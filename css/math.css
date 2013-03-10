@@ -1,0 +1,175 @@
+body {
+  counter-reset: prop;
+  counter-reset: definition;
+  counter-reset: theorem;
+  counter-reset: fact;
+  counter-reset: lemma;
+  counter-reset: question;
+  counter-reset: corollary;
+  counter-reset: section;
+}
+
+h2 {
+  counter-increment: section;
+  counter-reset: prop 0;
+  counter-reset: definition 0;
+  counter-reset: theorem 0;
+  counter-reset: fact 0;
+  counter-reset: lemma 0;
+  counter-reset: question 0;
+  counter-reset: corollary 0;
+}
+
+h2:before {
+  content: counter(section) ". "
+}
+
+.author:before{
+    content: "作成者：";
+}
+
+.question, .answer, .corollary, .prop, .proof, .theorem, .definition, .lemma, .fact, .axiom {
+    margin: 10px;
+    border: 1px solid;
+    padding: 10px;
+}
+
+.axiom {
+    counter-increment: axiom;
+}
+
+.axiom[name]:before{
+  content: attr(name) "．";
+}
+
+.axiom:before{
+  font-weight: bold;
+  display: inline;
+  content: "公理 " counter(section) "." counter(axiom) "．";
+}
+
+.fact {
+    counter-increment: fact;
+}
+
+.fact:before {
+  font-weight: bold;
+  display: inline;
+  content: "事実 " counter(section) "." counter(fact) "．"
+}
+
+.corollary {
+  counter-increment: corollary;
+}
+
+.corollary[name]:before{
+  content: "系 " counter(section) "." counter(corollary) "（" attr(name) "）．";
+}
+
+.corollary:before{
+  font-weight: bold;
+  display: inline;
+  content: "系 " counter(section) "." counter(corollary) "．";
+}
+
+.lemma {
+  counter-increment: lemma;
+}
+
+.lemma[name]:before{
+  content: "補題 " counter(section) "." counter(lemma) "（" attr(name) "）．";
+}
+
+.lemma:before{
+  font-weight: bold;
+  content: "補題 " counter(section) "." counter(lemma) "．";
+}
+
+.prop{
+  counter-increment: prop;
+}
+
+.prop[name]:before{
+  content: "命題 " counter(section) "." counter(prop) "（" attr(name) "）．";
+}
+.prop:before{
+  font-weight: bold;
+  display: inline;
+  content: "命題 " counter(section) "." counter(prop) "．";
+}
+
+.question {
+  counter-increment: question;
+}
+.question:before{
+  font-weight: bold;
+  display: inline;
+  content: "問 " counter(section) "." counter(question) "．";
+}
+
+.theorem {
+  counter-increment: theorem;
+}
+.theorem[name]:before{
+  content: "定理 " counter(section) "." counter(theorem) "（" attr(name) "）．";
+}
+
+.theorem:before{
+  font-weight: bold;
+  display: inline;
+  content: "定理 " counter(section) "." counter(theorem) "．";
+}
+
+.definition {
+  counter-increment: definition;
+}
+
+.definition[name]:before{
+  content: "定義 " counter(section) "." counter(definition) "（" attr(name) "）．";
+}
+
+.definition:before{
+  font-weight: bold;
+  display: inline;
+  content: "定義 " counter(section) "." counter(definition) "．";
+}
+
+.proof[name]:before{
+    content: attr(name) "．";
+    display: inline;
+    font-weight: bold;
+}
+
+.proof:before{
+    content: "証明．";
+    display: inline;
+    font-weight: bold;
+}
+
+.answer:before{
+    content: "答．";
+    display: inline;
+    font-weight: bold;
+}
+
+.axiom[name]:before {
+    display: inline;
+    font-weight: bold;
+    content:  attr(name) "．";
+}
+
+.axiom:before {
+    display: inline;
+    font-weight: bold;
+    content: "公理．";
+}
+
+.proof:after{
+    text-align: right;
+    display: block;
+    content: "■";
+}
+
+.label{
+    font-weight: bold;
+}
