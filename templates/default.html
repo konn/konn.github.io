@@ -9,18 +9,20 @@
 
   <title>$title$ - konn-san.com</title>
 
-  <meta name="description" content="konn-san.com">
   <meta name="author" content="Hiromi ISHII">
 
   <meta name="viewport" content="width=device-width">
+  $meta$
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
   <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
   <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
   <style type="text/css">
     body {
-      padding-top: 60px; 
+      padding-top: 60px;
     }
   </style>
   $head$
+  <script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button_wo_al.js" charset="utf-8" async="async"></script>
   <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
   <script src="/math/mathjax/MathJax.js?config=xypic" type="text/javascript"></script>
 </head>
@@ -29,11 +31,28 @@
   <!--[if lt IE 7]>
     <p class="chromeframe">えーマジ <strong>IE 7 以前？</strong> キモーイ. IE7 以前が許されるのは小学生までだよねキャハハ <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
   <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
   $navbar$
   <div class="container">
     $breadcrumb$
     <div class="page-header">
       <h1>$title$ <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="icon-bookmark"></i>
+      <div class="fb-like" data-href="http://konn-san.com$url$" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      <a href="http://b.hatena.ne.jp/entry/http://konn-san.com$url$" class="hatena-bookmark-button" data-hatena-bookmark-title="$title$ - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+      <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+      <g:plusone></g:plusone>
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    </div>
     </div>
     <div class="page-content">$body$</div>
   </div>

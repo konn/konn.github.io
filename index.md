@@ -1,6 +1,7 @@
 ---
 title: konn-san.com 建設予定地
-description: HOME
+description: konn-san.com: 数理論理学を中心に数学、Haskell、推理小説、評論など。
+tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オートマトン
 ---
 
 取り敢えず、さくらVPSの方にウェブページ含め全て移行予定。ここはその建設予定地です。今のところ
@@ -8,13 +9,10 @@ description: HOME
 
 更新履歴
 =======
-この辺りの自動化の仕方がわかったらやるよ。
+<dl>\$updates\$</dl>
 
 Table Of Contents
 =================
-[これは圏です（Blog）](http://blog.konn-san.com)
-:    ブログです。Yesod 製の自作エンジンで動いている。主に Haskell 関連の記事が多い。
-
 [数学関係を纏めておくばしょ](/math)
 :    数学関係を纏めておくばしょです。
 
@@ -23,4 +21,7 @@ Table Of Contents
 
 [Writings](/writing)
 :    その他の文書。サークル関連や暇潰しで書いた小説・評論などを気が向いたら載せます。
+
+[これは圏です（Blog）](http://blog.konn-san.com)
+:    ブログです。Yesod 製の自作エンジンで動いている。主に Haskell 関連の記事が多い。
 

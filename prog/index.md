@@ -1,6 +1,8 @@
 ---
 title: プログラミング関連
 author: Hiromi ISHII
+description: GitHub などへの外部リンクと昔につくったプロダクトの紹介。
+tag: Haskell,Ruby,オートマトン,IRC
 ---
 
 ソフトウェアやプログラミング関連の記事を溜めておく場所です。大半は [Blog](http://blog.konn-san.com) にあるので、余り何もありません。
