@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xml:lang="ja" lang="ja">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="generator" content="Emacs psgml+snippet-mode" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <link rev="made" title="作成者" href="mailto:konn.jinro_at_gmail.com" />
+    <link rel="stylesheet" type="text/css" media="all" href="design.css" />
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+    <title>MathJax と SVGを使ってみるテスツ</title>
+</head>
+<body>
+<h1>MathJax と SVG を使ってみるテスツ</h1>
+<p>試験で判らなかった Perseval の等式は $$\frac{1}{\pi}\int_{-\pi}^{\pi} \left|f(t)\right|^2\mathrm{dt} = \frac{a_0}{2} +\sum_{n=1}^\infty (a_n^2 + b_n^2)$$で表すことが可能である。ヨカッタネ!インライン版を書いてみるとこうなる：\(\frac{1}{\pi}\int_{-\pi}^{\pi} \left|f(t)\right|^2\mathrm{dt} = \frac{a_0}{2} +\sum_{n=1}^\infty (a_n^2 + b_n^2)\)ふむふむ。</p>
+<p>MathJax を拡張して、Xy-pic 風の可換図式構文を追加する試みはあるらしく、MathJax への extension への移植が進んでいるらしい。しかしまだ非公式だと云うことと、Xy-pic がそもそも好きではないと云うことを考えると、現時点で可換図式をHTML内に張り込む良い方法は、SVG なのではないかと結論に一応達した。ぼくは TikZ が好きなんです。</p>
+<p><object type="image/svg+xml" data="product.svg"></object></p>
+
+</body>
+</html>

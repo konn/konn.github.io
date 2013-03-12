@@ -1,0 +1,10 @@
+.DS_Store
+*.hi
+_site
+*.o
+*~
+_cache
+.#*
+#*#
+site
+math/mathjax
