@@ -48,7 +48,7 @@ main = hakyllWith config $ do
 
   match "prog/automaton/**/*" $ route idRoute >> compile copyFileCompiler
 
-  match "prog/**/*.js" $ route idRoute >> compile copyFileCompiler
+  match ("prog/**/*.js" .||. "prog/**/*.css" .||. "prog/**/*.png" .||. "prog/**/*.gif") $ route idRoute >> compile copyFileCompiler
 
   match ("math/**/*.pdf" .||. "math/*.pdf") $ route idRoute >> compile copyFileCompiler
 
@@ -160,7 +160,7 @@ getActive :: Identifier -> String
 getActive ident = fromMaybe "/" $ listToMaybe $ filter p $ map snd catDic
   where
     p "/" = False
-    p ('/':inp) = fromString (inp++"/*") `matches` ident
+    p ('/':inp) = fromGlob (inp++"/*") `matches` ident
     p _ = False
 
 makeBreadcrumb :: Identifier -> Compiler String
