@@ -15,26 +15,31 @@ import           Data.Time
 import           Filesystem
 import qualified Filesystem.Path.CurrentOS       as Path
 import           Hakyll
+import           MathConv
 import           Network.HTTP.Types
 import           Prelude                         hiding (div, span)
+import           System.Cmd
 import           System.FilePath
 import           System.Locale
 import           Text.Blaze.Html.Renderer.String
 import           Text.Hamlet
 import           Text.HTML.TagSoup
+import           Text.HTML.TagSoup.Match
 import           Text.Pandoc
+import           Text.Pandoc.Builder             hiding (fromList)
+import qualified Text.Pandoc.Builder             as Pan
 
 main :: IO ()
 main = hakyllWith config $ do
   match "*.css" $ route idRoute >> compile compressCssCompiler
 
-  match ("js/*" .||. "robots.txt" .||. "img/*" .||. "favicon.ico" .||. "files/**") $
+  match ("js/**" .||. "robots.txt" .||. "img/**" .||. "favicon.ico" .||. "files/**") $
     route idRoute >> compile copyFileCompiler
 
-  match "css/*" $
+  match "css/**" $
     route idRoute >> compile compressCssCompiler
 
-  match "templates/*" $ compile templateCompiler
+  match "templates/**" $ compile templateCompiler
 
   match "index.md" $ do
     route $ setExtension "html"
@@ -44,21 +49,49 @@ main = hakyllWith config $ do
               >>= applyAsTemplate (constField "updates" posts <> defaultContext)
               >>= applyDefaultTemplate >>= relativizeUrls
 
-  match "t/**/*" $ route idRoute >> compile copyFileCompiler
+  match "t/**" $ route idRoute >> compile copyFileCompiler
 
-  match "prog/automaton/**/*" $ route idRoute >> compile copyFileCompiler
+  match "prog/automaton/**" $ route idRoute >> compile copyFileCompiler
 
-  match ("prog/**/*.js" .||. "prog/**/*.css" .||. "prog/**/*.png" .||. "prog/**/*.gif") $ route idRoute >> compile copyFileCompiler
+  match ("math/**.pdf") $ route idRoute >> compile copyFileCompiler
 
-  match ("math/**/*.pdf" .||. "math/*.pdf") $ route idRoute >> compile copyFileCompiler
+  match ("prog/doc/*/**") $
+    route idRoute >> compile copyFileCompiler
+  {-
+  match ("prog/doc/index.md") $ do
+    route $ setExtension "html"
+    compile $ do
+      chs <- loadAll "prog/doc/*/index.html"
+      list <- renderDocIndex chs
+      myPandocCompiler
+        >>= applyAsTemplate (constField "list" list <> defaultContext)
+        >>= applyDefaultTemplate >>= relativizeUrls
+  -}
+  match ("**.html" .&&. complement ("prog/doc/**.html" .||. "templates/**")) $
+    route idRoute >> compile copyFileCompiler
+  match ("math/**.tex") $ version "html" $ do
+    route $ setExtension "html"
+    compile $ do
+      fp <- fromJust <$> (getRoute =<< getUnderlying)
+      ipandoc <- fmap (addPDFLink ("/" </> replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22" . texToMarkdown)
+                   <$> getResourceBody
+      let item = writeHtmlString def{ writerHTMLMathMethod = MathJax "/math/mathjax/MathJax.js?config=xypic"}
+                   <$> ipandoc
+      saveSnapshot "content" item
+      applyDefaultTemplate item >>= relativizeUrls
 
-  match "**/*.html" $
+  match ("math/**.tex") $ version "pdf" $ do
+    route $ setExtension "pdf"
+    compile $ do
+      getResourceBody >>= compileToPDF
+
+  match ("math/mathjax/**") $
+     route idRoute >> compile copyFileCompiler
+
+  match ("math/**.png" .&&. complement "math/mathjax/**") $
     route idRoute >> compile copyFileCompiler
 
-  match ("math/**/*.png" .&&. complement "math/mathjax/**/*") $
-    route idRoute >> compile copyFileCompiler
-
-  match ("math/*.md" .||. "prog/*.md" .||. "writing/*.md") $ do
+  match ("math/**.md" .||. "prog/**.md" .||. "writing/**.md") $ do
     route $ setExtension "html"
     compile $
        myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate >>= relativizeUrls
@@ -67,13 +100,61 @@ main = hakyllWith config $ do
     route idRoute
     compile $ do
       loadAllSnapshots subContentsWithoutIndex "content"
-        >>= fmap (take 10 . filter (matches ("index.md" .||. complement "**/index.md") . itemIdentifier)) . myRecentFirst
+        >>= myRecentFirst
+        >>= return . take 10 . filter (matches ("index.md" .||. complement "**/index.md") . itemIdentifier)
         >>= renderAtom feedConf feedCxt
 
+addPDFLink :: String -> Pandoc -> Pandoc
+addPDFLink plink (Pandoc meta body) = Pandoc meta body'
+  where
+    Pandoc _ body' = doc $ mconcat [ para $ "[" <> link plink "PDF版" "PDF版" <> "]"
+                                   , Pan.fromList body
+                                   ]
+
+listChildren :: Bool -> Compiler [Item String]
+listChildren recursive = do
+  ident <- getUnderlying
+  let dir  = takeDirectory $ toFilePath ident
+      exts = ["md", "tex"]
+      wild = if recursive then "**" else "*"
+      pat =  foldr1 (.||.) ([fromGlob $ dir </> wild <.> e | e <- exts])
+               .&&. complement (fromList [ident])
+  loadAll pat >>= myRecentFirst
+
+compileToPDF :: Item String -> Compiler (Item TmpFile)
+compileToPDF item = do
+  TmpFile texPath <- newTmpFile "pdflatex.tex"
+  let tmpDir  = takeDirectory texPath
+      dviPath = replaceExtension texPath "dvi"
+      pdfPath = replaceExtension texPath "pdf"
+
+  unsafeCompiler $ do
+    Prelude.writeFile texPath $ itemBody item
+    _ <- system $ unwords ["platex"
+                          , "-output-directory", tmpDir, texPath, ">/dev/null", "2>&1"]
+    _ <- system $ unwords ["dvipdfmx", "-o", pdfPath, dviPath, ">/dev/null", "2>&1"]
+    return ()
+  makeItem $ TmpFile pdfPath
+
+renderDocIndex :: [Item String] -> Compiler String
+renderDocIndex is = do
+  is' <- forM is $ \i -> ( , itemBody i) . fromJust <$> getRoute (itemIdentifier i)
+  return $ renderHtml $ forM_ is' $ \(path, src) ->
+      let tags = parseTags src
+          content = innerText $ getTagContent "div" (anyAttrLit ("class", "doc")) tags
+          name = takeWhile (/= ':') $ innerText $
+            getTagContent "div" (anyAttrLit ("class", "description")) tags
+      in [shamlet| <dt>
+                     <a href="#{path}">#{name}
+                   <dd>#{content}
+                 |]
+
+renderMeta :: [Inline] -> String
+renderMeta ils = writeHtmlString def $ Pandoc (Meta [] [] []) [Plain ils]
+
 subContentsWithoutIndex :: Pattern
-subContentsWithoutIndex = ("prog/*.md" .||. "math/*.md" .||. "writing/*.md") .&&. complement ("writing/index.md" .||. "prog/index.md" .||. "math/index.md")
-
-
+subContentsWithoutIndex = ("**.md" .||. ("math/**.tex" .&&. hasVersion "html"))
+                     .&&. complement ("index.md" .||. "**/index.md")
 
 feedCxt :: Context String
 feedCxt =  mconcat [ field "published" itemDateStr
@@ -97,15 +178,33 @@ myPandocCompiler :: Compiler (Item String)
 myPandocCompiler = pandocCompilerWithTransform def def{ writerHTMLMathMethod = MathJax "/math/mathjax/MathJax.js?config=xypic"} (addAmazonAssociateLink "konn06-22")
 
 applyDefaultTemplate :: Item String -> Compiler (Item String)
-applyDefaultTemplate =
+applyDefaultTemplate = applyDefaultTemplateWith
+
+applyDefaultTemplateWith :: Item String -> Compiler (Item String)
+applyDefaultTemplateWith =
   let navbar = field "navbar" $ return . makeNavBar . itemIdentifier
-      bcrumb = field "breadcrumb" $ makeBreadcrumb . itemIdentifier
+      bcrumb = field "breadcrumb" $ makeBreadcrumb
+      children = field "children" $ const $ do
+        chs <- listChildren False
+        navs <- liftM catMaybes . forM chs $ \c -> do
+          link  <- getRoute (itemIdentifier c)
+          title <- getMetadataField (itemIdentifier c) "title"
+          return $ (,) <$> link <*> title
+        return $ renderHtml [shamlet| <ul>
+                                        $forall (pth, title) <- navs
+                                          <li>
+                                            <a href="#{pth}">
+                                               #{title}
+                                    |]
       header = field "head" $ \i -> return $
         if "math" `isPrefixOf` toFilePath (itemIdentifier i) && "math/index.md" /= toFilePath (itemIdentifier i)
         then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
         else ""
       meta = field "meta" $ liftM mconcat . forM [("description", "description"), ("tag", "Keywords")] . extractMeta
-  in return . fmap (demoteHeaders . withTags addTableClass) >=> loadAndApplyTemplate "templates/default.html" (defaultContext <> navbar <> bcrumb <> header <> meta)
+      cxt  = (defaultContext <> navbar <> bcrumb <> header <> meta <> children)
+  in return . fmap (demoteHeaders . withTags addTableClass)
+         >=> applyAsTemplate cxt
+         >=> loadAndApplyTemplate "templates/default.html" cxt
 
 extractMeta :: Item String -> (String, String) -> Compiler String
 extractMeta i (from, to) = do
@@ -160,16 +259,18 @@ getActive :: Identifier -> String
 getActive ident = fromMaybe "/" $ listToMaybe $ filter p $ map snd catDic
   where
     p "/" = False
-    p ('/':inp) = fromGlob (inp++"/*") `matches` ident
+    p ('/':inp) = fromGlob (inp++"/**") `matches` ident
     p _ = False
 
-makeBreadcrumb :: Identifier -> Compiler String
-makeBreadcrumb ident = do
-  mytitle <- fromMaybe (takeBaseName $ toFilePath ident) <$> getMetadataField ident "title"
+makeBreadcrumb :: Item String -> Compiler String
+makeBreadcrumb item = do
+  let ident = itemIdentifier item
+  Just mytitle <- getMetadataField ident "title"
   let parents = filter (/= toFilePath ident) $ map ((</> "index.md").joinPath) $ init $ inits $ splitPath $ toFilePath ident
-  bc <- forM parents $ \fp -> do
-    Just path <- getRoute $ fromFilePath fp
-    (toUrl path, ) . fromMaybe (takeBaseName fp) <$> getMetadataField (fromFilePath fp) "title"
+  bc <- liftM catMaybes . forM parents $ \fp -> do
+    mpath <- liftM toUrl <$> getRoute (fromFilePath fp)
+    mtitle <-  getMetadataField (fromFilePath fp) "title"
+    return $ (,) <$> mpath <*> mtitle
   return $ renderHtml [shamlet|
       <ul .breadcrumb>
         $forall (path, title) <- bc

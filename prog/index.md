@@ -9,7 +9,7 @@ tag: Haskell,Ruby,オートマトン,IRC
 
 プロジェクト関連
 ==============
-[computational-algebra](haskell/computational-algebra/)
+[computational-algebra](doc/computational-algebra/)
 :    計算代数のライブラリ [computational-algebra](https://github.com/konn/computational-algebra) の Haddock が Hackage 表示されるまでの場繋ぎ。
 
 外部リンク
