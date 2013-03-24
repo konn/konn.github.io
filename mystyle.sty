@@ -1,0 +1,58 @@
+\usepackage{bm}
+\usepackage{cases}
+\usepackage{extarrows}
+\usepackage{amsmath,amssymb}
+\usepackage[framed,thmmarks,amsthm]{ntheorem}
+\usepackage{framed}
+\usepackage{bussproofs}
+\usepackage{bm}
+\usepackage{cases}
+\usepackage{braket}
+
+%% その他記号
+\newcommand{\congto}{\stackrel{\sim}{\to}}
+\newcommand{\mono}{\rightarrowtail}
+\newcommand{\epi}{\twoheadrightarrow}
+\newcommand{\Pow}{\mathfrak{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Sets}{\mathbf{Sets}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Dom}{\mathrm{Dom}}
+\newcommand{\Rng}{\mathrm{Rng}}
+\newcommand{\dom}{\mathrm{dom}}
+\newcommand{\cod}{\mathrm{cod}}
+\newcommand{\defs}{\xLongleftrightarrow{\mathrm{def}}}
+\newcommand{\defeq}{\mathrel{:=}}
+\newcommand{\ignore}[1]{}
+\newcommand{\restr}{\upharpoonleft}
+\newcommand{\pair}[1]{\langle #1 \rangle}
+\newcommand{\cls}[2]{\Set{#1 | #2(x)}}
+\newcommand{\st}{\ \ {\rm s.t.}\ \ }
+\newcommand{\qedm}{\rule{0.5em}{1em}}
+\qedsymbol{\rule{0.5em}{1em}}
+\newcommand{\quot}[2]{\left.{#1}\middle/{#2}\right.}
+\newcommand{\deriveto}[1]{\overset{\scriptsize #1}{\rightsquigarrow}}
+\newcommand{\otherwise}{\mathrm{otherwise}}
+\newcommand{\Gal}{\mathrm{Gal}}
+\newcommand{\ch}{\mathrm{char}}
+\newcommand{\irr}{\mathrm{irr}}
+\newcommand{\replace}[2]{[\begin{smallmatrix} {#1} \\ {#2} \end{smallmatrix}]}
+
+\theoremstyle{definition}
+\theoremseparator{.}
+\newframedtheorem{theorem}{Th.}[section]
+\newframedtheorem{definition}{Def.}[section]
+\newframedtheorem{prop}{Prop.}[section]
+\newframedtheorem{corollary}{Cor.}[section]
+\newtheorem*{answer}{解}
+\newframedtheorem{question}{問}[section]
+\theoremstyle{break}
+\newframedtheorem{lemma}{Lemma}[section]
+\def\@iroha#1{%
+  \ifcase#1\or イ\or ロ\or ハ\or ニ\or ホ\or ヘ\or ト\or チ\or リ\or ヌ\or ル\or ヲ\or
+  ワ\or カ\or ヨ\or タ\or レ\or ソ\or ツ\or ヌ\or ナ\or ラ\or ム\or
+  ウ\or ヰ\or ノ\or オ\or ク\or ヤ\or マ\or ケ\or フ\or コ\or エ\or テ\or 
+  ア\or サ\or キ\or ユ\or メ\or ミ\or シ\or ヱ\or ヒ\or モ\or セ\or ス\or ン\else\@ctrerr\fi}
