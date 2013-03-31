@@ -184,6 +184,7 @@ applyDefaultTemplateWith :: Item String -> Compiler (Item String)
 applyDefaultTemplateWith =
   let navbar = field "navbar" $ return . makeNavBar . itemIdentifier
       bcrumb = field "breadcrumb" $ makeBreadcrumb
+      date = field "date" itemDateStr
       children = field "children" $ const $ do
         chs <- listChildren False
         navs <- liftM catMaybes . forM chs $ \c -> do
@@ -201,7 +202,7 @@ applyDefaultTemplateWith =
         then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
         else ""
       meta = field "meta" $ liftM mconcat . forM [("description", "description"), ("tag", "Keywords")] . extractMeta
-      cxt  = (defaultContext <> navbar <> bcrumb <> header <> meta <> children)
+      cxt  = (defaultContext <> navbar <> bcrumb <> header <> meta <> children <> date)
   in return . fmap (demoteHeaders . withTags addTableClass)
          >=> applyAsTemplate cxt
          >=> loadAndApplyTemplate "templates/default.html" cxt
