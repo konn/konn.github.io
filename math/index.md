@@ -8,6 +8,12 @@ tag: モデル理論,集合論,数学,数理論理学,数学基礎論,ロジッ�
 
 発表資料
 =======
+
+[Haskellで計算機代数勉強会](http://partake.in/events/451a51b0-b18e-4e01-bda4-423bf57f4051)
+----------------------------------------------------------------------------------------
+* わかったつもりになる Gröbner基底（[PDF](./groebner-basis-an-introduction.pdf) / [Keynote](./groebner-basis-an-introduction.key) / [Speaker Deck](https://speakerdeck.com/konn/wakatutatumorininaru-grobner-ji-di)）
+
+
 ロジック勉強会（Girard 友の会）
 --------------------------
 @[qnighy](https://twitter.com/qnighy) さん、@[dchiji](https://twitter.com/dchiji) さん、@[ukikagi](https://twitter.com/ukikagi) さんなどとやっているロジックの勉強会での発表資料。[新井本](http://www.amazon.co.jp/dp/4000055364) を教科書にしている。
@@ -56,3 +62,10 @@ tag: モデル理論,集合論,数学,数理論理学,数学基礎論,ロジッ�
 * [一次元セル・オートマトンとシェルピンスキ・ガスケット](./cellular-automaton/sierpinski.html)
 
     シェルピンスキ・ガスケットやその類似図形を生成するような一次元セル・オートマトンの一覧。
+
+計算機代数関係
+------------
+* [今年の冬は Gröbner 基底でスーパー大学受験ガール！ ](groebner-and-entrance-math.md)
+
+    Gröbner 基底で大学受験問題を解く話ですが、人間が Gröbner 基底で手で解けるはずがなくて、エイプリールフールネタです。エイプリールフールにかこつけて書いたので数学的厳密性はうんこですが、嘘は一応書いていないですし面白みが伝わればなと思います。
+

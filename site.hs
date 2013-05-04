@@ -54,6 +54,7 @@ main = hakyllWith config $ do
   match "prog/automaton/**" $ route idRoute >> compile copyFileCompiler
 
   match ("math/**.pdf") $ route idRoute >> compile copyFileCompiler
+  match ("**.key") $ route idRoute >> compile copyFileCompiler
 
   match ("prog/doc/*/**") $
     route idRoute >> compile copyFileCompiler
