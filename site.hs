@@ -220,7 +220,7 @@ addTableClass (TagOpen "table" attr) = TagOpen "table" (("class", "table"):attr)
 addTableClass t = t
 
 config :: Configuration
-config = defaultConfiguration { deployCommand = "rsync --checksum -av _site/* sakura-vps:~/mighttpd/public_html/ && git add math writing prog && git commit -am\"deployed\" && git push origin master"}
+config = defaultConfiguration { deployCommand = "rsync --checksum -av _site/* sakura-vps:~/mighttpd/public_html/ && git add img math writing prog && git commit -am\"deployed\" && git push origin master"}
 
 addAmazonAssociateLink :: String -> Pandoc -> Pandoc
 addAmazonAssociateLink = bottomUp . procAmazon
