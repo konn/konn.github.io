@@ -76,7 +76,7 @@ main = hakyllWith config $ do
       fp <- fromJust <$> (getRoute =<< getUnderlying)
       ipandoc <- fmap (addPDFLink ("/" </> replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22" . texToMarkdown)
                    <$> getResourceBody
-      let item = writeHtmlString def{ writerHTMLMathMethod = MathJax "/math/mathjax/MathJax.js?config=xypic"}
+      let item = writeHtmlString def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}
                    <$> ipandoc
       saveSnapshot "content" item
       applyDefaultTemplate item >>= relativizeUrls
@@ -176,7 +176,7 @@ feedConf = FeedConfiguration { feedTitle = "konn-san.com 建設予定地"
                              }
 
 myPandocCompiler :: Compiler (Item String)
-myPandocCompiler = pandocCompilerWithTransform def def{ writerHTMLMathMethod = MathJax "/math/mathjax/MathJax.js?config=xypic"} (addAmazonAssociateLink "konn06-22")
+myPandocCompiler = pandocCompilerWithTransform def def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"} (addAmazonAssociateLink "konn06-22")
 
 applyDefaultTemplate :: Item String -> Compiler (Item String)
 applyDefaultTemplate = applyDefaultTemplateWith
