@@ -255,6 +255,7 @@ catDic = [("Home", "/")
          ,("Programming", "/prog")
          ,("Writings", "/writing")
          ,("Blog", "http://blog.konn-san.com/")
+         ,("Tumblr", "http://tumblr.konn-san.com/")
          ]
 
 getActive :: Identifier -> String

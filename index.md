@@ -25,3 +25,6 @@ Table Of Contents
 [これは圏です（Blog）](http://blog.konn-san.com)
 :    ブログです。Yesod 製の自作エンジンで動いている。主に Haskell 関連の記事が多い。
 
+[ねこはかわいい（Tumblr）](http://tumblr.konn-san.com)
+:    Tumblr。特にねこの写真がある訳ではなく、Twitter で流れてきた面白そうな記事をスクラップしている。
+
