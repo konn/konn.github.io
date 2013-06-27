@@ -7,7 +7,7 @@ description: 絶対に理解出来ないモナドチュートリアルです。
 絶対に理解出来ないモナドチュートリアル
 ===============================
 
-世の中には、恐しい数のモナドチュートリアルがあって、それぞれ[モナドは象だ](http://dl.dropboxusercontent.com/u/261418/Monads_are_Elephants/index.html)とか、いや[接ぎ木だ](https://dl.dropboxusercontent.com/u/360784/Monads.ja/monads.ja.pdf) とか、[プログラマブル・コンテナだ](http://d.hatena.ne.jp/kazu-yamamoto/20110413/1302683869)とか、[プログラム可能なセミコロンだ](http://www.slideshare.net/tanakh/monad-tutorial)とか、設計図の色々な説明がなされている。「モナド チュートリアル」で検索すれば、他にも色々に絵解きされた有象無象のモナドが大量に引っ掛かる。そうそう、[モナドは単なる自己関手の圏におけるモノイド対象だよ。何か問題でも？](http://www.aoky.net/articles/james_iry/brief-incomplete-and-mostly-wrong.htm)なんてのもあったな。
+世の中には、恐しい数のモナドチュートリアルがあって、それぞれ[モナドは象だ](http://dl.dropboxusercontent.com/u/261418/Monads_are_Elephants/index.html)とか、いや[接ぎ木だ](https://dl.dropboxusercontent.com/u/360784/Monads.ja/monads.ja.pdf) とか、[プログラマブル・コンテナだ](http://d.hatena.ne.jp/kazu-yamamoto/20110413/1302683869)とか、[プログラム可能なセミコロンだ](http://www.slideshare.net/tanakh/monad-tutorial)とか、色々な説明がなされている。「モナド チュートリアル」で検索すれば、他にも色々に絵解きされた有象無象のモナドが大量に引っ掛かる。そうそう、[モナドは単なる自己関手の圏におけるモノイド対象だよ。何か問題でも？](http://www.aoky.net/articles/james_iry/brief-incomplete-and-mostly-wrong.htm)なんてのもあったな。
 
 この記事の目的は別に、こうした既存のモナドチュートリアルを「間違ってる！」とか「わかるわけねーよ！」といって貶そうという訳ではない。実際、既に幾多書かれているチュートリアルの中でも、僕の云いたいことと殆んど同じようなことが書かれているものは沢山ある。
 では、上の膨大なリストの末尾にまた一つ「わかりやすい比喩」を付け足そうというのか？というとそういう訳でもない。そうそう、[モナドは比喩ではない](http://eed3si9n.com/ja/monads-are-not-metaphors)というチュートリアルもあった。じゃあ何故この記事を書いているのかというと、これだけ優れたチュートリアルが巷に溢れているのに、何故モナドは難しいと思われて恐れられているのか、ということを明らかにするところにある。だから、この記事だけを読んでも、多分モナドを理解することは絶対に出来ない[^2]。でも、どうしたらモナドを「わかる」ことが出来るか、その足掛かりだけでも提供することが出来れば幸いだ。
