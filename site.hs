@@ -315,7 +315,7 @@ readHierarchy = mapMaybe (toTup . words) . lines
 postList :: Pattern -> Compiler String
 postList pat = do
   postItemTpl <- loadBody "templates/update.html"
-  posts <- fmap (take 3) . myRecentFirst =<< loadAll pat
+  posts <- fmap (take 5) . myRecentFirst =<< loadAll pat
   let myDateField = field "date" itemDateStr
   applyTemplateList postItemTpl (myDateField <> defaultContext) posts
 
