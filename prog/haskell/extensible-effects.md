@@ -34,7 +34,7 @@ action = modify (+1) >> mzero
 ghci> runState (runMaybeT (modify (+1) >> mzero)) 10
 (Nothing,11)
 
-ghci> runMaybeT (runStateT (modify succ >> mzero) 10)
+ghci> runMaybeT (runStateT (modify (+1) >> mzero) 10)
 Nothing
 ```
 
