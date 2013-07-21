@@ -44,10 +44,26 @@ main = hakyllWith config $ do
   match "index.md" $ do
     route $ setExtension "html"
     compile $ do
-      posts <- postList $ subContentsWithoutIndex
+      posts <- postList (Just 5) $ subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "updates" posts <> defaultContext)
               >>= applyDefaultTemplate >>= relativizeUrls
+
+  match "archive.md" $ do
+    route $ setExtension "html"
+    compile $ do
+      posts <- postList Nothing $ subContentsWithoutIndex
+      myPandocCompiler
+              >>= applyAsTemplate (constField "children" posts <> defaultContext)
+              >>= applyDefaultTemplate >>= relativizeUrls
+
+  match ("*/index.md") $ do
+    route $ setExtension "html"
+    compile $ do
+      chs <- listChildren True
+      children <- postList Nothing (fromList $ map itemIdentifier chs)
+      myPandocCompiler >>= applyAsTemplate (constField "children" children <> defaultContext)
+                       >>= applyDefaultTemplate >>= saveSnapshot "content"  >>= relativizeUrls
 
   match "t/**" $ route idRoute >> compile copyFileCompiler
 
@@ -58,16 +74,6 @@ main = hakyllWith config $ do
 
   match ("prog/doc/*/**") $
     route idRoute >> compile copyFileCompiler
-  {-
-  match ("prog/doc/index.md") $ do
-    route $ setExtension "html"
-    compile $ do
-      chs <- loadAll "prog/doc/*/index.html"
-      list <- renderDocIndex chs
-      myPandocCompiler
-        >>= applyAsTemplate (constField "list" list <> defaultContext)
-        >>= applyDefaultTemplate >>= relativizeUrls
-  -}
   match ("**.html" .&&. complement ("prog/doc/**.html" .||. "templates/**")) $
     route idRoute >> compile copyFileCompiler
   match ("math/**.tex") $ version "html" $ do
@@ -155,7 +161,7 @@ renderMeta ils = writeHtmlString def $ Pandoc (Meta [] [] []) [Plain ils]
 
 subContentsWithoutIndex :: Pattern
 subContentsWithoutIndex = ("**.md" .||. ("math/**.tex" .&&. hasVersion "html"))
-                     .&&. complement ("index.md" .||. "**/index.md")
+                     .&&. complement ("index.md" .||. "**/index.md" .||. "archive.md")
 
 feedCxt :: Context String
 feedCxt =  mconcat [ field "published" itemDateStr
@@ -254,6 +260,7 @@ catDic = [("Home", "/")
          ,("Math", "/math")
          ,("Programming", "/prog")
          ,("Writings", "/writing")
+         ,("Archive", "/archive.html")
          ,("Blog", "http://blog.konn-san.com/")
          ,("Tumblr", "http://tumblr.konn-san.com/")
          ]
@@ -312,10 +319,10 @@ readHierarchy = mapMaybe (toTup . words) . lines
     toTup (x:y:ys) = Just (y ++ unwords ys, x)
     toTup _        = Nothing
 
-postList :: Pattern -> Compiler String
-postList pat = do
+postList :: Maybe Int -> Pattern -> Compiler String
+postList mcount pat = do
   postItemTpl <- loadBody "templates/update.html"
-  posts <- fmap (take 5) . myRecentFirst =<< loadAll pat
+  posts <- fmap (maybe id take mcount) . myRecentFirst =<< loadAll pat
   let myDateField = field "date" itemDateStr
   applyTemplateList postItemTpl (myDateField <> defaultContext) posts
 
