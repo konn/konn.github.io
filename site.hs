@@ -266,6 +266,7 @@ catDic = [("Home", "/")
          ]
 
 getActive :: Identifier -> String
+getActive "archive.md" = "/archive.html"
 getActive ident = fromMaybe "/" $ listToMaybe $ filter p $ map snd catDic
   where
     p "/" = False
