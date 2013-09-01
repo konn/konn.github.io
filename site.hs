@@ -82,10 +82,10 @@ main = hakyllWith config $ do
       fp <- fromJust <$> (getRoute =<< getUnderlying)
       ipandoc <- fmap (addPDFLink ("/" </> replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22" . texToMarkdown)
                    <$> getResourceBody
-      let item = writeHtmlString def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}
-                   <$> ipandoc
-      saveSnapshot "content" item
-      applyDefaultTemplate item >>= relativizeUrls
+
+      let item = writePandocWith def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}
+                   $ ipandoc
+      saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate item
 
   match ("math/**.tex") $ version "pdf" $ do
     route $ setExtension "pdf"
@@ -125,7 +125,7 @@ listChildren recursive = do
       exts = ["md", "tex"]
       wild = if recursive then "**" else "*"
       pat =  foldr1 (.||.) ([fromGlob $ dir </> wild <.> e | e <- exts])
-               .&&. complement (fromList [ident])
+               .&&. complement (fromList [ident] .||. hasVersion "pdf")
   loadAll pat >>= myRecentFirst
 
 compileToPDF :: Item String -> Compiler (Item TmpFile)
@@ -276,7 +276,7 @@ getActive ident = fromMaybe "/" $ listToMaybe $ filter p $ map snd catDic
 makeBreadcrumb :: Item String -> Compiler String
 makeBreadcrumb item = do
   let ident = itemIdentifier item
-  Just mytitle <- getMetadataField ident "title"
+  mytitle <- getMetadataField' ident "title"
   let parents = filter (/= toFilePath ident) $ map ((</> "index.md").joinPath) $ init $ inits $ splitPath $ toFilePath ident
   bc <- liftM catMaybes . forM parents $ \fp -> do
     mpath <- liftM toUrl <$> getRoute (fromFilePath fp)
