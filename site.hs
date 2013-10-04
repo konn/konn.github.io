@@ -2,7 +2,7 @@
 module Main where
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
-import           Control.Monad
+import           Control.Monad                   hiding (mapM, sequence)
 import qualified Data.ByteString.Char8           as BS
 import qualified Data.CaseInsensitive            as CI
 import           Data.List                       hiding (span)
@@ -12,12 +12,14 @@ import           Data.Ord
 import           Data.String
 import qualified Data.Text                       as T
 import           Data.Time
+import           Data.Traversable                hiding (forM)
 import           Filesystem
 import qualified Filesystem.Path.CurrentOS       as Path
 import           Hakyll
 import           MathConv
 import           Network.HTTP.Types
-import           Prelude                         hiding (div, span)
+import           Prelude                         hiding (div, mapM, sequence,
+                                                  span)
 import           System.Cmd
 import           System.FilePath
 import           System.Locale
@@ -80,8 +82,8 @@ main = hakyllWith config $ do
     route $ setExtension "html"
     compile $ do
       fp <- fromJust <$> (getRoute =<< getUnderlying)
-      ipandoc <- fmap (addPDFLink ("/" </> replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22" . texToMarkdown)
-                   <$> getResourceBody
+      ipandoc <- fmap (addPDFLink ("/" </> replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22")
+                   <$> (mapM (unsafeCompiler . texToMarkdown) =<< getResourceBody)
 
       let item = writePandocWith def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}
                    $ ipandoc

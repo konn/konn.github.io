@@ -13,6 +13,7 @@ import           Text.LaTeX.Base        hiding ((&))
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
 import           Text.Pandoc            hiding (MathType)
+import           Text.TeXMath.Macros
 
 deriving instance Typeable Measure
 deriving instance Data Measure
@@ -29,22 +30,25 @@ myReaderOpts = def { readerExtensions = S.insert Ext_raw_tex pandocExtensions
                    , readerParseRaw = True
                    }
 
+parseTeX :: String -> Either String LaTeX
 parseTeX = Atto.parseOnly latexParser . T.pack
 
-texToMarkdown :: String -> Pandoc
-texToMarkdown src =
-  let rewritten = T.unpack $ render $ rewriteCommands $ view _Right $ parseTeX $ src
+texToMarkdown :: String -> IO Pandoc
+texToMarkdown src = do
+  macros <- fst . parseMacroDefinitions <$> readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
+  let rewritten = T.unpack $ render $ rewriteCommands $ view _Right $ parseTeX $ applyMacros macros $ src
       pandoc = rewriteEnv $ readLaTeX myReaderOpts rewritten
-  in pandoc
+  return pandoc
 
 rewriteCommands :: LaTeX -> LaTeX
 rewriteCommands = bottomUp rewrite
   where
+    expands = ["Set", "Braket"]
     rewrite (TeXComm "underline" [FixArg src]) = TeXRaw $ T.concat ["<u>", render src, "</u>"]
-    rewrite (TeXComm "Set" [FixArg src]) =
+    rewrite (TeXComm comm [FixArg src]) | comm `elem` expands =
       case breakTeXOn "|" src of
-        Just (lhs, rhs) -> TeXComm "Set" [FixArg lhs, FixArg rhs]
-        Nothing -> TeXComm "set" [FixArg src]
+        Just (lhs, rhs) -> TeXComm comm [FixArg lhs, FixArg rhs]
+        Nothing -> TeXComm (T.unpack $ T.toLower $ T.pack comm) [FixArg src]
     rewrite t = t
 
 breakTeXOn :: T.Text -> LaTeX -> Maybe (LaTeX, LaTeX)
@@ -64,7 +68,7 @@ breakTeXOn _ _ = Nothing
 
 envs :: [String]
 envs = [ "prop", "proof", "theorem", "lemma", "axiom"
-       , "definition", "question", "answer"
+       , "definition", "question", "answer", "problem", "corollary"
        ]
 
 commandDic :: [(String, Either ([Inline] -> Inline) String)]
