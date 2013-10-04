@@ -7,11 +7,14 @@ body {
   counter-reset: question;
   counter-reset: corollary;
   counter-reset: section;
+  counter-reset: subsection;
 }
 
 h2 {
   counter-increment: section;
-  /* counter-reset: prop 0;
+  counter-reset: subsection;
+  /*
+  counter-reset: prop 0;
   counter-reset: definition 0;
   counter-reset: theorem 0;
   counter-reset: fact 0;
@@ -21,10 +24,17 @@ h2 {
   */
 }
 
+h3 {
+    counter-increment: subsection;
+}
+
 h2:before {
   content: counter(section) ". "
 }
 
+h3:before {
+  content: counter(section) "." counter(subsection) ". "
+}
 .author:before{
     content: "作成者：";
 }
