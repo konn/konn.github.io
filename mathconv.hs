@@ -14,6 +14,8 @@ import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
 import           Text.Pandoc            hiding (MathType)
 import           Text.TeXMath.Macros
+import           Text.TeXMath.ToUnicode
+import           Text.TeXMath.Types
 
 deriving instance Typeable Measure
 deriving instance Data Measure
@@ -103,7 +105,7 @@ rewriteBeginEnv = concatMap step
           let divStart
                   | null args = concat ["<div class=\"", env, "\">"]
                   | otherwise = concat ["<div class=\"", env, "\" name=\""
-                                       , unwords $ map (init . tail . T.unpack . render) args, "\">"]
+                                       , toUnicode TextNormal $ unwords $ map (init . tail . T.unpack . render) args, "\">"]
               Pandoc _ myBody = rewriteEnv $ readLaTeX myReaderOpts $ T.unpack $ render body
           in RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
     step b = [b]
