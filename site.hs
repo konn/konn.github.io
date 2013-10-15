@@ -16,6 +16,7 @@ import           Data.Traversable                hiding (forM)
 import           Filesystem
 import qualified Filesystem.Path.CurrentOS       as Path
 import           Hakyll
+import           Hakyll.Web.Pandoc.Biblio
 import           MathConv
 import           Network.HTTP.Types
 import           Prelude                         hiding (div, mapM, sequence,
@@ -81,10 +82,11 @@ main = hakyllWith config $ do
   match ("math/**.tex") $ version "html" $ do
     route $ setExtension "html"
     compile $ do
+      bib <- biblioCompiler
+      csl <- cslCompiler
       fp <- fromJust <$> (getRoute =<< getUnderlying)
       ipandoc <- fmap (addPDFLink ("/" </> replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22")
-                   <$> (mapM (unsafeCompiler . texToMarkdown) =<< getResourceBody)
-
+                   <$> (mapM (unsafeCompiler . texToMarkdown csl bib) =<< getResourceBody)
       let item = writePandocWith def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}
                    $ ipandoc
       saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate item
