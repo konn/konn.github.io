@@ -46,7 +46,6 @@ rewriteCommands :: LaTeX -> LaTeX
 rewriteCommands = bottomUp rewrite
   where
     expands = ["Set", "Braket"]
-    rewrite (TeXComm "underline" [FixArg src]) = TeXRaw $ T.concat ["<u>", render src, "</u>"]
     rewrite (TeXComm comm [FixArg src]) | comm `elem` expands =
       case breakTeXOn "|" src of
         Just (lhs, rhs) -> TeXComm comm [FixArg lhs, FixArg rhs]
@@ -105,7 +104,7 @@ rewriteBeginEnv = concatMap step
           let divStart
                   | null args = concat ["<div class=\"", env, "\">"]
                   | otherwise = concat ["<div class=\"", env, "\" name=\""
-                                       , toUnicode TextNormal $ unwords $ map (init . tail . T.unpack . render) args, "\">"]
+                                       , writePlain def $ readLaTeX def $ toUnicode TextNormal $ unwords $ map (init . tail . T.unpack . render) args, "\">"]
               Pandoc _ myBody = rewriteEnv $ readLaTeX myReaderOpts $ T.unpack $ render body
           in RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
     step b = [b]

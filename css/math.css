@@ -28,7 +28,7 @@ h3 {
     counter-increment: subsection;
 }
 
-h2:before {
+h2:not(#biblio):before {
   content: counter(section) ". "
 }
 
