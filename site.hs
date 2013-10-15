@@ -153,7 +153,7 @@ appendBiblioSection (Pandoc meta bs) =
 listChildren :: Bool -> Compiler [Item String]
 listChildren recursive = do
   ident <- getUnderlying
-  let dir  = Path.directory $ toFilePath ident
+  let Just dir = Path.stripPrefix "." $ Path.directory $ toFilePath ident
       exts = ["md", "tex"]
       wild = if recursive then "**" else "*"
       pat =  foldr1 (.||.) ([fromGlob $ Path.encodeString $ dir </> wild <.> e | e <- exts])
@@ -366,7 +366,7 @@ postList mcount pat = do
 
 itemPDFLink :: Item a -> Compiler String
 itemPDFLink item
-    | toFilePath (itemIdentifier item) `Path.hasExtension` "tex" = do
+    | "**.tex" `matches` itemIdentifier item = do
         Just route <- getRoute $ itemIdentifier item
         return $ concat $ [" [", "<a href=\""
                           , Path.encodeString $ Path.replaceExtension (Path.decodeString route) "pdf"
