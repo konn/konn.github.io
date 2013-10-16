@@ -3,30 +3,32 @@
 {-# LANGUAGE ViewPatterns                                                #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind -fno-warn-type-defaults         #-}
 module Main where
-import           Blaze.ByteString.Builder  (toByteString)
+import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
-import           Control.Monad             hiding (mapM, sequence)
-import qualified Data.ByteString.Char8     as BS
-import qualified Data.CaseInsensitive      as CI
-import           Data.List                 hiding (span)
+import           Control.Monad                   hiding (mapM, sequence)
+import qualified Data.ByteString.Char8           as BS
+import qualified Data.CaseInsensitive            as CI
+import           Data.List                       hiding (span, stripPrefix)
 import           Data.Maybe
 import           Data.Monoid
 import           Data.Ord
 import           Data.String
-import qualified Data.Text                 as T
+import qualified Data.Text                       as T
 import           Data.Time
-import           Data.Traversable          hiding (forM)
+import           Data.Traversable                hiding (forM)
 import           Filesystem
-import qualified Filesystem.Path.CurrentOS as Path
-import           Hakyll                    hiding (fromFilePath, toFilePath)
+import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
+                                                  (</>))
+import qualified Filesystem.Path.CurrentOS       as Path
+import           Hakyll                          hiding (fromFilePath,
+                                                  toFilePath)
 import qualified Hakyll
 import           Instances
 import           MathConv
 import           Network.HTTP.Types
-import           Prelude                   hiding (FilePath, div, mapM,
-                                            sequence, span)
+import           Prelude                         hiding (FilePath, div, mapM,
+                                                  sequence, span)
 import           Shelly
--- import           System.FilePath
 import           System.Locale
 import           Text.Blaze.Html.Renderer.String
 import           Text.CSL                        (readCSLFile)
@@ -41,10 +43,10 @@ import qualified Text.Pandoc.Builder             as Pan
 default (T.Text)
 
 toFilePath :: Identifier -> FilePath
-toFilePath = Path.decodeString . Hakyll.toFilePath
+toFilePath = decodeString . Hakyll.toFilePath
 
 fromFilePath :: FilePath -> Identifier
-fromFilePath = Hakyll.fromFilePath . Path.encodeString
+fromFilePath = Hakyll.fromFilePath . encodeString
 
 main :: IO ()
 main = hakyllWith config $ do
@@ -98,32 +100,26 @@ main = hakyllWith config $ do
   match ("math/**.tex") $ version "html" $ do
     route $ setExtension "html"
     compile $ do
-      fp <- Path.decodeString . fromJust <$> (getRoute =<< getUnderlying)
-      mbib <- fmap itemBody <$> optional (load $ fromFilePath $ Path.replaceExtension fp "bib")
+      fp <- decodeString . fromJust <$> (getRoute =<< getUnderlying)
+      mbib <- fmap itemBody <$> optional (load $ fromFilePath $ replaceExtension fp "bib")
       style <- unsafeCompiler . readCSLFile . Hakyll.toFilePath . itemIdentifier
-                  =<< load (fromFilePath $ Path.replaceExtension fp "csl")
+                  =<< load (fromFilePath $ replaceExtension fp "csl")
                   <|> (load "default.csl" :: Compiler (Item CSL))
-      ipandoc <- fmap (addPDFLink ("/" </> Path.replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22")
-                   <$> (mapM (unsafeCompiler . texToMarkdown) =<< getResourceBody)
-      let item =
-            case mbib of
-              Just (BibTeX bib) ->
-                  writePandocWith
+      ipandoc <- mapM (unsafeCompiler . texToMarkdown) =<< getResourceBody
+      let ip' = case mbib of
+                  Just (BibTeX bib) | not (null bib) ->
+                      fmap (processCites style bib . appendBiblioSection) ipandoc
+                  _ -> ipandoc
+          item = writePandocWith
                      def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}
-                     $ fmap (processCites style bib . appendBiblioSection) ipandoc
-              Nothing ->
-                  writePandocWith def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"} ipandoc
+                     $ fmap (addPDFLink ("/" </> replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22") ip'
       saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate item
 
   match ("math/**.tex") $ version "pdf" $ do
     route $ setExtension "pdf"
-    compile $ do
-      getResourceBody >>= compileToPDF
+    compile $ getResourceBody >>= compileToPDF
 
-  match ("math/mathjax/**") $
-     route idRoute >> compile copyFileCompiler
-
-  match ("math/**.png" .&&. complement "math/mathjax/**") $
+  match ("math/**.png") $
     route idRoute >> compile copyFileCompiler
 
   match ("math/**.md" .||. "prog/**.md" .||. "writing/**.md") $ do
@@ -142,7 +138,7 @@ main = hakyllWith config $ do
 addPDFLink :: FilePath -> Pandoc -> Pandoc
 addPDFLink plink (Pandoc meta body) = Pandoc meta body'
   where
-    Pandoc _ body' = doc $ mconcat [ para $ "[" <> link (Path.encodeString plink) "PDF版" "PDF版" <> "]"
+    Pandoc _ body' = doc $ mconcat [ para $ "[" <> link (encodeString plink) "PDF版" "PDF版" <> "]"
                                    , Pan.fromList body
                                    ]
 
@@ -153,31 +149,31 @@ appendBiblioSection (Pandoc meta bs) =
 listChildren :: Bool -> Compiler [Item String]
 listChildren recursive = do
   ident <- getUnderlying
-  let Just dir = Path.stripPrefix "." $ Path.directory $ toFilePath ident
+  let Just dir = stripPrefix "." $ directory $ toFilePath ident
       exts = ["md", "tex"]
       wild = if recursive then "**" else "*"
-      pat =  foldr1 (.||.) ([fromGlob $ Path.encodeString $ dir </> wild <.> e | e <- exts])
+      pat =  foldr1 (.||.) ([fromGlob $ encodeString $ dir </> wild <.> e | e <- exts])
                .&&. complement (fromList [ident] .||. hasVersion "pdf")
   loadAll pat >>= myRecentFirst
 
 compileToPDF :: Item String -> Compiler (Item TmpFile)
 compileToPDF item = do
-  TmpFile (Path.decodeString -> texPath) <- newTmpFile "pdflatex.tex"
-  let tmpDir  = Path.directory texPath
-      dviPath = Path.filename $ Path.replaceExtension texPath "dvi"
-      pdfPath = Path.filename $ Path.replaceExtension texPath "pdf"
-      bibOrig = Path.replaceExtension (toFilePath (itemIdentifier item)) "bib"
+  TmpFile (decodeString -> texPath) <- newTmpFile "pdflatex.tex"
+  let tmpDir  = directory texPath
+      dviPath = filename $ replaceExtension texPath "dvi"
+      pdfPath = filename $ replaceExtension texPath "pdf"
+      bibOrig = replaceExtension (toFilePath (itemIdentifier item)) "bib"
 
   unsafeCompiler $ shelly $ silently $ do
     writefile texPath $ T.pack $ itemBody item
     exts <- test_e =<< absPath bibOrig
     when exts $ do
-      cp  bibOrig $ tmpDir </> Path.filename bibOrig
+      cp  bibOrig $ tmpDir </> filename bibOrig
     cd tmpDir
-    cmd "latexmk" $ Path.filename texPath
+    cmd "latexmk" $ filename texPath
     cmd "dvipdfmx" "-o" pdfPath dviPath
     return ()
-  makeItem $ TmpFile $ Path.encodeString (tmpDir </> pdfPath)
+  makeItem $ TmpFile $ encodeString (tmpDir </> pdfPath)
 
 renderDocIndex :: [Item String] -> Compiler String
 renderDocIndex is = do
@@ -313,7 +309,7 @@ makeBreadcrumb :: Item String -> Compiler String
 makeBreadcrumb item = do
   let ident = itemIdentifier item
   mytitle <- getMetadataField' ident "title"
-  let parents = filter (/= toFilePath ident) $ map ((</> "index.md"). Path.concat) $ init $ inits $ Path.splitDirectories $ toFilePath ident
+  let parents = filter (/= toFilePath ident) $ map ((</> "index.md"). Path.concat) $ init $ inits $ splitDirectories $ toFilePath ident
   bc <- liftM catMaybes . forM parents $ \fp -> do
     mpath <- liftM toUrl <$> getRoute (fromFilePath fp)
     mtitle <-  getMetadataField (fromFilePath fp) "title"
@@ -369,7 +365,7 @@ itemPDFLink item
     | "**.tex" `matches` itemIdentifier item = do
         Just route <- getRoute $ itemIdentifier item
         return $ concat $ [" [", "<a href=\""
-                          , Path.encodeString $ Path.replaceExtension (Path.decodeString route) "pdf"
+                          , encodeString $ replaceExtension (decodeString route) "pdf"
                           , "\">"
                           , "PDF版"
                           , "</a>"
