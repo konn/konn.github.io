@@ -4,17 +4,19 @@ description: konn-san.com: 数理論理学を中心に数学、Haskell、推理�
 tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オートマトン
 ---
 
-取り敢えず、さくらVPSの方にウェブページ含め全て移行予定。ここはその建設予定地です。今のところ
-[Mighttpd2](http://www.mew.org/~kazu/proj/mighttpd/en/)ウェブサーバとして利用しています。作者の kazu-yamamoto さんに感謝
+集合論など数理論理学関連を中心に、数学・関数型プログラミング・ミステリなどに関する情報を集積してあります。
 
-更新履歴
-=======
+更新履歴など
+==========
 <dl>\$updates\$</dl>
 
 上記最新5件以外は、[アーカイブ](./archive.html) をご覧ください。
 
 Table Of Contents
 =================
+[プロフィール](/profile.html)
+:    私について。最近の活動記録など。
+
 [数学関係を纏めておくばしょ](/math)
 :    数学関係を纏めておくばしょです。
 
@@ -30,3 +32,19 @@ Table Of Contents
 [ねこはかわいい（Tumblr）](http://tumblr.konn-san.com)
 :    Tumblr。特にねこの写真がある訳ではなく、Twitter で流れてきた面白そうな記事をスクラップしている。
 
+外部リンクなど
+------------
+[Twitter](http://twitter.com/mr_konn)
+:    主に日常のつぶやきなどはこちら。Twitter を始めてから情報発信を Twitter でしかしなくなった感じがする。
+
+[GitHub](https://github.com/mr_konn)
+:    開発したもので公開しても差し支えのないものなどはこちらで管理中。
+
+[ブクログ](http://booklog.jp/users/mr_konn)
+:    本棚。蔵書と既読の管理。レビュー等は気が向いたら更新している。だいたいここを見れば趣味が把握出来る。
+
+[ねこはかわいい（Tumblr）](http://tumblr.konn-san.com)
+:    たんぶらー。Twitter で見掛けた記事を適当にスクラップしている。
+
+[slideshare](http://www.slideshare.net/konn)
+:    主に技術系のプレゼンの発表資料などはこちら。

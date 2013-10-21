@@ -122,7 +122,7 @@ main = hakyllWith config $ do
   match ("math/**.png") $
     route idRoute >> compile copyFileCompiler
 
-  match ("math/**.md" .||. "prog/**.md" .||. "writing/**.md") $ do
+  match ("profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") $ do
     route $ setExtension "html"
     compile $
        myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate >>= relativizeUrls
@@ -289,16 +289,17 @@ ccTLDs = ["jp"]
 
 catDic :: [(Html, String)]
 catDic = [("Home", "/")
+         ,("Profile", "/profile.html")
          ,("Math", "/math")
          ,("Programming", "/prog")
          ,("Writings", "/writing")
          ,("Archive", "/archive.html")
          ,("Blog", "http://blog.konn-san.com/")
-         ,("Tumblr", "http://tumblr.konn-san.com/")
          ]
 
 getActive :: Identifier -> String
 getActive "archive.md" = "/archive.html"
+getActive "profile.md" = "/profile.html"
 getActive ident = fromMaybe "/" $ listToMaybe $ filter p $ map snd catDic
   where
     p "/" = False
