@@ -12,6 +12,9 @@ tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オ�
 
 上記最新5件以外は、[アーカイブ](./archive.html) をご覧ください。
 
+<div class="row-fluid">
+
+<div class="span6">
 Table Of Contents
 =================
 [プロフィール](/profile.html)
@@ -29,11 +32,11 @@ Table Of Contents
 [これは圏です（Blog）](http://blog.konn-san.com)
 :    ブログです。Yesod 製の自作エンジンで動いている。主に Haskell 関連の記事が多い。
 
-[ねこはかわいい（Tumblr）](http://tumblr.konn-san.com)
-:    Tumblr。特にねこの写真がある訳ではなく、Twitter で流れてきた面白そうな記事をスクラップしている。
+</div>
 
-外部リンクなど
-------------
+<div class="span6">
+External Links
+===============
 [Twitter](http://twitter.com/mr_konn)
 :    主に日常のつぶやきなどはこちら。Twitter を始めてから情報発信を Twitter でしかしなくなった感じがする。
 
@@ -48,3 +51,5 @@ Table Of Contents
 
 [slideshare](http://www.slideshare.net/konn)
 :    主に技術系のプレゼンの発表資料などはこちら。
+</div>
+</div>
