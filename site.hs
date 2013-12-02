@@ -23,6 +23,7 @@ import qualified Filesystem.Path.CurrentOS       as Path
 import           Hakyll                          hiding (fromFilePath,
                                                   toFilePath)
 import qualified Hakyll
+import           Hakyll.Web.Paginate
 import           Instances
 import           MathConv
 import           Network.HTTP.Types
