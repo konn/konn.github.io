@@ -35,6 +35,7 @@ import           Text.Blaze.Html.Renderer.String
 import           Text.CSL                        (readCSLFile)
 import           Text.CSL.Pandoc
 import           Text.Hamlet
+import           Text.Highlighting.Kate          hiding (Context (..))
 import           Text.HTML.TagSoup
 import           Text.HTML.TagSoup.Match
 import           Text.Pandoc
@@ -215,7 +216,13 @@ feedConf = FeedConfiguration { feedTitle = "konn-san.com 建設予定地"
                              }
 
 myPandocCompiler :: Compiler (Item String)
-myPandocCompiler = pandocCompilerWithTransform def def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"} (addAmazonAssociateLink "konn06-22")
+myPandocCompiler = pandocCompilerWithTransform
+                   def
+                   def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
+                      , writerHighlight = True
+                      , writerHighlightStyle = pygments
+                      }
+                   (addAmazonAssociateLink "konn06-22")
 
 applyDefaultTemplate :: Item String -> Compiler (Item String)
 applyDefaultTemplate = applyDefaultTemplateWith

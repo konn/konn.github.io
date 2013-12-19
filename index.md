@@ -8,6 +8,7 @@ tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オ�
 
 お知らせ
 =======
+* **2013/12/20** C85 で Tsukuba Coq Users' Group『[Coq による定理証明](http://tcug.jp/)』を頒布します。僕は会場にはいません。Coq の本なのに Haskell を定理証明器として用いる方法について解説しました。おそらくHaskellの定理証明について解説した日本で唯一の文献です。[販促記事](prog/2013-advent-calendar.html)。
 * **2013/12/02** 株式会社ロングゲート様の技術書『[プログラミングの魔導書 〜Programmers' Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed Programming”](http://longgate.co.jp/books/grimoire-vol3.html)』に、合成可能な並行処理手法である STM の入門記事を執筆しました。拙稿以外にも並行・並列・分散に関する幅広い濃い記事が集まった一冊ですので、是非お買い求め下さい。
 
 
