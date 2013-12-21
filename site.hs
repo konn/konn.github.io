@@ -171,9 +171,10 @@ compileToPDF item = do
     exts <- test_e =<< absPath bibOrig
     when exts $ do
       cp  bibOrig $ tmpDir </> filename bibOrig
+    cp ".latexmkrc" tmpDir
     cd tmpDir
-    cmd "latexmk" $ filename texPath
-    cmd "dvipdfmx" "-o" pdfPath dviPath
+    cmd "latexmk" "-pdfdvi" $ filename texPath
+    -- cmd "dvipdfmx" "-o" pdfPath dviPath
     return ()
   makeItem $ TmpFile $ encodeString (tmpDir </> pdfPath)
 
