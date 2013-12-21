@@ -6,7 +6,7 @@ description: C85 の TCUG に寄稿させて頂いた Haskell で定理証明を
 tag: haskell, theorem prover, 定理証明, 宣伝
 ---
 
-この記事は [Haskell Advent Calendar 2013](http://qiita.com/advent-calendar/2013/haskell) および [Theorem Prover Advent Calendar 2013](http://qiita.com/advent-calendar/2013/theorem_prover) 二十日目の記事であり、更にTCUGの新刊「[Coqによる定理証明](http://tcug.jp/)」の[販促記事](#last)でもある。
+この記事は [Haskell Advent Calendar 2013](http://qiita.com/advent-calendar/2013/haskell) および [Theorem Prover Advent Calendar 2013](http://qiita.com/advent-calendar/2013/theorem_prover) 二十日目の記事であり、更にTCUGの新刊「[Coqによる定理証明](http://tcug.jp/books/2013-12/)」の[販促記事](#last)でもある。
 
 型システム再考{#type-system-revisited}
 ====================================
@@ -156,7 +156,7 @@ plusSR n m =
 本書は他にもCoqで証明を書くための技がいっぱい詰まっているので、Haskellに興味はないが定理証明には興味があるという方も是非[^3]。そんなワクワクが詰まった書籍の詳細は以下の通り：
 
 書名
-:    『Coq による定理証明』（第三章をわたしが書きました）
+:    『[Coq による定理証明](http://tcug.jp/books/2013-12/)』（第三章をわたしが書きました；[サンプル](http://tcug.jp/books/2013-12/example.pdf)）
 サークル名
 :    [Tsukuba Coq Users' Group](http://tcug.jp/)
 頒布イベント
