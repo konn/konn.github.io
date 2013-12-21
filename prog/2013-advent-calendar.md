@@ -2,7 +2,7 @@
 title: 定理証明系 Haskell
 date: 2013/12/20 00:00:00 JST
 author: 石井大海
-description: C85 の TCUG に寄稿させて頂いた Haskell で定理証明を行う記事の販促記事です。Haskell Advent Calendar 2013 および Theorem Prover Advent Calendar 2013 参加記事。
+description: Haskell Advent Calendar 2013 および Theorem Prover Advent Calendar 2013 参加記事。Haskell における依存型プログラミングおよび定理証明について解説した数少ない日本語文献です。C85 の TCUG に寄稿させて頂いた Haskell で定理証明を行う記事の販促記事でもあります。
 tag: haskell, theorem prover, 定理証明, 宣伝
 ---
 
@@ -164,7 +164,7 @@ plusSR n m =
 配置
 :    12/31 火曜日(3日目) 西し33-a
 価格
-:    未定（800円程度）
+:    800円
 
 著者（@[pi8027](http://twitter.com/pi8027)さんとか@[pirapira](http://twitter.com/pirapira)さんとかわたしとか）に直接云って貰っても、在庫を持ってれば多分売れます。買ってやってください m(_ _)m
 
