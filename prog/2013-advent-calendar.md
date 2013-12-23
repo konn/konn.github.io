@@ -156,7 +156,7 @@ plusSR n m =
 本書は他にもCoqで証明を書くための技がいっぱい詰まっているので、Haskellに興味はないが定理証明には興味があるという方も是非[^3]。そんなワクワクが詰まった書籍の詳細は以下の通り：
 
 書名
-:    『[Coq による定理証明](http://tcug.jp/books/2013-12/)』（第三章をわたしが書きました；[サンプル](http://tcug.jp/books/2013-12/example.pdf)）
+:    『[Coq による定理証明](http://tcug.jp/books/2013-12/)』（第三章をわたしが書きました；[サンプル](http://tcug.jp/books/2013-12/sample.pdf)）
 サークル名
 :    [Tsukuba Coq Users' Group](http://tcug.jp/)
 頒布イベント
