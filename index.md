@@ -47,7 +47,7 @@ External Links
 [Twitter](http://twitter.com/mr_konn)
 :    主に日常のつぶやきなどはこちら。Twitter を始めてから情報発信を Twitter でしかしなくなった感じがする。
 
-[GitHub](https://github.com/mr_konn)
+[GitHub](https://github.com/konn)
 :    開発したもので公開しても差し支えのないものなどはこちらで管理中。
 
 [ブクログ](http://booklog.jp/users/mr_konn)

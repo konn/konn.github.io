@@ -8,6 +8,7 @@ import           Control.Applicative
 import           Control.Monad                   hiding (mapM, sequence)
 import qualified Data.ByteString.Char8           as BS
 import qualified Data.CaseInsensitive            as CI
+import           Data.Char
 import           Data.List                       hiding (span, stripPrefix)
 import           Data.Maybe
 import           Data.Monoid
@@ -383,9 +384,20 @@ itemPDFLink item
     | otherwise                                           = return ""
 
 myRecentFirst :: [Item a] -> Compiler [Item a]
-myRecentFirst is = do
+myRecentFirst is0 = do
+  is <- filterM isPublished is0
   ds <- mapM itemDate is
   return $ map snd $ sortBy (flip $ comparing (zonedTimeToLocalTime . fst)) $ zip ds is
+
+isPublished :: Item a -> Compiler Bool
+isPublished item = do
+  let ident = itemIdentifier item
+  mans <- fmap capitalize <$> getMetadataField ident "published"
+  return $ fromMaybe True $ listToMaybe . fmap fst . reads =<< mans
+
+capitalize :: String -> String
+capitalize "" = ""
+capitalize (c: cs) = toUpper c : map toLower cs
 
 itemDate :: Item a -> Compiler ZonedTime
 itemDate item = do
