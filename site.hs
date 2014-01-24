@@ -5,6 +5,7 @@
 module Main where
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
+import           Control.Exception
 import           Control.Monad                   hiding (mapM, sequence)
 import qualified Data.ByteString.Char8           as BS
 import qualified Data.CaseInsensitive            as CI
@@ -27,10 +28,13 @@ import qualified Hakyll
 import           Hakyll.Web.Paginate
 import           Instances
 import           MathConv
+import           Network.HTTP.Conduit
 import           Network.HTTP.Types
+import           Network.URI
 import           Prelude                         hiding (FilePath, div, mapM,
                                                   sequence, span)
 import           Shelly
+import           System.IO                       (hPutStrLn, stderr)
 import           System.Locale
 import           Text.Blaze.Html.Renderer.String
 import           Text.CSL                        (readCSLFile)
@@ -63,13 +67,17 @@ main = hakyllWith config $ do
 
   match "templates/**" $ compile templateCompiler
 
+  tags <- buildTagsWith myGetTags
+          (("**.md" .||. "**.tex") .&&. complement ("index.md" .||. "*/index.md"))
+          (fromCapture "tags/*.html")
+
   match "index.md" $ do
     route $ setExtension "html"
     compile $ do
       posts <- postList (Just 5) $ subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "updates" posts <> defaultContext)
-              >>= applyDefaultTemplate >>= relativizeUrls
+              >>= applyDefaultTemplate tags >>= relativizeUrls
 
   match "archive.md" $ do
     route $ setExtension "html"
@@ -77,7 +85,7 @@ main = hakyllWith config $ do
       posts <- postList Nothing $ subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "children" posts <> defaultContext)
-              >>= applyDefaultTemplate >>= relativizeUrls
+              >>= applyDefaultTemplate tags >>= relativizeUrls
 
   match ("*/index.md") $ do
     route $ setExtension "html"
@@ -85,7 +93,7 @@ main = hakyllWith config $ do
       chs <- listChildren True
       children <- postList Nothing (fromList $ map itemIdentifier chs)
       myPandocCompiler >>= applyAsTemplate (constField "children" children <> defaultContext)
-                       >>= applyDefaultTemplate >>= saveSnapshot "content"  >>= relativizeUrls
+                       >>= applyDefaultTemplate tags >>= saveSnapshot "content"  >>= relativizeUrls
 
   match "t/**" $ route idRoute >> compile copyFileCompiler
 
@@ -116,7 +124,7 @@ main = hakyllWith config $ do
           item = writePandocWith
                      def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}
                      $ fmap (addPDFLink ("/" </> replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22") ip'
-      saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate item
+      saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate tags item
 
   match ("math/**.tex") $ version "pdf" $ do
     route $ setExtension "pdf"
@@ -128,7 +136,24 @@ main = hakyllWith config $ do
   match ("profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") $ do
     route $ setExtension "html"
     compile $
-       myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate >>= relativizeUrls
+      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate tags >>= relativizeUrls
+
+{-
+  tagsRules tags $ \tag pat -> do
+    let title = "[" <> tag <> "] タグの記事一覧"
+    route idRoute
+    compile $ do
+      posts <- postList Nothing pat
+      let ctx = mconcat [ constField "title" title
+                        , constField "children" posts
+                        , defaultContext
+                        ]
+      makeItem ""
+        >>= loadAndApplyTemplate "archive.md" ctx
+        >>= applyAsTemplate ctx
+        >>= applyDefaultTemplate tags
+        >>= relativizeUrls
+-}
 
   create ["feed.xml"] $ do
     route idRoute
@@ -163,7 +188,6 @@ compileToPDF :: Item String -> Compiler (Item TmpFile)
 compileToPDF item = do
   TmpFile (decodeString -> texPath) <- newTmpFile "pdflatex.tex"
   let tmpDir  = directory texPath
-      dviPath = filename $ replaceExtension texPath "dvi"
       pdfPath = filename $ replaceExtension texPath "pdf"
       bibOrig = replaceExtension (toFilePath (itemIdentifier item)) "bib"
 
@@ -226,14 +250,15 @@ myPandocCompiler = pandocCompilerWithTransform
                       }
                    (addAmazonAssociateLink "konn06-22")
 
-applyDefaultTemplate :: Item String -> Compiler (Item String)
+applyDefaultTemplate :: Tags -> Item String -> Compiler (Item String)
 applyDefaultTemplate = applyDefaultTemplateWith
 
-applyDefaultTemplateWith :: Item String -> Compiler (Item String)
-applyDefaultTemplateWith =
+applyDefaultTemplateWith :: Tags -> Item String -> Compiler (Item String)
+applyDefaultTemplateWith tags item = do
   let navbar = field "navbar" $ return . makeNavBar . itemIdentifier
       bcrumb = field "breadcrumb" $ makeBreadcrumb
       date = field "date" itemDateStr
+      tagField = tagsField "tags" tags
       children = field "children" $ const $ do
         chs <- listChildren False
         navs <- liftM catMaybes . forM chs $ \c -> do
@@ -251,10 +276,22 @@ applyDefaultTemplateWith =
         then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
         else ""
       meta = field "meta" $ liftM mconcat . forM [("description", "description"), ("tag", "Keywords")] . extractMeta
-      cxt  = (defaultContext <> navbar <> bcrumb <> header <> meta <> children <> date)
-  in return . fmap (demoteHeaders . withTags addTableClass)
-         >=> applyAsTemplate cxt
-         >=> loadAndApplyTemplate "templates/default.html" cxt
+      cxt  = (defaultContext <> tagField <> navbar <> bcrumb <> header <> meta <> children <> date)
+  let item' = demoteHeaders . withTags addTableClass <$> item
+      links = filter isURI $ getUrls $ parseTags $ itemBody item'
+  unsafeCompiler $ do
+    broken <- filterM isLinkBroken links
+    forM_ broken $ \l -> hPutStrLn stderr $ "*** Link Broken: " ++ l
+
+  applyAsTemplate cxt item'
+    >>= loadAndApplyTemplate "templates/default.html" cxt
+
+isLinkBroken :: String -> IO Bool
+isLinkBroken url = return False
+  {-
+  withManager (\man -> httpLbs ((fromJust $ parseUrl url) { method = "GET" }) man >> return False)
+    `catch` \(SomeException _) -> return True
+-}
 
 extractMeta :: Item String -> (String, String) -> Compiler String
 extractMeta i (from, to) = do
@@ -262,6 +299,10 @@ extractMeta i (from, to) = do
   case mt of
     Nothing -> return ""
     Just st -> return $ renderHtml $ [shamlet|<meta name=#{to} content=#{st} />|]
+
+myGetTags :: (Functor m, MonadMetadata m) => Identifier -> m [String]
+myGetTags ident =
+  maybe [] (map (T.unpack . T.strip) . T.splitOn "," . T.pack) <$> getMetadataField ident "tag"
 
 addTableClass :: Tag String -> Tag String
 addTableClass (TagOpen "table" attr) = TagOpen "table" (("class", "table"):attr)
@@ -376,7 +417,7 @@ itemPDFLink item
     | "**.tex" `matches` itemIdentifier item = do
         Just route <- getRoute $ itemIdentifier item
         return $ concat $ [" [", "<a href=\""
-                          , encodeString $ replaceExtension (decodeString route) "pdf"
+                          , encodeString $ "/" </> replaceExtension (decodeString route) "pdf"
                           , "\">"
                           , "PDF版"
                           , "</a>"
