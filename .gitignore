@@ -8,3 +8,10 @@ _cache
 #*#
 site
 math/mathjax
+.shelly
+dist
+TAGS
+*_latexmk
+*.log
+draft
+*.aux
