@@ -12,7 +12,7 @@ tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オ�
 * **2013/12/02** 株式会社ロングゲート様の技術書『[プログラミングの魔導書 〜Programmers' Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed Programming”](http://longgate.co.jp/books/grimoire-vol3.html)』に、合成可能な並行処理手法である STM の入門記事を執筆しました。拙稿以外にも並行・並列・分散に関する幅広い濃い記事が集まった一冊ですので、是非お買い求め下さい。
 
 
-更新履歴など
+更新履歴など{#updates}
 ==========
 
 <dl>\$updates\$</dl>
@@ -22,8 +22,7 @@ tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オ�
 <div class="row-fluid">
 
 <div class="span6">
-Table Of Contents
-=================
+<h2 id="toc">Table Of Contents</h2>
 [プロフィール](/profile.html)
 :    私について。最近の活動記録など。
 
@@ -42,8 +41,8 @@ Table Of Contents
 </div>
 
 <div class="span6">
-External Links
-===============
+
+<h2 id="links">External Links</h2>
 [Twitter](http://twitter.com/mr_konn)
 :    主に日常のつぶやきなどはこちら。Twitter を始めてから情報発信を Twitter でしかしなくなった感じがする。
 

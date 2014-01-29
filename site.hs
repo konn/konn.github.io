@@ -1,16 +1,17 @@
-{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, OverloadedStrings #-}
-{-# LANGUAGE PatternGuards, QuasiQuotes, TemplateHaskell, TupleSections  #-}
-{-# LANGUAGE ViewPatterns                                                #-}
+{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules                    #-}
+{-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, PatternGuards #-}
+{-# LANGUAGE QuasiQuotes, TemplateHaskell, TupleSections, ViewPatterns   #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind -fno-warn-type-defaults         #-}
 module Main where
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
-import           Control.Exception
 import           Control.Monad                   hiding (mapM, sequence)
+import           Data.Binary
 import qualified Data.ByteString.Char8           as BS
 import qualified Data.CaseInsensitive            as CI
 import           Data.Char
-import           Data.List                       hiding (span, stripPrefix)
+import           Data.Function
+import           Data.List                       hiding (stripPrefix)
 import           Data.Maybe
 import           Data.Monoid
 import           Data.Ord
@@ -18,6 +19,7 @@ import           Data.String
 import qualified Data.Text                       as T
 import           Data.Time
 import           Data.Traversable                hiding (forM)
+import           Data.Typeable
 import           Filesystem
 import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
                                                   (</>))
@@ -25,27 +27,31 @@ import qualified Filesystem.Path.CurrentOS       as Path
 import           Hakyll                          hiding (fromFilePath,
                                                   toFilePath)
 import qualified Hakyll
-import           Hakyll.Web.Paginate
 import           Instances
 import           MathConv
 import           Network.HTTP.Conduit
 import           Network.HTTP.Types
-import           Network.URI
+import           Network.URI                     hiding (query)
 import           Prelude                         hiding (FilePath, div, mapM,
                                                   sequence, span)
 import           Shelly
 import           System.IO                       (hPutStrLn, stderr)
 import           System.Locale
 import           Text.Blaze.Html.Renderer.String
+import           Text.Blaze.Html5                ((!))
+import qualified Text.Blaze.Html5                as H5
+import qualified Text.Blaze.Html5.Attributes     as H5
 import           Text.CSL                        (readCSLFile)
 import           Text.CSL.Pandoc
 import           Text.Hamlet
-import           Text.Highlighting.Kate          hiding (Context (..))
+import           Text.Highlighting.Kate          hiding (Context ())
 import           Text.HTML.TagSoup
 import           Text.HTML.TagSoup.Match
 import           Text.Pandoc
 import           Text.Pandoc.Builder             hiding (fromList)
 import qualified Text.Pandoc.Builder             as Pan
+import           Text.Pandoc.Shared              (stringify)
+import           Text.Pandoc.Walk
 
 default (T.Text)
 
@@ -57,15 +63,15 @@ fromFilePath = Hakyll.fromFilePath . encodeString
 
 main :: IO ()
 main = hakyllWith config $ do
-  match "*.css" $ route idRoute >> compile compressCssCompiler
+  match "*.css" $ route idRoute >> compile' compressCssCompiler
 
   match ("js/**" .||. "robots.txt" .||. "img/**" .||. "favicon.ico" .||. "files/**") $
-    route idRoute >> compile copyFileCompiler
+    route idRoute >> compile' copyFileCompiler
 
   match "css/**" $
-    route idRoute >> compile compressCssCompiler
+    route idRoute >> compile' compressCssCompiler
 
-  match "templates/**" $ compile templateCompiler
+  match "templates/**" $ compile' templateCompiler
 
   tags <- buildTagsWith myGetTags
           (("**.md" .||. "**.tex") .&&. complement ("index.md" .||. "*/index.md"))
@@ -73,7 +79,7 @@ main = hakyllWith config $ do
 
   match "index.md" $ do
     route $ setExtension "html"
-    compile $ do
+    compile' $ do
       posts <- postList (Just 5) $ subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "updates" posts <> defaultContext)
@@ -81,7 +87,7 @@ main = hakyllWith config $ do
 
   match "archive.md" $ do
     route $ setExtension "html"
-    compile $ do
+    compile' $ do
       posts <- postList Nothing $ subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "children" posts <> defaultContext)
@@ -89,28 +95,28 @@ main = hakyllWith config $ do
 
   match ("*/index.md") $ do
     route $ setExtension "html"
-    compile $ do
+    compile' $ do
       chs <- listChildren True
       children <- postList Nothing (fromList $ map itemIdentifier chs)
       myPandocCompiler >>= applyAsTemplate (constField "children" children <> defaultContext)
                        >>= applyDefaultTemplate tags >>= saveSnapshot "content"  >>= relativizeUrls
 
-  match "t/**" $ route idRoute >> compile copyFileCompiler
+  match "t/**" $ route idRoute >> compile' copyFileCompiler
 
-  match "prog/automaton/**" $ route idRoute >> compile copyFileCompiler
+  match "prog/automaton/**" $ route idRoute >> compile' (copyFileCompiler)
 
-  match ("math/**.pdf") $ route idRoute >> compile copyFileCompiler
-  match ("**.key") $ route idRoute >> compile copyFileCompiler
+  match ("math/**.pdf") $ route idRoute >> compile' copyFileCompiler
+  match ("**.key") $ route idRoute >> compile' copyFileCompiler
 
   match ("prog/doc/*/**") $
-    route idRoute >> compile copyFileCompiler
+    route idRoute >> compile' copyFileCompiler
   match ("**.html" .&&. complement ("prog/doc/**.html" .||. "templates/**")) $
-    route idRoute >> compile copyFileCompiler
-  match ("**.csl") $ compile cslCompiler
-  match ("**.bib") $ compile (fmap biblioToBibTeX <$> biblioCompiler)
+    route idRoute >> compile' copyFileCompiler
+  match ("**.csl") $ compile' cslCompiler
+  match ("**.bib") $ compile' (fmap biblioToBibTeX <$> biblioCompiler)
   match ("math/**.tex") $ version "html" $ do
     route $ setExtension "html"
-    compile $ do
+    compile' $ do
       fp <- decodeString . fromJust <$> (getRoute =<< getUnderlying)
       mbib <- fmap itemBody <$> optional (load $ fromFilePath $ replaceExtension fp "bib")
       style <- unsafeCompiler . readCSLFile . Hakyll.toFilePath . itemIdentifier
@@ -128,21 +134,29 @@ main = hakyllWith config $ do
 
   match ("math/**.tex") $ version "pdf" $ do
     route $ setExtension "pdf"
-    compile $ getResourceBody >>= compileToPDF
+    compile' $ getResourceBody >>= compileToPDF
 
   match ("math/**.png") $
-    route idRoute >> compile copyFileCompiler
+    route idRoute >> compile' copyFileCompiler
 
   match ("profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") $ do
     route $ setExtension "html"
-    compile $
+    compile' $
       myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate tags >>= relativizeUrls
+
+  create ["feed.xml"] $ do
+    route idRoute
+    compile $ do
+      loadAllSnapshots subContentsWithoutIndex "content"
+        >>= myRecentFirst
+        >>= return . take 10 . filter (matches ("index.md" .||. complement "**/index.md") . itemIdentifier)
+        >>= renderAtom feedConf feedCxt
 
 {-
   tagsRules tags $ \tag pat -> do
     let title = "[" <> tag <> "] タグの記事一覧"
     route idRoute
-    compile $ do
+    compile' $ do
       posts <- postList Nothing pat
       let ctx = mconcat [ constField "title" title
                         , constField "children" posts
@@ -155,13 +169,16 @@ main = hakyllWith config $ do
         >>= relativizeUrls
 -}
 
-  create ["feed.xml"] $ do
-    route idRoute
-    compile $ do
-      loadAllSnapshots subContentsWithoutIndex "content"
-        >>= myRecentFirst
-        >>= return . take 10 . filter (matches ("index.md" .||. complement "**/index.md") . itemIdentifier)
-        >>= renderAtom feedConf feedCxt
+compile' :: (Typeable a, Writable a, Binary a) => Compiler (Item a) -> Rules ()
+compile' d = compile $ addRepo >> d
+
+addRepo :: Compiler ()
+addRepo = do
+  ident <- getUnderlying
+  published <- maybe True (== "true") <$> getMetadataField ident "published"
+  when published $ do
+    let pth = toFilePath ident
+    unsafeCompiler $ shelly $ silently $ void $ cmd "git" "add" pth
 
 addPDFLink :: FilePath -> Pandoc -> Pandoc
 addPDFLink plink (Pandoc meta body) = Pandoc meta body'
@@ -183,6 +200,32 @@ listChildren recursive = do
       pat =  foldr1 (.||.) ([fromGlob $ encodeString $ dir </> wild <.> e | e <- exts])
                .&&. complement (fromList [ident] .||. hasVersion "pdf")
   loadAll pat >>= myRecentFirst
+
+data HTree a = HTree { label :: a, _chs :: [HTree a] } deriving (Read, Show, Eq, Ord)
+
+headerTree :: [Block] -> [HTree Block]
+headerTree [] = []
+headerTree (b:bs) =
+  case span ((> getLevel b).getLevel) bs of
+    (lows, dohai) -> HTree b (headerTree lows) : headerTree dohai
+  where
+    getLevel (Header n _ _) = n
+    getLevel _ = error "You promissed this consists of only Headers!"
+
+buildTOC :: Pandoc -> Html
+buildTOC pan = build (headerTree $ extractHeaders pan)
+  where
+    build ts =
+     forM_ ts $ \(HTree (Header _ (ident, _, _) is) cs) ->
+     H5.li $ do
+       H5.a ! H5.href (H5.toValue $ "#" ++ ident) $ H5.toMarkup $ stringify is
+       when (not $ null cs) $ H5.ul $ build cs
+
+extractHeaders :: Pandoc -> [Block]
+extractHeaders = query ext
+  where
+    ext h@(Header {}) = [h]
+    ext _             = []
 
 compileToPDF :: Item String -> Compiler (Item TmpFile)
 compileToPDF item = do
@@ -241,24 +284,24 @@ feedConf = FeedConfiguration { feedTitle = "konn-san.com 建設予定地"
                              , feedRoot = "http://konn-san.com"
                              }
 
+
 myPandocCompiler :: Compiler (Item String)
-myPandocCompiler = pandocCompilerWithTransform
-                   def
-                   def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
-                      , writerHighlight = True
-                      , writerHighlightStyle = pygments
-                      }
-                   (addAmazonAssociateLink "konn06-22")
+myPandocCompiler =
+  pandocCompilerWithTransform
+  def
+  def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
+     , writerHighlight = True
+     , writerHighlightStyle = pygments
+     }
+  (addAmazonAssociateLink "konn06-22")
 
 applyDefaultTemplate :: Tags -> Item String -> Compiler (Item String)
-applyDefaultTemplate = applyDefaultTemplateWith
-
-applyDefaultTemplateWith :: Tags -> Item String -> Compiler (Item String)
-applyDefaultTemplateWith tags item = do
+applyDefaultTemplate tags item = do
   let navbar = field "navbar" $ return . makeNavBar . itemIdentifier
       bcrumb = field "breadcrumb" $ makeBreadcrumb
       date = field "date" itemDateStr
       tagField = tagsField "tags" tags
+      toc = field "toc" $ return .renderHtml . buildTOC . readHtml def . itemBody
       children = field "children" $ const $ do
         chs <- listChildren False
         navs <- liftM catMaybes . forM chs $ \c -> do
@@ -276,7 +319,7 @@ applyDefaultTemplateWith tags item = do
         then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
         else ""
       meta = field "meta" $ liftM mconcat . forM [("description", "description"), ("tag", "Keywords")] . extractMeta
-      cxt  = (defaultContext <> tagField <> navbar <> bcrumb <> header <> meta <> children <> date)
+      cxt  = (defaultContext <> toc <> tagField <> navbar <> bcrumb <> header <> meta <> children <> date)
   let item' = demoteHeaders . withTags addTableClass <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
   unsafeCompiler $ do
