@@ -107,9 +107,9 @@ $$bibtex           = 'upbibtex';
 biber と biblatex
 =================
 つぎに biblatex と biber の話をしましょう。biblatex というのは bibtex の後継で、より柔軟な運用が可能な文献管理・処理パッケージです。目で見て判りやすいところでは、例えばデフォルトで英字の書名は斜体、ユニコード文字の書名は太字で出力されるようになったりします[^2]。MacTeX や TeXLive であれば、これらは最初から何もしなくとも勝手に入っています。
-もちろん見た目だけではなくって、例えば文献一覧のソート順を柔軟に指定出来たり、様々な実用的なフィールドが追加されていたり、[biblatex.pdf](ftp://ftp.kddilabs.jp/CTAN/info/translations/biblatex/de/biblatex-de.pdf) を参考にしてください。
+もちろん見た目だけではなくって、例えば文献一覧のソート順を柔軟に指定出来たり、様々な実用的なフィールドが追加されていたりします。詳しい仕様については[biblatex.pdf](ftp://ftp.kddilabs.jp/CTAN/info/translations/biblatex/de/biblatex-de.pdf) を参考にしてください。
 
-BibLaTeX の特徴として、例えば今まで pBibTeX なんかでは日本人の名前をちゃんとソートするのに `Yomi` フィールドを指定していましたが、BibLaTeX では次のように `sortname` フィールドを指定すれば、後はよしなにやってくれます：
+実際に BibLaTeX の使い方を見てみましょう。例えば今まで pBibTeX なんかでは日本人の名前をちゃんとソートするのに `Yomi` フィールドを指定していましたが、BibLaTeX では次のように `sortname` フィールドを指定すれば、後はよしなにやってくれます：
 
 ```bibtex
 @book{Takeuti:2001,
