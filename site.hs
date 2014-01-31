@@ -229,6 +229,7 @@ extractHeaders = query ext
 
 compileToPDF :: Item String -> Compiler (Item TmpFile)
 compileToPDF item = do
+  mopts <- getMetadataField (itemIdentifier item) "latexmk"
   TmpFile (decodeString -> texPath) <- newTmpFile "pdflatex.tex"
   let tmpDir  = directory texPath
       pdfPath = filename $ replaceExtension texPath "pdf"
@@ -241,7 +242,9 @@ compileToPDF item = do
       cp  bibOrig $ tmpDir </> filename bibOrig
     cp ".latexmkrc" tmpDir
     cd tmpDir
-    cmd "latexmk" "-pdfdvi" $ filename texPath
+    case mopts of
+      Nothing -> cmd "latexmk" "-pdfdvi" $ filename texPath
+      Just opts -> run_ "latexmk" (map T.pack (words opts) ++ [Path.encode $ filename texPath])
     -- cmd "dvipdfmx" "-o" pdfPath dviPath
     return ()
   makeItem $ TmpFile $ encodeString (tmpDir </> pdfPath)

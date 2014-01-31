@@ -68,7 +68,7 @@ breakTeXOn s (TeXSeq l r) =
 breakTeXOn _ _ = Nothing
 
 envs :: [String]
-envs = [ "prop", "proof", "theorem", "lemma", "axiom"
+envs = [ "prop", "proof", "theorem", "lemma", "axiom", "remark"
        , "definition", "question", "answer", "problem", "corollary"
        ]
 
