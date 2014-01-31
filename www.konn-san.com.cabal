@@ -54,6 +54,7 @@ executable site
                ,       lens
                ,       system-filepath
                ,       system-fileio
+               ,       template-haskell
                ,       case-insensitive
                ,       bytestring
                ,       blaze-builder
