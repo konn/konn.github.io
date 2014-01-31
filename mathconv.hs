@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable, FlexibleContexts, MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings, PatternGuards, StandaloneDeriving        #-}
+{-# LANGUAGE OverloadedStrings, PatternGuards, StandaloneDeriving, LambdaCase        #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module MathConv where
 import           Control.Applicative
@@ -9,10 +9,13 @@ import           Data.Data
 import           Data.Default
 import qualified Data.Set               as S
 import qualified Data.Text              as T
+import qualified MyTeXMathConv          as MyT
 import           Text.LaTeX.Base        hiding ((&))
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
 import           Text.Pandoc            hiding (MathType)
+import           Text.Pandoc.Shared
+import           Text.TeXMath
 import           Text.TeXMath.Macros
 import           Text.TeXMath.ToUnicode
 import           Text.TeXMath.Types
@@ -104,7 +107,18 @@ rewriteBeginEnv = concatMap step
           let divStart
                   | null args = concat ["<div class=\"", env, "\">"]
                   | otherwise = concat ["<div class=\"", env, "\" name=\""
-                                       , writePlain def $ readLaTeX def $ toUnicode TextNormal $ unwords $ map (init . tail . T.unpack . render) args, "\">"]
+                                       , procMathInline $
+                                         unwords $ map (init . tail . T.unpack . render) args, "\">"
+                                       ]
               Pandoc _ myBody = rewriteEnv $ readLaTeX myReaderOpts $ T.unpack $ render body
           in RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
     step b = [b]
+
+procMathInline :: String -> String
+procMathInline = stringify . bottomUp go . readLaTeX def
+  where
+    go :: Inline -> Inline
+    go = bottomUp $ \case
+      Math _ math ->  Str $ stringify $ MyT.readTeXMath  math
+      t -> t
+    
