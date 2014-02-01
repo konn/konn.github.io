@@ -36,7 +36,7 @@ description: 公理的集合論においてあるモデルの性質を調べる�
 \maketitle
 
 \section{はじめに}
-公理的集合論であるモデルの性質を調べる際，様々な概念の\emph{絶対性}を多用します．このプリントは，どのような条件下でどんな概念が絶対性を満たすのかをメモした個人的な覚書です．あくまで手軽に使うための覚え書きなので，そこまで踏み込んだ証明などは載せず，寧ろ一覧表のような体裁になる予定です．
+公理的集合論であるモデルの性質を調べる際，様々な概念の{\bfseries 絶対性}を多用します．このプリントは，どのような条件下でどんな概念が絶対性を満たすのかをメモした個人的な覚書です．あくまで手軽に使うための覚え書きなので，そこまで踏み込んだ証明などは載せず，寧ろ一覧表のような体裁になる予定です．
 
 \section{基本的な定義と$\Delta_0$-論理式}
 以下，特に断りのない限り言語は$\mathcal{L} = \set{\epsilon}$とする．
@@ -59,8 +59,8 @@ description: 公理的集合論においてあるモデルの性質を調べる�
   \item 論理式$\varphi \in \mathcal{L}$，$\mathfrak{A}, \mathfrak{B}$を$\mathfrak{A} \subseteq \mathfrak{B}$なる$\mathcal{L}$-構造とする．この時，
 	
 	$\mathfrak{A} \preccurlyeq_\varphi \mathfrak{B} \defs A$上の任意の付値$\sigma$に対して$\mathfrak{A} \models \varphi[\sigma] \Leftrightarrow \mathfrak{B} \models \varphi[\sigma]$
-  \item 論理式$\varphi$が$A$および$B$について\emph{絶対的} $\defs A \preccurlyeq_\varphi B$
-  \item 論理式$\varphi$が$A$について\emph{絶対的} $\defs A \preccurlyeq_\varphi V$
+  \item 論理式$\varphi$が$A$および$B$について{\bfseries 絶対的} $\defs A \preccurlyeq_\varphi B$
+  \item 論理式$\varphi$が$A$について{\bfseries 絶対的} $\defs A \preccurlyeq_\varphi V$
  \end{itemize}
 \end{definition}
 
@@ -143,7 +143,7 @@ description: 公理的集合論においてあるモデルの性質を調べる�
 一般に$z = f(x,y)$が絶対的であることと，関数$f$が絶対的でることは異なる．関数の絶対性は，個々の$x, y, z$について偶然$z = f(x,y)$が絶対的であるだけではなく，関数$f$が定義出来る事も含む．よってある関数が絶対的である為には，それを定義するのに十分な公理が必要になる．
 
 \begin{definition}
- $n$項関係$R$が\emph{算術的} $\defs R(x_1, \dots, x_n)$ が成り立つのは $x_1, \dots, x_n \in \HF$に対してのみであり，$R$の定義に現れる量化子が全て$\HF$に相対化されている
+ $n$項関係$R$が{\bfseries 算術的} $\defs R(x_1, \dots, x_n)$ が成り立つのは $x_1, \dots, x_n \in \HF$に対してのみであり，$R$の定義に現れる量化子が全て$\HF$に相対化されている
 \end{definition}
 
 \begin{theorem}[$\BST$で絶対的な関数・関係]
@@ -199,9 +199,9 @@ $\Delta_0$-論理式に較べるとそこまで出番はないが，$\Delta_1$-�
  以下，$\psi$を$\Delta_0$-論理式とする．
  
  \begin{itemize}
-  \item 論理式$\varphi$が$\Pi_1$-\emph{論理式}$\defs$ある変数$x_1, \dots, x_n\,(0 \leq n < \omega)$があって$\varphi = \forall x_1 \dots \forall x_n \psi$
-  \item 論理式$\varphi$が$\Sigma_1$-\emph{論理式}$\defs$ある変数$x_1, \dots, x_n\,(0 \leq n < \omega)$があって$\varphi = \exists x_0 \dots \exists x_n \psi$
-  \item 論理式$\varphi$が理論$T$について$\Delta_1$-\emph{論理式}$\defs \Pi_1$-論理式$\psi_\Pi$と$\Sigma_1$-論理式$\psi_\Sigma$ があって，
+  \item 論理式$\varphi$が$\Pi_1$-{\bfseries 論理式}$\defs$ある変数$x_1, \dots, x_n\,(0 \leq n < \omega)$があって$\varphi = \forall x_1 \dots \forall x_n \psi$
+  \item 論理式$\varphi$が$\Sigma_1$-{\bfseries 論理式}$\defs$ある変数$x_1, \dots, x_n\,(0 \leq n < \omega)$があって$\varphi = \exists x_0 \dots \exists x_n \psi$
+  \item 論理式$\varphi$が理論$T$について$\Delta_1$-{\bfseries 論理式}$\defs \Pi_1$-論理式$\psi_\Pi$と$\Sigma_1$-論理式$\psi_\Sigma$ があって，
 	\[
 	 T \vdash \phi \leftrightarrow \psi_\Pi \leftrightarrow \psi_\Sigma
 	\]
