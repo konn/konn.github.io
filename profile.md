@@ -38,6 +38,7 @@ Activity
 ----
 勉強会や社内セミナーなどでの発表記録。
 
+* 2014/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2014『数学プログラムをHaskellで書くべき6の理由』（[Slide](http://www.slideshare.net/konn/haskell-6-32258528)、[録画](https://www.youtube.com/watch?v=S4_7KVNA-Ww)）
 * 2013/10/12 第四回選択公理オフ『数理論理学の初歩の初歩の初歩の……』（[HTML](/math/acoff-04.html)、[PDF](/math/acoff-04.pdf)）
 * 2013/05/04 [Haskell で計算機代数勉強会](http://partake.in/events/451a51b0-b18e-4e01-bda4-423bf57f4051)『わかったつもりになる Gröbner 基底』（[Slide](http://www.slideshare.net/konn/groebner-basisanintroductionreduced)）
 * 2012/11/22 PFI 社内セミナー『Algebraic DP: 動的計画法を書きやすく』（[Slide](http://www.slideshare.net/konn/algebraic-dp)、[Ustream](http://www.ustream.tv/recorded/27196711)）

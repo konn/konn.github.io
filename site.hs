@@ -534,3 +534,4 @@ myProcCites style bib p =
   in if null pars
      then p
      else Pandoc info (body ++ toList (header 1 "参考文献") ++ filter isReference bibs)
+
