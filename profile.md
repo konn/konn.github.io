@@ -27,7 +27,7 @@ tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オ�
 * 2010/08〜09 [株式会社 Preferred Infrastructure](http://preferred.jp/) インターン生
 * 2010/10〜 [株式会社 Preferred Infrastructure](http://preferred.jp/) アルバイト
 * 2011/04 早稲田大学基幹理工学部 数学科配属
-* 2014/03 同卒業（予定）
+* 2014/03 同卒業
 * 2014/04 筑波大学大学院 数理物質科学研究科 数学専攻入学（予定）
 
 Activity
@@ -38,6 +38,7 @@ Activity
 ----
 勉強会や社内セミナーなどでの発表記録。
 
+* 2014/03/20 PFI社内セミナー『技術者が知るべき Gröbner 基底』（[Slide](http://www.slideshare.net/konn/grbner )、UStream [前半](http://www.ustream.tv/recorded/45083535)・[後半](http://www.ustream.tv/recorded/45083876)）
 * 2014/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2014『数学プログラムをHaskellで書くべき6の理由』（[Slide](http://www.slideshare.net/konn/haskell-6-32258528)、[録画](https://www.youtube.com/watch?v=S4_7KVNA-Ww)）
 * 2013/10/12 第四回選択公理オフ『数理論理学の初歩の初歩の初歩の……』（[HTML](/math/acoff-04.html)、[PDF](/math/acoff-04.pdf)）
 * 2013/05/04 [Haskell で計算機代数勉強会](http://partake.in/events/451a51b0-b18e-4e01-bda4-423bf57f4051)『わかったつもりになる Gröbner 基底』（[Slide](http://www.slideshare.net/konn/groebner-basisanintroductionreduced)）
