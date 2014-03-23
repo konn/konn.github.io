@@ -135,7 +135,7 @@ main = hakyllWith config $ do
                   =<< load (fromFilePath $ replaceExtension fp "csl")
                   <|> (load "default.csl" :: Compiler (Item CSL))
       let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib
-      ipandoc <- mapM (unsafeCompiler . texToMarkdown) =<< getResourceBody
+      ipandoc <- mapM (unsafeCompiler . texToMarkdown fp) =<< getResourceBody
       let ip' = fmap (myProcCites style bibs) ipandoc
           item = writePandocWith
                      def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}

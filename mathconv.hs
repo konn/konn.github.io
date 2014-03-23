@@ -1,24 +1,28 @@
-{-# LANGUAGE DeriveDataTypeable, FlexibleContexts, MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings, PatternGuards, StandaloneDeriving, LambdaCase        #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, FlexibleContexts   #-}
+{-# LANGUAGE LambdaCase, MultiParamTypeClasses, NoMonomorphismRestriction #-}
+{-# LANGUAGE OverloadedStrings, PatternGuards, StandaloneDeriving         #-}
+{-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults #-}
 module MathConv where
 import           Control.Applicative
-import           Control.Lens           hiding (op, rewrite)
-import qualified Data.Attoparsec.Text   as Atto
+import           Control.Lens              hiding (op, rewrite)
+import           Control.Monad.Identity
+import           Control.Monad.RWS
+import qualified Data.Attoparsec.Text      as Atto
 import           Data.Data
 import           Data.Default
-import qualified Data.Set               as S
-import qualified Data.Text              as T
-import qualified MyTeXMathConv          as MyT
-import           Text.LaTeX.Base        hiding ((&))
+import qualified Data.Set                  as S
+import qualified Data.Text                 as T
+import           Filesystem.Path.CurrentOS hiding (concat, null, (<.>), (</>))
+import qualified MyTeXMathConv             as MyT
+import           Prelude                   hiding (FilePath)
+import           Shelly
+import           Text.LaTeX.Base           hiding ((&))
+import           Text.LaTeX.Base.Class
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
-import           Text.Pandoc            hiding (MathType)
+import           Text.Pandoc               hiding (MathType)
 import           Text.Pandoc.Shared
-import           Text.TeXMath
 import           Text.TeXMath.Macros
-import           Text.TeXMath.ToUnicode
-import           Text.TeXMath.Types
 
 deriving instance Typeable Measure
 deriving instance Data Measure
@@ -29,6 +33,7 @@ deriving instance Data MathType
 deriving instance Typeable LaTeX
 deriving instance Data LaTeX
 
+default (T.Text)
 
 myReaderOpts :: ReaderOptions
 myReaderOpts = def { readerExtensions = S.insert Ext_raw_tex pandocExtensions
@@ -38,12 +43,23 @@ myReaderOpts = def { readerExtensions = S.insert Ext_raw_tex pandocExtensions
 parseTeX :: String -> Either String LaTeX
 parseTeX = Atto.parseOnly latexParser . T.pack
 
-texToMarkdown :: String -> IO Pandoc
-texToMarkdown src = do
+texToMarkdown :: FilePath -> String -> IO Pandoc
+texToMarkdown fp src = do
   macros <- fst . parseMacroDefinitions <$> readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
   let rewritten = T.unpack $ render $ rewriteCommands $ view _Right $ parseTeX $ applyMacros macros $ src
+      base = dropExtension fp
       pandoc = rewriteEnv $ readLaTeX myReaderOpts rewritten
-  return pandoc
+      (pandoc',tikzs) = procTikz base pandoc
+  unless (null tikzs) $ shelly $ silently $ do
+    master <- canonic base
+    mkdir_p master
+    withTmpDir $ \tmp -> do
+      cd tmp
+      writefile "image.tex" $ render $ buildTikzer tikzs
+      cmd "xelatex" "-shell-escape" "image.tex"
+      pngs <- findWhen (return . hasExt "png") "."
+      mapM_ (flip cp master) pngs
+  return pandoc'
 
 rewriteCommands :: LaTeX -> LaTeX
 rewriteCommands = bottomUp rewrite
@@ -114,11 +130,44 @@ rewriteBeginEnv = concatMap step
           in RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
     step b = [b]
 
+buildTikzer :: [LaTeX] -> LaTeX
+buildTikzer tkzs = snd $ runIdentity $ runLaTeXT $ do
+  documentclass ["tikz", "preview", "convert={outname=image}", "12pt"] "standalone"
+  usepackage [] "zxjatype"
+  usepackage ["hiragino"] "zxjafont"
+  usepackage [] "amsmath"
+  usepackage [] "amssymb"
+  usepackage [] "pgfplots"
+  comm1 "usetikzlibrary" "matrix,arrows"
+  comm1 "tikzset" $ do
+    "node distance=2cm, auto, >=latex,"
+    "description/.style="
+    braces "fill=white,inner sep=1.5pt,auto=false"
+  comm1 "pgfplotsset" $ do
+    "tick label style="
+    braces "font=\\tiny"
+    ",compat=1.8,width=12cm"
+  document $ mapM_ textell tkzs
+
+procTikz :: FilePath -> Pandoc -> (Pandoc, [LaTeX])
+procTikz fp pan =
+  let (pan', _, tikzs) = runRWS (bottomUpM step pan ) () (-1 :: Int)
+  in  (pan', tikzs)
+  where
+    step (RawBlock "latex" src)
+      | Right t@(TeXEnv "tikzpicture" _ _) <- parseTeX src = do
+        tell [t]
+        n <- gets succ
+        return $ Plain [Image [Str $ "Figure-" ++ show (n+1)]
+                        (encodeString $ "/" </> fp </> ("image-"++show n++".png"),"")]
+    step a = return a
+
 procMathInline :: String -> String
 procMathInline = stringify . bottomUp go . readLaTeX def
   where
     go :: Inline -> Inline
-    go = bottomUp $ \case
+    go = bottomUp $ \a -> case a of
       Math _ math ->  Str $ stringify $ MyT.readTeXMath  math
       t -> t
-    
+
+
