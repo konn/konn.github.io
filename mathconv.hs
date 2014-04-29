@@ -1,12 +1,15 @@
 {-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, FlexibleContexts   #-}
 {-# LANGUAGE LambdaCase, MultiParamTypeClasses, NoMonomorphismRestriction #-}
 {-# LANGUAGE OverloadedStrings, PatternGuards, StandaloneDeriving         #-}
-{-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults #-}
+{-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 module MathConv where
 import           Control.Applicative
+import           Control.Eff
+import qualified Control.Eff               as Eff
+import           Control.Eff.Fresh
+import           Control.Eff.Writer.Strict
 import           Control.Lens              hiding (op, rewrite)
 import           Control.Monad.Identity
-import           Control.Monad.RWS
 import qualified Data.Attoparsec.Text      as Atto
 import           Data.Data
 import           Data.Default
@@ -30,8 +33,8 @@ deriving instance Typeable TeXArg
 deriving instance Data TeXArg
 deriving instance Typeable MathType
 deriving instance Data MathType
-deriving instance Typeable LaTeX
 deriving instance Data LaTeX
+instance Plated LaTeX
 
 default (T.Text)
 
@@ -56,6 +59,7 @@ texToMarkdown fp src = do
     withTmpDir $ \tmp -> do
       cd tmp
       writefile "image.tex" $ render $ buildTikzer tikzs
+      writefile "/Users/hiromi/Documents/www.konn-san.com/tmp.tex" $ render $ buildTikzer tikzs
       cmd "xelatex" "-shell-escape" "image.tex"
       pngs <- findWhen (return . hasExt "png") "."
       mapM_ (flip cp master) pngs
@@ -151,15 +155,16 @@ buildTikzer tkzs = snd $ runIdentity $ runLaTeXT $ do
 
 procTikz :: FilePath -> Pandoc -> (Pandoc, [LaTeX])
 procTikz fp pan =
-  let (pan', _, tikzs) = runRWS (bottomUpM step pan ) () (-1 :: Int)
-  in  (pan', tikzs)
+  let (texs, pan') = Eff.run $ runWriter (:) ([] :: [LaTeX]) $ runFresh (bottomUpM step pan) (0 :: Int)
+  in (pan', texs)
   where
     step (RawBlock "latex" src)
-      | Right t@(TeXEnv "tikzpicture" _ _) <- parseTeX src = do
-        tell [t]
-        n <- gets succ
-        return $ Plain [Image [Str $ "Figure-" ++ show (n+1)]
-                        (encodeString $ "/" </> fp </> ("image-"++show n++".png"),"")]
+      | Right ts <- parseTeX src = do
+        liftM Plain $ forM [ t | t@(TeXEnv "tikzpicture" _ _) <- universe ts] $ \t -> do
+          tell t
+          n <- fresh
+          return $ Image [Str $ "Figure-" ++ show (n+1 :: Int)]
+                          (encodeString $ "/" </> fp </> ("image-"++show n++".png"),"")
     step a = return a
 
 procMathInline :: String -> String

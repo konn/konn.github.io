@@ -30,7 +30,6 @@ import qualified Hakyll
 import           Instances
 import           Language.Haskell.TH             (litE, runIO, stringL)
 import           MathConv
-import           Network.HTTP.Conduit
 import           Network.HTTP.Types
 import           Network.URI                     hiding (query)
 import           Prelude                         hiding (FilePath, div, mapM,
@@ -204,7 +203,7 @@ appendBiblioSection (Pandoc meta bs) =
 listChildren :: Bool -> Compiler [Item String]
 listChildren recursive = do
   ident <- getUnderlying
-  let Just dir = stripPrefix "." $ directory $ toFilePath ident
+  let dir = directory $ toFilePath ident
       exts = ["md", "tex"]
       wild = if recursive then "**" else "*"
       pat =  foldr1 (.||.) [fromGlob $ encodeString $ dir </> wild <.> e | e <- exts]
@@ -514,7 +513,7 @@ extractNoCites :: Data c => c -> [[Citation]]
 extractNoCites = queryWith collect
   where
     collect (RawInline "latex" src) =
-      case latexAtOnce $ T.pack src of
+      case parseLaTeX $ T.pack src of
         Left _ -> []
         Right t -> flip queryWith t $ \a -> case a of
           TeXComm "nocite" [cs] -> [[ Citation (trim $ T.unpack w) [] [] NormalCitation 0 0
