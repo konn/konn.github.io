@@ -1,9 +1,9 @@
 ---
 title: 初等部分構造を用いたErdős-Radoの定理の証明
 author: 石井 大海
-tag: 数学,数理論理学,集合論,モデル理論,無限組合せ論
+tag: 数学,数理論理学,集合論,モデル理論,無限組合せ論,Erdős-Radoの定理,Ramsey理論,Ramseyの定理,ゼミ資料
 latexmk: -xelatex
-description: Erdős-Radoの定理はRamseyの定理に代表されるような、無限組合せ論における分割・彩色性質の一つです。初等部分構造を用いることで、オリジナルのErdős-Radoの定理の証明よりも簡単に示すことが出来るということが知られています。
+description: Erdős-Radoの定理はRamseyの定理に代表されるような，無限組合せ論における分割・彩色性質の一つです．ここではオリジナルの純粋に組合せ論的な証明ではなく，初等部分構造を用いたより簡単な方法を紹介します．
 published: false
 ---
 \documentclass[a4paper]{bxjsarticle}
@@ -25,7 +25,25 @@ published: false
 \begin{document}
 \maketitle
 
+※これは研究室でのゼミ資料を一部改変して公開したものである．
 \section{定義と準備}
+以下では，初等部分構造を用いた議論をするので，まずその準備をしておく：
+\begin{definition}
+ $\kappa \geq \omega$とする．$M$が$\kappa$-{\itshape closed} $\Leftrightarrow [M]^{<\kappa} \subseteq M$
+\end{definition}
+
+\begin{lemma}\label{lem:LS-generalized}
+ $\theta > \kappa \geq \omega$とする．$S \in [H(\theta)]^{\leq 2^\kappa}$とおくと，$M \subseteq H(\theta)$で次を満たすものが存在する：
+ \begin{enumerate}
+  \item $M \preccurlyeq H(\theta)$
+  \item $S \subseteq M$
+  \item $M$は$\kappa^+$-closed
+  \item $|M| = 2^\kappa$
+ \end{enumerate}
+\end{lemma}
+\begin{proof}
+ L\"{o}wenheim-Skolemの定理より$M_0 \preccurlyeq H(\theta)$で$S \subseteq M_0$かつ$|M_0| = |S| = 2^\kappa$を満たすものが取れる．$M_\alpha \preccurlyeq M_\beta \preccurlyeq H(\theta), |M_\alpha| = 2^\kappa\; (\alpha < \beta < \kappa^+)$なる初等鎖を構成できれば，$M = \bigcup_{\alpha < \kappa^+} M_\alpha$が求める物となる．まず，$\alpha$が極限順序数の時には$M_\alpha = \bigcup_{\beta < \alpha} M_\beta$と置けば，初等鎖定理より$\beta < \alpha \rightarrow M_\beta \preccurlyeq M_\alpha$となり，濃度の条件もOK．つづいて$\alpha = \beta + 1$ とする．この時，$(2^{\kappa})^{<\kappa^+} =(2^\kappa)^{\leq \kappa} = 2^{\kappa \kappa} = 2^\kappa$に注意すれば，$S_\alpha = M_\beta \cup [M_\beta]^{<\kappa^+}$の濃度は$2^\kappa$である．そこでL\"{o}wenheim-Skolemの定理により$S_\alpha \subseteq M_\alpha \preccurlyeq H(\theta), |M_\alpha| = 2^\kappa$なる$M_\alpha$を取れば良い．\mbox{}
+\end{proof}
 \begin{definition}
  $\kappa \geq \lambda, \sigma$を基数，$n<\omega$とする．この時，
  \[
@@ -93,13 +111,7 @@ published: false
  $(2^\omega)^+ \longrightarrow (\omega_1)^2_\omega$．よって特に$(2^\omega)^+ \longrightarrow (\omega_1)^2_2$．
 \end{theorem}
 
-これは次のErd\H{o}s-Radoの定理から直ちに従う：
-
-\begin{theorem}[\Erdos-Rado]
- $\kappa \geq \omega$について，$(2^\kappa)^+ \longrightarrow (\kappa^+)^2_\kappa$
-\end{theorem}
-
-更に，これは次の命題で$n=1$とおいて得られる：
+これは次のErd\H{o}s-Radoの定理で$n=1, \kappa = \omega$とおけば直ちに従う：
 
 \begin{theorem}[一般化\Erdos-Rado]\label{Th:E-R}
  $\kappa \geq \omega$とする．
@@ -112,44 +124,33 @@ published: false
  \]
 \end{theorem}
 
-以下では，初等部分構造を用いてこの定理を証明する．その為に以下の定義と補題を用いる：
-
-\begin{definition}
- $\kappa \geq \omega$とする．$M$が$\kappa$-{\itshape closed} $\Leftrightarrow [M]^{<\kappa} \subseteq M$
-\end{definition}
-
-\begin{lemma}\label{LS-gen}
- $\theta > \kappa \geq \omega, S \in [H(\theta)]^{\leq 2^\kappa}
-   \Longrightarrow \exists M \preccurlyeq H(\theta) \, [ |M| = 2^\kappa \wedge M: \kappa^+\text{-closed} \wedge S \subseteq M]$
-\end{lemma}
-
-\begin{proof}[定理 \ref{Th:E-R} の証明]
+\begin{proof}
  $n$に関する帰納法で証明する．$n = 0$の時は$\kappa^+ \longrightarrow (\kappa^+)^1_\kappa$であり，$\kappa < \kappa^+ = \cf(\kappa^+)$なので補題 \ref{er:small}より成立．
 
 $n+1$の場合を考える．以後，簡単の為$\mathrm{exp}_n(\kappa) = \chi_n$と略記する．帰納法の仮定は，
 \[
  (\chi_n)^+ \longrightarrow (\kappa^+)^{n+1}_\kappa
 \]
-である．$f: [\chi_{n+1}^+]^{n+2} \longrightarrow \kappa$を固定し，$Z \in [\chi_{n+1}^+]^{\kappa^+}$で$f$について等質となるものを得たい．そこで，まず$f, \chi_{n+1}^+ \in H(\theta), \kappa \subseteq H(\theta)$を満たす十分大きな$\theta > \omega$を取り，その$\chi_n^+$-closedな初等部分構造$M \preccurlyeq H(\theta)$で$f, \chi_{n+1}^+ \in M$かつ$\kappa \subseteq M$となるものを取る．補題 \ref{LS-gen} より，特に$|M| = 2^{\chi_n} = \chi_{n+1}$とできる．すると，$|M \cap \chi_{n+1}^+| \leq \chi_{n+1}$となり，$\chi_{n+1}^+$の正則性より$j = \sup^+(\chi_{n+1}^+ \cap M) \in \chi_{n+1}^+$が取れる．
+である．$f: [\chi_{n+1}^+]^{n+2} \longrightarrow \kappa$を固定し，$Z \in [\chi_{n+1}^+]^{\kappa^+}$で$f$について等質となるものを得たい．そこで，まず$f, \chi_{n+1}^+ \in H(\theta), \kappa \subseteq H(\theta)$を満たす十分大きな$\theta > \omega$を取り，その$\chi_n^+$-closedな初等部分構造$M \preccurlyeq H(\theta)$で$f, \chi_{n+1}^+ \in M$かつ$\kappa \subseteq M$となるものを取る．補題 \ref{lem:LS-generalized} より，特に$|M| = 2^{\chi_n} = \chi_{n+1}$とできる．すると，$|M \cap \chi_{n+1}^+| \leq \chi_{n+1}$となり，$\chi_{n+1}^+$の正則性より$j = \sup^+(\chi_{n+1}^+ \cap M) \in \chi_{n+1}^+$が取れる．
 
  以下，各$\xi < \chi_{n}^+$に対し，
  \[
-  \forall \eta < \xi \, [ i_\eta < i_\xi] \wedge \forall \eta_0, \dots, \eta_n < \xi \, [f(\{i_{\eta_0}, \dots, i_{\eta_n}, i_\xi\}) = f(\{i_{\eta_0}, \dots, i_{\eta_n}, j\})]
+ \forall \eta < \xi \, [ i_\eta < i_\xi] \wedge \forall \eta_0, \dots, \eta_n < \xi \, [f(\{i_{\eta_0}, \dots, i_{\eta_n}, i_\xi\}) = f(\{i_{\eta_0}, \dots, i_{\eta_n}, j\})]
  \]
- を満たすよう帰納的に$\Braket{i_\xi \in \chi_{n+1}^+ \cap M | \xi < \chi_n^+}$を定めたい．そこで，$\xi$未満まで出来たとする．$D = \Set{ i_\eta : \eta < \xi}$とおき，$g : [D]^{n+1} \rightarrow \kappa$を$g(A) = f(A \cup \{j\})$により定める．すると，$D \in [M]^{\leq \chi_n}$より$M$が$\chi_n^+$-closedであることから$D \in M$かつ$[D]^{n+1} \in M$となる．また，$\kappa \subseteq M$となるように取っており，$H(\theta)$で$\mathrm{ZFC}-\mathrm{P}$（特に対の公理）が成り立つことから$M \times \kappa \subseteq M$．よって$g \subseteq [D]^{n+1} \times \kappa \subseteq M \times \kappa \subseteq M$となり，特に$|g| < \chi_n^+$だから再び$M$の$\chi_n^+$-closed性より$g \in M$が言える．今，
+ を満たすよう帰納的に$\Braket{i_\xi \in \chi_{n+1}^+ \cap M | \xi < \chi_n^+}$を定めたい．そこで，$\xi$未満まで出来たとし，$D = \Set{ i_\eta : \eta < \xi} \subseteq M \cap \chi_{n+1}^+$とおく．この時$|D| = |\xi| < \chi_n^+$なので，$M$の$\chi_n^+$-closed性から$D \in M$となる．また，$M$は有限部分集合について閉じるから，$D \subseteq M$より$[D]^{n+1} \subseteq M$となり，更に$|[D]^{n+1}| = |D| < \chi_n^+$から$[D]^{n+1} \in M$も云える．そこで，$g : [D]^{n+1} \rightarrow \kappa$を$g(A) = f(A \cup \{j\})$により定める．すると，$\kappa \subseteq M$となるように取っており，$H(\theta)$で$\mathrm{ZFC}-\mathrm{P}$（特に対の公理）が成り立つことから$[D]^{n+1} \times \kappa \subseteq M$．よって$g \subseteq [D]^{n+1} \times \kappa \subseteq M$となり，特に$|g| < \chi_n^+$だからみたび$M$の$\chi_n^+$-closed性より$g \in M$が言える．今，
  \[
   H(\theta) \models
  \exists y \in \chi_{n+1}^+\;\left[ \forall i \in D\, (i < y) \wedge \forall A \in [D]^{n+1}\, (f(A \cup \{y\}) = g(A))\right]
  \]
- が成立する（$y$として$j$が取れる）．この右辺の論理式は$M$の元をパラメータに持つ論理式であり，$M \preccurlyeq H(\theta)$であるので，$M$でも成立する．そこで$i_\xi$としてそのような$y$を取れば良い．
+ が成立する（$y$として$j$が取れる）．この右辺の論理式に現れるパラメータ$\chi_{n+1}^+, D, [D]^{n+1}, f, g$は全て$M$の元であり，$M \preccurlyeq H(\theta)$であるので，$M$でも成立する．そこで$i_\xi$としてそのような$y$を取れば良い．
 
- $W = \Set{ i_\xi : \xi < \chi_n^+}$と置く．この時$f_j(A) = f(A \cup \{j\})$により$f_j: [W]^{n+1} \rightarrow \kappa$を定める．帰納法の仮定より，分割$f_j$に対する等質集合$Z \in [W]^{\kappa^+}$で$f_j[[Z]^{n+1}] = \{\alpha\}$となるような物が取れる．この時，$A = \{i_{\xi_0} < \dots < i_{\xi_n} < i_{\xi_{n+1}}\} \in [Z]^{n+2}\;(\xi_k < \xi_{k+1})$を任意に取れば，
+ $W = \Set{ i_\xi : \xi < \chi_n^+}$と置く．この時$f_j(A) = f(A \cup \{j\})$により$f_j: [W]^{n+1} \rightarrow \kappa$を定める．帰納法の仮定を分割$f_j$と$W$に適用すれば，$Z \in [W]^{\kappa^+}, \alpha < \kappa$で$f_j[[Z]^{n+1}] = \{\alpha\}$となるような物が取れる．この時，$A = \{i_{\xi_0} < \dots < i_{\xi_n} < i_{\xi_{n+1}}\} \in [Z]^{n+2}\;(\xi_k < \xi_{k+1})$を任意に取れば，
  \[
   f(A) = f(\{i_{\xi_0}, \dots, i_{\xi_n}, i_{\xi_{n+1}}\})
  = f(\{i_{\xi_0}, \dots, i_{\xi_n}, j\})
  = f_j(\{i_{\xi_0}, \dots, i_{\xi_n}\}) = \alpha
  \]
- よって$Z$は$f$について等質である．\mbox{}
+ ここで$A = \set{i_{\xi_0}, \dots, i_{\xi_{n+1}}}$の取り方は任意なので，$Z$は$f$について等質であることが示せた．\mbox{}
 \end{proof}
 
 \section{関連する問題}
@@ -186,7 +187,8 @@ $\kappa, \lambda < \omega$ の場合は（有限）組合せ論の非自明な�
    \item $6 \longrightarrow (3)^2_2$は成立する
 	 \begin{center}
 	  \begin{tikzpicture}
-	   \node (p0) at (270:1cm) 
+	   \begin{scope}
+ 	   \node (p0) at (270:1cm) 
 	     [inner sep=2pt,circle,draw=black,fill=red] {};
 	   \foreach \x in {1,...,5} {
 	     \pgfmathparse{mod(\x,2) ? "blue" : "white"}
@@ -201,9 +203,9 @@ $\kappa, \lambda < \omega$ の場合は（有限）組合せ論の非自明な�
 	   \draw [gray,thin]
 	     (p0) -- (p2)
 	     (p0) -- (p4);
-	  \end{tikzpicture}\qquad
-	  \begin{tikzpicture}
-	   \node (p0) at (270:1cm) 
+	   \end{scope}	  
+	   \begin{scope}[xshift=2.5cm]
+ 	   \node (p0) at (270:1cm) 
 	     [inner sep=2pt,circle,draw=black,fill=red] {};
 	   \foreach \x in {1,3,5} {
 	     \node (p\x) at ({330+240*\x}:1cm)
@@ -216,10 +218,10 @@ $\kappa, \lambda < \omega$ の場合は（有限）組合せ論の非自明な�
 	   \draw [dashed ,very thick,red]
 	     (p5) -- (p1)
 	     (p1) -- (p3)
-	     (p3) -- (p5);	  
-	  \end{tikzpicture}\qquad
-	  \begin{tikzpicture}
-	   \node (p0) at (270:1cm) 
+	     (p3) -- (p5);
+	   \end{scope}	  
+	  \begin{scope}[xshift=5cm]
+ 	   \node (p0) at (270:1cm) 
 	     [inner sep=2pt,circle,draw=black,fill=red] {};
 	   \foreach \x in {1,3,5} {
 	     \node (p\x) at ({330+240*\x}:1cm)
@@ -234,8 +236,10 @@ $\kappa, \lambda < \omega$ の場合は（有限）組合せ論の非自明な�
 	   \draw [dashed,very thin,red]
 	     (p5) -- (p1)
 	     (p3) -- (p5);	  
+	  \end{scope}	  
 	  \end{tikzpicture}
 	 \end{center}
+
    \item $5 \nrightarrow (3)^2_2$：次の図が反例（どの三角形も異なる色の辺を含む）：
 	 \begin{center}
 	  \begin{tikzpicture}
@@ -247,7 +251,6 @@ $\kappa, \lambda < \omega$ の場合は（有限）組合せ論の非自明な�
 	 \end{center}
  \end{itemize}
 
-\nocite{Kunen:2011,Jech:2002,Kanamori:2009,Negami:1990}
-
+\nocite{Kunen:2011,Jech:2002,Kanamori:2009,Negami:1990,Tanaka:2011}
 \printbibliography[title=参考文献]
 \end{document}

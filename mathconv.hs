@@ -136,7 +136,7 @@ rewriteBeginEnv = concatMap step
 
 buildTikzer :: [LaTeX] -> LaTeX
 buildTikzer tkzs = snd $ runIdentity $ runLaTeXT $ do
-  documentclass ["tikz", "preview", "convert={outname=image}", "12pt"] "standalone"
+  documentclass ["tikz", "preview", "convert={density=175,outname=image}", "12pt"] "standalone"
   usepackage [] "zxjatype"
   usepackage ["hiragino"] "zxjafont"
   usepackage [] "amsmath"
@@ -150,7 +150,7 @@ buildTikzer tkzs = snd $ runIdentity $ runLaTeXT $ do
   comm1 "pgfplotsset" $ do
     "tick label style="
     braces "font=\\tiny"
-    ",compat=1.8,width=12cm"
+    ",compat=1.8,width=6cm"
   document $ mapM_ textell tkzs
 
 procTikz :: FilePath -> Pandoc -> (Pandoc, [LaTeX])
@@ -164,7 +164,7 @@ procTikz fp pan =
           tell t
           n <- fresh
           return $ Image [Str $ "Figure-" ++ show (n+1 :: Int)]
-                          (encodeString $ "/" </> fp </> ("image-"++show n++".png"),"")
+                         (encodeString $ "/" </> fp </> ("image-"++show n++".png"),"")
     step a = return a
 
 procMathInline :: String -> String
