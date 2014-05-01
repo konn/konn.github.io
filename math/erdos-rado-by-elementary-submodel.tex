@@ -4,6 +4,7 @@ author: 石井 大海
 tag: 数学,数理論理学,集合論,モデル理論,無限組合せ論,Erdős-Radoの定理,Ramsey理論,Ramseyの定理,ゼミ資料
 latexmk: -xelatex
 description: Erdős-Radoの定理はRamseyの定理に代表されるような，無限組合せ論における分割・彩色性質の一つです．ここではオリジナルの純粋に組合せ論的な証明ではなく，初等部分構造を用いたより簡単な方法を紹介します．
+date: 2014/05/01 23:00:42 JST
 ---
 \documentclass[a4paper]{bxjsarticle}
 \usepackage{zxjatype}
@@ -32,9 +33,8 @@ description: Erdős-Radoの定理はRamseyの定理に代表されるような�
 \end{definition}
 
 \begin{lemma}\label{lem:LS-generalized}
- $\theta > \kappa \geq \omega$とする．$S \in [H(\theta)]^{\leq 2^\kappa}$とおくと，$M \subseteq H(\theta)$で次を満たすものが存在する：
+ $\theta > \kappa \geq \omega$とする．$S \in [H(\theta)]^{\leq 2^\kappa}$とおくと，$M \preccurlyeq H(\theta)$で次を満たすものが存在する：
  \begin{enumerate}
-  \item $M \preccurlyeq H(\theta)$
   \item $S \subseteq M$
   \item $M$は$\kappa^+$-closed
   \item $|M| = 2^\kappa$

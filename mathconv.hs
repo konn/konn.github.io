@@ -59,7 +59,6 @@ texToMarkdown fp src = do
     withTmpDir $ \tmp -> do
       cd tmp
       writefile "image.tex" $ render $ buildTikzer tikzs
-      writefile "/Users/hiromi/Documents/www.konn-san.com/tmp.tex" $ render $ buildTikzer tikzs
       cmd "xelatex" "-shell-escape" "image.tex"
       pngs <- findWhen (return . hasExt "png") "."
       mapM_ (flip cp master) pngs
