@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, FlexibleContexts   #-}
 {-# LANGUAGE LambdaCase, MultiParamTypeClasses, NoMonomorphismRestriction #-}
 {-# LANGUAGE OverloadedStrings, PatternGuards, StandaloneDeriving         #-}
+{-# LANGUAGE ViewPatterns                                                 #-}
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 module MathConv where
 import           Control.Applicative
@@ -12,6 +13,8 @@ import           Control.Monad.Identity
 import qualified Data.Attoparsec.Text      as Atto
 import           Data.Data
 import           Data.Default
+import           Data.Maybe                (fromMaybe)
+import           Data.Maybe                (listToMaybe)
 import qualified Data.Set                  as S
 import qualified Data.Text                 as T
 import           Filesystem.Path.CurrentOS hiding (concat, null, (<.>), (</>))
@@ -138,7 +141,42 @@ rewriteBeginEnv = concatMap step
                                        ]
               Pandoc _ myBody = rewriteEnv $ readLaTeX myReaderOpts $ T.unpack $ render body
           in RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
+      | Right (TeXEnv "enumerate" args body) <- parseTeX src
+      = [procEnumerate args body]
     step b = [b]
+
+procEnumerate :: [TeXArg] -> LaTeX -> Block
+procEnumerate args body =
+  let Pandoc _ [OrderedList _ blcs] = rewriteEnv $ readLaTeX myReaderOpts $
+                                      T.unpack $ render $ TeXEnv "enumerate" [] body
+  in OrderedList (parseEnumOpts args) blcs
+
+parseEnumOpts :: [TeXArg] -> ListAttributes
+parseEnumOpts args =
+  let opts = [ (key, val)
+             | OptArg lat <- args
+             , opt <- T.splitOn "," $ render lat
+             , (key, T.stripPrefix "=" -> Just val) <- [T.breakOn "=" opt]
+             ]
+      styleDic = [("arabic", Decimal)
+                 ,("Alph", UpperAlpha)
+                 ,("alph", LowerAlpha)
+                 ,("Roman", UpperRoman)
+                 ,("roman", LowerRoman)
+                 ]
+      labF = fromMaybe "" $ lookup "label" opts
+      start = maybe 0 (read . T.unpack) $ lookup "start" opts
+      style = fromMaybe Decimal $ listToMaybe
+              [ sty | (com, sty) <- styleDic, ("\\"<>com) `T.isInfixOf` labF]
+      oparens = T.count "(" labF
+      cparens = T.count ")" labF
+      delim
+        | max oparens cparens >= 2 = TwoParens
+        | max oparens cparens == 1 = OneParen
+        | "." `T.isInfixOf` labF   = Period
+        | otherwise = DefaultDelim
+  in (start, style, delim)
+
 
 buildTikzer :: [LaTeX] -> LaTeX
 buildTikzer tkzs = snd $ runIdentity $ runLaTeXT $ do
