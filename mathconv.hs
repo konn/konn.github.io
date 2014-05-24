@@ -4,7 +4,6 @@
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 module MathConv where
 import           Control.Applicative
-import           Control.Eff
 import qualified Control.Eff               as Eff
 import           Control.Eff.Fresh
 import           Control.Eff.Writer.Strict
@@ -49,7 +48,7 @@ parseTeX = Atto.parseOnly latexParser . T.pack
 texToMarkdown :: FilePath -> String -> IO Pandoc
 texToMarkdown fp src = do
   macros <- fst . parseMacroDefinitions <$> readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
-  let rewritten = T.unpack $ render $ rewriteCommands $ view _Right $ parseTeX $ applyMacros macros $ src
+  let rewritten = T.unpack $ render $ preprTeX $ view _Right $ parseTeX $ applyMacros macros $ src
       base = dropExtension fp
       pandoc = rewriteEnv $ readLaTeX myReaderOpts rewritten
       (pandoc',tikzs) = procTikz base pandoc
@@ -64,10 +63,13 @@ texToMarkdown fp src = do
       mapM_ (flip cp master) pngs
   return pandoc'
 
-rewriteCommands :: LaTeX -> LaTeX
-rewriteCommands = bottomUp rewrite
+preprTeX :: LaTeX -> LaTeX
+preprTeX = bottomUp rewrite . bottomUp alterEnv
   where
     expands = ["Set", "Braket"]
+    alterEnv (TeXEnv env args body)
+      | Just env' <- lookup env envAliases = TeXEnv env' args body
+    alterEnv e = e
     rewrite (TeXComm comm [FixArg src]) | comm `elem` expands =
       case breakTeXOn "|" src of
         Just (lhs, rhs) -> TeXComm comm [FixArg lhs, FixArg rhs]
@@ -93,6 +95,11 @@ envs :: [String]
 envs = [ "prop", "proof", "theorem", "lemma", "axiom", "remark"
        , "definition", "question", "answer", "problem", "corollary"
        ]
+
+envAliases :: [(String, String)]
+envAliases = [("enumerate*", "enumerate")
+             ,("itemize*", "itemize")
+             ]
 
 commandDic :: [(String, Either ([Inline] -> Inline) String)]
 commandDic = [("underline", Right "u"), ("bf", Left Strong)]
