@@ -147,15 +147,13 @@ $M[G]$は$M$の各元と$G$を含むようにしたいので，それらを指�
 
 $\mathds{1}$はどんなフィルターにも含まれており，「無条件」を表すものだと思えば，この定義は自然なものである．実際，次が云える：
 \begin{lemma}
- \begin{enumerate*}[label=(\arabic*),itemjoin=\quad]
-  \item $(\forall x \in M)\, \left[ \check{x} \in M^\mathbb{P} \wedge \val(\check{x}, G) = x\right]$\label{cond:x-check-is-m-p-name}
-  \item $M[G] \supseteq M$\label{cond:mg-includes-m}
- \end{enumerate*}
+ (i) $(\forall x \in M)\, \left[ \check{x} \in M^\mathbb{P} \wedge \val(\check{x}, G) = x\right]$\label{cond:x-check-is-m-p-name}
+  \quad (ii) $M[G] \supseteq M$\label{cond:mg-includes-m}
 \end{lemma}
 \begin{proof}
- \ref{cond:mg-includes-m}は\ref{cond:x-check-is-m-p-name}より直ちに従う．
+ (ii) は (i) より直ちに従う．
 
- \ref{cond:x-check-is-m-p-name}に関して．$x \in M$とする．$\check{x} \in M^\mathbb{P}$となることは，「$\mathbb{P}$-name」や直積，対などが$ZF-P$の推移的モデルについて絶対であることから直ちにわかる．後半についても，帰納法により一瞬で示せる．\mbox{}
+ (i)に関して．$x \in M$とする．$\check{x} \in M^\mathbb{P}$となることは，「$\mathbb{P}$-name」や直積，対などが$ZF-P$の推移的モデルについて絶対であることから直ちにわかる．後半についても，帰納法により一瞬で示せる．\mbox{}
 \end{proof}
 
 先程，大抵の場合$G \notin M$であることを述べたが，$G \in M[G]$であるためには，$G$を指す名前は$M$に含まれていなければならない．実際，次のようにして簡単に作ることが出来る：
