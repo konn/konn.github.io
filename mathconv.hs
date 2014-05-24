@@ -51,16 +51,19 @@ parseTeX = Atto.parseOnly latexParser . T.pack
 texToMarkdown :: FilePath -> String -> IO Pandoc
 texToMarkdown fp src = do
   macros <- fst . parseMacroDefinitions <$> readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
-  let rewritten = T.unpack $ render $ preprTeX $ view _Right $ parseTeX $ applyMacros macros $ src
+  let latexTree = view _Right $ parseTeX $ applyMacros macros $ src
+      rewritten = T.unpack $ render $ preprTeX latexTree
       base = dropExtension fp
       pandoc = rewriteEnv $ readLaTeX myReaderOpts rewritten
       (pandoc',tikzs) = procTikz base pandoc
+      tlibs = queryWith (\a -> case a of { c@(TeXComm "usetikzlibrary" _) -> [c] ; _ -> []} )
+              latexTree
   unless (null tikzs) $ shelly $ silently $ do
     master <- canonic base
     mkdir_p master
     withTmpDir $ \tmp -> do
       cd tmp
-      writefile "image.tex" $ render $ buildTikzer tikzs
+      writefile "image.tex" $ render $ buildTikzer tlibs tikzs
       cmd "xelatex" "-shell-escape" "image.tex"
       pngs <- findWhen (return . hasExt "png") "."
       mapM_ (flip cp master) pngs
@@ -101,7 +104,7 @@ breakTeXOn s (TeXSeq l r) =
 breakTeXOn _ _ = Nothing
 
 envs :: [String]
-envs = [ "prop", "proof", "theorem", "lemma", "axiom", "remark"
+envs = [ "prop", "proof", "theorem", "lemma", "axiom", "remark","exercise"
        , "definition", "question", "answer", "problem", "corollary"
        ]
 
@@ -184,8 +187,8 @@ parseEnumOpts args =
   in (start, style, delim)
 
 
-buildTikzer :: [LaTeX] -> LaTeX
-buildTikzer tkzs = snd $ runIdentity $ runLaTeXT $ do
+buildTikzer :: [LaTeX] -> [LaTeX] -> LaTeX
+buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
   documentclass ["tikz", "preview", "convert={density=175,outname=image}", "12pt"] "standalone"
   usepackage [] "zxjatype"
   usepackage ["hiragino"] "zxjafont"
@@ -193,6 +196,7 @@ buildTikzer tkzs = snd $ runIdentity $ runLaTeXT $ do
   usepackage [] "amssymb"
   usepackage [] "pgfplots"
   comm1 "usetikzlibrary" "matrix,arrows"
+  mapM_ fromLaTeX tikzLibs
   comm1 "tikzset" $ do
     "node distance=2cm, auto, >=latex,"
     "description/.style="
@@ -224,5 +228,3 @@ procMathInline = stringify . bottomUp go . readLaTeX def
     go = bottomUp $ \a -> case a of
       Math _ math ->  Str $ stringify $ MyT.readTeXMath  math
       t -> t
-
-
