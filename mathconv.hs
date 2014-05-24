@@ -1,7 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, FlexibleContexts   #-}
 {-# LANGUAGE LambdaCase, MultiParamTypeClasses, NoMonomorphismRestriction #-}
 {-# LANGUAGE OverloadedStrings, PatternGuards, StandaloneDeriving         #-}
-{-# LANGUAGE ViewPatterns                                                 #-}
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 module MathConv where
 import           Control.Applicative
@@ -17,6 +16,7 @@ import           Data.Maybe                (fromMaybe)
 import           Data.Maybe                (listToMaybe)
 import qualified Data.Set                  as S
 import qualified Data.Text                 as T
+import qualified Debug.Trace               as DT
 import           Filesystem.Path.CurrentOS hiding (concat, null, (<.>), (</>))
 import qualified MyTeXMathConv             as MyT
 import           Prelude                   hiding (FilePath)
@@ -79,6 +79,12 @@ preprTeX = bottomUp rewrite . bottomUp alterEnv
         Nothing -> TeXComm (T.unpack $ T.toLower $ T.pack comm) [FixArg src]
     rewrite t = t
 
+splitTeXOn :: Text -> LaTeX -> [LaTeX]
+splitTeXOn delim t =
+  case breakTeXOn delim t  of
+    Nothing -> [tex]
+    Just (a, b) -> a : splitTeXOn delim b
+
 breakTeXOn :: T.Text -> LaTeX -> Maybe (LaTeX, LaTeX)
 breakTeXOn _ TeXEmpty = Nothing
 breakTeXOn s (TeXRaw t) =
@@ -100,7 +106,7 @@ envs = [ "prop", "proof", "theorem", "lemma", "axiom", "remark"
        ]
 
 envAliases :: [(String, String)]
-envAliases = [("enumerate*", "enumerate")
+envAliases = [("enumerate*", "enumerate!")
              ,("itemize*", "itemize")
              ]
 
@@ -131,6 +137,8 @@ rewriteBeginEnv :: [Block] -> [Block]
 rewriteBeginEnv = concatMap step
   where
     step (RawBlock "latex" src)
+      | Right (TeXEnv "enumerate!" args body) <- parseTeX src
+      = [procEnumerate args body]
       | Right (TeXEnv env args body) <- parseTeX src
       , env `elem` envs =
           let divStart
@@ -141,8 +149,6 @@ rewriteBeginEnv = concatMap step
                                        ]
               Pandoc _ myBody = rewriteEnv $ readLaTeX myReaderOpts $ T.unpack $ render body
           in RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
-      | Right (TeXEnv "enumerate" args body) <- parseTeX src
-      = [procEnumerate args body]
     step b = [b]
 
 procEnumerate :: [TeXArg] -> LaTeX -> Block
@@ -153,10 +159,10 @@ procEnumerate args body =
 
 parseEnumOpts :: [TeXArg] -> ListAttributes
 parseEnumOpts args =
-  let opts = [ (key, val)
+  let opts = [ (render key, render val)
              | OptArg lat <- args
-             , opt <- T.splitOn "," $ render lat
-             , (key, T.stripPrefix "=" -> Just val) <- [T.breakOn "=" opt]
+             , opt <- splitTeXOn "," lat
+             , Just (key, val) <- [breakTeXOn "=" opt]
              ]
       styleDic = [("arabic", Decimal)
                  ,("Alph", UpperAlpha)
@@ -165,7 +171,7 @@ parseEnumOpts args =
                  ,("roman", LowerRoman)
                  ]
       labF = fromMaybe "" $ lookup "label" opts
-      start = maybe 0 (read . T.unpack) $ lookup "start" opts
+      start = maybe 1 (read . T.unpack) $ lookup "start" opts
       style = fromMaybe Decimal $ listToMaybe
               [ sty | (com, sty) <- styleDic, ("\\"<>com) `T.isInfixOf` labF]
       oparens = T.count "(" labF
