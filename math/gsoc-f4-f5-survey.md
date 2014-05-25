@@ -27,6 +27,8 @@ Papers
 ------
 [On the Criteria of the F5 Algorithm][Eder]
 :    Paper on correctness of Rewritten criteria and involves implementation in SINGULAR.
+[Faugère's F5 Algorithm][Perry]
+:    Pseudocode of F5 by co-implementor of SINGULAR implementation presented in [Eder][Eder]'s paper.
 [An analysis of inhomogeneous signature-based Gröbner basis computations][Anal]
 :    Paper on signature-based Gröbner basis computation algorithms.
 [A new efﬁcient algorithm for computing Gröbner bases without reduction to zero (F5)](http://www.risc.jku.at/Groebner-Bases-Bibliography/gbbib_files/publication_502.pdf)
@@ -51,6 +53,9 @@ Papers
 [Anal]: http://arxiv.org/pdf/1203.6186.pdf
 
 [Eder]: http://arxiv.org/pdf/0804.2033v4.pdf
+
+[Perry]: http://www.math.usm.edu/perry/Research/CorrectAlgorithm.pdf
+
 
 
 F_4 algorithm
