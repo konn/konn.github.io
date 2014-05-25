@@ -25,6 +25,8 @@ Current progress
 
 Papers
 ------
+[On the Criteria of the F5 Algorithm][Eder]
+:    Paper on correctness of Rewritten criteria and involves implementation in SINGULAR.
 [An analysis of inhomogeneous signature-based Gröbner basis computations][Anal]
 :    Paper on signature-based Gröbner basis computation algorithms.
 [A new efﬁcient algorithm for computing Gröbner bases without reduction to zero (F5)](http://www.risc.jku.at/Groebner-Bases-Bibliography/gbbib_files/publication_502.pdf)
@@ -47,6 +49,9 @@ Papers
 [Orig]: http://www.risc.jku.at/Groebner-Bases-Bibliography/gbbib_files/publication_502.pdf
 
 [Anal]: http://arxiv.org/pdf/1203.6186.pdf
+
+[Eder]: http://arxiv.org/pdf/0804.2033v4.pdf
+
 
 F_4 algorithm
 =============
