@@ -4,7 +4,8 @@ author: 石井 大海
 tag: 数学,数理論理学,集合論,ゼミ資料,無限組合せ論,マーティンの公理,Martinの公理,マーチンの公理,Martin's axiom,PFA,範疇定理,Baireの範疇定理,カテゴリー定理,連続体問題,関数解析,函数解析
 latexmk: -xelatex
 description: 研究室の集合論ゼミで，集合論の種々の独立命題を示す方法である強制法の理論の最初の方について発表した時の資料．
-date: 2014/05/25 01:59:00 JST
+published: false
+date: 2014/05/25 02:20:00 JST
 ---
 \documentclass[a4j]{bxjsarticle}
 \usepackage{zxjatype}
@@ -12,14 +13,13 @@ date: 2014/05/25 01:59:00 JST
 \usepackage[macros]{zxotf}
 \usepackage{xltxtra}
 \usepackage{tikz}
-\usetikzlibrary{arrows,calc}
+\usetikzlibrary{arrows,calc,backgrounds}
 \usepackage{mystyle}
 \usepackage[inline]{enumitem}
 \usepackage[pdfauthor={石井大海},pdftitle={Martinの公理，範疇定理，小さな基数}]{hyperref}
 \usepackage[backend=biber, style=numeric]{biblatex}
 \usepackage{dsfont}
 \addbibresource{myreference.bib}
-%\renewcommand{\emph}[1]{\textsf{\textgt{#1}}}
 \newcommand{\Con}{\mathrm{Con}}
 \newcommand{\MA}{\mathrm{MA}}
 \newframedtheorem{promise}{約束}
@@ -42,9 +42,10 @@ $\mathrm{MA}(\kappa)$は「任意のc.c.c. poset $\mathbb{P}$に対し$\mathrm{M
 \end{lemma}
 \begin{proof}
  前回のゼミの際に$\mathrm{Fn}(I, J)$がc.c.c.を持つことと$I = \emptyset \vee |J| \leq \aleph_0$ であることが同値なことを見た．そこで，$I = \omega, J = \omega_1$の場合を考えれば，$\mathbb{P} = \mathrm{Fn}(\omega, \omega_1)$はc.c.c.を持たない．ここで，次の集合を考える：
- \begin{alignat*}{2}
+ \begin{align*}
   D_n \defeq \Set{ p \in \mathbb{P} | n \in \dom(p)} & \;(n < \omega) & \quad E_\alpha \defeq \Set{ p \in \mathbb{P} | \alpha \in \rng(p)} & \; (\alpha < \omega_1)
- \end{alignat*}
+ \end{align*}
+ 
  $p \in \mathbb{P}$が有限であることから，各$E_n, D_n$は$\mathbb{P}$で稠密．そこで$\mathrm{MA}_{\mathbb{P}}(\omega_1)$とすれば，$\set{D_n, E_\alpha}$-ジェネリックなフィルター$G \subseteq \mathbb{P}$が取れる．特に，$f_G = \bigcup G$とおくと$f_G : \omega \xrightarrow{\text{onto}} \omega_1$となる．これは$\omega < \omega_1$に反する．\mbox{}
 \end{proof}
 
@@ -115,10 +116,12 @@ $\mathrm{MA}(\kappa)$は「任意のc.c.c. poset $\mathbb{P}$に対し$\mathrm{M
        child { node (p_1) {$p_1$}}
     }
     child {node (p_0) {$p_0$}};
-   \fill[opacity=0.5,gray,rotate=-26] (p_1) ellipse (0.6cm and 2.5cm);
    \node at ($0.5*(r_1)+0.5*(p_0)$) {$\perp$};
    \node at ($0.5*(r_2)+0.5*(p_1)$) {$\perp$};
    \node[below right of=p_1] {$A$};
+   \begin{pgfonlayer}{background}
+    \fill[opacity=0.2,gray,rotate=-26] (p_1) ellipse (0.6cm and 2.5cm);
+   \end{pgfonlayer}   
   \end{tikzpicture}
  \end{center}
 \end{proof}
@@ -136,7 +139,7 @@ $\mathrm{MA}(\kappa)$は「任意のc.c.c. poset $\mathbb{P}$に対し$\mathrm{M
 	$\defs \forall \mathcal{F} \in [\mathcal{E}]^{<\omega} \, |\bigcap \mathcal{F}| \geq \aleph_0$
   \item $K$が$\mathcal{E} \subseteq [\omega]^\omega$の\textbf{擬共通部分}(\textit{pseudointersecion})である
 	$\defs |K| = \aleph_0 \wedge \forall Z \in \mathcal{E} \,[ K \mathrel{\mathord{\subseteq}^*} Z]$
-  \item $\mathfrak{p} = \text{SFIPを持つが擬共通部分を持たないような$[\omega]^\omega$の部分集合の最小濃度}$
+  \item $\mathfrak{p} = $ SFIPを持つが擬共通部分を持たないような$[\omega]^\omega$の部分集合の最小濃度
  \end{itemize}
 \end{definition}
 第一節で議論した髭文字系の小さな基数の中で$\mathfrak{p}$は最小だった．以下では$\mathfrak{m} \leq \mathfrak{p}$を示す：
@@ -154,7 +157,7 @@ $\mathrm{MA}(\kappa)$は「任意のc.c.c. poset $\mathbb{P}$に対し$\mathrm{M
  \end{numcases}
  これにより，$\braket{\mathbb{P}, \leq, \braket{\emptyset, \emptyset}}$がforcing posetとなるのは明らか．$\MA(\kappa)$を使いたいので，$\mathbb{P}$がc.c.c.を満たすことを示さなくてはならない．ここで，
  \begin{equation}
-  s_p = s_q \longrightarrow s_p \not\perp s_q \tag{\mbox{$\star$}}\label{cond:cented}
+  s_p = s_q \longrightarrow s_p \not\perp s_q \tag{*}\label{cond:cented}
  \end{equation}
  が成立する．なぜならこの時，$r = \braket{s_p, \mathcal{W}_p \cup \mathcal{W}_q}$とおけば明らかに$r \leq p, q$となるからである．特に各$s \in [\omega]^{<\omega}$は可算個しかないから，もし$A \subseteq \mathbb{P}$が非可算集合であったとすると，必ず$s_p = s_q$となる$p, q \in A$があり$s_p \not\perp s_q$となるので，$A$は反鎖ではない．よって$\mathbb{P}$はc.c.c.を満たす．
 

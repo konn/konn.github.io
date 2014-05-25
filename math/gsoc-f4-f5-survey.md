@@ -18,9 +18,15 @@ Plan
 Current progress
 ----------------
 * Reading [Steger's thesis][Rev]. (2014/04/29)
+* Implementing F_5, but is not yet working correctly. (2014/05/25)
+    * It turns out that F_5 is for homogeneous ideals, so
+	  I'm planning to read [Eder][Anal] and implement similar algorithm
+	  for inhomogeneous ideals.
 
 Papers
 ------
+[An analysis of inhomogeneous signature-based Gröbner basis computations][Anal]
+:    Paper on signature-based Gröbner basis computation algorithms.
 [A new efﬁcient algorithm for computing Gröbner bases without reduction to zero (F5)](http://www.risc.jku.at/Groebner-Bases-Bibliography/gbbib_files/publication_502.pdf)
 :    Original paper. This includes some errors and have an issue on the proof of termination.
 [Faugère's F5 Algorithm Revisited][Rev]
@@ -39,3 +45,21 @@ Papers
 [Term]: http://arxiv.org/pdf/1006.0318v4.pdf
 
 [Orig]: http://www.risc.jku.at/Groebner-Bases-Bibliography/gbbib_files/publication_502.pdf
+
+[Anal]: http://arxiv.org/pdf/1203.6186.pdf
+
+F_4 algorithm
+=============
+A naive implementation has been done before GSoC starts.
+As we have to implement more efficient matrix triangulation, I'll read the following papers:
+
+[A new efficient algorithm for computing Groebner basis F4][F4Orig]
+:    Original paper. Current implementation is based on this paper.
+[An Implementation of Faugèere's F4 Algorithm for Computing Gröbner Bases][Cabarcas]
+:    Paper on the detail of the implementation of F4. Maybe informative for matrix triangulation methods.
+
+[F4Orig]: http://www-polsys.lip6.fr/~jcf/Papers/F99a.pdf
+
+[Cabarcas]: https://etd.ohiolink.edu/ap/10?0::NO:10:P10_ACCESSION_NUM:ucin1277120935#abstract-files
+
+
