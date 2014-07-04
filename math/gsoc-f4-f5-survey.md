@@ -22,9 +22,15 @@ Current progress
     * It turns out that F_5 is for homogeneous ideals, so
 	  I'm planning to read [Eder][Anal] and implement similar algorithm
 	  for inhomogeneous ideals.
+* To make situation clear, I'm reading the articles on general signature-based
+  algorithms (such as Eder's papers ([1][Anal], [2][Sig]) and [G2V][G2V])
 
 Papers
 ------
+[Improving incremental signature-based Gröbner basis algorithms][Sig]
+:    Paper on the improvements for signature-based algorithms.
+[A New Incremental Algorithm for Computing Groebner Bases][G2V]
+:    The signature-based algorithm for general ideals (called G2V algorithm).
 [On the Criteria of the F5 Algorithm][Eder]
 :    Paper on correctness of Rewritten criteria and involves implementation in SINGULAR.
 [Faugère's F5 Algorithm][Perry]
@@ -55,6 +61,12 @@ Papers
 [Eder]: http://arxiv.org/pdf/0804.2033v4.pdf
 
 [Perry]: http://www.math.usm.edu/perry/Research/CorrectAlgorithm.pdf
+
+[Sig]: http://arxiv.org/abs/1201.6472
+
+[G2V]: http://www.math.clemson.edu/~sgao/papers/GGV10.pdf
+
+
 
 
 
