@@ -66,10 +66,6 @@ Papers
 
 [G2V]: http://www.math.clemson.edu/~sgao/papers/GGV10.pdf
 
-
-
-
-
 F_4 algorithm
 =============
 A naive implementation has been done before GSoC starts.
@@ -83,5 +79,18 @@ As we have to implement more efficient matrix triangulation, I'll read the follo
 [F4Orig]: http://www-polsys.lip6.fr/~jcf/Papers/F99a.pdf
 
 [Cabarcas]: https://etd.ohiolink.edu/ap/10?0::NO:10:P10_ACCESSION_NUM:ucin1277120935#abstract-files
+
+### structured Gaussian Elimination
+
+[Cabarcas][Cabarcas]'s paper suggests that it'd be better to use the simplified version of structured Gaussian Elimination but not describe the detail of its algorithm (for example, how to determine columns "light" or "heavy").
+
+Here is some references which might be useful:
+
+* [Solving Large Sparse Linear Systems Over Finite Fields][Solving]
+* [An Approximate Probabilistic Model for Structured Gaussian Elimination][Approx]
+
+[Solving]: http://www.farcaster.com/papers/crypto-solve/node5.html
+
+[Approx]: http://algo.inria.fr/seminars/sem98-99/bender1.html#LaOd90a
 
 
