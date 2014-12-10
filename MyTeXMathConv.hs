@@ -1,8 +1,10 @@
+{-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 module MyTeXMathConv where
+import Data.Either                    (rights)
 import Text.Pandoc.Definition
-import Text.TeXMath.Parser
-import Text.TeXMath.ToUnicode
+import Text.TeXMath.Readers.TeX
 import Text.TeXMath.Types
+import Text.TeXMath.Unicode.ToUnicode
 
 -- | Converts a raw TeX math formula to a list of 'Pandoc' inlines.
 -- Defaults to raw formula between @$@ characters if entire formula
@@ -15,7 +17,7 @@ readTeXMath inp = case texMathToPandoc inp of
 
 texMathToPandoc :: String -> Either String [Inline]
 texMathToPandoc inp = inp `seq`
-  case parseFormula inp of
+  case readTeX inp of
          Left err    -> Left err
          Right exps  -> case expsToInlines exps of
                              Nothing  -> Left "Formula too complex for [Inline]"
@@ -39,19 +41,19 @@ expToInlines (ESymbol t s) = Just $ addSpace t (Str s)
         thinspace = Str "\x2006"
         medspace  = Str "\x2005"
         widespace = Str "\x2004"
-expToInlines (EStretchy x) = expToInlines x
+-- expToInlines (EStretchy x) = expToInlines x
 expToInlines (EDelimited start end xs) = do
-  xs' <- mapM expToInlines xs
+  xs' <- mapM expToInlines $ rights xs
   return $ [Str start] ++ concat xs' ++ [Str end]
 expToInlines (EGrouped xs) = expsToInlines xs
-expToInlines (ESpace "0.167em") = Just [Str "\x2009"]
-expToInlines (ESpace "0.222em") = Just [Str "\x2005"]
-expToInlines (ESpace "0.278em") = Just [Str "\x2004"]
-expToInlines (ESpace "0.333em") = Just [Str "\x2004"]
-expToInlines (ESpace "1em")     = Just [Str "\x2001"]
-expToInlines (ESpace "2em")     = Just [Str "\x2001\x2001"]
+expToInlines (ESpace 0.167) = Just [Str "\x2009"]
+expToInlines (ESpace 0.222) = Just [Str "\x2005"]
+expToInlines (ESpace 0.278) = Just [Str "\x2004"]
+expToInlines (ESpace 0.333) = Just [Str "\x2004"]
+expToInlines (ESpace 1)     = Just [Str "\x2001"]
+expToInlines (ESpace 2)     = Just [Str "\x2001\x2001"]
 expToInlines (ESpace _)         = Just [Str " "]
-expToInlines (EBinary _ _ _) = Nothing
+-- expToInlines (ESymbol Bin _ _ _) = Nothing
 expToInlines (ESub x y) = do
   x' <- expToInlines x
   y' <- expToInlines y
@@ -65,15 +67,14 @@ expToInlines (ESubsup x y z) = do
   y' <- expToInlines y
   z' <- expToInlines z
   return $ x' ++ [Subscript y'] ++ [Superscript z']
-expToInlines (EDown x y) = expToInlines (ESub x y)
-expToInlines (EUp x y) = expToInlines (ESuper x y)
-expToInlines (EDownup x y z) = expToInlines (ESubsup x y z)
+expToInlines (EUnder _ x y) = expToInlines (ESub x y)
+expToInlines (EUnderover _ x y z) = expToInlines (ESubsup x y z)
 expToInlines (EText TextNormal x) = Just [Str x]
 expToInlines (EText TextBold x) = Just [Strong [Str x]]
 expToInlines (EText TextMonospace x) = Just [Code nullAttr x]
 expToInlines (EText TextItalic x) = Just [Emph [Str x]]
 expToInlines (EText style x) = Just [Str $ toUnicode style x]
-expToInlines (EOver (EGrouped [EIdentifier [c]]) (ESymbol Accent [accent])) =
+expToInlines (EOver _ (EGrouped [EIdentifier [c]]) (ESymbol Accent [accent])) =
     case accent of
          '\x203E' -> Just [Emph [Str [c,'\x0304']]]  -- bar
          '\x00B4' -> Just [Emph [Str [c,'\x0301']]]  -- acute

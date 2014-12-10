@@ -57,6 +57,7 @@ import qualified Text.Pandoc.Builder             as Pan
 import           Text.Pandoc.Shared              (stringify)
 import           Text.Pandoc.Walk
 
+
 default (T.Text)
 
 toFilePath :: Identifier -> FilePath
@@ -75,7 +76,7 @@ main :: IO ()
 main = hakyllWith config $ do
   match "*.css" $ route idRoute >> compile' compressCssCompiler
 
-  match ("js/**" .||. "robots.txt" .||. "img/**" .||. "favicon.ico" .||. "files/**") $
+  match ("js/**" .||. "robots.txt" .||. "**/*imgs/**" .||. "img/**" .||. "**/*img/**" .||. "favicon.ico" .||. "files/**") $
     route idRoute >> compile' copyFileCompiler
 
   match "css/**" $
@@ -130,7 +131,7 @@ main = hakyllWith config $ do
       fp <- decodeString . fromJust <$> (getRoute =<< getUnderlying)
       mbib <- fmap itemBody <$> optional (load $ fromFilePath $ replaceExtension fp "bib")
       gbib <- unsafeCompiler $ readBiblioFile $ encodeString globalBib
-      style <- unsafeCompiler . readCSLFile . Hakyll.toFilePath . itemIdentifier
+      style <- unsafeCompiler . readCSLFile Nothing . Hakyll.toFilePath . itemIdentifier
                   =<< load (fromFilePath $ replaceExtension fp "csl")
                   <|> (load "default.csl" :: Compiler (Item CSL))
       let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib

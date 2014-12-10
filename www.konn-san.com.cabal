@@ -20,12 +20,12 @@ executable site
   main-is:             site.hs
   other-modules:       MathConv, Instances
   other-extensions:    DeriveDataTypeable, TemplateHaskell
-  build-depends:       base                >=4.6 && <4.7
+  build-depends:       base    >= 4 && < 5
                ,       binary
                ,       derive
                ,       hakyll
                ,       pandoc-citeproc
-               ,       network
+               ,       network-uri
                ,       http-conduit
                ,       stm
                ,       stm-chans
@@ -47,18 +47,18 @@ executable site
                ,       monad-loops
                ,       shelly
                ,       http-types
-               ,       texmath              >= 0.6.5
+               ,       texmath
                ,       text
                ,       containers
                ,       data-default
-               ,       attoparsec
+               ,       parsec
                ,       lens
                ,       system-filepath
                ,       system-fileio
                ,       template-haskell
                ,       case-insensitive
                ,       bytestring
-               ,       extensible-effects
+               ,       effin
                ,       blaze-builder
   -- hs-source-dirs:      
   default-language:    Haskell2010

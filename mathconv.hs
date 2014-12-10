@@ -4,30 +4,29 @@
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 module MathConv where
 import           Control.Applicative
-import qualified Control.Eff               as Eff
-import           Control.Eff.Fresh
-import           Control.Eff.Writer.Strict
-import           Control.Lens              hiding (op, rewrite)
+import           Control.Arrow                   (left)
+import           Control.Effect
+import           Control.Lens                    hiding (op, rewrite)
 import           Control.Monad.Identity
-import qualified Data.Attoparsec.Text      as Atto
 import           Data.Data
 import           Data.Default
-import           Data.Maybe                (fromMaybe)
-import           Data.Maybe                (listToMaybe)
-import qualified Data.Set                  as S
-import qualified Data.Text                 as T
-import qualified Debug.Trace               as DT
-import           Filesystem.Path.CurrentOS hiding (concat, null, (<.>), (</>))
-import qualified MyTeXMathConv             as MyT
-import           Prelude                   hiding (FilePath)
-import           Shelly
-import           Text.LaTeX.Base           hiding ((&))
+import           Data.Maybe                      (fromMaybe)
+import           Data.Maybe                      (listToMaybe)
+import qualified Data.Set                        as S
+import qualified Data.Text                       as T
+import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
+                                                  (</>))
+import qualified MyTeXMathConv                   as MyT
+import           Prelude                         hiding (FilePath)
+import           Shelly                          hiding (get)
+import           Text.LaTeX.Base                 hiding ((&))
 import           Text.LaTeX.Base.Class
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
-import           Text.Pandoc               hiding (MathType)
+import           Text.Pandoc                     hiding (MathType)
 import           Text.Pandoc.Shared
-import           Text.TeXMath.Macros
+import qualified Text.Parsec                     as P
+import           Text.TeXMath.Readers.TeX.Macros
 
 deriving instance Typeable Measure
 deriving instance Data Measure
@@ -38,7 +37,7 @@ deriving instance Data MathType
 deriving instance Data LaTeX
 instance Plated LaTeX
 
-default (T.Text)
+default (String)
 
 myReaderOpts :: ReaderOptions
 myReaderOpts = def { readerExtensions = S.insert Ext_raw_tex pandocExtensions
@@ -46,7 +45,7 @@ myReaderOpts = def { readerExtensions = S.insert Ext_raw_tex pandocExtensions
                    }
 
 parseTeX :: String -> Either String LaTeX
-parseTeX = Atto.parseOnly latexParser . T.pack
+parseTeX = left show . P.parse latexParser "" . T.pack
 
 texToMarkdown :: FilePath -> String -> IO Pandoc
 texToMarkdown fp src = do
@@ -123,11 +122,11 @@ rewriteInlineCmd = concatMap step
         | Right t <- parseTeX src = rewrite t
     step i = [i]
     rewrite (TeXSeq l r) = rewrite l ++ rewrite r
-    rewrite c@(TeXComm cmd [FixArg arg]) =
-      case lookup cmd commandDic of
-        Just (Right tag) -> [ RawInline "html" $ "<" ++ tag ++ ">"
+    rewrite c@(TeXComm cm [FixArg arg]) =
+      case lookup cm commandDic of
+        Just (Right t) -> [ RawInline "html" $ "<" ++ t ++ ">"
                             , RawInline "latex" $ T.unpack $ render arg
-                            , RawInline "html" $ "</" ++ tag ++ ">"
+                            , RawInline "html" $ "</" ++ t ++ ">"
                             ]
         Just (Left inl) -> [inl [RawInline "latex" $ T.unpack $ render arg]]
         _ -> [RawInline "latex" $ T.unpack $render c]
@@ -207,18 +206,18 @@ buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
     ",compat=1.8,width=6cm"
   document $ mapM_ textell tkzs
 
+fresh = get <* modify succ
+
 procTikz :: FilePath -> Pandoc -> (Pandoc, [LaTeX])
-procTikz fp pan =
-  let (texs, pan') = Eff.run $ runWriter (:) ([] :: [LaTeX]) $ runFresh (bottomUpM step pan) (0 :: Int)
-  in (pan', texs)
+procTikz fp pan = runEffect $ runWriter $ evalState (0 :: Int) (bottomUpM step pan)
   where
     step (RawBlock "latex" src)
       | Right ts <- parseTeX src = do
         liftM Plain $ forM [ t | t@(TeXEnv "tikzpicture" _ _) <- universe ts] $ \t -> do
-          tell t
+          tell [t]
           n <- fresh
           return $ Image [Str $ "Figure-" ++ show (n+1 :: Int)]
-                         (encodeString $ "/" </> fp </> ("image-"++show n++".png"),"")
+                         (encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".png"),"")
     step a = return a
 
 procMathInline :: String -> String
