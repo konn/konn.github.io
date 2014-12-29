@@ -1,6 +1,6 @@
 ---
 title: Haskell ではじめる Cocoa アプリ開発
-date: 2014/12/13 00:00:00 JST
+date: 2014/12/29 23:27:30 JST
 author: 石井大海
 tag: haskell, cocoa, programming
 description: Haskell による Cocoa アプリ開発の実際についての記事。Haskell Advent Calendar 2014 参加記事です。
