@@ -6,7 +6,7 @@ tag: haskell, cocoa, programming
 description: Haskell による Cocoa アプリ開発の実際についての記事。Haskell Advent Calendar 2014 参加記事です。
 ---
 
-この記事は[Haskell Advent Calendar 2014](http://qiita.com/advent-calendar/2014/haskell) の 13日目の記事です。前日は[arrowM さんの「Haskell rest フレームワークでREST API設計をサボる」](http://qiita.com/minpou/items/20ba354b32af89b20c64)、翌日は[solorabさんの「Haskellのlensの使い方」](http://solorab.net/blog/2014/12/14/how-to-use-lens-a/)です。
+この記事は[Haskell Advent Calendar 2014](http://qiita.com/advent-calendar/2014/haskell) の 13日目の記事です[^4]。前日は[arrowM さんの「Haskell rest フレームワークでREST API設計をサボる」](http://qiita.com/minpou/items/20ba354b32af89b20c64)、翌日は[solorabさんの「Haskellのlensの使い方」](http://solorab.net/blog/2014/12/14/how-to-use-lens-a/)です。
 
 対象読者は、これから Cocoa アプリ開発で Haskell を使いたいと思っている Haskell プログラマです。Objective-C （以下、Obj-C）がなんとなく読めればよりよいでしょうが、私じしんそこまで Obj-C は得意ではないので、まあ読めなくても何とかなるでしょう。また、本稿では OS X 向けの Cocoa 開発を対象とし、iOS アプリの開発は扱いません[^1]。また、以下で扱う`language-c-inline`は専ら Obj-Cとの連携に注力されていますが、普通のC言語との交ぜ書きも同じ要領で出来る筈なので、OS Xとか知らねーし！みたいな不逞の輩（！）な皆さんの参考にもなるのではないかと思います。
 
@@ -787,3 +787,5 @@ objc_marshaller 'listOfStringsToNSArr 'nsArrToListOfStrings
 [^2]: Cocoa Bindings も原始的な FRP みたいなものなので、Haskell側のFRPライブラリと上手いこと連携が取れるとよいなあ、と思っているのですが、今のところあんまり良い方法が思い付いてません。
 
 [^3]: お前は何をいってるんだ。
+
+[^4]: 発表日は遅延評価されました（常套句）。
