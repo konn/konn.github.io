@@ -1,5 +1,5 @@
 ---
-title: Haskell ではじめる Cocoa アプリ開発
+title: Haskell ではじめるふわとろ Cocoa アプリ開発
 date: 2014/12/29 23:27:30 JST
 author: 石井大海
 tag: haskell, cocoa, programming
@@ -8,7 +8,7 @@ description: Haskell による Cocoa アプリ開発の実際についての記�
 
 この記事は[Haskell Advent Calendar 2014](http://qiita.com/advent-calendar/2014/haskell) の 13日目の記事です[^4]。前日は[arrowM さんの「Haskell rest フレームワークでREST API設計をサボる」](http://qiita.com/minpou/items/20ba354b32af89b20c64)、翌日は[solorabさんの「Haskellのlensの使い方」](http://solorab.net/blog/2014/12/14/how-to-use-lens-a/)です。
 
-対象読者は、これから Cocoa アプリ開発で Haskell を使いたいと思っている Haskell プログラマです。Objective-C （以下、Obj-C）がなんとなく読めればよりよいでしょうが、私じしんそこまで Obj-C は得意ではないので、まあ読めなくても何とかなるでしょう。また、本稿では OS X 向けの Cocoa 開発を対象とし、iOS アプリの開発は扱いません[^1]。また、以下で扱う`language-c-inline`は専ら Obj-Cとの連携に注力されていますが、普通のC言語との交ぜ書きも同じ要領で出来る筈なので、OS Xとか知らねーし！みたいな不逞の輩（！）な皆さんの参考にもなるのではないかと思います。
+HaskellでCocoaアプリ開発、したいですよね？したくない人は存在しないと仮定しても一般性を失わない筈なので、存在しないとして以下議論しましょう。というわけで、対象読者は、これから Cocoa アプリ開発で Haskell を使いたいと思っている Haskell プログラマです。Objective-C （以下、Obj-C）がなんとなく読めればよりよいでしょうが、私じしんそこまで Obj-C は得意ではないので、まあ読めなくても何とかなるでしょう。また、本稿では OS X 向けの Cocoa 開発を対象とし、iOS アプリの開発は扱いません[^1]。また、以下で扱う`language-c-inline`は専ら Obj-Cとの連携に注力されていますが、普通のC言語との交ぜ書きも同じ要領で出来る筈なので、OS Xとか知らねーし！みたいな不逞の輩（！）な皆さんの参考にもなるのではないかと思います。
 
 以下で採り上げる例は、全て[GitHubで閲覧可能](https://github.com/konn/objc-tutor)です。
 
