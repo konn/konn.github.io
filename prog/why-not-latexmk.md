@@ -1,6 +1,6 @@
 ---
 title: latexmk で楽々 TeX タイプセットの薦め（＆ biblatex+biberで先進的な参考文献処理）
-date: 2014/01/31 21:21:58 JST
+date: 2015/01/06 23:48:54 JST
 author: 石井大海
 description: TeX ファイルの変更を監視して、必要な回数だけ自動タイプセットしてくれる latexmk の紹介です。OMake はもう古い。あとbibtexの代替である biber と biblatex についても紹介。
 tag: TeX, LaTeX, upLaTeX, biblatex, biber, latexmk
@@ -24,8 +24,8 @@ latexmk を使うには、まず設定ファイルを書いてやる必要があ
 
 ~~~{.perl}
 #!/usr/bin/env perl
-$$latex            = 'platex -synctex=1';
-$$latex_silent     = 'platex -synctex=1 -interaction=batchmode';
+$$latex            = 'platex -synctex=1 -halt-on-error';
+$$latex_silent     = 'platex -synctex=1 -halt-on-error -interaction=batchmode';
 $$bibtex           = 'pbibtex';
 $$dvipdf           = 'dvipdfmx %O -o %D %S';
 $$makeindex        = 'mendex %O -o %D %S';
@@ -42,7 +42,9 @@ $$pdf_previewer    = "open -ga /Applications/Skim.app";
 
 これは何をしているのか順に説明しましょう。
 
-まず `$$latex`{.perl} の値はその名の通り .tex ファイルのコンパイルに使う `latex` コマンドを指定しています。ちなみに`-synctex=1`というオプションを付けておくと、SyncTeX が有効になって、SyncTeX対応のPDFビューワ（Skimとか）を使っていると、PDFの文章から tex ファイルの対応する部分に即座に飛ぶことが出来るようになります。便利です。
+まず `$$latex`{.perl} の値はその名の通り .tex ファイルのコンパイルに使う `latex` コマンドを指定しています。ちなみに`-synctex=1`というオプションを付けておくと、SyncTeX が有効になり、SyncTeX対応のPDFビューワ（Skimとか）を使っていると、PDFの文章から tex ファイルの対応する部分に即座に飛ぶことが出来るようになります。便利です。
+
+また、`-halt-on-error` オプションを付けておくと、文法エラーやらコマンド未定義やらでコンパイルに失敗した時、あの鬱陶しいプロンプトが出ずにそのまま TeX エンジンが終了してくれます。これは、後述の `-pvc` コマンドと組合せたときに、コンパイルに失敗してもいちいち C-d を送ったりする必要がなく、単にファイルを修正して保存しなおせば再度コンパイルが走ってくれるようになるので便利です。
 
 `$$bibtex` とか `$$dvipdf`、`$$mendex` とかもその他のツールを指定しているだけです。
 
@@ -191,6 +193,12 @@ $$biber = 'biber --bblencoding=utf8 -u -U --output_safechars';
 これは、「.bblファイルのエンコードは UTF-8、入出力も共に UTF-8 を使って、アクセント記号とかちょっとヤバめの記号は TeX にエンコードする」という意味の設定です。最後の「ヤバめ」云々というのがちょっと判りづらいですね。例えば biber はデフォルトのままだと bib ファイルで `G{\"o}del` のように書かれているものを、自動的に `Gödel` に変更して bbl に出力します。欧米では既にUTF-8をサポートしたTeXのエンジンが広く用いられているのでこれで問題がないのですが、upLaTeX はユニコード文字は全て和文だと判断して処理します。すると、上の文字は`G ö del`のように字間や書体が変な形で印字されてしまうのです。それを避けるために、アクセント記号をはじめとしたユニコード文字は LaTeX の命令を使ってエンコードした形で出力させる必要があります。それに必要なのが `--output_safechars` オプションという訳です。
 
 こんな具合に、biber や biblatex を使えば従来の BibTeX では手のまわらなかった細かいところまで柔軟に設定することが出来ます。まだ日本語環境にローカライズされていなかったりしますが、それでも実用には耐え得るものになっていると云えると思います。
+
+変更履歴
+--------
+
+* 2015/01/06 23:48:54 JST `-halt-on-error` についての説明を追加。
+* 2014/01/31 21:21:58 JST （多分）初版公開。
 
 [^1]: 本当は設定書かなくても平気なんですけど、platexとかの設定はちゃんと書いといた方が一々コマンドラインで指定しなくてよくて楽です。
 
