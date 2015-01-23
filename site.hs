@@ -146,7 +146,7 @@ main = hakyllWith config $ do
     route $ setExtension "pdf"
     compile' $ getResourceBody >>= compileToPDF
 
-  match "math/**.png" $
+  match ("math/**.png" .||. "math/**.jpg") $
     route idRoute >> compile' copyFileCompiler
 
   match ("profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") $ do
