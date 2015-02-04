@@ -5,6 +5,8 @@
 module Main where
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
+import           Control.Lens                    (rmapping, (%~), (&), (.~),
+                                                  (<>~), _Unwrapping')
 import           Control.Monad                   hiding (mapM, sequence)
 import           Data.Binary
 import qualified Data.ByteString.Char8           as BS
@@ -18,6 +20,7 @@ import           Data.Monoid
 import           Data.Ord
 import           Data.String
 import qualified Data.Text                       as T
+import           Data.Text.Lens                  (packed)
 import           Data.Time
 import           Data.Traversable                hiding (forM)
 import           Filesystem
@@ -57,6 +60,10 @@ import qualified Text.Pandoc.Builder             as Pan
 import           Text.Pandoc.Shared              (stringify)
 import           Text.Pandoc.Walk
 
+import           Control.Exception (IOException, handle)
+import qualified Data.List         as L
+import           Lenses
+import           System.Exit       (ExitCode (..))
 
 default (T.Text)
 
@@ -74,6 +81,7 @@ globalBib = home </> "Library/texmf/bibtex/bib/myreference.bib"
 
 main :: IO ()
 main = hakyllWith config $ do
+
   match "*.css" $ route idRoute >> compile' compressCssCompiler
 
   match ("js/**" .||. "robots.txt" .||. "**/*imgs/**" .||. "img/**" .||. "**/*img/**" .||. "favicon.ico" .||. "files/**") $
@@ -103,6 +111,13 @@ main = hakyllWith config $ do
       myPandocCompiler
               >>= applyAsTemplate (constField "children" posts <> defaultContext)
               >>= applyDefaultTemplate tags >>= relativizeUrls
+
+  create [".ignore"] $ do
+    route idRoute
+    compile $ do
+      drafts <- filterM (liftM not . isPublished)
+                 =<< (loadAll subContentsWithoutIndex :: Compiler [Item String])
+      makeItem $ unlines $ ".ignore" : map (Hakyll.toFilePath . itemIdentifier) drafts
 
   match "*/index.md" $ do
     route $ setExtension "html"
@@ -364,7 +379,27 @@ addTableClass (TagOpen "table" attr) = TagOpen "table" (("class", "table"):attr)
 addTableClass t = t
 
 config :: Configuration
-config = defaultConfiguration { deployCommand = "rsync --checksum -av _site/* sakura-vps:~/mighttpd/public_html/ && git add img math writing prog && git commit -am\"deployed\" && git push origin master"}
+config = defaultConfiguration
+--          & _deployCommand .~ "rsync --checksum -av _site/* sakura-vps:~/mighttpd/public_html/ && git add img math writing prog && git commit -am\"deployed\" && git push origin master"
+         & _deploySite .~ deploy
+         & _ignoreFile.rmapping (_Unwrapping' Any)._Unwrapping' MonoidFun
+           <>~ MonoidFun (Any . (== (".ignore" :: String)))
+
+deploy :: t -> IO ExitCode
+deploy _config = handle h $ shelly $ do
+  ign <- T.lines <$> readfile "_site/.ignore"
+  writefile ".gitignore" $ T.unlines ign
+  run_ "rsync" $ "--exclude" : L.intersperse "--exclude" ( map ("_site/" <>) ign)
+              ++ ["--checksum", "-av" ,"_site/", "sakura-vps:~/mighttpd/public_html/"]
+  cmd "git" "add" "img" "math" "writing" "prog"
+  cmd "git" "commit" "-am'deploy'"
+  cmd "git" "push" "origin" "master"
+  rm ".gitignore"
+
+  return ExitSuccess
+  where
+    h :: IOException -> IO ExitCode
+    h _ = return $ ExitFailure 1
 
 addAmazonAssociateLink :: String -> Pandoc -> Pandoc
 addAmazonAssociateLink = bottomUp . procAmazon
@@ -488,8 +523,13 @@ myRecentFirst is0 = do
 isPublished :: Item a -> Compiler Bool
 isPublished item = do
   let ident = itemIdentifier item
-  mans <- fmap capitalize <$> getMetadataField ident "published"
-  return $ fromMaybe True $ listToMaybe . fmap fst . reads =<< mans
+      txtToBool txt = case txt & packed %~ T.strip & reads of
+        [(b, "")] -> Just b
+        _ -> Nothing
+  pub <- fmap capitalize <$> getMetadataField ident "published"
+  dra <- fmap capitalize <$> getMetadataField ident "draft"
+  return $ fromMaybe True $ (txtToBool =<< pub)
+                         <|> not <$> (txtToBool =<< dra)
 
 capitalize :: String -> String
 capitalize "" = ""
