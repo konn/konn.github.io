@@ -389,8 +389,8 @@ deploy :: t -> IO ExitCode
 deploy _config = handle h $ shelly $ do
   ign <- T.lines <$> readfile "_site/.ignore"
   writefile ".gitignore" $ T.unlines ign
-  run_ "rsync" $ "--exclude" : L.intersperse "--exclude" ( map ("_site/" <>) ign)
-              ++ ["--checksum", "-av" ,"_site/", "sakura-vps:~/mighttpd/public_html/"]
+  run_ "rsync" $ "--checksum" : "-av" : map ("--exclude=" <>) ign
+              ++ ["_site/", "sakura-vps:~/mighttpd/public_html/"]
   cmd "git" "add" "img" "math" "writing" "prog"
   cmd "git" "commit" "-am'deploy'"
   cmd "git" "push" "origin" "master"
