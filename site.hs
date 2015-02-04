@@ -115,9 +115,10 @@ main = hakyllWith config $ do
   create [".ignore"] $ do
     route idRoute
     compile $ do
-      drafts <- filterM (liftM not . isPublished)
-                 =<< (loadAll subContentsWithoutIndex :: Compiler [Item String])
-      makeItem $ unlines $ ".ignore" : map (Hakyll.toFilePath . itemIdentifier) drafts
+      drafts <- mapM (\i -> let ident = itemIdentifier i in (ident,) . fromMaybe (Hakyll.toFilePath ident) <$> getRoute ident)
+                =<< filterM (liftM not . isPublished)
+                =<< (loadAll subContentsWithoutIndex :: Compiler [Item String])
+      makeItem $ unlines $ ".ignore" : map (\(a, b) -> Hakyll.toFilePath a ++ "\t" ++ b) drafts
 
   match "*/index.md" $ do
     route $ setExtension "html"
@@ -199,8 +200,9 @@ compile' d = compile $ addRepo >> d
 
 addRepo :: Compiler ()
 addRepo = do
-  ident <- getUnderlying
-  published <- maybe True (== "true") <$> getMetadataField ident "published"
+  item <- getResourceBody
+  let ident = itemIdentifier item
+  published <- isPublished item
   when published $ do
     let pth = toFilePath ident
     unsafeCompiler $ shelly $ silently $ void $ cmd "git" "add" pth
@@ -380,21 +382,26 @@ addTableClass t = t
 
 config :: Configuration
 config = defaultConfiguration
---          & _deployCommand .~ "rsync --checksum -av _site/* sakura-vps:~/mighttpd/public_html/ && git add img math writing prog && git commit -am\"deployed\" && git push origin master"
          & _deploySite .~ deploy
          & _ignoreFile.rmapping (_Unwrapping' Any)._Unwrapping' MonoidFun
            <>~ MonoidFun (Any . (== (".ignore" :: String)))
 
+parseIgnorance :: T.Text -> (T.Text, T.Text)
+parseIgnorance txt =
+  let (a, T.drop 1 -> b) = T.breakOn "\t" txt
+  in (a, if T.null b then a else b)
+
 deploy :: t -> IO ExitCode
 deploy _config = handle h $ shelly $ do
-  ign <- T.lines <$> readfile "_site/.ignore"
-  writefile ".gitignore" $ T.unlines ign
+  ign0 <- T.lines <$> readfile "_site/.ignore"
+  let (gign, ign) = unzip $ map parseIgnorance ign0
+  echo $ "ignoring: " <> T.intercalate "," ign
+  writefile ".git/info/exclude" $ T.unlines gign
   run_ "rsync" $ "--checksum" : "-av" : map ("--exclude=" <>) ign
               ++ ["_site/", "sakura-vps:~/mighttpd/public_html/"]
   cmd "git" "add" "img" "math" "writing" "prog"
-  cmd "git" "commit" "-am'deploy'"
+  cmd "git" "commit" "-amupdated"
   cmd "git" "push" "origin" "master"
-  rm ".gitignore"
 
   return ExitSuccess
   where
