@@ -34,7 +34,9 @@ executable site
                ,       io-choice
                ,       monad-control
                ,       mtl
-               ,       pandoc-types
+               ,       pandoc-types,
+                       yaml,
+                       unordered-containers
                ,       pandoc
                ,       tagsoup
                ,       HaTeX
@@ -58,7 +60,8 @@ executable site
                ,       template-haskell
                ,       case-insensitive
                ,       bytestring
-               ,       effin
+               ,       effin,
+                       hashable
                ,       blaze-builder
   -- hs-source-dirs:      
   default-language:    Haskell2010

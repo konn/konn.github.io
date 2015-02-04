@@ -37,6 +37,7 @@ import           Network.HTTP.Types
 import           Network.URI                     hiding (query)
 import           Prelude                         hiding (FilePath, div, mapM,
                                                   sequence, span)
+import qualified Prelude                         as P
 import           Shelly                          hiding (tag)
 import           System.IO                       (hPutStrLn, stderr)
 import           System.Locale
@@ -60,10 +61,13 @@ import qualified Text.Pandoc.Builder             as Pan
 import           Text.Pandoc.Shared              (stringify)
 import           Text.Pandoc.Walk
 
-import           Control.Exception (IOException, handle)
-import qualified Data.List         as L
+import           Control.Exception    (IOException, handle)
+import qualified Data.ByteString.Lazy as LBS
+import qualified Data.HashMap.Strict  as HM
+import qualified Data.Yaml            as Y
 import           Lenses
-import           System.Exit       (ExitCode (..))
+import           SiteTree
+import           System.Exit          (ExitCode (..))
 
 default (T.Text)
 
@@ -81,6 +85,8 @@ globalBib = home </> "Library/texmf/bibtex/bib/myreference.bib"
 
 main :: IO ()
 main = hakyllWith config $ do
+  match "tree.yml" $ compile $ cached "tree" $ do
+    fmap (fromMaybe (SiteTree "konn-san.com 建設予定地" HM.empty) . Y.decode . LBS.toStrict) <$> getResourceLBS
 
   match "*.css" $ route idRoute >> compile' compressCssCompiler
 
@@ -92,9 +98,11 @@ main = hakyllWith config $ do
 
   match "templates/**" $ compile' templateCompiler
 
+  {-
   tags <- buildTagsWith myGetTags
           (("**.md" .||. "**.tex") .&&. complement ("index.md" .||. "*/index.md"))
           (fromCapture "tags/*.html")
+  -}
 
   match "index.md" $ do
     route $ setExtension "html"
@@ -102,7 +110,7 @@ main = hakyllWith config $ do
       posts <- postList (Just 5) subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "updates" posts <> defaultContext)
-              >>= applyDefaultTemplate tags >>= relativizeUrls
+              >>= applyDefaultTemplate {- tags -} >>= relativizeUrls
 
   match "archive.md" $ do
     route $ setExtension "html"
@@ -110,7 +118,7 @@ main = hakyllWith config $ do
       posts <- postList Nothing subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "children" posts <> defaultContext)
-              >>= applyDefaultTemplate tags >>= relativizeUrls
+              >>= applyDefaultTemplate {- tags -} >>= relativizeUrls
 
   create [".ignore"] $ do
     route idRoute
@@ -126,7 +134,7 @@ main = hakyllWith config $ do
       chs <- listChildren True
       children <- postList Nothing (fromList $ map itemIdentifier chs)
       myPandocCompiler >>= applyAsTemplate (constField "children" children <> defaultContext)
-                       >>= applyDefaultTemplate tags >>= saveSnapshot "content"  >>= relativizeUrls
+                       >>= applyDefaultTemplate {- tags -} >>= saveSnapshot "content"  >>= relativizeUrls
 
   match "t/**" $ route idRoute >> compile' copyFileCompiler
 
@@ -156,7 +164,7 @@ main = hakyllWith config $ do
           item = writePandocWith
                      def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}
                      $ fmap (addPDFLink ("/" </> replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22") ip'
-      saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate tags item
+      saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate {- tags -} item
 
   match "math/**.tex" $ version "pdf" $ do
     route $ setExtension "pdf"
@@ -165,10 +173,10 @@ main = hakyllWith config $ do
   match ("math/**.png" .||. "math/**.jpg") $
     route idRoute >> compile' copyFileCompiler
 
-  match ("profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") $ do
+  match (("profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ do
     route $ setExtension "html"
     compile' $
-      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate tags >>= relativizeUrls
+      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate {- tags -} >>= relativizeUrls
 
   create ["feed.xml"] $ do
     route idRoute
@@ -178,25 +186,8 @@ main = hakyllWith config $ do
         >>= return . take 10 . filter (matches ("index.md" .||. complement "**/index.md") . itemIdentifier)
         >>= renderAtom feedConf feedCxt
 
-{-
-  tagsRules tags $ \tag pat -> do
-    let title = "[" <> tag <> "] タグの記事一覧"
-    route idRoute
-    compile' $ do
-      posts <- postList Nothing pat
-      let ctx = mconcat [ constField "title" title
-                        , constField "children" posts
-                        , defaultContext
-                        ]
-      makeItem ""
-        >>= loadAndApplyTemplate "archive.md" ctx
-        >>= applyAsTemplate ctx
-        >>= applyDefaultTemplate tags
-        >>= relativizeUrls
--}
-
 compile' :: (Typeable a, Writable a, Binary a) => Compiler (Item a) -> Rules ()
-compile' d = compile $ addRepo >> d
+compile' d = compile $ d
 
 addRepo :: Compiler ()
 addRepo = do
@@ -271,7 +262,6 @@ compileToPDF item = do
     case mopts of
       Nothing -> cmd "latexmk" "-pdfdvi" $ filename texPath
       Just opts -> run_ "latexmk" (map T.pack (words opts) ++ [Path.encode $ filename texPath])
-    -- cmd "dvipdfmx" "-o" pdfPath dviPath
     return ()
   makeItem $ TmpFile $ encodeString (tmpDir </> pdfPath)
 
@@ -324,31 +314,18 @@ myPandocCompiler =
      }
   (addAmazonAssociateLink "konn06-22")
 
-applyDefaultTemplate :: Tags -> Item String -> Compiler (Item String)
-applyDefaultTemplate tags item = do
+applyDefaultTemplate :: Item String -> Compiler (Item String)
+applyDefaultTemplate item = do
   let navbar = field "navbar" $ return . makeNavBar . itemIdentifier
       bcrumb = field "breadcrumb" makeBreadcrumb
       date = field "date" itemDateStr
-      tagField = tagsField "tags" tags
       toc = field "toc" $ return .renderHtml . buildTOC . readHtml def . itemBody
-      children = field "children" $ const $ do
-        chs <- listChildren False
-        navs <- liftM catMaybes . forM chs $ \c -> do
-          lnk  <- getRoute $ itemIdentifier c
-          title <- getMetadataField (itemIdentifier c) "title"
-          return $ (,) <$> lnk <*> title
-        return $ renderHtml [shamlet| <ul>
-                                        $forall (pth, title) <- navs
-                                          <li>
-                                            <a href="#{pth}">
-                                               #{title}
-                                    |]
       hdr = field "head" $ \i -> return $
         if "math" `isPrefixOf` Hakyll.toFilePath (itemIdentifier i) && "math/index.md" /= toFilePath (itemIdentifier i)
         then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
         else ""
       meta = field "meta" $ liftM mconcat . forM [("description", "description"), ("tag", "Keywords")] . extractMeta
-      cxt  = defaultContext <> toc <> tagField <> navbar <> bcrumb <> hdr <> meta <> children <> date
+      cxt  = defaultContext <> toc <> {- tagField <> -} navbar <> bcrumb <> hdr <> meta <> date
   let item' = demoteHeaders . withTags addTableClass <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
   unsafeCompiler $ do
@@ -412,8 +389,8 @@ addAmazonAssociateLink :: String -> Pandoc -> Pandoc
 addAmazonAssociateLink = bottomUp . procAmazon
 
 procAmazon :: String -> Inline -> Inline
-procAmazon tag (Link is (url, title))  = Link is (attachTo tag url, title)
-procAmazon tag (Image is (url, title)) = Image is (attachTo tag url, title)
+procAmazon tag (Link is (url, ttl))  = Link is (attachTo tag url, ttl)
+procAmazon tag (Image is (url, ttl)) = Image is (attachTo tag url, ttl)
 procAmazon _   il                      = il
 
 attachTo :: String -> String -> String
@@ -458,11 +435,12 @@ makeBreadcrumb :: Item String -> Compiler String
 makeBreadcrumb item = do
   let ident = itemIdentifier item
   mytitle <- getMetadataField' ident "title"
-  let parents = filter (/= toFilePath ident) $ map ((</> "index.md"). Path.concat) $ init $ inits $ splitDirectories $ toFilePath ident
-  bc <- liftM catMaybes . forM parents $ \fp -> do
-    mpath <- liftM toUrl <$> getRoute (fromFilePath fp)
-    mtitle <-  getMetadataField (fromFilePath fp) "title"
-    return $ (,) <$> mpath <*> mtitle
+  st <- loadBody "tree.yml"
+  let dropIndex fp | filename fp == "index.md" = parent $ dirname fp
+                   | otherwise = fp
+      parents = map encodeString $ splitDirectories $ dropIndex $ toFilePath ident
+      bc | ident == "index.md" = []
+         | otherwise = walkTree parents st
   return $ renderHtml [shamlet|
       <ul .breadcrumb>
         $forall (path, title) <- bc
