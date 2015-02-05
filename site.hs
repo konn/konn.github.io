@@ -86,8 +86,9 @@ globalBib = home </> "Library/texmf/bibtex/bib/myreference.bib"
 
 main :: IO ()
 main = hakyllWith config $ do
-  match "config/tree.yml" $ compile $ cached "tree" $ do
-    fmap (fromMaybe (SiteTree "konn-san.com 建設予定地" HM.empty) . Y.decode . LBS.toStrict) <$> getResourceLBS
+  setting "tree" (def :: SiteTree)
+  setting "schemes" (def :: Schemes)
+  setting "navbar" (def :: NavBar)
 
   match "config/schemes.yml" $ compile $ cached "schemes" $ do
     fmap (fromMaybe (Schemes HM.empty) . Y.decode . LBS.toStrict) <$> getResourceLBS
@@ -327,7 +328,7 @@ myPandocCompiler =
 
 applyDefaultTemplate :: Item String -> Compiler (Item String)
 applyDefaultTemplate item = do
-  let navbar = field "navbar" $ return . makeNavBar . itemIdentifier
+  let navbar = field "navbar" $ makeNavBar . itemIdentifier
       bcrumb = field "breadcrumb" makeBreadcrumb
       date = field "date" itemDateStr
       toc = field "toc" $ return .renderHtml . buildTOC . readHtml def . itemBody
@@ -383,7 +384,7 @@ deploy _config = handle h $ shelly $ do
   writefile ".git/info/exclude" $ T.unlines gign
   run_ "rsync" $ "--checksum" : "-av" : map ("--exclude=" <>) ign
               ++ ["_site/", "sakura-vps:~/mighttpd/public_html/"]
-  cmd "git" "add" "img" "math" "writing" "prog"
+  cmd "git" "add" "img" "math" "writing" "prog" "config"
   cmd "git" "commit" "-amupdated"
   cmd "git" "push" "origin" "master"
 
@@ -445,10 +446,11 @@ catDic = [("Home", "/")
          ,("Blog", "http://blog.konn-san.com/")
          ]
 
-getActive :: Identifier -> String
-getActive "archive.md" = "/archive.html"
-getActive "profile.md" = "/profile.html"
-getActive ident = fromMaybe "/" $ listToMaybe $ filter p $ map snd catDic
+getActive :: [(T.Text, String)] -> Identifier -> String
+getActive _ "archive.md" = "/archive.html"
+getActive _ "profile.md" = "/profile.html"
+getActive cDic ident = do
+  fromMaybe "/" $ listToMaybe $ filter p $ map snd cDic
   where
     p "/" = False
     p ('/':inp) = fromGlob (inp++"/**") `matches` ident
@@ -474,27 +476,29 @@ makeBreadcrumb item = do
           #{mytitle}
     |]
 
-makeNavBar :: Identifier -> String
-makeNavBar ident = renderHtml $ do
-  let cats = [(pth, cat, getActive ident == pth) | (cat, pth) <- catDic ]
-  [shamlet|
-  <div .navbar .navbar-inverse .navbar-fixed-top>
-    <div .navbar-inner>
-      <div .container>
-        <button .btn .btn-navbar data-toggle="collapse" data-target=".nav-collapse">
-          $forall _ <- catDic
-            <span .icon-bar>
-        <a .brand href="/">konn-san.com
-        <div .nav-collapse .collapse>
-          <ul .nav>
-            $forall (path, cat, isActive) <- cats
-              $if isActive
-                 <li .active>
-                   <a href="#{path}">#{cat}
-              $else
-                 <li>
-                   <a href="#{path}">#{cat}
-  |]
+makeNavBar :: Identifier -> Compiler String
+makeNavBar ident = do
+  NavBar cDic <- loadBody "config/navbar.yml"
+  debugCompiler $ "cDic: " ++ show cDic
+  let cats = [(pth, cat, getActive cDic ident == pth) | (cat, pth) <- cDic ]
+  return $ renderHtml $  [shamlet|
+    <div .navbar .navbar-inverse .navbar-fixed-top>
+      <div .navbar-inner>
+        <div .container>
+          <button .btn .btn-navbar data-toggle="collapse" data-target=".nav-collapse">
+            $forall _ <- cDic
+              <span .icon-bar>
+          <a .brand href="/">konn-san.com
+          <div .nav-collapse .collapse>
+            <ul .nav>
+              $forall (path, cat, isActive) <- cats
+                $if isActive
+                   <li .active>
+                     <a href="#{path}">#{cat}
+                $else
+                   <li>
+                     <a href="#{path}">#{cat}
+   |]
 
 readHierarchy :: String -> [(String, String)]
 readHierarchy = mapMaybe (toTup . words) . lines
