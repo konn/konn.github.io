@@ -6,7 +6,7 @@ module Main where
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
 import           Control.Lens                    (rmapping, (%~), (&), (.~),
-                                                  (<>~), _Unwrapping')
+                                                  (<>~), (^?), _Unwrapping')
 import           Control.Monad                   hiding (mapM, sequence)
 import           Data.Binary
 import qualified Data.ByteString.Char8           as BS
@@ -37,7 +37,6 @@ import           Network.HTTP.Types
 import           Network.URI                     hiding (query)
 import           Prelude                         hiding (FilePath, div, mapM,
                                                   sequence, span)
-import qualified Prelude                         as P
 import           Shelly                          hiding (tag)
 import           System.IO                       (hPutStrLn, stderr)
 import           System.Locale
@@ -62,11 +61,13 @@ import           Text.Pandoc.Shared              (stringify)
 import           Text.Pandoc.Walk
 
 import           Control.Exception    (IOException, handle)
+import           Control.Lens         (imap)
 import qualified Data.ByteString.Lazy as LBS
+import           Data.Foldable        (asum)
 import qualified Data.HashMap.Strict  as HM
 import qualified Data.Yaml            as Y
 import           Lenses
-import           SiteTree
+import           Settings
 import           System.Exit          (ExitCode (..))
 
 default (T.Text)
@@ -85,8 +86,11 @@ globalBib = home </> "Library/texmf/bibtex/bib/myreference.bib"
 
 main :: IO ()
 main = hakyllWith config $ do
-  match "tree.yml" $ compile $ cached "tree" $ do
+  match "config/tree.yml" $ compile $ cached "tree" $ do
     fmap (fromMaybe (SiteTree "konn-san.com 建設予定地" HM.empty) . Y.decode . LBS.toStrict) <$> getResourceLBS
+
+  match "config/schemes.yml" $ compile $ cached "schemes" $ do
+    fmap (fromMaybe (Schemes HM.empty) . Y.decode . LBS.toStrict) <$> getResourceLBS
 
   match "*.css" $ route idRoute >> compile' compressCssCompiler
 
@@ -132,9 +136,9 @@ main = hakyllWith config $ do
     route $ setExtension "html"
     compile' $ do
       chs <- listChildren True
-      children <- postList Nothing (fromList $ map itemIdentifier chs)
-      myPandocCompiler >>= applyAsTemplate (constField "children" children <> defaultContext)
-                       >>= applyDefaultTemplate {- tags -} >>= saveSnapshot "content"  >>= relativizeUrls
+      chl <- postList Nothing (fromList $ map itemIdentifier chs)
+      myPandocCompiler >>= applyAsTemplate (constField "children" chl <> defaultContext)
+                       >>= applyDefaultTemplate >>= saveSnapshot "content"  >>= relativizeUrls
 
   match "t/**" $ route idRoute >> compile' copyFileCompiler
 
@@ -161,10 +165,13 @@ main = hakyllWith config $ do
       let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib
       ipandoc <- mapM (unsafeCompiler . texToMarkdown fp) =<< getResourceBody
       let ip' = fmap (myProcCites style bibs) ipandoc
-          item = writePandocWith
+      conv'd <- mapM (return . addPDFLink ("/" </> replaceExtension fp "pdf") .
+                      addAmazonAssociateLink "konn06-22"
+                      <=< procSchemes) ip'
+      let item = writePandocWith
                      def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}
-                     $ fmap (addPDFLink ("/" </> replaceExtension fp "pdf") . addAmazonAssociateLink "konn06-22") ip'
-      saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate {- tags -} item
+                     conv'd
+      saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate item
 
   match "math/**.tex" $ version "pdf" $ do
     route $ setExtension "pdf"
@@ -176,7 +183,7 @@ main = hakyllWith config $ do
   match (("profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ do
     route $ setExtension "html"
     compile' $
-      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate {- tags -} >>= relativizeUrls
+      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate >>= relativizeUrls
 
   create ["feed.xml"] $ do
     route idRoute
@@ -304,15 +311,19 @@ feedConf = FeedConfiguration { feedTitle = "konn-san.com 建設予定地"
                              }
 
 
-myPandocCompiler :: Compiler (Item String)
-myPandocCompiler =
-  pandocCompilerWithTransform
-  def
+writerConf :: WriterOptions
+writerConf =
   def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
      , writerHighlight = True
      , writerHighlightStyle = pygments
      }
-  (addAmazonAssociateLink "konn06-22")
+
+myPandocCompiler :: Compiler (Item String)
+myPandocCompiler =
+  pandocCompilerWithTransformM
+  def
+  writerConf
+  (procSchemes >=> return . addAmazonAssociateLink "konn06-22")
 
 applyDefaultTemplate :: Item String -> Compiler (Item String)
 applyDefaultTemplate item = do
@@ -324,8 +335,15 @@ applyDefaultTemplate item = do
         if "math" `isPrefixOf` Hakyll.toFilePath (itemIdentifier i) && "math/index.md" /= toFilePath (itemIdentifier i)
         then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
         else ""
-      meta = field "meta" $ liftM mconcat . forM [("description", "description"), ("tag", "Keywords")] . extractMeta
-      cxt  = defaultContext <> toc <> {- tagField <> -} navbar <> bcrumb <> hdr <> meta <> date
+      meta = field "meta" $ \i -> do
+        [desc0, tags] <- forM ["description", "tag"] $ \key ->
+          fromMaybe "" <$> getMetadataField (itemIdentifier i) key
+        let desc = writePlain writerConf { writerHTMLMathMethod = PlainMath
+                                         , writerWrapText = False } $ readMarkdown def desc0
+        return $ renderHtml $ do
+          [shamlet| <meta name="Keywords" content=#{tags} /> |]
+          [shamlet| <meta name="description" content=#{desc} /> |]
+      cxt  = toc <> navbar <> bcrumb <> hdr <> meta <> date <> defaultContext
   let item' = demoteHeaders . withTags addTableClass <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
   unsafeCompiler $ do
@@ -337,17 +355,6 @@ applyDefaultTemplate item = do
 
 isLinkBroken :: String -> IO Bool
 isLinkBroken _url = return False
-  {-
-  withManager (\man -> httpLbs ((fromJust $ parseUrl _url) { method = "GET" }) man >> return False)
-    `catch` \(SomeException _) -> return True
--}
-
-extractMeta :: Item String -> (String, String) -> Compiler String
-extractMeta i (from, to) = do
-  mt <- getMetadataField (itemIdentifier i) from
-  case mt of
-    Nothing -> return ""
-    Just st -> return $ renderHtml $ [shamlet|<meta name=#{to} content=#{st} />|]
 
 myGetTags :: (Functor m, MonadMetadata m) => Identifier -> m [String]
 myGetTags ident =
@@ -385,6 +392,24 @@ deploy _config = handle h $ shelly $ do
     h :: IOException -> IO ExitCode
     h _ = return $ ExitFailure 1
 
+
+procSchemes :: Pandoc -> Compiler Pandoc
+procSchemes = bottomUpM procSchemes0
+
+procSchemes0 :: Inline -> Compiler Inline
+procSchemes0 inl =
+  case inl ^? linkUrl of
+    Nothing -> return inl
+    Just url -> do
+      Schemes dic <- loadBody "config/schemes.yml"
+      let url' = maybe url T.unpack $ asum $
+                 imap (\k v -> fmap (sandwitched (prefix v) (fromMaybe "" $ postfix v)) $
+                               T.stripPrefix (k <> ":") $ T.pack url)
+                 dic
+      return $ inl & linkUrl .~ url'
+  where
+    sandwitched s e t = s <> t <> e
+
 addAmazonAssociateLink :: String -> Pandoc -> Pandoc
 addAmazonAssociateLink = bottomUp . procAmazon
 
@@ -402,8 +427,6 @@ attachTo key url
                         || ["gp", "product"] `isPrefixOf` cipath
     , isNothing (lookup "tag" qs)
          = tail $ BS.unpack $ toByteString $ encodePath p (("tag", Just $ BS.pack key):qs)
-    | Just as <- T.stripPrefix "asin:" $ T.pack url
-    = "http://www.amazon.co.jp/dp/" ++ T.unpack as ++ "/?tag=" ++ key
 attachTo _   url = url
 
 amazons :: [T.Text]
@@ -435,7 +458,7 @@ makeBreadcrumb :: Item String -> Compiler String
 makeBreadcrumb item = do
   let ident = itemIdentifier item
   mytitle <- getMetadataField' ident "title"
-  st <- loadBody "tree.yml"
+  st <- loadBody "config/tree.yml"
   let dropIndex fp | filename fp == "index.md" = parent $ dirname fp
                    | otherwise = fp
       parents = map encodeString $ splitDirectories $ dropIndex $ toFilePath ident
@@ -485,7 +508,11 @@ postList mcount pat = do
   posts <- fmap (maybe id take mcount) . myRecentFirst =<< loadAll pat
   let myDateField = field "date" itemDateStr
       pdfField = field "pdf" itemPDFLink
-  applyTemplateList postItemTpl (pdfField <> myDateField <> defaultContext) posts
+      descField = field "description" $ \item -> do
+        descr <- getMetadataField' (itemIdentifier item) "description"
+        return $ writeHtmlString writerConf $ readMarkdown def descr
+
+  applyTemplateList postItemTpl (pdfField <> myDateField <> descField <> defaultContext) posts
 
 itemPDFLink :: Item a -> Compiler String
 itemPDFLink item

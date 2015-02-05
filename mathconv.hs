@@ -206,6 +206,7 @@ buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
     ",compat=1.8,width=6cm"
   document $ mapM_ textell tkzs
 
+fresh :: (Enum s, EffectState s l) => Effect l s
 fresh = get <* modify succ
 
 procTikz :: FilePath -> Pandoc -> (Pandoc, [LaTeX])
