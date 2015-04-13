@@ -70,7 +70,11 @@ Activity
 
 Publication
 ------------
+[ミステリ読みが知りたい数理論理学（ロジック）のコト——](asin:B00VWT4H84)
+:    編集等に携わりました。井上真偽『[恋と禁忌の述語論理（プレディケット）](4062990385)』の内容を検討しながら、ミステリ読みを数理論理学の世界へと誘う本です。
+
 [Coqによる定理証明](http://tcug.jp/books/2013-12/)
 :    Tsukuba Coq Users' Group による、主に Coq による定理証明の技法についての同人誌。わたしの担当は第三章で、Haskell を定理証明系として用いる方法を解説する記事を書きました。[販促記事はこちら](/prog/2013-advent-calendar.html)。
+
 [プログラミングの魔導書 〜Programmers' Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed Programming”](http://longgate.co.jp/books/grimoire-vol3.html)
 :    株式会社ロングゲート様の技術書に、合成性の高い並行処理を実現する STM についての入門記事を寄稿させて頂きました。拙稿に限らず、並行・並列処理に関するあらゆる知識の詰まった一冊となっておりますので、是非。
