@@ -342,8 +342,8 @@ applyDefaultTemplate item = do
         let desc = writePlain writerConf { writerHTMLMathMethod = PlainMath
                                          , writerWrapText = False } $ readMarkdown def desc0
         return $ renderHtml $ do
-          [shamlet| <meta name="Keywords" content=#{tags}> |]
-          [shamlet| <meta name="description" content=#{desc}> |]
+          H5.meta ! H5.name "Keywords"    ! H5.content (H5.toValue tags)
+          H5.meta ! H5.name "description" ! H5.content (H5.toValue desc)
       cxt  = toc <> navbar <> bcrumb <> hdr <> meta <> date <> defaultContext
   let item' = demoteHeaders . withTags addTableClass <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
