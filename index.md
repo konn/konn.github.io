@@ -43,19 +43,18 @@ tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オ�
 <div class="span6">
 
 <h2 id="links">External Links</h2>
-[Twitter](http://twitter.com/mr_konn)
-:    主に日常のつぶやきなどはこちら。Twitter を始めてから情報発信を Twitter でしかしなくなった感じがする。
 
-[GitHub](https://github.com/konn)
-:    開発したもので公開しても差し支えのないものなどはこちらで管理中。
-
-[ブクログ](http://booklog.jp/users/mr_konn)
-:    本棚。蔵書と既読の管理。レビュー等は気が向いたら更新している。だいたいここを見れば趣味が把握出来る。
-
-[ねこはかわいい（Tumblr）](http://tumblr.konn-san.com)
-:    たんぶらー。Twitter で見掛けた記事を適当にスクラップしている。
-
-[slideshare](http://www.slideshare.net/konn)
-:    主に技術系のプレゼンの発表資料などはこちら。
+<dl>
+<dt>[Twitter](http://twitter.com/mr_konn)</dt>
+<dd><p>主に日常のつぶやきなどはこちら。Twitter を始めてから情報発信を Twitter でしかしなくなった感じがする。</p></dd>
+<dt>[GitHub](https://github.com/konn)</dt>
+<dd><p>開発したもので公開しても差し支えのないものなどはこちらで管理中。</p></dd>
+<dt>[ブクログ](http://booklog.jp/users/mr_konn)</dt>
+<dd><p>本棚。蔵書と既読の管理。レビュー等は気が向いたら更新している。だいたいここを見れば趣味が把握出来る。</p></dd>
+<dt>[ねこはかわいい（Tumblr）](http://tumblr.konn-san.com)</dt>
+<dd><p>たんぶらー。Twitter で見掛けた記事を適当にスクラップしている。</p></dd>
+<dt>[slideshare](http://www.slideshare.net/konn)
+<dd><p>主に技術系のプレゼンの発表資料などはこちら。</p></dd>
+</dl>
 </div>
 </div>
