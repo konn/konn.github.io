@@ -44,6 +44,9 @@ Activity
 ----
 勉強会や社内セミナーなどでの発表記録。
 
+* 2015/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2015『（数式の入った）本をつくる』（[Slide](http://www.slideshare.net/konn/ss-45587178)、[録画](https://www.youtube.com/watch?v=a0NcKmVWKq0) 
+）
+* 2014/11/20 数学基礎論若手の会2014＠鳥取『Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項』（[Slide](http://www.slideshare.net/konn/lebesgue-solovayshelah)）
 * 2014/03/20 PFI社内セミナー『技術者が知るべき Gröbner 基底』（[Slide](http://www.slideshare.net/konn/grbner )、UStream [前半](http://www.ustream.tv/recorded/45083535)・[後半](http://www.ustream.tv/recorded/45083876)）
 * 2014/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2014『数学プログラムをHaskellで書くべき6の理由』（[Slide](http://www.slideshare.net/konn/haskell-6-32258528)、[録画](https://www.youtube.com/watch?v=S4_7KVNA-Ww)）
 * 2013/10/12 第四回選択公理オフ『数理論理学の初歩の初歩の初歩の……』（[HTML](/math/acoff-04.html)、[PDF](/math/acoff-04.pdf)）
