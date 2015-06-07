@@ -1,7 +1,7 @@
 ------
 title: Haskell で LK の定理証明系を書いた
 author: 石井大海
-date: 2012/05/30 17:11:34 JST
+date: 2012/05/30 17:54:18 JST
 description: Haskellの型機能をふんだんに使って、古典命題論理の体系であるLKの定理証明系を書いた話ぞ。
 tags: Haskell,論理学,定理証明
 ------

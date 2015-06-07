@@ -1,7 +1,7 @@
 ------
 title: konn-san.com を刷新した
 author: 石井大海
-date: 2013/03/10 18:37:57 JST
+date: 2013/03/11 03:19:07 JST
 description: 今みてる konn-san.com 設立当時の設立宣言。こっちがメインになるとは思わなかった。
 tags: konn-san.com,更新履歴,Haskell,Hakyll
 ------

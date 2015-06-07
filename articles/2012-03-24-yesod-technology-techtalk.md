@@ -1,7 +1,7 @@
 ------
 title: Yesod を支える技術
 author: 石井大海
-date: 2012/03/24 18:24:15 JST
+date: 2012/03/24 14:41:14 JST
 description: 大昔のYesodの内部構造についての紹介。
 tags: Yesod,Haskell,発表資料
 ------

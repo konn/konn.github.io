@@ -1,7 +1,7 @@
 ------
 title: ８つの質問で、GHC の type-level language 業界の現状を知る
 author: 石井大海
-date: 2013/03/20 06:02:29 JST
+date: 2013/03/20 15:01:50 JST
 description: 「８つの質問」という釣り記事が技術クラスタで昔流行って、それに便乗してGHCの型システムの話を書いた。
 tags: Haskell,typelevel
 ------

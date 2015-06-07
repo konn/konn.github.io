@@ -1,7 +1,7 @@
 ------
 title: さらば愛しき JavaScript —— 愛と欲望の果てに Haskell は fay と出逢う。
 author: 石井大海
-date: 2012/12/25 14:33:00 JST
+date: 2012/12/25 14:11:11 JST
 description: Haskell のプログラムからJavaScriptを自動生成する Fay という言語処理系についての紹介記事。[Haskell Advent Calendar 2012]( http://partake.in/events/45a01d39-af5e-42f1-91c7-e8fcc91db244 ) の七日目の記事。
 tags: Haskell,Fay,JavaScript,Web
 ------
