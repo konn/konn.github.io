@@ -150,7 +150,7 @@ main = hakyllWith config $ do
 
   match "prog/doc/*/**" $
     route idRoute >> compile' copyFileCompiler
-  match ("**.html" .&&. complement ("prog/doc/**.html" .||. "templates/**")) $
+  match ("**.html" .&&. complement ("articles/**.html" .||. "prog/doc/**.html" .||. "templates/**")) $
     route idRoute >> compile' copyFileCompiler
   match "**.csl" $ compile' cslCompiler
   match "**.bib" $ compile' (fmap biblioToBibTeX <$> biblioCompiler)
@@ -181,7 +181,7 @@ main = hakyllWith config $ do
   match ("math/**.png" .||. "math/**.jpg") $
     route idRoute >> compile' copyFileCompiler
 
-  match (("profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ do
+  match (("articles/**.md" .||. "articles/**.html" .||. "profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ do
     route $ setExtension "html"
     compile' $
       myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate >>= relativizeUrls
@@ -223,7 +223,8 @@ listChildren recursive = do
   let dir = directory $ toFilePath ident
       exts = ["md", "tex"]
       wild = if recursive then "**" else "*"
-      pat =  foldr1 (.||.) [fromGlob $ encodeString $ dir </> wild <.> e | e <- exts]
+      pat =  (foldr1 (.||.) $ [fromGlob $ encodeString $ dir </> wild <.> e | e <- exts]
+              ++ [ "articles/**.html" | dir == "articles/" ])
                .&&. complement (fromList [ident] .||. hasVersion "pdf")
   loadAll pat >>= myRecentFirst
 
@@ -290,7 +291,7 @@ renderMeta :: [Inline] -> String
 renderMeta ils = writeHtmlString def $ Pandoc nullMeta [Plain ils]
 
 subContentsWithoutIndex :: Pattern
-subContentsWithoutIndex = ("**.md" .||. ("math/**.tex" .&&. hasVersion "html"))
+subContentsWithoutIndex = ("**.md" .||. "articles/**.html" .||. ("math/**.tex" .&&. hasVersion "html"))
                      .&&. complement ("index.md" .||. "**/index.md" .||. "archive.md")
 
 feedCxt :: Context String
