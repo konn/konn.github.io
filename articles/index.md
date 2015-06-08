@@ -17,6 +17,6 @@ tag: 旧ブログ
 
 <dl>
 <dt>[Extensible Effects はモナド変換子に対する救世主たり得るか？](/prog/haskell/extensible-effects.html) - 2013/07/21 21:26:00 JST</dt>
-<dd>Oleg らによる、モナド変換子に対する大体手法、Extensible Effects の論文を読んだ感想紹介記事です。</dd>
+<dd><p>Oleg らによる、モナド変換子に対する大体手法、Extensible Effects の論文を読んだ感想紹介記事です。</p></dd>
 \$children\$
 </dl>
