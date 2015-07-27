@@ -44,6 +44,7 @@ Activity
 ----
 勉強会や社内セミナーなどでの発表記録。
 
+* 2015/07/27 修士論文中間発表『実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について（公開版）』（[Slide](http://www.slideshare.net/konn/ss-50957683)）
 * 2015/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2015『（数式の入った）本をつくる』（[Slide](http://www.slideshare.net/konn/ss-45587178)、[録画](https://www.youtube.com/watch?v=a0NcKmVWKq0) 
 ）
 * 2014/11/20 数学基礎論若手の会2014＠鳥取『Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項』（[Slide](http://www.slideshare.net/konn/lebesgue-solovayshelah)）

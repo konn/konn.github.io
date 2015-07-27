@@ -41,7 +41,6 @@ executable site
                ,       tagsoup
                ,       HaTeX
                ,       highlighting-kate
-               ,       hamlet
                ,       shakespeare
                ,       blaze-html
                ,       time
