@@ -5,8 +5,10 @@ description: GitHub などへの外部リンクと昔につくったプロダク
 tag: Haskell,Ruby,オートマトン,IRC
 ---
 
-ソフトウェアやプログラミング関連の記事を溜めておく場所です。大半は [Blog](http://blog.konn-san.com) にあるので、余り何もありません。
+ソフトウェアやプログラミング関連の記事を溜めておく場所です。
 
+<div class="row-fluid">
+<div class="span9">
 記事一覧
 =======
 <dl>
@@ -53,3 +55,8 @@ tag: Haskell,Ruby,オートマトン,IRC
 * [偽音](./ruby/gionbot/) - IRC 人狼bot。今あるのかはしらないがむかし人狼 BBS と云うものが流行って、IRC 上でも人狼をしたいと云う人達がいた。IRC人狼には真音（マロン）という bot があって、それは CHOCOA とかじゃないと動かなかったのでクローンを作った。上の WereWolf を使って書かれている。UO人狼のルールとかも実装してたんじゃなかったかなぁ。
 
 いずれも古い Ruby 環境で作られたものなので今も動くかは知らない。多分動かない。
+</div>
+<div class="span3">
+<a class="qiita-timeline" href="https://qiita.com/users/mr_konn" data-qiita-username="mr_konn">mr_konnのtips</a><script src="//qiita-widget.suin.org/widget.js"></script>
+</div>
+</div>
