@@ -11,7 +11,7 @@ tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オ�
 専門と趣味について
 --------------
 好きな作家（順不同）
-:    麻耶雄嵩、円城塔、森川智喜、円居挽。座右の書は麻耶雄嵩『[夏と冬の奏鳴曲](asin:4062638916)』と円城塔『[Boy's Surface](asin:4150310203)』。パズル作家の芦ヶ原伸之さんのエッセイも好き。
+:    麻耶雄嵩、円城塔、森川智喜、円居挽、倉知淳。座右の書は麻耶雄嵩『[夏と冬の奏鳴曲](asin:4062638916)』と円城塔『[Boy's Surface](asin:4150310203)』。パズル作家の芦ヶ原伸之さんのエッセイも好き。
 
 数学
 :    専攻は集合論および計算代数。両者の共通部分のようなところを探っていけたらよいなあ。
@@ -48,18 +48,18 @@ Talks
 -----
 勉強会や社内セミナーなどでの発表記録。
 
-* 2015/07/27 修士論文中間発表『実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について（公開版）』（[Slide](http://www.slideshare.net/konn/ss-50957683)）
-* 2015/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2015『（数式の入った）本をつくる』（[Slide](http://www.slideshare.net/konn/ss-45587178)、[録画](https://www.youtube.com/watch?v=a0NcKmVWKq0) 
+* 2015/07/27 修士論文中間発表『**実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について**（公開版）』（[Slide](http://www.slideshare.net/konn/ss-50957683)）
+* 2015/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2015『**（数式の入った）本をつくる**』（[Slide](http://www.slideshare.net/konn/ss-45587178)、[録画](https://www.youtube.com/watch?v=a0NcKmVWKq0) 
 ）
-* 2014/11/20 数学基礎論若手の会2014＠鳥取『Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項』（[Slide](http://www.slideshare.net/konn/lebesgue-solovayshelah)）
-* 2014/03/20 PFI社内セミナー『技術者が知るべき Gröbner 基底』（[Slide](http://www.slideshare.net/konn/grbner )、UStream [前半](http://www.ustream.tv/recorded/45083535)・[後半](http://www.ustream.tv/recorded/45083876)）
-* 2014/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2014『数学プログラムをHaskellで書くべき6の理由』（[Slide](http://www.slideshare.net/konn/haskell-6-32258528)、[録画](https://www.youtube.com/watch?v=S4_7KVNA-Ww)）
-* 2013/10/12 第四回選択公理オフ『数理論理学の初歩の初歩の初歩の……』（[HTML](/math/acoff-04.html)、[PDF](/math/acoff-04.pdf)）
-* 2013/05/04 [Haskell で計算機代数勉強会](http://partake.in/events/451a51b0-b18e-4e01-bda4-423bf57f4051)『わかったつもりになる Gröbner 基底』（[Slide](http://www.slideshare.net/konn/groebner-basisanintroductionreduced)）
-* 2012/11/22 PFI 社内セミナー『Algebraic DP: 動的計画法を書きやすく』（[Slide](http://www.slideshare.net/konn/algebraic-dp)、[Ustream](http://www.ustream.tv/recorded/27196711)）
-* 2012/04/22 (祝) Yesod 1.0 勉強会『Yesod で Blog Engine をつくってみた』（[Slide](http://www.slideshare.net/konn/yesod-12637438)、[録画](http://www.justin.tv/kiwamu/b/315818516)）
-* 2012/04/12 PFI 社内セミナー『How wonderful to be (statically) typed 〜型が付くってスバラシイ〜』（[Slide](http://www.slideshare.net/konn/how-wonderful-to-be-statically-typed)、[Ustream](http://www.ustream.tv/recorded/21781769)）
-* 2011/09/22 PFI 社内セミナー『Alloy Analyzer のこと』（[Slide](http://www.slideshare.net/konn/alloy-analyzer-9379488)、[Ustream](http://www.ustream.tv/recorded/17430540)）
+* 2014/11/20 数学基礎論若手の会2014＠鳥取『**Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項**』（[Slide](http://www.slideshare.net/konn/lebesgue-solovayshelah)）
+* 2014/03/20 PFI社内セミナー『**技術者が知るべき Gröbner 基底**』（[Slide](http://www.slideshare.net/konn/grbner )、UStream [前半](http://www.ustream.tv/recorded/45083535)・[後半](http://www.ustream.tv/recorded/45083876)）
+* 2014/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2014『**数学プログラムをHaskellで書くべき6の理由**』（[Slide](http://www.slideshare.net/konn/haskell-6-32258528)、[録画](https://www.youtube.com/watch?v=S4_7KVNA-Ww)）
+* 2013/10/12 第四回選択公理オフ『**数理論理学の初歩の初歩の初歩の……**』（[HTML](/math/acoff-04.html)、[PDF](/math/acoff-04.pdf)）
+* 2013/05/04 [Haskell で計算機代数勉強会](http://partake.in/events/451a51b0-b18e-4e01-bda4-423bf57f4051)『**わかったつもりになる Gröbner 基底**』（[Slide](http://www.slideshare.net/konn/groebner-basisanintroductionreduced)）
+* 2012/11/22 PFI 社内セミナー『**Algebraic DP: 動的計画法を書きやすく**』（[Slide](http://www.slideshare.net/konn/algebraic-dp)、[Ustream](http://www.ustream.tv/recorded/27196711)）
+* 2012/04/22 (祝) Yesod 1.0 勉強会『**Yesod で Blog Engine をつくってみた**』（[Slide](http://www.slideshare.net/konn/yesod-12637438)、[録画](http://www.justin.tv/kiwamu/b/315818516)）
+* 2012/04/12 PFI 社内セミナー『**How wonderful to be (statically) typed 〜型が付くってスバラシイ〜**』（[Slide](http://www.slideshare.net/konn/how-wonderful-to-be-statically-typed)、[Ustream](http://www.ustream.tv/recorded/21781769)）
+* 2011/09/22 PFI 社内セミナー『**Alloy Analyzer のこと**』（[Slide](http://www.slideshare.net/konn/alloy-analyzer-9379488)、[Ustream](http://www.ustream.tv/recorded/17430540)）
 
 Pre-publication Reviews
 -----------------------
