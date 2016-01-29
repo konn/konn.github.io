@@ -1,0 +1,8 @@
+flags: {}
+packages:
+- '.'
+extra-deps:
+- HaTeX-qq-0.0.1.2
+- effin-0.3.0.1
+- antiquoter-0.1.1.0
+resolver: lts-4.2

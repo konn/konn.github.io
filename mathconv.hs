@@ -39,6 +39,9 @@ instance Plated LaTeX
 
 default (String)
 
+fromRight :: Either a b -> b
+fromRight ~(Right a) = a
+
 myReaderOpts :: ReaderOptions
 myReaderOpts = def { readerExtensions = S.insert Ext_raw_tex pandocExtensions
                    , readerParseRaw = True
@@ -53,7 +56,7 @@ texToMarkdown fp src = do
   let latexTree = view _Right $ parseTeX $ applyMacros macros $ src
       rewritten = T.unpack $ render $ preprTeX latexTree
       base = dropExtension fp
-      pandoc = rewriteEnv $ readLaTeX myReaderOpts rewritten
+      pandoc = rewriteEnv $ fromRight $ readLaTeX myReaderOpts rewritten
       (pandoc',tikzs) = procTikz base pandoc
       tlibs = queryWith (\a -> case a of { c@(TeXComm "usetikzlibrary" _) -> [c] ; _ -> []} )
               latexTree
@@ -149,13 +152,13 @@ rewriteBeginEnv = concatMap step
                                        , procMathInline $
                                          unwords $ map (init . tail . T.unpack . render) args, "\">"
                                        ]
-              Pandoc _ myBody = rewriteEnv $ readLaTeX myReaderOpts $ T.unpack $ render body
+              Pandoc _ myBody = rewriteEnv $ fromRight $ readLaTeX myReaderOpts $ T.unpack $ render body
           in RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
     step b = [b]
 
 procEnumerate :: [TeXArg] -> LaTeX -> Block
 procEnumerate args body =
-  let Pandoc _ [OrderedList _ blcs] = rewriteEnv $ readLaTeX myReaderOpts $
+  let Pandoc _ [OrderedList _ blcs] = rewriteEnv $ fromRight $ readLaTeX myReaderOpts $
                                       T.unpack $ render $ TeXEnv "enumerate" [] body
   in OrderedList (parseEnumOpts args) blcs
 
@@ -222,7 +225,7 @@ procTikz fp pan = runEffect $ runWriter $ evalState (0 :: Int) (bottomUpM step p
     step a = return a
 
 procMathInline :: String -> String
-procMathInline = stringify . bottomUp go . readLaTeX def
+procMathInline = stringify . bottomUp go . fromRight . readLaTeX def
   where
     go :: Inline -> Inline
     go = bottomUp $ \a -> case a of

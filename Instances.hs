@@ -20,10 +20,6 @@ newtype BibTeX = BibTeX { runBibTeX :: [Reference] }
 instance Writable BibTeX where
   write _ _ = return ()
 
-instance Binary T.Text where
-  put = put . T.encodeUtf8
-  get = T.decodeUtf8 <$> get
-
 instance (Eq k, Hashable k, Binary k, Binary v) => Binary (HashMap k v) where
   put = put . HM.toList
   get = HM.fromList <$> get

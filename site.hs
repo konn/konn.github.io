@@ -39,7 +39,6 @@ import           Prelude                         hiding (FilePath, div, mapM,
                                                   sequence, span)
 import           Shelly                          hiding (tag)
 import           System.IO                       (hPutStrLn, stderr)
-import           System.Locale
 import           Text.Blaze.Html.Renderer.String
 import           Text.Blaze.Html5                ((!))
 import qualified Text.Blaze.Html5                as H5
@@ -327,12 +326,14 @@ myPandocCompiler =
   writerConf
   (procSchemes >=> return . addAmazonAssociateLink "konn06-22")
 
+readHtml' opt = fromRight . readHtml opt
+
 applyDefaultTemplate :: Item String -> Compiler (Item String)
 applyDefaultTemplate item = do
   let navbar = field "navbar" $ makeNavBar . itemIdentifier
       bcrumb = field "breadcrumb" makeBreadcrumb
       date = field "date" itemDateStr
-      toc = field "toc" $ return .renderHtml . buildTOC . readHtml def . itemBody
+      toc = field "toc" $ return .renderHtml . buildTOC . readHtml' def . itemBody
       hdr = field "head" $ \i -> return $
         if "math" `isPrefixOf` Hakyll.toFilePath (itemIdentifier i) && "math/index.md" /= toFilePath (itemIdentifier i)
         then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
@@ -341,7 +342,7 @@ applyDefaultTemplate item = do
         [desc0, tags] <- forM ["description", "tag"] $ \key ->
           fromMaybe "" <$> getMetadataField (itemIdentifier i) key
         let desc = writePlain writerConf { writerHTMLMathMethod = PlainMath
-                                         , writerWrapText = False } $ readMarkdown def desc0
+                                         , writerWrapText = False } $ fromRight $ readMarkdown def desc0
         return $ renderHtml $ do
           H5.meta ! H5.name "Keywords"    ! H5.content (H5.toValue tags)
           H5.meta ! H5.name "description" ! H5.content (H5.toValue desc)
@@ -515,7 +516,7 @@ postList mcount pat = do
       pdfField = field "pdf" itemPDFLink
       descField = field "description" $ \item -> do
         descr <- getMetadataField' (itemIdentifier item) "description"
-        return $ writeHtmlString writerConf $ readMarkdown def descr
+        return $ writeHtmlString writerConf $ fromRight $ readMarkdown def descr
 
   applyTemplateList postItemTpl (pdfField <> myDateField <> descField <> defaultContext) posts
 
@@ -556,7 +557,7 @@ itemDate :: Item a -> Compiler ZonedTime
 itemDate item = do
   let ident = itemIdentifier item
   dateStr <- getMetadataField ident "date"
-  let mdate = dateStr >>= parseTime defaultTimeLocale "%Y/%m/%d %X %Z"
+  let mdate = dateStr >>= parseTimeM True defaultTimeLocale "%Y/%m/%d %X %Z"
   case mdate of
     Just date -> return date
     Nothing -> unsafeCompiler $ utcToLocalZonedTime =<< getModified (toFilePath ident)
