@@ -210,22 +210,6 @@ $\Delta_0$-論理式に較べるとそこまで出番はないが，$\Delta_1$-�
 \end{theorem}
 
 \section{記述集合論における絶対性}
-\begin{definition}
- 論理式の階層$\boldface{\Pi}^1_n, \boldface{\Sigma}^1_n, \boldface{\Delta}^1_n$を次で定義する：
- \begin{enumerate}
-  \item 算術的論理式$\varphi(x_1, \dots, x_n, y)$と$z \in \Baire$に対し，$\exists a_1 \in \Baire\: \dots \exists a_n\: \varphi(a_1, \dots, a_n, z)$の形の論理式を$\Sigma^1_1(z)$-論理式と呼ぶ．
-  \item 算術的論理式$\varphi(x_1, \dots, x_n, y)$と$z \in \Baire$に対し，$\forall a_1 \in \Baire\: \dots \forall a_n\: \varphi(a_1, \dots, a_n, z)$の形の論理式を$\Pi^1_1(z)$-論理式と呼ぶ．
-  \item $\Pi^1_n(z)$-論理式$\varphi(x_1, \dots, x_n)$に対し，$\exists a_1 \in \Baire\:\dots \exists a_n \in \Baire\: \varphi(a_1, \dots, a_n)$の形の論理式を$\Sigma^1_{n+1}(z)$-論理式と呼ぶ．
-  \item $\Sigma^1_n(z)$-論理式$\varphi(x_1, \dots, x_n)$に対し，$\forall a_1 \in \Baire\:\dots \forall a_n \in \Baire\: \varphi(a_1, \dots, a_n)$の形の論理式を$\Pi^1_{n+1}(z)$-論理式と呼ぶ．
-  \item 論理式$\varphi$に対し，$\Sigma^1_n(z)$-論理式$\varphi_\Sigma$と$\Pi^1_n(z)$-論理式$\varphi_\Delta$があり，
-        $V_{\omega_1} \models \quoted{\varphi \iff \varphi_\Sigma \iff \varphi_\Delta}$を満たす時，
-        $\varphi$は$\Delta^1_n(z)$-論理式と呼ばれる．
-  \item $\Sigma^1_n \defeq \Sigma^1_n(\emptyset), \Pi^1_n \defeq \Pi^1_n(\emptyset), \Delta^1_n \defeq \Delta^1_n(\emptyset), $
-  \item $\boldface{\Sigma}^1_n \defeq \bigcup_{a \in \Baire} \Sigma^1_n(a), \qquad
-        \boldface{\Pi}^1_n \defeq \bigcup_{a \in \Baire} \Pi^1_n(a), \qquad
-        \boldface{\Delta}^1_n \defeq \boldface{\Pi}^1_n \cap \boldface{\Sigma}^1_n.$
- \end{enumerate}
-\end{definition}
 \begin{theorem}[Mostwski Absoluteness]
  $\boldface{\Pi}^1_1$-概念は任意の推移的モデルについて絶対．
  従って$\boldface{\Delta}^1_1$と$\boldface{\Sigma}^1_1$もそう．
@@ -240,6 +224,7 @@ $\Delta_0$-論理式に較べるとそこまで出番はないが，$\Delta_1$-�
  $\omega_1 \in M$を満たす$\ZF$の十分大きな有限断片を満たす部分推移的モデルについて，$\boldface{\Pi}^1_2$-概念（よって$\boldface{\Delta}^1_2$および$\boldface{\Sigma}^1_2$概念も）は絶対．
  特に，内部モデルに対し$\boldface{\Pi}^1_2$, $\boldface{\Sigma}^1_2$, $\boldface{\Delta}^1_2$-概念は絶対．
 \end{theorem}
+
 \nocite{Kunen:2011,Jech:2002,Arai:2011,Kunen:2009}
 \printbibliography[title=参考文献]
 \end{document}
