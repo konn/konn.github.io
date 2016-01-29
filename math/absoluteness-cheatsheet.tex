@@ -221,26 +221,105 @@ $\Delta_0$-論理式に較べるとそこまで出番はないが，$\Delta_1$-�
   \item 論理式$\varphi$に対し，$\Sigma^1_n(z)$-論理式$\varphi_\Sigma$と$\Pi^1_n(z)$-論理式$\varphi_\Delta$があり，
         $V_{\omega_1} \models \quoted{\varphi \iff \varphi_\Sigma \iff \varphi_\Delta}$を満たす時，
         $\varphi$は$\Delta^1_n(z)$-論理式と呼ばれる．
-  \item $\Sigma^1_n \defeq \Sigma^1_n(\emptyset), \Pi^1_n \defeq \Pi^1_n(\emptyset), \Delta^1_n \defeq \Delta^1_n(\emptyset), $
-  \item $\boldface{\Sigma}^1_n \defeq \bigcup_{a \in \Baire} \Sigma^1_n(a), \qquad
+  \item $\begin{gathered}
+         \Sigma^1_n \defeq \Sigma^1_n(\emptyset), \Pi^1_n \defeq \Pi^1_n(\emptyset), \Delta^1_n \defeq \Delta^1_n(\emptyset)\end{gathered}$
+  \item $\begin{gathered}\boldface{\Sigma}^1_n \defeq \bigcup_{a \in \Baire} \Sigma^1_n(a), \qquad
         \boldface{\Pi}^1_n \defeq \bigcup_{a \in \Baire} \Pi^1_n(a), \qquad
-        \boldface{\Delta}^1_n \defeq \boldface{\Pi}^1_n \cap \boldface{\Sigma}^1_n.$
+        \boldface{\Delta}^1_n \defeq \boldface{\Pi}^1_n \cap \boldface{\Sigma}^1_n.\end{gathered}$
  \end{enumerate}
 \end{definition}
+
+以下の議論には，次の概念が役に立つ：
+
+\begin{definition}
+ \begin{itemize}
+  \item $T$が$\alpha_1 \times \dots \times \alpha_n$上の木
+        $\defs T \subseteq \bigcup_n (\power{n}{\alpha}_1 \times \dots \times \power{n}{\alpha_n})$かつ$(s_1, \dots, s_n) \in T \implies (s_1 \restr k, \dots, s_n \restr k) \in T$.
+  \item $T$が$\alpha_1 \times \dots \times \alpha_n$上の木の時，
+        \begin{gather*}
+         [T] \defeq \Set{(x_1, \dots, x_n) \in \power{\omega}{\alpha_1} \times \dots \times \power{\omega}{\alpha_n} | \forall k < \omega \: (x_1 \restr k, \dots, x_n \restr k) \in T},\\
+         p_\ell[T] \defeq \Set{ (x_1, \dots, x_\ell) | \exists x_{\ell+1}\dots \exists x_{n}\: (x_1, \dots, x_{\ell}, x_{\ell+1}, \dots, x_n) \in [T] }.
+        \end{gather*}
+ \end{itemize}
+\end{definition}
+
+\begin{theorem}
+ 次は同値：
+ \begin{enumerate}
+  \item $A$: $\Sigma^1_1(z)$
+  \item $A = p[T]$を満たす$\omega\times\omega$上の木$T \in L[z]$が存在する．
+ \end{enumerate}
+\end{theorem}
+
 \begin{theorem}[Mostwski Absoluteness]
- $\boldface{\Pi}^1_1$-概念は任意の推移的モデルについて絶対．
- 従って$\boldface{\Delta}^1_1$と$\boldface{\Sigma}^1_1$もそう．
+ $\boldface{\Sigma}^1_1$-概念は任意の推移的モデルについて絶対．
+ 従って$\boldface{\Delta}^1_1$と$\boldface{\Pi}^1_1$もそう．
 \end{theorem}
 
 \begin{proof}
- $M$をc.t.m.とし，$A \in M$を$\Pi^1_1$-概念とする．
- 特に，算術的論理式$\varphi(x)$について，$x \in A \iff \forall z \in \Baire \: \varphi(z, x)$と書けているとしよう．\qed
+ $M$をc.t.m.とし，$A \in M$を$\boldface{\Sigma}^1_1$-概念とする．
+ すると，上の定理から$A = p[T]$となるような$\omega \times \omega$上の木$T$がとれるので，
+ 各$x \in \Baire$に対し$T_x \defeq \Set{s \in \finseq{\omega} | (x \restr \lh(s), s) \in T}$とおく．
+ この時，明らかに$(T_x, \supsetneq): \text{ill-founded} \iff x \in p[T] = A$.
+ 
+ よって，$x \in M$, $N \supseteq M$とすると，
+ \begin{align*}
+  (x \in A)^{M} &\iff (T_x: \text{ill-founded})^M\\
+  &\iff (T_x: \text{ill-founded})^N &\quad& (\because \text{定理}6)\\
+  &\iff (x \in A)^N.
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ $A \in \boldface{\Pi}^1_1$なら，$A = p[T]$を満たす$\omega \times \omega_1$上の木$T$が取れる．
+\end{lemma}
+\begin{proof}
+ $A = \Baire \setminus p[S]$を満たす$\omega \times \omega$上の木$S$を取る．
+ この時，$x \in A \iff (S_x, \supsetneq): \text{well-founded}$となる事に注意する．
+ 特に$|S_x| \leq \aleph_0$なので，$S_x$が整礎木の時，その対応するランク関数の値域は$\omega_1$で十分である．
+ なので，$(x, h) \in [T]$なら$h$が$S_x$上の（広い意味での）ランク関数となるように$\omega \times \omega_1$上の木$T$を定めたい．
+
+ それには，全単射$e: \omega \congto \finseq{\omega}$で$n < \lh(s) \rightarrow e^{-1}(s \restr n) < e^{-1}(s)$を満たすものを一つ固定して，次のように$T$を定めれば良い：
+ \[
+  (s, h) \in T \defs \begin{cases}
+                     h: \lh(s) \to \kappa\\
+                     \forall k, \ell < \lh(s)\:[e(k), e(\ell) \in T_s\wedge e(k) \supsetneq e(\ell) \longrightarrow h(k) < h(\ell)].
+                    \end{cases}
+ \]
+ \qed
+\end{proof}
+
+\begin{lemma}
+ $A \in \boldface{\Sigma}^1_2$なら，$A = p[T]$を満たす$\omega \times \omega_1$上の木$T$が取れる．
+\end{lemma}
+\begin{proof}
+ $A = \proj^{\Baire} p[S]$を満たすような$\omega \times \omega \times \omega_1$上の木$S$を前の補題2により取る．
+ この時，次により$T$を定めれば，これが明らかに求めるものになっている：
+ \[
+  T \defeq \Set{(s, t) | (s \restr \lfloor \lh(t)/2 \rfloor, (t)_0, (t)_1) \in S}.
+ \]
+ 但し，$s \in \finseq{\omega}$に対して
+ \[
+  (s)_0 \defeq \Braket{s(2i)   | i < \lfloor \lh(s)/2 \rfloor},\quad 
+  (s)_1 \defeq \Braket{s(2i+1) | i < \lfloor \lh(s)/2 \rfloor}.
+ \]
 \end{proof}
 
 \begin{theorem}[Shoenfield Absoluteness]
- $\omega_1 \in M$を満たす$\ZF$の十分大きな有限断片を満たす部分推移的モデルについて，$\boldface{\Pi}^1_2$-概念（よって$\boldface{\Delta}^1_2$および$\boldface{\Sigma}^1_2$概念も）は絶対．
+ $\omega_1 \in M$を満たす$\ZF$の推移的モデルについて，$\boldface{\Sigma}^1_2$-概念（よって$\boldface{\Delta}^1_2$および$\boldface{\Pi}^1_2$概念も）は絶対．
  特に，内部モデルに対し$\boldface{\Pi}^1_2$, $\boldface{\Sigma}^1_2$, $\boldface{\Delta}^1_2$-概念は絶対．
 \end{theorem}
+\begin{proof}
+ $A$を$\boldface{\Sigma}^1_2$-集合とすると，上の補題3から$A = p[T]$を満たす$\omega \times \omega_1$上の木$T$が取れる．
+ 上と同様の議論によって，
+ \[
+  x \in A \iff T_x: \text{ill-founded}
+ \]
+ となる．
+ ここで，$\omega_1 \in M$は$T$や$T_x$の絶対性を保証するのに必要である．
+ \qed
+\end{proof}
+
 
 \nocite{Kunen:2011,Jech:2002,Arai:2011,Kunen:2009}
 \printbibliography[title=参考文献]
