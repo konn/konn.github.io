@@ -19,6 +19,7 @@ import           Data.List                       hiding (stripPrefix)
 import           Data.Maybe
 import           Data.Monoid
 import           Data.Ord
+import qualified Data.Set                        as S
 import           Data.String
 import qualified Data.Text                       as T
 import           Data.Text.Lens                  (packed)
@@ -170,7 +171,9 @@ main = hakyllWith config $ do
                       addAmazonAssociateLink "konn06-22"
                       <=< procSchemes) ip'
       let item = writePandocWith
-                     def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"}
+                     def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
+                        , writerExtensions = S.delete Ext_raw_tex $ writerExtensions def
+                        }
                      conv'd
       saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate item
 
@@ -590,7 +593,11 @@ myProcCites style bib p =
       isReference (Div (_, ["references"], _) _) = True
       isReference _ = False
       body = filter (not . isReference) pan'
-  in if null pars
+  in bottomUp removeTeXGomiStr $ if null pars
      then p
      else Pandoc info (body ++ toList (header 1 "参考文献") ++ filter isReference bibs)
 
+removeTeXGomiStr = packed %~ T.replace "\\qed" ""
+                           . T.replace "\\mbox" ""
+                           . T.replace "\\printbibliography" ""
+                           . T.replace "\\printbibliography[title=参考文献]" ""
