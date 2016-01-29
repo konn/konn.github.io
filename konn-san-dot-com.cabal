@@ -18,7 +18,11 @@ cabal-version:       >=1.10
 
 executable site
   main-is:             site.hs
-  other-modules:       MathConv, Instances
+  other-modules:       MathConv
+                       Instances
+                       Lenses
+                       MyTeXMathConv
+                       Settings
   other-extensions:    DeriveDataTypeable, TemplateHaskell
   build-depends:       base    >= 4 && < 5
                ,       binary
@@ -40,11 +44,11 @@ executable site
                ,       pandoc
                ,       tagsoup
                ,       HaTeX
+               , HaTeX-qq
                ,       highlighting-kate
                ,       shakespeare
                ,       blaze-html
                ,       time
-               ,       old-locale
                ,       monad-loops
                ,       shelly
                ,       http-types
