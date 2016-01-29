@@ -12,7 +12,7 @@ tag: 数学,娯楽数学,フラクタル,マンデルブロ集合,Mandelbrot集�
 **Mandelbrot集合**（マンデルブロー集合）と呼ばれるフラクタル図形がある。こんなやつ[^1]：
 
 
-<img src=http://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Mandel_zoom_00_mandelbrot_set.jpg/644px-Mandel_zoom_00_mandelbrot_set.jpg" class="thumbnail image-responsive" width="500">
+<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Mandel_zoom_00_mandelbrot_set.jpg/644px-Mandel_zoom_00_mandelbrot_set.jpg" class="thumbnail image-responsive" width="500">
 
 検索すればゴマンとヒットするのであんまり細かいことは説明しないけれど、「ゼロから始めて自乗しては一定の定数$\xi \in \C$を足す」という操作を繰り返していったときに、何らかの値に収束するような$\xi \in \C$の全体をMandelbrot集合という。この図からもわかる通り、一見相似な図形が色々なスケールで無数に現れていて、大雑把にいえばこういう無限の入れ子構造になった図形の事をフラクタル図形という。因みに、この「相似な図形の入れ子構造」は、このMandelbrot集合の場合、相似に見えるだけで実際には微妙に異なる形が入れ替わり立ち代わり現れている。
 
