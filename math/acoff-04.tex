@@ -2,17 +2,14 @@
 title: 第四回選択公理オフ：数理論理学の初歩の初歩の初歩の……
 author: 石井 大海
 tag: 数学,数理論理学,集合論,モデル理論,超積,超冪,超準解析,自然数,強制法
+latexmk: -xelatex
 description: 第四回選択公理オフでの発表資料．選択公理と関連するモデル理論の初歩の話です．初学者向けに論理式やモデルの定義から入り，超積や超冪と選択公理，超準解析の関わりなどを論じています．実は Łoś+超フィルター定理と選択公理は同値だよとかそういう話もあり．
 date: 2013/10/16 00:48:34 JST
 ----
-
-\documentclass[a4j,uplatex]{jsarticle}
+\documentclass[a4j,xelatex,ja=standard]{bxjsarticle}
+\usepackage[hiragino]{zxjafont}
 \usepackage{amsmath,amssymb}
-\usepackage{epstopdf}
-\usepackage{enumitem,mystyle}
-\usepackage{graphicx}
-\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
-\bibliographystyle{jplain}
+\usepackage{mystyle}
 \usepackage{bm}
 \usepackage{url}
 \usepackage{epstopdf}
@@ -21,9 +18,10 @@ date: 2013/10/16 00:48:34 JST
 \newcommand{\Los}{{\L}o\'{s}}
 \newcommand{\Diag}{\mathrm{Diag}}
 \newcommand{\Th}{\mathrm{Th}}
-\newcommand{\card}{\mathrm{card}}
 \newcommand{\GL}{\mathrm{GL}}
-\usepackage[dvipdfmx]{hyperref}
+\usepackage{hyperref}
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{acoff-04.bib}
 
 \title{第四回選択公理オフ：\\数理論理学の初歩の初歩の初歩の……}
 \author{早稲田数学科四年\\石井 大海（@mr\_konn）}
@@ -467,5 +465,5 @@ ZF が無矛盾だとすると，G\"{o}del の完全性定理により $V \model
 こんな可算モデルを取って何が嬉しいのだろうか．集合論ではある命題が ZF から独立であることを示す為に{\bfseries 強制法}という手法が良く使われる\footnote{強制法については，Kunen~\cite{Kunen:2011} やその旧版の日本語訳が標準的な教科書として挙げられる}．選択公理も，この強制法を用いて独立性が示される重要な例である．強制法で用いられる道具の存在を示すために，ZF の可算モデルが取れるという事は非常に重要な前提条件になっているのである．
 
 \nocite{*}
-\bibliography{acoff-04}
+\printbibliography
 \end{document}

@@ -4,21 +4,15 @@ author: 石井 大海
 tag: 数学,数理論理学,集合論,無限組合せ論
 description: 集合論における Hausdorff Gap の証明．
 date: 2013/09/01 23:38:34 JST
+latexmk: -xelatex
 ---
-
-\documentclass[a4j,uplatex]{jsarticle}
-\usepackage{amsmath,amssymb}
-\usepackage{epstopdf}
-\usepackage{graphicx}
-\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
-\bibliographystyle{jplain}
-\usepackage{bm}
-\usepackage{epstopdf}
-\usepackage{cases}
-\usepackage{enumerate}
+\documentclass[a4j,xelatex,ja=standard]{bxjsarticle}
+\usepackage[hiragino]{zxjafont}
 \usepackage{mystyle}
+\usepackage{bm}
+\usepackage{cases}
 
-\newcommand{\Fin}{\mathrm{Fin}}
+\newcommand{\Fin}{\mathreg{Fin}}
 
 \title{Hausdorff Gap の証明}
 \author{石井大海}
@@ -39,7 +33,7 @@ date: 2013/09/01 23:38:34 JST
 まず，次の事は簡単に確認出来る：
 
 \begin{fact}
- \begin{enumerate}[(i)]
+ \begin{enumerate}[label=(\roman*)]
   \item $[A] = 1 \Leftrightarrow A \text{は補有限}$
   \item $[A] \leq [B] \Leftrightarrow A \setminus B \in \Fin$
   \item $[A] \neq [B] \Leftrightarrow A \vartriangle B \notin \Fin$
@@ -75,13 +69,13 @@ date: 2013/09/01 23:38:34 JST
  $a_n = [A_n], b_n = [B_n]$ とする．$a_n \wedge b_n = 0$ より $A_n \cap B_n \in \Fin \; (n < \omega)$ である．
 
  そこで，
- \begin{equation*}
+\begin{equation*}
   \begin{aligned}
    A_i \cap [j_n, \omega) \subseteq A_n\\
    A_n \cap B_i \subseteq [0, j_n)
-  \end{aligned} \quad (i \leq n)  \tag{*}\label{def:jn01}
- \end{equation*}
- を満たすように $j_n < j_{n+1}$ を取りたい．まず，$A_n \cap B_n \in \Fin$ より，$A_0 \cap B_0 \subseteq [0, j_0)$ となるような最小の $j_0$ が取れる．この時，$A_0 \cap [j_0, \omega) \subseteq A_0$ は自明に成立しているので，$n = 0$ の時は OK．
+  \end{aligned} \quad (i \leq n)\tag{*}
+\end{equation*} 
+を満たすように $j_n < j_{n+1}$ を取りたい．まず，$A_n \cap B_n \in \Fin$ より，$A_0 \cap B_0 \subseteq [0, j_0)$ となるような最小の $j_0$ が取れる．この時，$A_0 \cap [j_0, \omega) \subseteq A_0$ は自明に成立しているので，$n = 0$ の時は OK．
  そこで，$(*)$ を満たす $j_n$ が取れているとき，$j_{n+1}$ を次のように定める：
  \[
   j_{n+1} = \min \Set{j_n < j < \omega | A_{n+1} \cap B_i \subseteq [0,j) \; (i < n + 1), A_n \cap [j, \omega) \subseteq A_{n+1}}
@@ -119,16 +113,12 @@ date: 2013/09/01 23:38:34 JST
 
 \begin{proof}[定理の証明]
  以下を満たすように $A_\alpha, B_\alpha \; (\alpha < \omega_1)$ を帰納的に構成する：
- \begin{enumerate}[(a)]
+ \begin{enumerate}[label=(\alph*)]
   \item $[A_\alpha] \vee [B_\alpha] < 1$
-	\label{cond:join-coinfinite}
   \item $[A_\alpha] \wedge [B_\alpha] = 0$
-	\label{cond:almost-disj}
   \item $[A_\alpha] < [A_\beta], [B_\alpha] < [B_\beta]\;(\alpha < \beta < \omega_1)$
-	\label{cond:increasing}
   \item 各 $k < \omega, \beta < \omega_1$ に対し，
 	$\Set{\alpha < \beta | A_\beta \cap B_\alpha \subseteq k}$ は有限
-	\label{cond:finiteness}
  \end{enumerate}
 
  $\alpha = 0$ の時は，$A_0 = B_0 = \emptyset$ とおけばよい．
@@ -189,7 +179,7 @@ date: 2013/09/01 23:38:34 JST
 
  そこで，$B_\omega = X \setminus A_\omega$ とおいて，これが条件 $(a) \sim (d)$ を満たすことを示す．
 
- \begin{enumerate}[(a)]
+ \begin{enumerate}[label=(\alph*)]
   \item $[A_\omega] \vee [B_\omega] = [X] < 1$ なので成立．
   \item $[A_\omega] \wedge [B_\omega] = [\emptyset] = 0$ より成立．
   \item $n < \omega$ とすれば，帰納法の仮定により $[A_n] < [A_{n+1}] \leq [S_0] \leq [A_\omega]$ より $[A_n] < [A_\omega]$．また，$B_n \setminus B_\omega = B_n \cap A_n \in \Fin$ なので $[B_n] \leq [B_\omega]$．よって，先程と同様の議論により $[B_n] < [B_{n+1}] \leq B_\omega$ となる．よって OK．

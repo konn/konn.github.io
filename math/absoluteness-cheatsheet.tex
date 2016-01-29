@@ -4,7 +4,7 @@ author: 石井 大海
 tag: 数学,数理論理学,集合論,モデル理論
 latexmk: -xelatex
 description: 公理的集合論においてあるモデルの性質を調べる際，様々な概念の絶対性を利用します．このプリントは，どのような条件下でどんな概念が絶対性を満たすのかをメモした個人的な覚書です．あくまで手軽に使うための覚え書きなので，そこまで踏み込んだ証明などは載せず，寧ろ一覧表のような体裁になる予定です．
-date: 2014/02/01 14:04:40 JST
+date: 2016/01/29 17:09:40 JST
 ---
 \documentclass[xelatex,a4j,jadriver=standard]{bxjsarticle}
 \usepackage{zxjatype}
@@ -12,16 +12,16 @@ date: 2014/02/01 14:04:40 JST
 \usepackage{xltxtra}
 \usepackage{amsmath,amssymb}
 \usepackage{epstopdf}
-\usepackage{enumitem,mystyle}
+\usepackage{mystyle}
 \usepackage[backend=biber, style=numeric]{biblatex}
 \addbibresource{myreference.bib}
 \usepackage{bm}
 \usepackage{cases}
 \renewcommand{\emph}[1]{\textsf{\textgt{#1}}}
-\newcommand{\BST}{\mathrm{BST}}
-\newcommand{\absolute}{\preccurlyeq}
-\newcommand{\HF}{\mathrm{HF}}
-\newcommand{\bij}{\xrightarrow[onto]{1:1}}
+\newcommand*{\BST}{\mathrm{BST}}
+\newcommand*{\absolute}{\preccurlyeq}
+\newcommand*{\HF}{\mathrm{HF}}
+\newcommand*{\bij}{\xrightarrow[onto]{1:1}}
 
 \title{絶対性チートシート}
 \author{石井大海}
@@ -43,7 +43,7 @@ date: 2014/02/01 14:04:40 JST
 
 \begin{definition}
 \begin{itemize}
- \item 集合$A$に対し，$\epsilon_\mathfrak{A} = \Set{ (a, b) \in A \times A | a \in b}$ により定まる$\mathcal{L}$-構造を$\epsilon$-モデルと呼ぶ．
+ \item 集合$A$に対し，$\epsilon_{{\mathfrak{A}}} = \Set{ (a, b) \in A \times A | a \in b}$ により定まる$\mathcal{L}$-構造を$\epsilon$-モデルと呼ぶ．
  \item $\epsilon$-モデル$A$が推移的モデル$\defs A$は推移的集合である（$x \in y \in A \rightarrow x \in A$）
 \end{itemize}
 \end{definition}
@@ -126,7 +126,7 @@ date: 2014/02/01 14:04:40 JST
    \item $x$は関数で，$y \in \dom(x)$であり，$x(y) = z$
    \item 「$x$は有限である」を次で定義した場合：
 
-	 $\mathrm{Fin}(x) \equiv \exists n, t, f [ n \text{は自然数} \wedge f: n \xrightarrow[onto]{1:1} t]$
+	 $\mathrm{Fin}(x) \equiv \exists n, t, f [ n < \omega \wedge f: n \xrightarrow[onto]{1:1} t]$
    \item 「$x$は遺伝的有限である」を次で定義した場合：
 	 ある$n,t,f$があって$x \subseteq t$かつ$t$は推移的集合，$n$は自然数で$f : n \bij t$
   \end{enumerate}
@@ -207,6 +207,39 @@ $\Delta_0$-論理式に較べるとそこまで出番はないが，$\Delta_1$-�
 
 \begin{theorem}
  $\varphi$が$T$について$\Delta_1$-論理式であるとする．この時$\varphi$は$T$に関して絶対的である．
+\end{theorem}
+
+\section{記述集合論における絶対性}
+\begin{definition}
+ 論理式の階層$\boldface{\Pi}^1_n, \boldface{\Sigma}^1_n, \boldface{\Delta}^1_n$を次で定義する：
+ \begin{enumerate}
+  \item 算術的論理式$\varphi(x_1, \dots, x_n, y)$と$z \in \Baire$に対し，$\exists a_1 \in \Baire\: \dots \exists a_n\: \varphi(a_1, \dots, a_n, z)$の形の論理式を$\Sigma^1_1(z)$-論理式と呼ぶ．
+  \item 算術的論理式$\varphi(x_1, \dots, x_n, y)$と$z \in \Baire$に対し，$\forall a_1 \in \Baire\: \dots \forall a_n\: \varphi(a_1, \dots, a_n, z)$の形の論理式を$\Pi^1_1(z)$-論理式と呼ぶ．
+  \item $\Pi^1_n(z)$-論理式$\varphi(x_1, \dots, x_n)$に対し，$\exists a_1 \in \Baire\:\dots \exists a_n \in \Baire\: \varphi(a_1, \dots, a_n)$の形の論理式を$\Sigma^1_{n+1}(z)$-論理式と呼ぶ．
+  \item $\Sigma^1_n(z)$-論理式$\varphi(x_1, \dots, x_n)$に対し，$\forall a_1 \in \Baire\:\dots \forall a_n \in \Baire\: \varphi(a_1, \dots, a_n)$の形の論理式を$\Pi^1_{n+1}(z)$-論理式と呼ぶ．
+  \item 論理式$\varphi$に対し，$\Sigma^1_n(z)$-論理式$\varphi_\Sigma$と$\Pi^1_n(z)$-論理式$\varphi_\Delta$があり，
+        $V_{\omega_1} \models \quoted{\varphi \iff \varphi_\Sigma \iff \varphi_\Delta}$を満たす時，
+        $\varphi$は$\Delta^1_n(z)$-論理式と呼ばれる．
+  \item $\Sigma^1_n \defeq \Sigma^1_n(\emptyset), \Pi^1_n \defeq \Pi^1_n(\emptyset), \Delta^1_n \defeq \Delta^1_n(\emptyset), $
+  \item $\displaystyle
+          \boldface{\Sigma}^1_n \defeq \bigcup_{a \in \Baire} \Sigma^1_n(a), \qquad
+          \boldface{\Pi}^1_n \defeq \bigcup_{a \in \Baire} \Pi^1_n(a), \qquad
+          \boldface{\Delta}^1_n \defeq \boldface{\Pi}^1_n \cap \boldface{\Sigma}^1_n.$
+ \end{enumerate}
+\end{definition}
+\begin{theorem}[Mostwski Absoluteness]
+ $\boldface{\Pi}^1_1$-概念は任意の推移的モデルについて絶対．
+ 従って$\boldface{\Delta}^1_1$と$\boldface{\Sigma}^1_1$もそう．
+\end{theorem}
+
+\begin{proof}
+ $M$をc.t.m.とし，$A \in M$を$\Pi^1_1$-概念とする．
+ 特に，算術的論理式$\varphi(x)$について，$x \in A \iff \forall z \in \Baire \: \varphi(z, x)$と書けているとしよう．\qed
+\end{proof}
+
+\begin{theorem}[Shoenfield Absoluteness]
+ $\omega_1 \in M$を満たす$\ZF$の十分大きな有限断片を満たす部分推移的モデルについて，$\boldface{\Pi}^1_2$-概念（よって$\boldface{\Delta}^1_2$および$\boldface{\Sigma}^1_2$概念も）は絶対．
+ 特に，内部モデルに対し$\boldface{\Pi}^1_2$, $\boldface{\Sigma}^1_2$, $\boldface{\Delta}^1_2$-概念は絶対．
 \end{theorem}
 
 \nocite{Kunen:2011,Jech:2002,Arai:2011,Kunen:2009}

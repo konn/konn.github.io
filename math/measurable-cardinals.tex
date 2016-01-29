@@ -7,10 +7,10 @@ description: 選択公理の下で Lebesgue 可測でないような R の部分
 ---
 
 \documentclass[a4j,uplatex]{jsarticle}
+\usepackage[hiragino-elcapitan]{pxchfon}
 \usepackage{amsmath,amssymb}
 \usepackage{mystyle}
 \usepackage{epstopdf}
-\usepackage{enumerate}
 \usepackage{graphicx}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 \bibliographystyle{jplain}
@@ -38,7 +38,7 @@ Lebesgue は当初，$\R$ の部分集合は全て Lebesgue 可測であろう�
 
 \begin{problem}[Measure Problem]
  次を満たすような $\Pow(S)$ 上の確率測度 $\mu$ が定義出来るような無限集合 $S$ は存在するか？
- \begin{enumerate}[(i)]
+ \begin{enumerate}[label=(\roman*)]
   \item $\mu(\emptyset) = 0, \mu(S) = 1$
   \item $X \subseteq Y \Rightarrow \mu(X) \leq \mu(Y)$
   \item {\bfseries 非自明性}．$(\forall x \in S)\, \mu(\{x\}) = 0$
@@ -65,7 +65,7 @@ Measure Problem の強さを表す結果が次である：
 
 \begin{theorem}[Ulam]\label{Thm:Ulam}
  もし集合 $S$ 上の非自明な測度が存在するなら，次のいずれかが成立する：
- \begin{enumerate}[(1)]
+ \begin{enumerate}[label=(\arabic*)]
   \item $S$ 上の二値測度が存在し，$|S|$ は最小の到達不能基数以上となる．
 	\label{cond:two-value-exists}
   \item $2^{\aleph_0}$ 上のアトムを持たない測度が存在し，$2^{\aleph_0}$ は最小の弱到達不能基数以上となる．
@@ -146,7 +146,7 @@ $\mu$ が二値測度の時， $U = \Set{ X \subseteq S | \mu(X) = 1}$ はウル
 \]
 $I_\mu$ は非単項な $\sigma$-完備イデアルとなり，更に次の性質を持つ：
 
-\begin{enumerate}[(i)]
+\begin{enumerate}[label=(\roman*)]
  \item 各 $x \in S$ に対し $\{x\} \in I_\mu$
        \label{Def:saturate:non-principal}
  \item $I_\mu$ に属さない互いに交わらない集合 $X \subseteq S$ から成る族は高々可算である．
@@ -158,7 +158,7 @@ $I_\mu$ は非単項な $\sigma$-完備イデアルとなり，更に次の性�
 このイデアル $I_\mu$ についても，二値測度の際の $U$ のような性質が成立する．
 
 \begin{lemma}
- \begin{enumerate}[(i)]
+ \begin{enumerate}[label=(\roman*)]
   \item $\kappa$ を非自明な測度を持つ最小の基数とする．この時，零集合の成すイデアル $I_\mu$ は $\kappa$-完備となる．
   \item $\kappa$ を $\sigma$-完備 $\sigma$-飽和イデアルを持つ最小の基数とする．そのイデアルを $I$ とすると，$I$ は $\kappa$-完備である．
  \end{enumerate}
@@ -218,14 +218,14 @@ $I_\mu$ は非単項な $\sigma$-完備イデアルとなり，更に次の性�
 
 \begin{definition}[Ulam 行列]
  無限基数 $\kappa$ について，次を満たす $\Braket{A_{\alpha, \beta} \subseteq \kappa^+ | \alpha < \kappa^+, \beta < \kappa }$ を {\bfseries $\kappa$-Ulam 行列} と呼ぶ：
- \begin{enumerate}[(i)]
+ \begin{enumerate}[label=(\roman*)]
  \item 任意の $\gamma < \kappa$ について，$\alpha \neq \beta \Rightarrow A_{\alpha,\gamma} \cap A_{\beta, \gamma} = \emptyset$
  \item 任意の $\alpha < \kappa^+$ に対し，$\left|\kappa^+ \setminus \bigcup\Set{A_{\alpha, \beta} | \beta < \kappa}\right| < \kappa^+$
  \end{enumerate}
 \end{definition}
 
 即ち，Ulam 行列とは，$\kappa^+$ の部分集合を成分にもつ $\kappa^+$-行 $\kappa$-列の行列であり，
-\begin{enumerate}[(i)]
+\begin{enumerate}[label=(\roman*)]
  \item 各列の成分が互いに交わらず，
  \item 行ごとに和を取れば，高々 $\kappa$ 個を除いて $\kappa^+$ の元を全て含んでいる
 \end{enumerate}
