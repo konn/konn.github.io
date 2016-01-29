@@ -1,6 +1,7 @@
-{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, FlexibleContexts   #-}
-{-# LANGUAGE LambdaCase, MultiParamTypeClasses, NoMonomorphismRestriction #-}
-{-# LANGUAGE OverloadedStrings, PatternGuards, StandaloneDeriving         #-}
+{-# LANGUAGE DataKinds, DeriveDataTypeable, ExtendedDefaultRules         #-}
+{-# LANGUAGE FlexibleContexts, GADTs, LambdaCase, MultiParamTypeClasses  #-}
+{-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, PatternGuards #-}
+{-# LANGUAGE StandaloneDeriving, TypeOperators                           #-}
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 module MathConv where
 import           Control.Applicative
@@ -23,7 +24,7 @@ import           Text.LaTeX.Base                 hiding ((&))
 import           Text.LaTeX.Base.Class
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
-import           Text.Pandoc                     hiding (MathType)
+import           Text.Pandoc                     hiding (MathType, Writer)
 import           Text.Pandoc.Shared
 import qualified Text.Parsec                     as P
 import           Text.TeXMath.Readers.TeX.Macros

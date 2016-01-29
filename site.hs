@@ -1,6 +1,7 @@
-{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, LambdaCase        #-}
+{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, GADTs, LambdaCase #-}
 {-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, PatternGuards #-}
-{-# LANGUAGE QuasiQuotes, TemplateHaskell, TupleSections, ViewPatterns   #-}
+{-# LANGUAGE QuasiQuotes, TemplateHaskell, TupleSections, TypeFamilies   #-}
+{-# LANGUAGE ViewPatterns                                                #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind -fno-warn-type-defaults         #-}
 module Main where
 import           Blaze.ByteString.Builder        (toByteString)
