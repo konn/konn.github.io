@@ -1,0 +1,57 @@
+%#!xelatex -src-specials config.tex
+
+\documentclass[leqno,a4paper,fontsize=11pt]{scrbook}
+\usepackage[kozuka-pro,expert,no-math]{luatexja-preset}
+\usepackage[lines=45,includeheadfoot,marginparwidth=2truecm,%
+            outer=2truecm,bottom=2truecm,top=2.5truecm]{geometry}
+\reversemarginpar
+\newif\ifpublic
+\publictrue
+\input{config}
+
+\usepackage{amsmath}	% required for `\cases' (yatex added)
+\usepackage{amssymb}	% required for `\mathbb' (yatex added)
+\usepackage{makeidx}
+\makeindex
+\usepackage[nottoc]{tocbibind}
+\usepackage{bm}	% required for `\bm' (yatex added)
+\usepackage{multicol}	% required for `\multicols' (yatex added)
+\begin{document}
+
+\frontmatter
+
+\ifpublic
+\maketitle
+\else
+\include{00-covers}
+\fi
+\include{intro}
+\tableofcontents
+
+\mainmatter
+\include{ch01-prel}
+\include{ch02-solovay}
+\include{ch03-shelah}
+
+\appendix
+\include{ch04-alternative-analysis}
+
+\nocite{Schindler:2014,Tajiri:2014,Fujita:2007,Jech:2002,Moschovakis:2009}
+\nocite{Kechris:1995,Kunen:2011,Fuchino:2006,Khomskii:2012,Solovay:1970}
+\nocite{Shelah:1984,Shelah:1998,Fujita:2004,Devlin:1984,Halbeisen:2011}
+\nocite{Jech:2008jt,Howard:1998pb,Rubin:1985ye,Rubin:1963lr,alg-d}
+\nocite{Rubin:2002qv,Rubin:2002qr,Raisonnier:1984fk,Garnir:1968cs}
+\nocite{Wright:1973,Masuda:1994,Bartoszynski:1988,Talagrand:1980kk}
+\nocite{Pincus:1974fk,Bartoszynski:1995hl}
+\nocite{Wright:1977qd,Garnir:1974fk,Fischer:2014qy,Judah:1992fk,Semmes:1997ly}
+\backmatter
+\emergencystretch=1em
+\printbibliography[heading=bibintoc]
+\printindex
+\end{document}
+
+% Local Variables:
+% mode: yatex
+% TeX-master: "config.tex"
+% End:
+
