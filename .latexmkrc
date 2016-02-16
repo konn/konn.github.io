@@ -1,3 +1,11 @@
-#!/usr/bin/env perl
-$pdflatex = "luajittex --fmt=luajitlatex.fmt %O -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 %S";
-$pdf_mode = 1;
+$latex            = 'uplatex -file-line-error -interaction=nonstopmode -shell-escape -halt-on-error';
+$latex_silent     = 'uplatex -file-line-error -interaction=nonstopmode -shell-escape -halt-on-error';
+$bibtex           = 'pbibtex';
+$dvipdf           = 'dvipdfmx -p a4 -f otf-up-ipaex.map %O -o %D %S';
+$pdflatex         = 'xelatex -file-line-error -interaction=nonstopmode -shell-escape -halt-on-error';
+$xelatex          = 'xelatex -file-line-error -interaction=nonstopmode -shell-escape -halt-on-error';
+$pdf_mode         = 3;
+$max_repeat       = 5;
+$biber            = 'biber --bblencoding=utf8 -u -U --output_safechars';
+$dvipdf           = 'dvipdfmx %O -o %D %S';
+$makeindex        = 'mendex %O -o %D %S';
