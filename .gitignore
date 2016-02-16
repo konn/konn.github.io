@@ -1,297 +1,76 @@
-# git ls-files --others --exclude-from=.git/info/exclude
-# Lines that start with '#' are comments.
-# For a project mostly in C, the following would be a good set of
-# exclude patterns (uncomment them if you want to use them):
-# *.[oa]
-# *~
-.DS_Store
-*.hi
-_site
-*.o
-*~
-_cache
-.#*
-#*#
-site
-math/mathjax
-.shelly
-dist
-TAGS
-*_latexmk
-*.log
-draft
+# Created by https://www.gitignore.io
+
+### LaTeX ###
+*.acn
+*.acr
+*.alg
 *.aux
-.cabal-sandbox
-cabal.sandbox.config
-### https://raw.github.com/github/gitignore/be3333655bffe9507d66cc864aee95ed6052b4ed/Global/emacs.gitignore
-
-# -*- mode: gitignore; -*-
-*~
-\#*\#
-/.emacs.desktop
-/.emacs.desktop.lock
-*.elc
-auto-save-list
-tramp
-.\#*
-
-# Org-mode
-.org-id-locations
-*_archive
-
-# flymake-mode
-*_flymake.*
-
-# eshell files
-/eshell/history
-/eshell/lastdir
-
-# elpa packages
-/elpa/
-
-# reftex files
-*.rel
-
-# AUCTeX auto folder
-/auto/
-
-# cask packages
-.cask/
-
-
-### https://raw.github.com/github/gitignore/be3333655bffe9507d66cc864aee95ed6052b4ed/haskell.gitignore
-
-dist
-cabal-dev
-*.o
-*.hi
-*.chi
-*.chs.h
-*.dyn_o
-*.dyn_hi
-.hpc
-.hsenv
-.cabal-sandbox/
-cabal.sandbox.config
-*.prof
-*.aux
-*.hp
-.stack-work/
-
-
-### https://raw.github.com/github/gitignore/be3333655bffe9507d66cc864aee95ed6052b4ed/Global/emacs.gitignore
-
-# -*- mode: gitignore; -*-
-*~
-\#*\#
-/.emacs.desktop
-/.emacs.desktop.lock
-*.elc
-auto-save-list
-tramp
-.\#*
-
-# Org-mode
-.org-id-locations
-*_archive
-
-# flymake-mode
-*_flymake.*
-
-# eshell files
-/eshell/history
-/eshell/lastdir
-
-# elpa packages
-/elpa/
-
-# reftex files
-*.rel
-
-# AUCTeX auto folder
-/auto/
-
-# cask packages
-.cask/
-
-
-### https://raw.github.com/github/gitignore/be3333655bffe9507d66cc864aee95ed6052b4ed/haskell.gitignore
-
-dist
-cabal-dev
-*.o
-*.hi
-*.chi
-*.chs.h
-*.dyn_o
-*.dyn_hi
-.hpc
-.hsenv
-.cabal-sandbox/
-cabal.sandbox.config
-*.prof
-*.aux
-*.hp
-.stack-work/
-
-
-### https://raw.github.com/github/gitignore/be3333655bffe9507d66cc864aee95ed6052b4ed/tex.gitignore
-
-## Core latex/pdflatex auxiliary files:
-*.aux
-*.lof
-*.log
-*.lot
-*.fls
-*.out
-*.toc
-*.fmt
-
-## Intermediate documents:
-*.dvi
-*-converted-to.*
-# these rules might exclude image files for figures etc.
-# *.ps
-# *.eps
-# *.pdf
-
-## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
 *.bcf
 *.blg
-*-blx.aux
-*-blx.bib
-*.brf
-*.run.xml
-
-## Build tool auxiliary files:
+*.dvi
 *.fdb_latexmk
-*.synctex
-*.synctex.gz
-*.synctex.gz(busy)
-*.pdfsync
-
-## Auxiliary and intermediate files from other packages:
-# algorithms
-*.alg
-*.loa
-
-# achemso
-acs-*.bib
-
-# amsthm
-*.thm
-
-# beamer
-*.nav
-*.snm
-*.vrb
-
-# cprotect
-*.cpt
-
-#(e)ledmac/(e)ledpar
-*.end
-*.[1-9]
-*.[1-9][0-9]
-*.[1-9][0-9][0-9]
-*.[1-9]R
-*.[1-9][0-9]R
-*.[1-9][0-9][0-9]R
-*.eledsec[1-9]
-*.eledsec[1-9]R
-*.eledsec[1-9][0-9]
-*.eledsec[1-9][0-9]R
-*.eledsec[1-9][0-9][0-9]
-*.eledsec[1-9][0-9][0-9]R
-
-# glossaries
-*.acn
-*.acr
 *.glg
 *.glo
 *.gls
-
-# gnuplottex
-*-gnuplottex-*
-
-# hyperref
-*.brf
-
-# knitr
-*-concordance.tex
-*.tikz
-*-tikzDictionary
-
-# listings
-*.lol
-
-# makeidx
 *.idx
 *.ilg
 *.ind
 *.ist
-
-# minitoc
+*.lof
+*.log
+*.lot
 *.maf
 *.mtc
-*.mtc[0-9]
-*.mtc[1-9][0-9]
-
-# minted
-_minted*
-*.pyg
-
-# morewrites
-*.mw
-
-# mylatexformat
-*.fmt
-
-# nomencl
+*.mtc0
+*.nav
 *.nlo
-
-# sagetex
-*.sagetex.sage
-*.sagetex.py
-*.sagetex.scmd
-
-# sympy
-*.sout
-*.sympy
-sympy-plots-for-*.tex/
-
-# pdfcomment
-*.upa
-*.upb
-
-#pythontex
-*.pytxcode
-pythontex-files-*/
-
-# Texpad
-.texpadtmp
-
-# TikZ & PGF
-*.dpth
-*.md5
-*.auxlock
-
-# todonotes
+*.out
+*.thm
+*.fls
+*.pdfsync
+*.ps
+*.run.xml
+*.snm
+*.synctex.gz
+*.synctex.gz(busy)
+*.toc
+*.vrb
+*.xdy
 *.tdo
 
-# xindy
-*.xdy
 
-# xypic precompiled matrices
-*.xyc
+### Emacs ###
+# -*- mode: gitignore; -*-
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
 
-# WinEdt
-*.bak
-*.sav
+# Org-mode
+.org-id-locations
+*_archive
 
-# endfloat
-*.ttt
-*.fff
+# flymake-mode
+*_flymake.*
 
+# eshell files
+/eshell/history
+/eshell/lastdir
 
+# elpa packages
+/elpa/
+
+# reftex files
+*.rel
+
+# AUCTeX auto folder
+/auto/
+
+# cask packages
+.cask/
+master-japanese.pdf
