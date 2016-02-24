@@ -78,5 +78,4 @@ We also give really brief survey on this topic.
 ```
 
 ## History
-* 2016/02/16 Grammatical Change in Title
-* 2016/02/01 Silently Published
+* 2016/02/24 Published
