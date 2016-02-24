@@ -1,0 +1,325 @@
+---
+title: 絶対性チートシート
+author: 石井 大海
+tag: 数学,数理論理学,集合論,モデル理論
+latexmk: -xelatex
+description: 公理的集合論においてあるモデルの性質を調べる際，様々な概念の絶対性を利用します．このプリントは，どのような条件下でどんな概念が絶対性を満たすのかをメモした個人的な覚書です．あくまで手軽に使うための覚え書きなので，そこまで踏み込んだ証明などは載せず，寧ろ一覧表のような体裁になる予定です．
+date: 2016/01/29 21:35:00 JST
+---
+\documentclass[xelatex,a4j,jadriver=standard]{bxjsarticle}
+\usepackage{zxjatype}
+\usepackage[hiragino]{zxjafont}
+\usepackage{xltxtra}
+\usepackage{amsmath,amssymb}
+\usepackage{epstopdf}
+\usepackage{mystyle}
+\usepackage[backend=biber, style=numeric]{biblatex}
+\addbibresource{myreference.bib}
+\usepackage{bm}
+\usepackage{cases}
+\renewcommand{\emph}[1]{\textsf{\textgt{#1}}}
+\newcommand*{\BST}{\mathrm{BST}}
+\newcommand*{\absolute}{\preccurlyeq}
+\newcommand*{\HF}{\mathrm{HF}}
+\newcommand*{\bij}{\xrightarrow[onto]{1:1}}
+
+\title{絶対性チートシート}
+\author{石井大海}
+\date{2014/01/30 初版作成\\2016/01/29 Shoenfield絶対性について追記}
+
+\usepackage{multicol}	% required for `\multicols' (yatex added)
+\begin{document}
+\maketitle
+
+\section{はじめに}
+公理的集合論であるモデルの性質を調べる際，様々な概念の{\bfseries 絶対性}を多用します．このプリントは，どのような条件下でどんな概念が絶対性を満たすのかをメモした個人的な覚書です．あくまで手軽に使うための覚え書きなので，そこまで踏み込んだ証明などは載せず，寧ろ一覧表のような体裁になる予定です．
+
+\section{基本的な定義と$\Delta_0$-論理式}
+以下，特に断りのない限り言語は$\mathcal{L} = \set{\epsilon}$とする．
+
+\begin{definition}
+ 外延性公理，基礎の公理，内包公理，対の公理および和集合公理に加え，冪集合公理か置換公理のどちらか一方から成る公理系を集合論の基本公理系と呼び，記号$\BST$で表す．また，集合論の何らかの公理系$\Gamma$に対し，$\Gamma$から基礎の公理を取り除いたものを$\Gamma^-$で表す．
+\end{definition}
+
+\begin{definition}
+\begin{itemize}
+ \item 集合$A$に対し，$\epsilon_{{\mathfrak{A}}} = \Set{ (a, b) \in A \times A | a \in b}$ により定まる$\mathcal{L}$-構造を$\epsilon$-モデルと呼ぶ．
+ \item $\epsilon$-モデル$A$が推移的モデル$\defs A$は推移的集合である（$x \in y \in A \rightarrow x \in A$）
+\end{itemize}
+\end{definition}
+
+以下，特に推移的な$\epsilon$-モデルの絶対性について議論することとする．
+
+\begin{definition}[絶対性]
+ \begin{itemize}
+  \item 論理式$\varphi \in \mathcal{L}$，$\mathfrak{A}, \mathfrak{B}$を$\mathfrak{A} \subseteq \mathfrak{B}$なる$\mathcal{L}$-構造とする．この時，
+	
+	$\mathfrak{A} \preccurlyeq_\varphi \mathfrak{B} \defs A$上の任意の付値$\sigma$に対して$\mathfrak{A} \models \varphi[\sigma] \Leftrightarrow \mathfrak{B} \models \varphi[\sigma]$
+  \item 論理式$\varphi$が$A$および$B$について{\bfseries 絶対的} $\defs A \preccurlyeq_\varphi B$
+  \item 論理式$\varphi$が$A$について{\bfseries 絶対的} $\defs A \preccurlyeq_\varphi V$
+ \end{itemize}
+\end{definition}
+
+ある概念が絶対的であるとは，その概念が部分モデルと拡大モデルで一致するということを意味する．推移的モデルでの絶対性を考える上で基本的な道具として，$\Delta_0$-論理式の概念は重要である：
+
+\begin{definition}
+ 次により帰納的に構成される論理式を$\Delta_0$-{\bfseries 論理式}と呼ぶ：
+
+ \begin{enumerate}[label=(\alph*)]
+  \item 任意の原子論理式は$\Delta_0$論理式である
+  \item $\varphi$が$\Delta_0$で$x, y$を相異なる変数とすると$\forall x \in y\, \varphi$および$\exists x \in y\, \varphi$も$\Delta_0$論理式
+  \item $\Delta_0$論理式のブール結合も$\Delta_0$論理式である
+ \end{enumerate}
+
+ 即ち，$\Delta_0$論理式とは，それに現れる量化子が全て有界量化子であるような論理式の事である．
+\end{definition}
+
+\begin{theorem}
+ $A \subseteq B, A:$推移的，$\varphi: \Delta_0$論理式とすると，$A \preccurlyeq_\varphi B$
+\end{theorem}
+\begin{proof}
+ 構成による帰納法で明らか．\qed
+\end{proof}
+
+\begin{theorem}[無条件で$\Delta_0$論理式で書けるものリスト]
+ 以下の概念は全て$\Delta_0$論理式と論理的に同値であり，従って任意の推移的モデルについて絶対的である：
+ \begin{enumerate}
+  \item $x$は空集合 $\forall z \in x (z \neq z)$
+  \item $x \subseteq y $（$\Leftrightarrow \forall z \in x (z \in y)$）
+  \item $x$ は推移的（$\forall y \in x \forall z \in y (z \in x)$）
+  \item $x$は一点集合である（$\exists y \in x \forall z \in x (y = x)$）
+  \item $z = \set{x, y}$（$up(z,x,y) \equiv x \in z \wedge y \in z \wedge \forall w \in z (w = x \vee w = y)$）
+  \item $z = \braket{x, y}$（$op(z,x,y) \equiv \exists v \in z \exists w \in z [up(v,w,z) \wedge up(x,x,v) \wedge up(x,y,w)]$）
+  \item $z = x \cap y$（$z \subseteq x \wedge z \subseteq y \wedge \forall u \in z(u \in x \wedge u \in y)$）
+  \item $z = x \cup y$
+  \item $y = S(x) = x \cup \set{x}$
+  \item $z = x \times y$（$\forall u \in x \forall v \in y \exists w \in z [w = \braket{u,v}] \wedge \forall w \in z \exists u \in x \exists v \in y [w = \braket{u,v}]$）
+  \item 任意の遺伝的有限集合 $x$
+ \end{enumerate}
+\end{theorem}
+
+\subsection{$\BST$ における絶対性}
+以上は任意の推移的モデルで云える．次に挙げる概念は幾らか公理を必要とし，特に$\BST$の推移的モデルについて絶対的である．その証明には以下の補題が役に立つ：
+
+\begin{lemma}
+ $k < \omega, \varphi \in \Delta_0$のとき，和集合公理の下で$\forall x \in \bigcup^k y\,\varphi$および$\exists x \in \bigcup^k y\,\varphi$も$\Delta_0$
+\end{lemma}
+
+\begin{theorem}[$\BST$の推移的モデルについて絶対的な物一覧]
+ $\BST$の下で以下の概念は絶対的である：
+
+  \begin{enumerate}
+   \item $x$は非順序対
+   \item $x$は順序対
+   \item $x$は関係
+   \item $x$は関数
+   \item $x$は順序数である
+   \item $x$は後続順序数である
+   \item $x$は極限順序数である
+   \item $x$は自然数である
+   \item $x = \omega$
+   \item $x \subseteq \omega$
+   \item $z = \bigcup y$
+   \item $y = \dom(x)$
+   \item $y = \rng(x)$
+   \item $x$は関数で$\dom(x)$から$\rng(x)$への全単射
+   \item $x$は関数で，$y \in \dom(x)$であり，$x(y) = z$
+   \item 「$x$は有限である」を次で定義した場合：
+
+	 $\mathrm{Fin}(x) \equiv \exists n, t, f [ n < \omega \wedge f: n \xrightarrow[onto]{1:1} t]$
+   \item 「$x$は遺伝的有限である」を次で定義した場合：
+	 ある$n,t,f$があって$x \subseteq t$かつ$t$は推移的集合，$n$は自然数で$f : n \bij t$
+  \end{enumerate}
+\end{theorem}
+
+\begin{remark}
+ 「$z$は順序対$\braket{x,y}$である」と「$z$は順序対である」は違う概念である．前で見た通り，$z = \braket{x,y}$は集合論の公理を使わずに$\Delta_0$-論理式で書くことが出来るが，「$z$は順序対である」を表す論理式 $\exists x, y \, [z = \braket{x, y}]$はそのままで$\Delta_0$-論理式で書けるという訳には行かない．後者は$\BST$の下で$\exists x, y \in \bigcup^2 z [z = \braket{x, y}]$という論理式で表されるが，これが$\Delta_0$論理式である為には和集合公理が必要である．
+\end{remark}
+
+一般に$z = f(x,y)$が絶対的であることと，関数$f$が絶対的でることは異なる．関数の絶対性は，個々の$x, y, z$について偶然$z = f(x,y)$が絶対的であるだけではなく，関数$f$が定義出来る事も含む．よってある関数が絶対的である為には，それを定義するのに十分な公理が必要になる．
+
+\begin{definition}
+ $n$項関係$R$が{\bfseries 算術的} $\defs R(x_1, \dots, x_n)$ が成り立つのは $x_1, \dots, x_n \in \HF$に対してのみであり，$R$の定義に現れる量化子が全て$\HF$に相対化されている
+\end{definition}
+
+\begin{theorem}[$\BST$で絶対的な関数・関係]
+ 次の関数・関係は$\BST$の推移的モデルについて絶対的である：
+
+ \begin{enumerate}
+  \item 二引数関数 $\cup$ および $\cap$
+  \item 一引数関数 $\bigcap x$および$\bigcup x$．但し$\bigcap \emptyset = \emptyset$とする．
+  \item 対関数 $x, y \mapsto \set{x,y}$および順序対関数$x, y \mapsto \braket{x, y}$
+  \item 二引数関数 $f, x \mapsto f(x)$．ここで$x$が定義域にない場合は$f(x) = 0$とする．
+  \item $x, y \mapsto x \times y$
+  \item 任意の算術的関係．
+  \item $\varphi$は$\mathcal{L}$-論理式
+  \item $\mathfrak{A} \models \varphi[\sigma]$
+ \end{enumerate}
+\end{theorem}
+
+\subsection{$\ZF-P$ における絶対性}
+
+帰納的に定義された関数については，次の定理により$\ZF-P$で絶対性を確立出来る．
+
+\begin{theorem}[帰納的に定義され関数の絶対性]
+ $R, G:$定義済みの二項関係，$A:$クラスとし，特に$R$は$A$上でleft-narrowな整礎関係であるとする．関数$F$が次によって帰納的に定義されているとする：
+ \[
+  \forall a \in A [F(a) = G(a, F \restr (a\mathord{\downarrow}))]
+ \]
+ また，簡単の為，$F$は$A$の外では$0$を返すものとする（但し$a \mathord{\downarrow} = \Set{b \in A | b \mathrel{R} a}$）．
+
+ $M$を$\ZF-P$の推移的モデルとし，もし$R, A, G$が共に$M$で絶対的で$(R \text{は left-narrow})^M$かつ任意の$a \in M$に対して$a \mathord{\downarrow} \subseteq A$が成立するとする．この時，$F^M(a)$は任意の$a \in M$で定義され，$F$は$M$について絶対的となる．
+\end{theorem}
+
+以上を踏まえて，次が $\ZF-P$で絶対的となる：
+
+\begin{theorem}[$ZF-P$で絶対的]
+ 以下は$ZF-P$の推移的モデルについて絶対的である：
+ \begin{enumerate}
+  \item 推移閉包を取る一変数関数$x \mapsto \mathrm{trcl}(x)$
+  \item 順序数演算$\alpha + \beta$および$\alpha \cdot \beta$
+  \item 「$R$は$A$を整列する」および「$R$は$A$上整礎」
+  \item 集合 $\HF$
+  \item 集合 $\omega$
+  \item 一変数関数$x \mapsto [x]^{<\omega}$および$x \mapsto {}^{<\omega} x$
+  \item 関数 $x \mapsto \rank(x)$
+  \item 順序数演算 $\alpha^\beta$
+  \item 定義可能集合を取る関数$\mathcal{D}(A, P)$および$\mathcal{D}^+(A), \mathcal{D}^-(A)$
+  \item G\"{o}delの構成可能階層を取る関数$\delta \mapsto L(\delta)$
+ \end{enumerate}
+\end{theorem}
+
+\section{$\Delta_1$-論理式と絶対性}
+$\Delta_0$-論理式に較べるとそこまで出番はないが，$\Delta_1$-論理式の概念も絶対性を判定する上で重要である：
+
+\begin{definition}
+ 以下，$\psi$を$\Delta_0$-論理式とする．
+ 
+ \begin{itemize}
+  \item 論理式$\varphi$が$\Pi_1$-{\bfseries 論理式}$\defs$ある変数$x_1, \dots, x_n\,(0 \leq n < \omega)$があって$\varphi = \forall x_1 \dots \forall x_n \psi$
+  \item 論理式$\varphi$が$\Sigma_1$-{\bfseries 論理式}$\defs$ある変数$x_1, \dots, x_n\,(0 \leq n < \omega)$があって$\varphi = \exists x_0 \dots \exists x_n \psi$
+  \item 論理式$\varphi$が理論$T$について$\Delta_1$-{\bfseries 論理式}$\defs \Pi_1$-論理式$\psi_\Pi$と$\Sigma_1$-論理式$\psi_\Sigma$ があって，
+	\[
+	 T \vdash \phi \leftrightarrow \psi_\Pi \leftrightarrow \psi_\Sigma
+	\]
+ \end{itemize}
+\end{definition}
+
+\begin{theorem}
+ $\varphi$が$T$について$\Delta_1$-論理式であるとする．この時$\varphi$は$T$に関して絶対的である．
+\end{theorem}
+
+\section{記述集合論における絶対性}
+
+\begin{definition}
+ 論理式の階層$\boldface{\Pi}^1_n, \boldface{\Sigma}^1_n, \boldface{\Delta}^1_n$を次で定義する：
+ \begin{enumerate}
+  \item 算術的論理式$\varphi(x_1, \dots, x_n, y)$と$z \in \Baire$に対し，$\exists a_1 \in \Baire\: \dots \exists a_n\: \varphi(a_1, \dots, a_n, z)$の形の論理式を$\Sigma^1_1(z)$-論理式と呼ぶ．
+  \item 算術的論理式$\varphi(x_1, \dots, x_n, y)$と$z \in \Baire$に対し，$\forall a_1 \in \Baire\: \dots \forall a_n\: \varphi(a_1, \dots, a_n, z)$の形の論理式を$\Pi^1_1(z)$-論理式と呼ぶ．
+  \item $\Pi^1_n(z)$-論理式$\varphi(x_1, \dots, x_n)$に対し，$\exists a_1 \in \Baire\:\dots \exists a_n \in \Baire\: \varphi(a_1, \dots, a_n)$の形の論理式を$\Sigma^1_{n+1}(z)$-論理式と呼ぶ．
+  \item $\Sigma^1_n(z)$-論理式$\varphi(x_1, \dots, x_n)$に対し，$\forall a_1 \in \Baire\:\dots \forall a_n \in \Baire\: \varphi(a_1, \dots, a_n)$の形の論理式を$\Pi^1_{n+1}(z)$-論理式と呼ぶ．
+  \item 論理式$\varphi$に対し，$\Sigma^1_n(z)$-論理式$\varphi_\Sigma$と$\Pi^1_n(z)$-論理式$\varphi_\Delta$があり，
+        $V_{\omega_1} \models \quoted{\varphi \iff \varphi_\Sigma \iff \varphi_\Delta}$を満たす時，
+        $\varphi$は$\Delta^1_n(z)$-論理式と呼ばれる．
+  \item $\begin{gathered}
+         \Sigma^1_n \defeq \Sigma^1_n(\emptyset), \Pi^1_n \defeq \Pi^1_n(\emptyset), \Delta^1_n \defeq \Delta^1_n(\emptyset)\end{gathered}$
+  \item $\begin{gathered}\boldface{\Sigma}^1_n \defeq \bigcup_{a \in \Baire} \Sigma^1_n(a), \qquad
+        \boldface{\Pi}^1_n \defeq \bigcup_{a \in \Baire} \Pi^1_n(a), \qquad
+        \boldface{\Delta}^1_n \defeq \boldface{\Pi}^1_n \cap \boldface{\Sigma}^1_n.\end{gathered}$
+ \end{enumerate}
+\end{definition}
+
+以下の議論には，次の概念が役に立つ：
+
+\begin{definition}
+ \begin{itemize}
+  \item $T$が$\alpha_1 \times \dots \times \alpha_n$上の木
+        $\defs T \subseteq \bigcup_n (\power{n}{\alpha}_1 \times \dots \times \power{n}{\alpha_n})$かつ$(s_1, \dots, s_n) \in T \implies (s_1 \restr k, \dots, s_n \restr k) \in T$.
+  \item $T$が$\alpha_1 \times \dots \times \alpha_n$上の木の時，
+        \begin{align*}\phantom{}
+         [T] &\defeq \Set{(x_1, \dots, x_n) \in \power{\omega}{\alpha_1} \times \dots \times \power{\omega}{\alpha_n} | \forall k < \omega \: (x_1 \restr k, \dots, x_n \restr k) \in T},\\
+         p_\ell[T] &\defeq \Set{ (x_1, \dots, x_\ell) | \exists x_{\ell+1}\dots \exists x_{n}\: (x_1, \dots, x_{\ell}, x_{\ell+1}, \dots, x_n) \in [T] }.
+        \end{align*}
+ \end{itemize}
+\end{definition}
+
+\begin{theorem}
+ 次は同値：
+ \begin{enumerate}
+  \item $A$: $\Sigma^1_1(z)$
+  \item $A = p[T]$を満たす$\omega\times\omega$上の木$T \in L[z]$が存在する．
+ \end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Mostwski Absoluteness]
+ $\boldface{\Sigma}^1_1$-概念は任意の推移的モデルについて絶対．
+ 従って$\boldface{\Delta}^1_1$と$\boldface{\Pi}^1_1$もそう．
+\end{theorem}
+
+\begin{proof}
+ $M$をc.t.m.とし，$A \in M$を$\boldface{\Sigma}^1_1$-概念とする．
+ すると，上の定理から$A = p[T]$となるような$\omega \times \omega$上の木$T$がとれるので，
+ 各$x \in \Baire$に対し$T_x \defeq \Set{s \in \finseq{\omega} | (x \restr \lh(s), s) \in T}$とおく．
+ この時，明らかに$(T_x, \supsetneq): \text{ill-founded} \iff x \in p[T] = A$.
+ 
+ よって，$x \in M$, $N \supseteq M$とすると，
+ \begin{align*}
+  (x \in A)^{M} &\iff (T_x: \text{ill-founded})^M\\
+  &\iff (T_x: \text{ill-founded})^N &\quad& (\because \text{定理}6)\\
+  &\iff (x \in A)^N.
+ \end{align*}
+\end{proof}
+
+\begin{lemma}
+ $A \in \boldface{\Pi}^1_1$なら，$A = p[T]$を満たす$\omega \times \omega_1$上の木$T$が取れる．
+\end{lemma}
+\begin{proof}
+ $A = \Baire \setminus p[S]$を満たす$\omega \times \omega$上の木$S$を取る．
+ この時，$x \in A \iff (S_x, \supsetneq): \text{well-founded}$となる事に注意する．
+ 特に$|S_x| \leq \aleph_0$なので，$S_x$が整礎木の時，その対応するランク関数の値域は$\omega_1$で十分である．
+ なので，$(x, h) \in [T]$なら$h$が$S_x$上の（広い意味での）ランク関数となるように$\omega \times \omega_1$上の木$T$を定めたい．
+
+ それには，全単射$e: \omega \congto \finseq{\omega}$で$n < \lh(s) \rightarrow e^{-1}(s \restr n) < e^{-1}(s)$を満たすものを一つ固定して，次のように$T$を定めれば良い：
+ \[
+  (s, h) \in T \defs \begin{cases}
+                     h: \lh(s) \to \kappa\\
+                     \forall k, \ell < \lh(s)\:[e(k), e(\ell) \in T_s\wedge e(k) \supsetneq e(\ell) \longrightarrow h(k) < h(\ell)].
+                    \end{cases}
+ \]
+ \qed
+\end{proof}
+
+\begin{lemma}
+ $A \in \boldface{\Sigma}^1_2$なら，$A = p[T]$を満たす$\omega \times \omega_1$上の木$T$が取れる．
+\end{lemma}
+\begin{proof}
+ $A = \proj^{\Baire} p[S]$を満たすような$\omega \times \omega \times \omega_1$上の木$S$を前の補題2により取る．
+ この時，次により$T$を定めれば，これが明らかに求めるものになっている：
+ \[
+  T \defeq \Set{(s, t) | (s \restr \lfloor \lh(t)/2 \rfloor, (t)_0, (t)_1) \in S}.
+ \]
+ 但し，$s \in \finseq{\omega}$に対して
+ \[
+  (s)_0 \defeq \Braket{s(2i)   | i < \lfloor \lh(s)/2 \rfloor},\quad 
+  (s)_1 \defeq \Braket{s(2i+1) | i < \lfloor \lh(s)/2 \rfloor}.
+ \]
+\end{proof}
+
+\begin{theorem}[Shoenfield Absoluteness]
+ $\omega_1 \in M$を満たす$\ZF$の推移的モデルについて，$\boldface{\Sigma}^1_2$-概念（よって$\boldface{\Delta}^1_2$および$\boldface{\Pi}^1_2$概念も）は絶対．
+ 特に，内部モデルに対し$\boldface{\Pi}^1_2$, $\boldface{\Sigma}^1_2$, $\boldface{\Delta}^1_2$-概念は絶対．
+\end{theorem}
+\begin{proof}
+ $A$を$\boldface{\Sigma}^1_2$-集合とすると，上の補題3から$A = p[T]$を満たす$\omega \times \omega_1$上の木$T$が取れる．
+ 上と同様の議論によって，
+ \[
+  x \in A \iff T_x: \text{ill-founded}
+ \]
+ となる．
+ ここで，$\omega_1 \in M$は$T$や$T_x$の絶対性を保証するのに必要である．
+ \qed
+\end{proof}
+
+\nocite{Kunen:2011,Jech:2002,Arai:2011,Kunen:2009}
+\printbibliography[title=参考文献]
+\end{document}

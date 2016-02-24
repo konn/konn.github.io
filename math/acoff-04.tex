@@ -1,0 +1,469 @@
+----
+title: 第四回選択公理オフ：数理論理学の初歩の初歩の初歩の……
+author: 石井 大海
+tag: 数学,数理論理学,集合論,モデル理論,超積,超冪,超準解析,自然数,強制法
+latexmk: -xelatex
+description: 第四回選択公理オフでの発表資料．選択公理と関連するモデル理論の初歩の話です．初学者向けに論理式やモデルの定義から入り，超積や超冪と選択公理，超準解析の関わりなどを論じています．実は Łoś+超フィルター定理と選択公理は同値だよとかそういう話もあり．
+date: 2013/10/16 00:48:34 JST
+----
+\documentclass[a4j,xelatex,ja=standard]{bxjsarticle}
+\usepackage[hiragino]{zxjafont}
+\usepackage{amsmath,amssymb}
+\usepackage{mystyle}
+\usepackage{bm}
+\usepackage{url}
+\usepackage{epstopdf}
+\usepackage{cases}
+\newcommand{\defsym}{\mathrel{.\hspace{-2.5pt}\equiv\hspace{-2.5pt}.}}
+\newcommand{\Los}{{\L}o\'{s}}
+\newcommand{\Diag}{\mathrm{Diag}}
+\newcommand{\Th}{\mathrm{Th}}
+\newcommand{\GL}{\mathrm{GL}}
+\usepackage{hyperref}
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{acoff-04.bib}
+
+\title{第四回選択公理オフ：\\数理論理学の初歩の初歩の初歩の……}
+\author{早稲田数学科四年\\石井 大海（@mr\_konn）}
+\date{2013年 A月 C日}
+
+\begin{document}
+\maketitle
+
+\section{はじめに}
+この発表では，数理論理学の初歩的な知識から始まって，構造の濃度に関する L\"{o}wenheim-Skolem の定理や，超積に関する \Los の定理\footnote{\L は ``w'' と ``l'' の中間音らしい．カタカナでは「ウォッシュの定理」という表記が一般的なようだ．}と選択公理の関係について述べます．これらは，数理論理学と呼ばれる分野の初歩的な結果です．数理論理学は集合論やモデル理論，証明論，計算理論など幾つもの分野に別れていますが，ここで扱うのはややモデル理論よりの結果です．数理論理学は数学という営為じたいを数学的に分析してみよう！という分野ですので，はじめて見るぜ！という人に関しても，普段自分達がやっている数学がどのように形式化され扱われるのかを鑑賞して頂ければと思います．また，以下では本質に関わらない記号の選び方云々に関しては，意図的に適当に書いて目を瞑ったところがあります．また，この発表ではモデル理論的な側面を強調して，証明論的な側面は殆んど触れられていません．しっかりとした数理論理学の導入をするのであれば，形式的証明の概念をしっかりと定義して，完全性定理によって意味と構文の関係を確立するという事をするべきですが，発表の都合上省略せざるを得ませんでした．数理論理学の入門には田中~\cite{Tanaka}や新井~\cite{Arai}，江田~\cite{Eda}，古森・小野~\cite{Komori} などを，モデル理論の発展的な内容については坪井~\cite{Tsuboi}を読むと良いでしょう．
+
+最初の内は無関係に見えるかもしれませんが，後程 @alg\_d さんの発表との関係も判然としてくる予定です．
+
+\section{論理式と言語}
+数学を記述するのに我々は数式を使う．特に，定理や証明で条件を書き下したりするのに，しばしば{\bfseries 論理式}を使う．これから「数学」を数学的に記述するに当って，この数学で使われている言葉を，数学的に厳密に定義するところから始めよう．
+
+それでは早速論理式の定義を……といきたいところだが，その前に幾つか定義しておかなくてはならない事がある．それは，今我々が考えている{\bfseries 言語}は何か？ということだ．つまり，どんな述語や関数，定数などを使うのか，ということを明らかにしておかなくてはならない．例えば，環の理論を考える\footnote{今$^{\text{[いつ？]}}$気付いたけどこれは駄洒落ではない．}時は，二つの演算 $+, \cdot$ と定数 $0, 1$ を使うし，集合論を考える時は原理的には所属関係を表す $\in$ だけを使って議論することになる．このように，予め議論する対象をはっきりさせておかなければならないのだ．
+
+\begin{definition}[言語]
+ 言語 $\mathcal{L}$ とは，述語記号列 $\Braket{P_i | i \in I}$，関数記号列 $\Braket{f_j | j \in J}$，定数記号列 $\Braket{c_k | k \in K}$ の組の事である．また，各述語記号と関数記号には arity と呼ばれる自然数 $n_i, n_j$ が各々対応しており，$P_i$ は $n_i$-変数述語記号であるとか，$f_j$ は $n_j$-変数述語関数であるなどと云う．
+\end{definition}
+
+\begin{example}
+ \begin{itemize}
+  \item 群の言語は $\mathcal{L}_G = \braket{ \cdot }$ である．ここで $\cdot$ は $2$-変数関数記号である．勿論，普通の定義のように「単位元」を表す定数記号 $e$ を付け加えた $\mathcal{L}_G' = \braket{ \cdot, e }$ としても良いのだが，$e$ は乗法だけを用いて定義出来るので，言語に加えなくても大丈夫である．
+  \item 集合論の言語は $\mathcal{L}_{\mathrm{ZF}} = \Braket{ \epsilon }$ である．ここで $\epsilon$ は $2$-変数述語記号である．
+  \item 順序環の言語は $\mathcal{L}_{\mathrm{OR}} = \Braket{ 0, +, \cdot, <}$ である．$0$ は定数記号，$+, \cdot$ は $2$-変数関数記号，$<$ は $2$-変数述語記号である．
+  \item 言語に含まれる記号は無限でもよい．例えば $\R$-ベクトル空間の言語は $\mathcal{L}_{\mathrm{Vec}(\R)} = \Braket{ 0, +, x\cdot | x \in \R}$ である．ここで，各 $x \cdot$ はスカラー倍を表すつもりの$1$変数関数記号である．
+ \end{itemize}
+\end{example}
+
+このように，言語は述語記号だけであったり，関数記号だけであったりしてもよい．一般に，言語の記号を増やせば増やすほど記述出来る内容は増えるが，集合論のように $\in$ だけで全てを表現したりも出来るので，一概にはいえない．
+
+次に，$\sin x$ とか $x^2$，$1+1$ といった論理式ではない「数式」に当るものとして，{\bfseries $\mathcal{L}$-項}を定義しよう．
+
+\begin{definition}[項]
+ 次のようにして，言語 $\mathcal{L}$ の{\bfseries 項}を定める：
+ \begin{itemize}
+  \item 定数記号 $c$ は項である．
+  \item 変数記号 $x_i$ は項である．
+  \item $f$ が $n$-変数関数記号で，$\tau_1, \dots, \tau_n$ が項ならば，$f(\tau_1, \dots, \tau_n)$ も項である．
+  \item 以上で作られるものだけが項である．
+ \end{itemize}
+ 特に，変数記号の出現しない項を{\bfseries 閉項}と呼ぶ．
+\end{definition}
+
+上の最後の「以上で作られるものだけが項である」という約束により，論理式の構成に関する帰納法を使うことが出来る．以後，こうした帰納的定義の最後に一々書くのも面倒なので，最後には「以上で作られるものだけが〜」と書かれていると読んで欲しい．
+
+\begin{example}
+ \begin{itemize}
+  \item $x, y$ を変数とすると，$\mathord{\cdot}(x, y)$ は $\mathcal{L}_G$ の項である．このように記号を常に前置するのはとても見辛いので，特に関数記号が二項演算子の場合，慣例に従って $x \cdot y$ などと書くことにする．また，$e$ を定数記号と思うと，$e \cdot e$ は $\mathcal{L}_G$ の項ではないが，$\mathcal{L}_G'$ の項にはなっている．$1 \cdot 2$ は，$1, 2$ などという何処の馬の骨とも知らない記号は $\mathcal{L}_G$ にも $\mathcal{L}_G'$ にも含まれていないので，どちらの項でもない．$\cdot(x)$ などは $\cdot$ は二変数述語なのに一つしか後に続いていないので，当然項ではない．
+  \item 変数 $x, y$ について $x \mathrel{\epsilon} y$ は $\mathcal{L}_{\mathrm{ZF}}$ の項ではない．$\epsilon$ は関数記号ではなく述語記号だからである．特に，$\mathcal{L}_{\mathrm{ZF}}$ は定数記号も関数記号も持たないので，変数記号以外の項を持たない．
+  \item $0 + (0 \cdot x)$ は $\mathcal{L}_{\mathrm{OR}}$ の項である……といいたい所だが，``('' とか云う記号を俺は知らないので厳密には項ではない．が，以下では余りうるさく云わないことにして，結合順があやふやな場合は括弧で囲むことを認めることにする．
+ \end{itemize}
+\end{example}
+
+ここまで準備すれば，論理式を定義することが出来る．
+
+\begin{definition}[論理式]
+ 言語 $\mathcal{L}$ の{\bfseries 論理式}を次のように定義する：
+ \begin{enumerate}
+  \item $\tau_1, \tau_2$ が項の時，$\tau_1 = \tau_2$ は論理式である．
+  \item $P$ が $n$-変数述語記号 で $\tau_1, \dots, \tau_n$ が項の時，$P \tau_1 \dots \tau_n$ は論理式である．
+ \end{enumerate} 
+ 以上の二つを特に{\bfseries 原子論理式}と云う．
+ \begin{enumerate}[start=3]
+  \item $\varphi, \psi$ が論理式の時，$\neg \varphi$ および $\varphi \vee \psi$ も論理式である．
+  \item $x$ が変数記号，$\varphi$ が論理式の時，$\exists x \varphi$ も論理式である．
+ \end{enumerate}
+\end{definition}
+
+記号はあくまで記号であって，意味はないのだが，それでも一応意図された意味というものがあるのでそれを説明しよう．$\varphi \vee \psi$ は 「$\varphi$ または $\psi$」を，$\neg \varphi$ は 「$\varphi$ でない」を，$\exists x \varphi$ は 「$\phi$ を満たすような $x$ が存在する」という意味を意図している．「かつ」とか「ならば」とか「任意の」などが抜けているが，これらの論理結合子は，上の三つの組合せで「定義」できることが知られている\footnote{直観主義論理がどうのとかいう玄人はいいから黙っててください．}ので，それぞれに対応する「略記」を次のように導入しておく：
+\[
+ \varphi \wedge \psi \defsym \neg (\neg \varphi \vee \neg \psi), \qquad \varphi \rightarrow \psi \defsym \neg \varphi \vee \psi, \qquad
+ \forall x \varphi \defsym \neg \exists x \neg \varphi
+\]
+$\wedge, \rightarrow, \forall$ なども予め定義にいれておいたほうが分かり易いかもしれないが，記号が多いと後々の証明が大変になるので必要最低限に限ったのである．
+
+\begin{example}
+ \begin{itemize}
+  \item $\forall x \forall y (x \cdot y = y \cdot x)$ は，「演算が可換である」ことを表す $\mathcal{L}_G$-論理式である．これを全く略さず掛けば，$\neg \exists x \neg \neg \exists y \neg = \cdot(x, y) \cdot(y, x)$ となる．うげえ．$x \cdot y$ は項であって $\mathcal{L}_G$-論理式ではない．$\forall x \exists y (x \cdot y = e)$ は $\mathcal{L}_G'$ の論理式である．群の公理の下で，これと同値な $\mathcal{L}_G$-論理式は $\forall x (\forall y (x \cdot y = y \wedge y \cdot x = y) \rightarrow \forall y \exists z (y \cdot z = x))$ である．このように，言語は違っても，適当な公理系の下で全く同じ内容を説明することが出来ることが良くある．逆に，一意性や関数の存在を証明出来た際に，それを一々書き下すのが面倒なので，新たな記号と公理を追加して新しい言語・理論を考えることがある．これを，{\bfseries 定義による拡張}と云う．
+  \item 変数 $x, y$ について，$x \mathrel{\epsilon} y$ は $\mathcal{L}_\mathrm{ZF}$ の論理式である．$\exists x \forall y (y \not\mathrel{\epsilon} x)$ は，$x \not\mathrel{\epsilon} y \defsym \neg x \mathrel{\epsilon} y$ と略記することにすれば，空集合の存在を表す $\mathcal{L}_\mathrm{ZF}$ の論理式である．
+  \item $0 + 0 = 0$ や $\forall x (0 + x = 0)$ は $\mathcal{L}_\mathrm{OR}$-論理式である．しかし，$x < y$ や $y < z$ は $\mathcal{L}_\mathrm{OR}$-論理式だが，$\forall x \forall y \exists z (x < z < y)$ はそうではない．$\forall x \forall y \exists z (x < z \wedge z < y)$ と書けば，$\mathcal{L}_\mathrm{OR}$-論理式となる．
+  \item 全ての変数が量化子で束縛されていなくてもよい．たとえば，$\forall x (x \neq y)$ は論理式である．このとき，変数$y$ は論理式 $\forall x (x \neq y)$ で{\bfseries 自由である}とか{\bfseries 束縛されていない}と云う．自由でない変数は束縛されていると云う．この辺りは厳密にやると面倒なので余り深追いはしない．$\mathcal{L}$-論理式を $\varphi(x_1, \dots, x_n)$ と書いた場合，$\varphi$ は $x_1, \dots, x_n$ 以外の自由変数を含まないものとし，各変数に項 $t_i$ を代入したものを $\varphi(t_1, \dots, t_n)$ と書く．自由変数を含まない式の事を{\bfseries 閉論理式}とか{\bfseries 文}と呼ぶ．
+ \end{itemize}
+\end{example}
+
+\section{論理式の解釈と初等拡大}
+上では論理式を定義したが，あくまで文字列の構成法として定義しただけである．論理式は何らかの数学的な内容を意味するのだから，その{\bfseries 解釈}を定めてやらなければ意味がない．
+
+\begin{definition}
+ {\bfseries $\mathcal{L}$-構造} $\mathfrak{A} = \Braket{ A, P_i^\mathfrak{A}, f_j^\mathfrak{A}, c_k^\mathfrak{A} | i \in I, j \in J, k \in K }$ とは，次を満たすものである：
+ \begin{itemize}
+  \item $A$ は空でない集合である．$A = |\mathfrak{A}|$ などと表し，$\mathfrak{A}$ の議論領域などと呼んだりする．
+  \item $P_i$ が $n_i$-変数述語記号の時，$P_i^\mathfrak{A}$ は $A$ 上の $n$-項関係である．つまり $P_i^\mathfrak{A} \subseteq A^n$．
+  \item $f_j$ が $n_j$-変数関数記号の時，$f_j^\mathfrak{A}: A^n \rightarrow A$ である．
+  \item $c_k$ が定数記号の時，$c_k^\mathfrak{A} \in A$ である．
+ \end{itemize}
+ 上で定めた $P_i^\mathfrak{A}, f_j^\mathfrak{A}, c_k^\mathfrak{A}$ などを，$\mathcal{L}$ の記号の $\mathfrak{A}$ での解釈と呼ぶ．
+
+ また，$\mathcal{L}$ の一般の閉項 $\tau$ に対し，関数記号とその「引数」となる項に対して繰り返し解釈を取ることにより，$\tau$ の $\mathfrak{A}$ での解釈 $\tau^\mathfrak{A}$ を帰納的に定義する．
+\end{definition}
+
+ここで，$\mathcal{L}$-構造 $\mathfrak{A}$ に対し，$\mathfrak{A}$ 自身を写し取ったような言語 $L(\mathfrak{A})$ を考えることが出来る．
+
+\begin{definition}
+ $\mathcal{L}$-構造 $\mathfrak{A}$ に対し，言語 $L(\mathfrak{A})$ を
+  $\mathcal{L}(\mathfrak{A}) = \mathcal{L} \cup  \Set{ c_a | a \in A }$ で定義する．
+ ここで $c_a$ は $\mathcal{L}$ に含まれないような，各 $a \in A$ ごとに異なる新しい定数記号であり，$a \in A$ の{\bfseries 名前}と呼ばれる．$c_a^\mathfrak{A} = a$ として解釈を定めてやることにより，$\mathfrak{A}$ は自然に $\mathcal{L}(\mathfrak{A})$-構造と見ることが出来る．
+\end{definition}
+
+さて，$\mathcal{L}$-構造というのを考えるのは，論理式の「意味」を与えてやるためであった．そこで，次のようにして論理式の解釈を定めてやろう：
+
+\begin{definition}[充足関係]
+ $\mathcal{L}$-構造 $\mathfrak{A}$ と $\mathcal{L}(\mathfrak{A})$-論理式 $\varphi$ に対し，関係 $\mathfrak{A} \models \varphi$ （$\mathfrak{A}$ は $\varphi$ を満たすと読む）を次のように帰納的に定める：
+ \begin{enumerate}
+  \item $\mathfrak{A} \models \tau_1 = \tau_2 \Longleftrightarrow \tau_1^\mathfrak{A} = \tau_2^\mathfrak{A}$
+  \item $\mathfrak{A} \models P\tau_1 \dots \tau_n \Longleftrightarrow (\tau_1^\mathfrak{A}, \dots, \tau_n^\mathfrak{A}) \in P^\mathfrak{A}$
+  \item $\mathfrak{A} \models \varphi \vee \psi \Longleftrightarrow \mathfrak{A} \models \varphi$ または $\mathfrak{A} \models \psi$ の少なくとも一方が成立する．
+  \item $\mathfrak{A} \models \neg \varphi \Longleftrightarrow \mathfrak{A} \models \varphi$ でない
+  \item $\mathfrak{A} \models \exists x \varphi \Longleftrightarrow$ ある $a \in A$ が存在して，$\mathfrak{A} \models \varphi[\begin{smallmatrix}x\\c_a\end{smallmatrix}]$ となる．
+ \end{enumerate}
+ ただし，ここで $\varphi[\begin{smallmatrix}x\\\tau\end{smallmatrix}]$ は，$\varphi$ の中に自由に出現する変数 $x$ を項 $\tau$ で置き換えたものである．
+\end{definition}
+
+読み方通り，$\mathfrak{A} \models \varphi$ は構造 $\mathfrak{A}$ で $\varphi$ が成立することを示す物である．たとえば，群の公理を $\mathrm{Grp}$ と置くと，$(\Z, +) \models \mathrm{Grp}, (\R^\times, \cdot) \models \mathrm{Grp}$ だが，$(\N, +) \not\models \mathrm{Grp}$ である．こういったことをもっと通り良く述べるために，次のように定義をする．
+
+\begin{definition}
+ \begin{itemize}
+  \item $\mathcal{L}$-閉論理式の集合 $\mathcal{T}$ の事を $\mathcal{L}$-{\bfseries 公理系}とか$\mathcal{L}$-{\bfseries 理論}などと呼ぶ\footnotemark
+  \item $\mathcal{L}$-構造 $\mathfrak{A}, \mathfrak{B}$ が{\bfseries 初等的同値}（記号：$\mathfrak{A} \equiv \mathfrak{B}$）であるとは，$\Th_\mathcal{L}(\mathfrak{A}) = \Th_\mathcal{L}(\mathfrak{B})$ となることである．
+  \item $\mathcal{T}$ を$\mathcal{L}$-理論とする．$\mathcal{L}$-構造 $\mathfrak{A}$ が，任意の $\varphi \in \mathcal{T}$ に対し $\mathfrak{A} \models \varphi$ を満たすとき，$\mathfrak{A}$ は $\mathcal{T}$ の{\bfseries モデル}であると云う．このとき，$\mathfrak{A} \models \mathcal{T}$ と書く．
+  \item 論理式 $\varphi$ について，理論 $\mathcal{T}$ の任意のモデル $\mathfrak{A}$ で $\mathfrak{A} \models \varphi$ となる時，$\mathcal{T} \models \varphi$ と書く．
+  \item $\Th_\mathcal{L}(\mathfrak{A}) \defeq \Set{ \varphi : \mathcal{L}\text{-閉論理式} | \mathfrak{A} \models \varphi}$ を言語 $\mathcal{L}$ についての $\mathfrak{A}$ の{\bfseries 公理系}と云う．
+  \item $\Diag(\mathfrak{A}) \defeq \Th_{\mathcal{L}(\mathfrak{A})} = \Set{ \varphi : \mathcal{L}(\mathfrak{A})\text{-閉論理式} | \mathfrak{A} \models \varphi}$ を，$\mathfrak{A}$ の{\bfseries 初等設計図}と呼ぶ．
+  \item 構造 $\mathfrak{A}, \mathfrak{B}$ が{\bfseries 同型}であるとは，全単射 $\sigma: A \rightarrow B$ が存在して，
+	\begin{gather*}
+	 \sigma(c^\mathfrak{A}) = c^\mathfrak{B}\qquad\sigma(f^\mathfrak{A}(u_1, \dots, u_n)) = f^{\mathfrak{B}}(\sigma(u_1), \dots, \sigma(u_n))\\
+	 (u_1, \dots, u_n) \in P^\mathfrak{A} \Longleftrightarrow (\sigma(u_1), \dots, \sigma(u_n)) \in P^\mathfrak{B}
+	\end{gather*}
+	を満たすことである．このとき $\mathfrak{A} \cong \mathfrak{B}$ と書く．
+ \end{itemize}
+\end{definition}
+\footnotetext{モデル理論では，「理論」と云った場合無限モデルの存在や完全性の条件を課すことが多い．}
+
+構造と解釈に関する定義を幾つか済ませた所で，こんどは部分構造について定義しておこう．
+
+\begin{definition}[部分構造，初等部分構造]
+ 　
+ 
+ \begin{itemize}
+  \item $\mathcal{L}$-構造 $\mathfrak{A}, \mathfrak{B}$ について，$\mathfrak{A}$ が $\mathfrak{B}$ の{\bfseries 部分構造}であるとは，$A \subseteq B$ であり，以下の三つの条件が成立することである：
+	\begin{enumerate}
+	 \item 定数記号 $c$ について，$c^\mathfrak{A} = c^\mathfrak{B}$
+	 \item $n$-変数述語記号 $P$ について，$P^\mathfrak{A} = P^\mathfrak{B} \cap A^n$
+	 \item $n$-変数関数記号 $f$ について，$f^\mathfrak{B} \restr A^n = f^\mathfrak{A}$
+	\end{enumerate}
+  \item $\mathfrak{A}$ が $\mathfrak{B}$ の部分構造であるとする．任意の $\mathcal{L}(\mathfrak{A})$-論理式 $\varphi$ が
+	\[
+	 \mathfrak{A} \models \varphi \Longleftrightarrow \mathfrak{B} \models \varphi
+	\]
+	を満たすとき，$\mathfrak{A}$ は $\mathfrak{B}$ の{\bfseries 初等部分構造}である，または $\mathfrak{B}$ は $\mathfrak{A}$ の{\bfseries 初等拡大}であると云い，$\mathfrak{A} \prec \mathfrak{B}$ と書く．先程の記号を使えば，$\mathfrak{A} \prec \mathfrak{B} \Leftrightarrow \Diag(\mathfrak{A}) = \Th_{\mathcal{L}(\mathfrak{A})}(\mathfrak{B})$ である．
+ \end{itemize}
+\end{definition}
+
+例えば，$\mathfrak{N} = (\N, +)$ は $\mathfrak{Z} = (\Z, +)$ の部分構造であるが，$\mathcal{N} \prec \mathcal{Z}$ ではない．$\Z$ には逆元が存在するが，$\N$ はそもそも群ではないからである．また，$M_2(\R)$ と $H = \Set{ (\begin{smallmatrix}a & 0 \\ 0 & 0 \end{smallmatrix}) | a \in \R^\times}$ を考えると，$\braket{H, +, \cdot}$ は $\braket{M_2(\R), +, \cdot}$ の部分構造となり，乗法単位元はそれぞれ $(\begin{smallmatrix}1&0 \\ 0&1\end{smallmatrix})$ と $(\begin{smallmatrix}1&0 \\ 0&0\end{smallmatrix})$ である．部分環の定義に $0, 1$ を含めるかは流儀による．含めない場合は $\braket{+, \cdot}$-部分構造が，含める場合は $\braket{1, \cdot, +}$-部分構造が部分環と一致する．
+
+また，言語 $\mathcal{L} = \braket{ +, < }$ について，$\mathfrak{A} = (\N, +, <)$ と $\mathfrak{B} = (\N \setminus \{0\}, +, <)$ は同型になる．しかし，$\mathcal{L}(\mathfrak{B})$-論理式 $\psi \equiv \forall x \neg (x < 1)$ を考えると，$\mathfrak{B} \models \psi$ だが $\mathfrak{A} \not\models \psi$ なので，$\mathfrak{B} \prec \mathfrak{A}$ ではない．
+
+初等部分構造となる例としては，$(\Q, \leq) \prec (\R, \leq)$ や，$(\bar{\Q}, +, \cdot) \prec (\mathbb{C}, +, \cdot)$ などが知られている．
+
+より一般に，何らかの構造が与えられた際に，その非自明な初等拡大を構成する方法はあるのだろうか？
+その例の一つが，次節で扱う{\bfseries 超積}の特殊な場合である{\bfseries 超冪}である．
+
+\section{超積の定義と \Los の定理，そして選択公理}
+$\mathcal{L}$-構造の族が与えられた時に，その「殆んど至るところ」で成立する性質を取り出したものが超積である．午前中の発表でもあったように，フィルターの例として $[0,1]$ 上の測度 $1$ の集合全体の成すフィルターがある．測度 $1$ の集合は明らかに「大きな」集合である．ウルトラフィルターはその中でも更にキメが細かいフィルターであり，ウルトラフィルターに属する集合は「大きな集合」全体であると見做せる\footnote{離散的な値を取る測度と，ウルトラフィルターは本質的に同じものである．}．そこで，族の「大部分」で成り立つ性質を取り出すのに，ウルトラフィルターを使ってみよう，という訳である．
+
+\begin{definition}
+ $\{\mathfrak{A}_i\}_{i\in I}$を$\mathcal{L}$-構造の族（$I \neq 0$），$\mathcal{F}$ を $I$ 上のフィルターとする．この時，$\prod_{i \in I} |\mathfrak{A}_i|$ 上の二項関係 $\sim_\mathcal{F}$ を次で定義する．
+ \[
+  u \sim_\mathcal{F} v \defs \Set{i \in I | u(i) = v(i)} \in \mathcal{F}\ \ \ \left(u, v \in \prod_{i \in I} |\mathfrak{A}_i|\right)
+ \]
+ このとき，$\sim_\mathcal{F}$ は同値関係となっている．$u, v$ が「大きい集合で一致すれば」，つまり殆んど至るところで一致すれば，$u, v$ を等しいと見做すのが，関係 $\sim_\mathcal{F}$ である．
+
+ $\{\mathfrak{A}_i\}_{i \in I}$ の $\mathcal{F}$ による{\bfseries 縮積}（{\itshape reduce product}）$\mathfrak{C} = \quot{\prod_{i \in I} \mathfrak{A}_i}{\mathcal{F}}$ とは，$\prod_{i\in I} |\mathfrak{A}_i|$ の $\sim_\mathcal{F}$ による商集合のことである．即ち，$u$ の $\sim_{\mathcal{F}}$ による同値類を $[u]_{\mathcal{F}}$ と書けば，
+ \[
+  \quot{\prod_{i\in I} \mathfrak{A}_i}{\mathcal{F}} = \Set{ [u]_\mathcal{F} | u \in \prod_{i\in I} \left|\mathfrak{A}_i\right|}
+ \]
+ のことである．このとき，$\mathfrak{C}$ の $\mathcal{L}$-構造としての述語記号，関数記号に関する解釈は次により定める．
+ \begin{gather*}
+  ([u_1], \dots, [u_n]) \in P^\mathfrak{C} \Leftrightarrow \Set{i \in I | (u_1(i), \dots, u_n(i)) \in P^{\mathfrak{A}_i}} \in \mathcal{F}\\
+ f^\mathfrak{C}([u_1], \dots, [u_n]) = [u] \quad (\text{ただし} u(i) = f^{\mathfrak{A}_i}(u_1(i), \dots, u_n(i)))\\
+  c^\mathfrak{C} = [c^{\mathfrak{A}_i}]
+ \end{gather*}
+
+ 特に，ウルトラフィルター $\mathcal{U}$ に関する縮積を{\bfseries 超積}（{\itshape ultraproduct}）と云う．
+\end{definition}
+
+
+上の $\sim_\mathcal{F}$ が実際に同値関係となることはすぐに判る．また，上の縮積の定義が well-defined であることは本来ならば示すべきだが，面倒なので各自の演習問題とする．
+
+超積が「殆んど至るところで成立する性質を取り出したもの」ということを定式化したのが次の定理である．
+\begin{theorem}[\Los の定理]
+ $\mathcal{U}: I\text{上のウルトラフィルター},\quad \mathfrak{C} = \quot{\prod_{i \in I}\mathfrak{A}_i}{\mathcal{U}}$
+
+ $\varphi(a_1, \dots, a_n): \mathcal{L}\text{-論理式},\quad [u_1], \dots, [u_n] \in |\mathfrak{C}|$ とすると，次が成立．
+
+ \[
+  \mathfrak{C} \models \varphi([u_1], \dots, [u_n])
+ \Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \models \varphi(u_1(i), \dots, u_n(i))} \in \mathcal{U}
+ \]
+\end{theorem}
+
+定理の証明の為に，次の補題を使う．
+\begin{lemma}\label{ultraproduct-term}
+ $t(a_1, \dots, a_n)$ を $\mathcal{L}$-項， $\tau(i) = (t(u_1(i), \dots, u_n(i)))^\mathfrak{A_i}$ とする．このとき，
+ \[
+  (t([u_1], \dots, [u_n]))^{\mathfrak{C}} = [\tau]
+ \]
+\end{lemma}
+これは当然成り立つべき命題であるし，証明も単に帰納法で示せるのでここでは省略し，\Los の定理を示す．
+
+\begin{proof}[\Los の定理の証明]
+ $L(\mathfrak{C})$ の論理式の構造帰納法で示す．以下，$|\mathfrak{C}|$ の元と $L(\mathfrak{C})$ での名前を同一視する．
+
+ \begin{enumerate}[label=(\roman{*})]
+  \item $\varphi \equiv P t_1 \dots t_n$ （原子論理式）のとき．$P$ を $m$-変数述語記号，$t_1, \dots, t_m$ を $L(\mathfrak{C})$ の項とすると，
+	\newcommand{\myreplace}{(u_1(i), \dots, u_n(i))}
+	\newcommand{\ultreplace}{([u_1], \dots, [u_n])}
+	\begin{alignat*}{2}
+	 & \mathfrak{C} \models (P t_1 \dots t_m)([u_1], \dots, [u_n])\\
+	 & \Leftrightarrow \mathfrak{C} \models P t_1([u_1], \dots, [u_n])\dots t_m([u_1], \dots, [u_n])\\
+	 & \Leftrightarrow (t_1\ultreplace^{\mathfrak{C}}, \dots, t_m\ultreplace^{\mathfrak{C}}) \in P^\mathfrak{C} & \quad (\models \text{の定義})\\
+	 & \Leftrightarrow ([\tau_1], \dots, [\tau_m]) \in P^\mathfrak{C} & (\text{補題}\ref{ultraproduct-term}；但し補題の記号を用いた)\\
+	 & \Leftrightarrow \Set{ i \in I | (\tau_1(i), \dots, \tau_m(i)) \in P^{\mathfrak{A}_i}} \in \mathcal{U}& (超積の定義)\\
+	 & \Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \models P(t_1(u_1(i), \dots, u_n(i)))\dots(t_m(u_1(i), \dots, u_n(i)))} \in \mathcal{U} & (\models \text{の定義})\\
+	 & \Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \models (P t_1 \dots t_m)(u_1(i), \dots, u_n(i))} \in \mathcal{U} & (\models \text{の定義})
+	\end{alignat*}
+  \item $\varphi \equiv \psi \vee \vartheta$ の時．$\psi, \vartheta$ は命題を満たす論理式であるとする（帰納法の仮定）．
+	\begin{alignat*}{2}
+	 &\mathfrak{C} \models (\psi \vee \vartheta)\ultreplace\\
+	 &\Leftrightarrow \mathfrak{C} \models \psi\ultreplace \vee \vartheta\ultreplace\\
+	 &\Leftrightarrow \mathfrak{C} \models \psi\ultreplace \mathbin{\text{または}} \mathfrak{C} \models \vartheta\ultreplace &\quad(\models \text{の定義})\\
+	 &\Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \models \psi\myreplace} \in \mathcal{U} \text{または} \Set{ i \in I | \mathfrak{A}_i \models \vartheta \myreplace} \in \mathcal{U} &\quad (\text{帰納法の仮定})\\
+	 & \Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \models \psi\myreplace} \cup \Set{ i \in I | \mathfrak{A}_i \models \vartheta \myreplace} \in \mathcal{U}& (\star)\\
+	 & \Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \models \psi\myreplace \text{または} \mathfrak{A}_i \models \vartheta\myreplace} \in \mathcal{U}\\
+	 & \Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \models \psi\myreplace \vee \vartheta\myreplace} \in \mathcal{U} & (\models \text{の定義})\\
+	 & \Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \models (\psi \vee \vartheta)\myreplace} \in \mathcal{U}
+	\end{alignat*}
+	ただし，$(\star)$ では，$\mathcal{U}$ がウルトラフィルターの時，$A \cup B \in \mathcal{U} \rightarrow A \in \mathcal{U} \vee B \in \mathcal{U}$ となることを使った．
+  \item $\varphi \equiv \neg \psi$ の時．
+	\begin{alignat*}{2}
+	 \mathfrak{C} \models (\neg \psi)\ultreplace &\Leftrightarrow  \mathfrak{C} \models \psi\ultreplace \text{でない}\\
+	 &\Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \models \psi\myreplace} \notin \mathcal{U} &\quad (\text{帰納法の仮定})\\
+	 &\Leftrightarrow I \setminus \Set{ i \in I | \mathfrak{A}_i \models \psi\myreplace} \in \mathcal{U} & \quad (\mathcal{U}:\text{ウルトラフィルター})\\
+	 &\Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \not\models \psi\myreplace} \in \mathcal{U}\\
+	 &\Leftrightarrow \Set{ i \in I | \mathfrak{A}_i \models \neg \psi\myreplace} \in \mathcal{U}
+	\end{alignat*}
+  \item $\varphi \equiv \exists x \psi(x, [u_1], \dots, [u_n])$ の時．この証明に選択公理を使う．$(\Leftarrow)$ の方向について述べれば十分．
+	
+	$S \defeq \Set{i \in I | \mathfrak{A}_i \models \exists x \psi(x, u_1(i), \dots, u_n(i))}$
+	とおく．$u \in \prod_{i \in I} |\mathfrak{A}_i|$ を次のように構成する．まず， $i \in S$ に対しては，{\bfseries 選択公理により} $\mathfrak{A}_i \models \psi(u(i), u_1(i), \dots, u_n(i))$ となるように適当な $u(i) \in |\mathfrak{A}_i|$ を取れる．$i\notin S$ の場合は適当に何でもよいから $|\mathfrak{A}_i|$ の元を取る（{\bfseries 選択公理！！！}）．すると，$[u]$ が $\psi([u], [u_1], \dots, [u_n])$ を満足する．
+ \end{enumerate}
+ 以上より示された．\qed
+\end{proof}
+
+\Los の定理の系として，次が得られる．
+\begin{corollary}
+ $\varphi: L\text{-閉論理式}$ とするとき，
+ \[
+   \quot{\prod_{i \in I}\mathfrak{A}_i}{\mathcal{U}} \models \varphi \Leftrightarrow \Set{i \in I | \mathfrak{A}_i \models \varphi} \in \mathcal{U}
+ \]
+\end{corollary}
+\begin{corollary}\label{los-power}
+ 特に $\mathfrak{A}_i = \mathfrak{A}$ とする．このように，各 $\mathfrak{A}_i$ が等しい場合の超積を，特に{\bfseries 超冪}（ウルトラパワー；ultrapower）と呼ぶ．このとき，$u \in |\mathfrak{A}|$ について $c_u(i) = u \quad (i \in I)$ により定数関数 $c_u \in \power{I}{\mathfrak{A}}$ を定めれれば，写像 $u \mapsto [c_u]$ により $\mathfrak{A}$ は $\prod_{i \in I} \mathfrak{A} / \mathcal{U} = \power{I}{\mathfrak{A}}/\mathcal{U}$ の部分構造と見做すことが出来る．
+
+ このとき，$\mathcal{L}$-論理式 $\varphi(x_1, \dots, x_n)$ に対し次が成立する：
+ \[
+   \quot{\power{I}{\mathfrak{A}}}{\mathcal{U}} \models \varphi([c_{u_1}], \dots, [c_{u_n}]) \Leftrightarrow  \mathfrak{A} \models \varphi(u_1, \dots, u_n)
+ \]
+ よって，$\mathfrak{A} \prec \power{I}{\mathfrak{A}}/\mathcal{U}$ （初等拡大）である．特に，$\varphi$ が $\mathcal{L}$-閉論理式のとき次が成立．
+ \[
+   \quot{\power{I}{\mathfrak{A}}}{\mathcal{U}} \models \varphi \Leftrightarrow  \mathfrak{A} \models \varphi
+ \]
+ 即ち，$\power{I}{\mathfrak{A}}/\mathcal{U} \equiv \mathfrak{A}$ （初等的同値）である．
+\end{corollary}
+
+実は，「\Los の定理 + ウルトラフィルターの補題」と選択公理は同値であることが知られている：
+
+\begin{theorem}
+ $\mathrm{AC} \Longleftrightarrow $ \Los + ウルトラフィルターの補題
+\end{theorem}
+\begin{proof}
+ \newcommand{\relR}{\mathrel{\tilde{\epsilon}}}
+ 証明から $\Rightarrow$ は明らかなので，$\Leftarrow$ を示す．
+
+ $\{X_i\}_{i \in I}$ を互いに交わらない非空集合の族とし，$X = \bigcup_{i \in I} X_i$ とする．適当に添字を付け替えることで，$X \cap I = \emptyset$ として良い．そこで $A \defeq X \sqcup I$ と置く．この時，二項関係 $\relR$ を
+ \[
+  a \relR b \defs (a \in X \wedge b \in I \wedge a \in X_b) \vee a = b \in X
+ \]
+ により定め，構造 $\mathfrak{A} = \braket{A, \relR}$ を考える．族 $\{X_i\}_{i \in I}$ が選択関数を持たないと仮定する．このとき，
+ \[
+  \mathcal{I} \defeq \Set{ J \subseteq I | \{X_j\}_{j \in J} \text{は選択関数を持つ}}
+ \]
+ は $I$ 上のイデアルとなる．イデアル $\mathcal{I} \subseteq \Pow(I)$とは次を満たす部分集合族のことである\footnote{イデアルは冪集合 Boole 代数だけでなく一般の Boole 代数上で定義される概念であり，可換環のイデアルとは全く無関係と云う訳ではない．Boole 代数のイデアルは「小さな元」の集まりであり，可換環のイデアルは準同型の核，つまり「ゼロの集まり」と見做せることを思い出せば，両者が同じ名前を持っているのも不自然なことではないだろう．更に，Boole 代数には自然に可換環としての構造が入り，この時Boole 代数のイデアルと可換環としてのイデアルは一致する．}：
+ \begin{enumerate}[label=(\alph{*})]
+  \item $\emptyset \in \mathcal{I}, I \notin \mathcal{I}$
+  \item $A \in \mathcal{I} \wedge B \subseteq A \Rightarrow B \in \mathcal{I}$
+  \item $A, B \in \mathcal{I} \Rightarrow A \cup B \in \mathcal{I}$
+ \end{enumerate}
+ 定義を見ても判る通り，イデアルはフィルターの双対概念であり，「小さな集合」の集まりになっている．$\{X_i\}_{i \in I}$ は選択関数を持たないので，$I \notin \mathcal{I}$ であり，選択関数を持つ族の部分族はやはり選択関数を持つので最初の二つの条件は大丈夫である．また，各々の選択関数の和を考えれば，$\mathcal{I}$ の二つの元に対応する和も再び選択関数を持つことがわかる．
+
+ ここで，$\mathcal{I}$ がイデアルの時，$\mathcal{F} = \Set{ X^c \subseteq I | X \in \mathcal{I}}$ と置けば $\mathcal{F}$ は $I$ 上のフィルターとなる．よって，対応する族が選択関数を持たない $J \subseteq I$ の全体は $I$ 上のフィルターとなる．そこで，{\bfseries ウルトラフィルターの補題により} $\mathcal{F} \subseteq \mathcal{U}$ となるウルトラフィルター $\mathcal{U}$ を取ろう．
+
+ この時，超冪 $\power{I}{\mathfrak{A}}/\mathcal{U}$ を考えよう．今，$A$ および $\relR$ の定義より $\mathfrak{A} \models \forall u \exists v(v \relR u)$ が成立している．{\bfseries \Los の定理より}，$\mathfrak{A} \equiv \power{I}{\mathfrak{A}}/\mathcal{U}$ であるので，$\power{I}{\mathfrak{A}}/\mathcal{U} \models \forall u \exists v(v \relR u)$ となる．そこで，特に $u = [\mathrm{id}_I]$ と置けば，ある $v \in \power{I}{\mathfrak{A}}$ が存在して $[v] \relR [\mathrm{id}_I]$ となる．すると，超積の定義から，
+ \begin{equation}\label{eqn:J-is-in-U}
+  J \defeq \Set{i \in I | v(i) \relR \mathrm{id}_I(i)} \in \mathcal{U} 
+ \end{equation}
+ となる．すると，$\relR$ の定義より $v(i) \relR i \Leftrightarrow v(i) \in X_i$ であるので，$J = \Set{ i \in I | v(i) \in X_i} \in \mathcal{U}$ となる．よって，$f \restr J$ は $\{X_j\}_{j \in J}$ の選択関数である\footnote{ここで「従って $J \notin \mathcal{U}$ でなくてはならず矛盾．証明終了」としては{\bfseries いけない}．$\mathcal{F}$ の定義は確かに「対応する族が選択関数を持たない添字集合全体」であったが，ウルトラフィルターの補題によりそれを拡大したものが $\mathcal{U}$ なので，$\mathcal{U}$ には選択関数を持つものが入っているかもしれないからである．}．従って $J \in \mathcal{I}$ であり，$I \setminus J \in \mathcal{F} \subseteq \mathcal{U}$ となる．すると $(1)$ と合わせて $\emptyset = J \cap (I \setminus J) \in \mathcal{U}$ となり，$\mathcal{U}$ がフィルターであることに矛盾する．\qed
+\end{proof}
+
+\section{自然数の超準モデルと超準解析}
+ここでは，超冪を用いて自然数の超準モデルを構成する．{\bfseries 超準モデル}（{\itshape non-standard model}）というのは，通常期待されるような物と異なるモデルでありながら，一階述語論理の範囲内では全く同じ性質を持つようなモデルのことである．また，「超準」という言葉からもわかるように，午前中に扱った超準解析とも関係のある話題である．
+
+まず，午前中~\cite{alg_d:2013}にも出て来た $\N$ 上の Fr\'{e}chet フィルターを考える．
+\[
+ \mathcal{F}_0 \defeq \Set{ X \subseteq \N | \N \setminus X \text{は有限集合}}
+\]
+ウルトラフィルターの補題により，この $\mathcal{F}_0$ を含むようなウルトラフィルター $\mathcal{U}$ を取ることが出来る．このウルトラフィルターはウルトラフィルターの補題によって取り，その証明には選択公理が使われるので，一意なものではなく複数のものがありうることを注意しておく．
+
+以下では，順序環の言語 $\mathcal{L}_{\mathrm{OR}} = \braket{+, \cdot, \leq}$ を考えて，順序環 $\mathfrak{Z} = \braket{\Z, +, \cdot, \leq}$ の $\mathcal{U}$ による超冪 $\power{*}{\mathfrak{Z}} = \quot{\power{\N}{\mathfrak{Z}}}{\mathcal{U}}$ を考える．
+\Los の定理の系より $\mathfrak{Z} \prec \power{*}{\mathfrak{Z}}$ であった．即ち，$\varphi$ を $\mathcal{L}_{\mathrm{OR}}(\mathfrak{Z})$-論理式とすると，
+\[
+ \quot{\power{\N}{\mathfrak{Z}}}{\mathcal{U}} \models \varphi
+ \Leftrightarrow \mathfrak{Z} \models \varphi
+\]
+が成立するのだった．$\N$ 上の恒等写像 $id_\N$ を考えると，午前中の議論と同様にして $\omega \defeq [id_\N]$ は無限大の自然数となっていることがわかり，他にも $[id - 1]$ や $[id^2]$ などを考えれば，こうした無限大の自然数は無数に存在するのだった．このような無限大の自然数のことを，{\bfseries 超有限自然数}と呼ぶ．また， $-[id] < -n$ となるので，$\mathfrak{Z}$ は負の無限大の整数も持つことになる．午前中の超準解析の導入においては，ここでの $\mathfrak{Z}$ の代わりに $\R = \braket{\R, \N, \Z, \Q, <, \leq, +, \cdot , |\cdot|, \sin, \dots}$ というような構造の超冪 $\power{*}{\R}$ を取ったと考えることが出来る\footnote{より厳密に数理論理学の知識を使う場合は，集合論のユニヴァースを考えて云々するのだが，話が難しくなるのでここでは最初から全ての関数などを言語に加えた構造を考えている．厳密な取り扱いについては Keisler~\cite{Keisler} や Goldblatt~\cite{Goldblatt}，齋藤~\cite{Saito}などを参照されたい．}．ここで，$\N, \Z, \Q$ はそれぞれ自然数，整数，有理数を表す一変数述語記号であり，$\sin$ 以降は必要な「関数」に対応する記号を列挙していると思えばよい．
+
+すると，例えば最大値の原理の証明の部分は次のように考えることが出来る．午前中では，まず連続であるということの超実数を使った特徴付けを行い，それを用いた超準的な議論により最大値の原理が $\power{*}{\R}$ で成立する事を証明した．より詳しく述べよう．まず，\Los の定理の系より $\R \prec \power{*}{\R}$ なので，$\mathcal{L}(\R)$-論理式が $\R$ で成り立つことと $\power{*}{\R}$ で成り立つことは同値である．数列を自然数以外では値 $0$ を取る関数だと思えば，各数列 $a$ に対して「有限列 $a$ は最大値を持つ」という事を $\mathcal{L}(\R)$-論理式で書ける．これは $\R$ で明らかに成立するので，$\power{*}{\R}$ にもっていっても真である．特に，$\power{*}{\R}$ での超有限の長さの有限列も最大値を持つことになる．この事を使うと，各関数記号 $f$ について，$f$ が $\power{*}{[0,1]}$ で連続関数ならばある点で最大値を持つことが（$\power{*}{\R}$ で）示せる．
+ここで，各々の関数 $f$ が「連続である」「最大値を取る」といった事も言語 $\mathcal{L}(\R)$ で書ける条件式であるので，今度は同じことが $\R$ でも成り立つ．このように，通常の実数や関数に関する命題である限り，超実数を使って $\power{*}{\R}$ でその命題を証明したとしても，$\R$ でもその定理が成立するのだ．『《ある意味》で $\R$ で成り立つことは $\power{*}{\R}$で成り立ち，$\power{*}{\R}$ で成り立つことは $\R$ で成り立つ』の「ある意味」というのはこういう意味である．
+
+ところで，このような無限大の自然数が存在するような体系では面白いことが起こる．再び $\mathfrak{Z}$ とその超冪で考えよう．今，任意の整数 $n$ について，$n$ か $n-1$ のいずれかは偶数である．即ち，
+\[
+ \mathfrak{Z} \models \forall n \exists m (n = 2 \cdot m \vee n - 1 = 2\cdot m)
+\]
+が成立するのであった．すると，\Los の定理の系 $\ref{los-power}$ から
+\[
+ \power{*}{\mathfrak{Z}} \models \forall n \exists m (n = 2 \cdot m \vee n - 1 = 2\cdot m)
+\]
+である．よって $[id]$ か $[id]-1$ のいずれかが $2$ で割れることになる\footnote{どちらが割れるかは，ウルトラフィルターの取り方によってかわってくる}．割れる方を $2$ で割ってやると，これも超有限の自然数になっている．この手続を繰り返して，$\power{*}{\mathfrak{Z}}$ の元の狭義減少列 $\alpha_0 > \alpha_1 > \dots > \alpha_n > \cdots$ が得られる．これらはいずれも $0$ より大きい．よって自然数の狭義減少列が得られたことになる．
+
+しかし，自然数の整列性から狭義減少列は存在しない筈だ．どういうことか？今我々が考えているのは，「一階述語論理」で書ける範囲の理論であった．つまり，「狭義減少列が存在しない」とか「自然数は整列する」といった概念は，言語 $\mathcal{L}_{\mathrm{OR}}$ を使った一階述語論理では書けないと云うことが，この事実の伝える事なのである\footnote{他方，上の $\power{*}{\R}$ では有限列ということを書くことが出来た．しかし，$\power{*}{\R}$ での有限は超有限も含んでしまうので，結局標準的な意味での有限列であるという条件にはならない．より一般に，超準元の存在するモデルでは，そのモデル内で標準元と超準元の区別を付けることは出来ないことが証明出来る．}．自然数の整列性は，「任意の自然数からなる部分集合に最小値が存在する」という形で述べられるが，この「部分集合」に対する量化が一階述語論理では行えないのである．このことは，「自然数の部分集合」全体は非可算無限個存在するが，自然数の理論自体は可算言語で記述されるため，高々可算個の部分集合しか扱えない，ということを考えるとちょっと分かり易いのではないだろうか．
+
+そうはいっても，「集合と位相」などの講義でそういったことを証明したぞ，と思われるかもしれない．それに，部分集合も扱えないのであればイデアルなどを考えることも出来ず，一階述語論理など考えても仕方がないのではないか？と云う疑問も出て来るだろう．それにもかかわらず数理論理学が主に一階述語論理を対象としているのは概ね次のような事情による．
+
+環や群の公理といったものは，対応する一階述語論理上の理論を定める．こうした理論をZFC集合論の中で解釈して，その内部で様々な操作や議論を行う，というのが普段我々が「数学」でやっていることなのである．その意味で，現代数学は実質的に一階述語論理とその上のZFC集合論の内部で展開出来るということが知られている．「選択公理より極大イデアルが存在するので〜」というような言明の意味は，そういったことである．論理学的にも，一階述語論理は完全性やコンパクト性など扱い易い性質を持っているため，モデル理論や集合論は一階述語論理を使って展開されているのである．また，一階述語論理でその「部分集合」を直に扱うことが出来ないとしても，上の超準解析の議論でやったように，必要な定数や関数などを予め言語に付け加えてしまえば大体おなじようなことが出来る場合が多い\footnote{もちろん，可算言語でなくなるとか，公理が煩雑になるとかといった欠点もある．}．
+
+\section{L\"{o}wenheim-Skolem の定理}
+最後に，モデルの濃度に関わる L\"{o}wenheim-Skolem の定理を紹介して終わりにしよう．いきなり主張を述べてしまおう．
+
+\begin{theorem}[L\"{o}wenheim-Skolem]
+ $\mathcal{L}$ を可算言語，$\mathfrak{B}$ を無限 $\mathcal{L}$-構造とする．
+ \begin{enumerate}[label=(\alph{*})]
+  \item 無限基数 $\kappa \leq \card(\mathfrak{B})$ と $\card(S) \leq \kappa$ となる $S \subseteq |\mathfrak{B}|$ に対し，$S$ を含み濃度 $\kappa$ となるような初等部分構造 $\mathfrak{A} \prec \mathfrak{B}$ が存在する．
+  \item $\card(\mathfrak{B}) \leq \kappa$ ならば，濃度 $\kappa$ となるような初等拡大 $\mathfrak{A} \succ \mathfrak{B}$ が存在する．
+ \end{enumerate}
+\end{theorem}
+
+証明のため，次の初等部分構造の判定条件をまず証明しておく：
+
+\begin{lemma}[Tarski-Vaught 判定条件]
+ $\mathfrak{B}: \mathcal{L}$-構造，$A \subseteq B$ とする．この時，次は同値：
+ \begin{enumerate}
+  \item $A$ に自然な構造を入れることで $\mathfrak{A} \prec \mathfrak{B}$ となる．
+  \item 任意の $\mathcal{L}(\mathfrak{A})$-論理式 $\varphi(x)$ に関して，
+	 $\mathfrak{B} \models \exists x \varphi(x) \Longrightarrow$ ある $a \in A$ があって $\mathfrak{B} \models \varphi(a)$
+ \end{enumerate}
+\end{lemma}
+\begin{proof}
+ $1 \Longrightarrow 2$ は自明なので，$2 \Longrightarrow 1$ を示す．まずは部分構造となることを示す．
+ 
+ $\mathfrak{B}$ は $\mathcal{L}$-論理式なので，定数記号 $c$ に対し，$\mathfrak{B} \models \exists x (x = c)$ となる．すると $2$ よりある $a \in A$ が存在して $\mathfrak{B} \models a = c$ となる．よって $c^\mathfrak{A} = a \in A$ である．関数記号の場合についても同様である．
+
+ そこで，初等部分構造となる事を示す．$\varphi$ を $\mathcal{L}(\mathfrak{A})$-論理式として，
+ \begin{equation}
+  \mathfrak{A} \models \varphi \Leftrightarrow \mathfrak{B} \models \varphi\label{eqn:elementary}
+ \end{equation} 
+を示せばよい．$\varphi$ の構成に関する帰納法で証明する．
+ $\varphi$ が原子論理式であれば，$\mathfrak{A}$ が $\mathfrak{B}$ の部分構造であることから $(2)$ は成立する．また，$\varphi$ が Boole 結合の形になっているときも明らかである．$\varphi \equiv \exists x \psi(x)$ の時は，
+ \begin{alignat*}{2}
+  \mathfrak{B} \models \exists x \psi(x) &\Leftrightarrow \text{ある} a \in A \text{があって} \mathfrak{B} \models \psi(a) & (\text{仮定})\\
+  & \Leftrightarrow \text{ある} a \in A \text{があって} \mathfrak{A} \models \psi(a) & (\text{帰納法の仮定}) \\
+  & \Leftrightarrow \mathfrak{A} \models \exists x \psi(x)
+ \end{alignat*}
+
+ よって示された\mbox{}
+\end{proof}
+
+この条件が述べているのは，「部分構造が初等部分構造になれないのは，論理式を満たす『解』が足りないからである」ということである．そこで，元となる $S$ に足りない解を付け足していくことで L\"{o}wenheim-Skolem の定理を証明しよう．
+
+\begin{proof}[L\"{o}wenheim-Skolem の定理の証明]
+ \begin{enumerate}[label=(\alph{*})]
+  \item これは特に{\bfseries 下方 L\"{o}wenheim-Skolem の定理} と呼ばれる．また，単に L\"{o}wenheim-Skolem の定理と云った場合こちらだけを指すことも多い．
+
+	先の宣言通り，$S$ に足りない元を付け加えていって，それが高々 $\kappa$ 個で足りることを示す．
+	$B$ の部分集合の上昇列 $A_i (i \leq \omega)$ を次のようにして構成する．
+
+	まず，$A_0 = S$ とする．今，$\mathcal{L}(A_n)$ 論理式は $\mathcal{L}$ の記号と $A_n$ の元の有限列で書けるので，その個数は高々 $(\card(L) + \card(A_n) + \aleph_0)^{<\omega} \leq \kappa^{<\omega} = \kappa$ となる．ここで{\bfseries 選択公理を使っている}．任意の無限基数 $\kappa$ に対し，その有限列全体の濃度 $\kappa^{<\omega}$ が $\kappa$ と一致することは選択公理と同値である．
+
+	そこで，$\mathcal{L}(A_n)$-論理式 $\varphi(x)$ について，$a_\varphi \in B$ を次のように定める：
+	\[
+	 a_\varphi = \begin{cases}
+		   \mathfrak{B} \models \varphi(a) \text{となるような} a \in B & (\mathfrak{B} \models \exists x \varphi(x))\\
+		   \text{適当な} B \text{の元} & (\text{otherwise})
+		  \end{cases}
+	\]
+	再び，ここで$a_\varphi$ を取るときにも{\bfseries 選択公理を使っている}．これを用いて，
+	\[
+	 A_{n+1} = A_n \cup \Set{ a_\varphi | \varphi(x): \mathcal{L}(A_n)\text{-論理式}}
+	\]
+	と定め，$A = \bigcup_{n < \omega} A_n$ と置く．明らかに，$\card(A) \leq \kappa$ である．後は，$A \subseteq \mathfrak{B}$ が Tarski-Vaught の判定条件を満たすことを云えばよい．$\varphi(x)$ を $\mathcal{L}({\mathfrak{A}})$-論理式として，$\mathfrak{B} \models \exists x \varphi(x)$ とする．この時，$A$ の作り方よりある $n < \omega$ が存在し，$\varphi(x)$ は $\mathcal{L}(\mathfrak{A}_n)$-論理式となる．$A_n$ の構成の仕方より，$\varphi(x)$ は $A_{n+1}$ に解 $a_\varphi \in A_{n+1} \subseteq A$ を持つ．よって $\mathfrak{B} \models \varphi(a_\varphi)$ となるので，$\mathfrak{A} \prec \mathfrak{B}$ である．特に，$\card(S) = \kappa$ とすれば，$\mathfrak{A}$ の濃度は $\kappa$ となる．
+  \item こちらは{\bfseries 上昇 L\"{o}wenheim-Skolem の定理}と呼ばれ．証明には次のコンパクト性定理\footnote{この定理の名前の由来は，「任意の開被覆が有限部分開被覆を持つ」という位相空間のコンパクト性と単に似ているためだと思われがちである．しかし，論理式の間に適当な位相を入れることで，コンパクト性定理は実際にその空間のコンパクト性と同値となる~\cite[演習問題 1.8.4]{Arai}\cite[補遺VI]{Tanaka:2005}．}を使う：
+	\begin{quotation}
+	 理論 $\mathcal{T}$ の任意の有限部分集合がモデルを持つなら，$\mathcal{T}$ もモデルを持つ．
+	\end{quotation}
+	この事の証明は \Los の定理を使うととても鮮かに出来るので，各自で証明してみて欲しい（ここではやらない）．これさえ認めれば，次のようにして示せる．
+
+	$c_\alpha \, (\alpha < \kappa)$ を $\mathcal{L}(\mathfrak{B})$ に含まれない互いに異なる定数記号とし，$\mathcal{L}' = \mathcal{L}(\mathfrak{B}) \cup \Set{ c_\alpha | \alpha < \kappa }$ とする．ここで，$\mathcal{T} = \Diag(\mathfrak{B}) \cup \Set{ c_\alpha \neq c_\beta | \alpha < \beta < \kappa}$ と置く．$\mathcal{T}$ の任意の有限部分集合 $T \subseteq \mathcal{T}$ がモデルを持つことを示す．
+
+	まず，初等設計図の定義から $\mathfrak{B} \models T \cap \Diag(\mathfrak{B})$ である．$T$ の残りは $\{c_{\alpha_0} \neq c_{\beta_0}, \dots, c_{\alpha_n} \neq c_{\beta_n}\}$ の形である．今，$\mathfrak{B}$ は無限構造であるので，各 $c_{\alpha_k}, c_{\beta_k}$ が異なるように上手く元を取ってくることが出来る．よって $\mathfrak{B} \models T$．従って $\mathcal{T}$ の任意の有限部分集合がモデルを持つので，$\mathfrak{A} \models \mathcal{T}$ となるような $\mathcal{L}'$-構造 $\mathfrak{C}$ が得られる．$a \in B$ と，$\mathfrak{C}$ での名前の解釈 $c_a^\mathfrak{C}$ を同一視してやることにより $\mathfrak{B} \prec \mathfrak{C}$ となり，更に $\mathcal{T}$ のモデルである事から $\mathfrak{C}$ は $\kappa$ 個の異なる元を持つので，$\kappa \leq\card(C)$ である．そこで，下方 L\"{o}wenheim-Skolem を適用して濃度 $\kappa$ となるモデル $\mathfrak{A}$ を取れば，これが求めるものとなる． 
+ \end{enumerate}\qed
+\end{proof}
+
+実は，L\"{o}wenheim-Skolem の定理は{\bfseries 選択公理と同値}である．詳しい証明は第一回選択公理オフの際に非公式にやったらしいので，\href{http://alg-d.com/math/ac/loewenheim_skolem.html}{今から @alg\_d氏が一分で証明してくれます}．
+
+L\"{o}wenheim-Skolem の定理は，一階述語論理ではモデルの濃度を限定出来ないという主張である．これは単なる選択公理にまつわる不思議現象ではなく，
+しっかりとした応用がある．
+
+ZF が無矛盾だとすると，G\"{o}del の完全性定理により $V \models \mathrm{ZF}$ となるようなモデル $V$ が存在する．無限公理があるので，特に $V$ は無限モデルである．よって，L\"{o}wenheim-Skolem の定理より，{\bfseries 集合論の可算モデル} $U \subseteq V$ を取ることが出来る．えっ，でも Cantor の対角線論法によれば，$\aleph_0 < 2^{\aleph_0}$ だよね？モデルが可算だったら，実数のような連続体濃度の集合は存在しなくなっちゃうんじゃないの？？矛盾だ！！！という声が聞こえてきそうだ．しかし，これは矛盾ではない．そもそも「可算」などの濃度の概念がどのようにして定義されたか思い出そう．集合 $X$ と $Y$ の濃度が等しいというのは，$X$ と $Y$ の間に全単射が存在するということであった．つまり，集合の濃度は{\bfseries その濃度の証拠となる関数の存在に依存する}のだ．この場合，$U$ が可算であることを保証する全単射は $V$ には属するが，$U$ には存在しないのだ．よって，$V$ から見れば $U$ は可算集合だが，$U$ の中から見れば全体は可算ではないし，それどころか「集合」ですらない，ということになる．
+
+こんな可算モデルを取って何が嬉しいのだろうか．集合論ではある命題が ZF から独立であることを示す為に{\bfseries 強制法}という手法が良く使われる\footnote{強制法については，Kunen~\cite{Kunen:2011} やその旧版の日本語訳が標準的な教科書として挙げられる}．選択公理も，この強制法を用いて独立性が示される重要な例である．強制法で用いられる道具の存在を示すために，ZF の可算モデルが取れるという事は非常に重要な前提条件になっているのである．
+
+\nocite{*}
+\printbibliography
+\end{document}
