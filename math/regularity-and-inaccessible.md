@@ -65,7 +65,7 @@ We also give really brief survey on this topic.
 * [English Version (External Link)](https://tsukuba.repo.nii.ac.jp/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=37187&item_no=1&page_id=13&block_id=83)
 * Japanese Version (hopefully accessible in future?)
 
-# Reference Information
+## Reference Information
 
 ```bibtex
 @mastersthesis{ISHII:2016sf,
