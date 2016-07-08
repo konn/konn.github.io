@@ -3,6 +3,7 @@ $latex_silent     = 'uplatex -file-line-error -interaction=nonstopmode -shell-es
 $bibtex           = 'pbibtex';
 $dvipdf           = 'dvipdfmx -p a4 -f otf-up-ipaex.map %O -o %D %S';
 $pdflatex         = 'xelatex -file-line-error -interaction=nonstopmode -shell-escape -halt-on-error';
+$lualatex         = 'luajittex --fmt=luajitlatex.fmt %O -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1';
 $xelatex          = 'xelatex -file-line-error -interaction=nonstopmode -shell-escape -halt-on-error';
 $pdf_mode         = 3;
 $max_repeat       = 5;
