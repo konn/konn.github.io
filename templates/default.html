@@ -56,6 +56,12 @@
     <div><i class="icon-calendar"></i> posted on $date$</div>
     </div>
     <div class="page-content">
+      $if(abstract)$
+      <div class="abstract">
+        <h2>概要</h2>
+        $abstract$
+      </div>
+      $endif$
       $body$
     </div>
   </div>

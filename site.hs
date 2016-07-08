@@ -607,6 +607,6 @@ removeTeXGomiStr = packed %~ T.replace "\\qed" ""
                            . T.replace "\\RequirePackage{luatex85}" ""
 
 procCrossRef :: Pandoc -> Pandoc
-procCrossRef p@(Pandoc m _) = runCrossRef m (Just "html") defaultCrossRefAction p
+procCrossRef p = p
 
 

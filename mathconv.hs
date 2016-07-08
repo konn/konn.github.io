@@ -22,11 +22,13 @@ import           Data.Maybe                      (fromMaybe)
 import           Data.Maybe                      (listToMaybe)
 import qualified Data.Set                        as S
 import qualified Data.Text                       as T
+import qualified Data.Text.IO                    as T
 import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
                                                   (</>))
 import qualified MyTeXMathConv                   as MyT
 import           Prelude                         hiding (FilePath)
 import           Shelly                          hiding (get)
+import           System.IO.Temp                  (withSystemTempDirectory)
 import           Text.LaTeX.Base                 hiding ((&))
 import           Text.LaTeX.Base.Class
 import           Text.LaTeX.Base.Parser
@@ -161,8 +163,6 @@ commandDic = [("underline", Right "u"), ("bf", Left Strong)
              ,("emph", Left Strong)
              ,("textgt", Left Strong)
              ,("textsf", Left Strong)
-             ,("label", Left $ \i -> Span (stringify i, [], []) [])
-             ,("ref", Left $ \i -> RawInline "html" $ "[@" ++ stringify i ++ "]")
              ]
 
 rewriteInlineCmd :: [Inline] -> [Inline]
@@ -214,8 +214,11 @@ rewriteBeginEnv = concatMapM step
                                        , procMathInline $
                                          unwords $ map (init . tail . T.unpack . render) args, "\">"
                                        ]
-          Pandoc _ myBody <- texToMarkdown "" $  T.unpack $ render body
-          return $ RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
+          withSystemTempDirectory "intermidiatex" $ \tmp ->  do
+            let targ = tmp </> "interm.tex"
+            T.writeFile (encodeString targ) (render body)
+            Pandoc _ myBody <- texToMarkdown targ $  T.unpack $ render body
+            return $ RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
     step b = return [b]
 
 concatMapM :: Monad m => (a -> m [b]) -> [a] -> m [b]
@@ -262,7 +265,7 @@ buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
   usepackage [] "amsmath"
   usepackage [] "amssymb"
   usepackage [] "pgfplots"
-  comm1 "usetikzlibrary" "matrix,arrows"
+  comm1 "usetikzlibrary" "matrix,arrows,backgrounds,calc,shapes"
   mapM_ fromLaTeX tikzLibs
   comm1 "tikzset" $ do
     "node distance=2cm, auto, >=latex,"
