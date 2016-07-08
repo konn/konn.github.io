@@ -68,24 +68,24 @@ tag: 数学,数理論理学,集合論,無限組合せ論,極小歩,minimal walk,
  \end{itemize}
 \end{definition}
 
-\begin{theorem}[Shelah~\cite{Shelah:1984}]\label{thm:Shel-Cohen-Suslin}
+\begin{theorem}[Shelah~\cite{Shelah:1984}]
  Cohen強制法$\mathbf{C}$はSuslin木を付加する．
 \end{theorem}
 
 まず次の補題を認める：
 
-\begin{lemma}\label{lem:coh-seq}
+\begin{lemma}
  次を満たす列$\Braket{e_\alpha | \alpha < \omega}$が存在する：
  \begin{enumerate}
-  \item \label{item:ea-inj}単射性：各$\alpha$について$e_\alpha : \alpha \xrightarrow{\text{1-1}} \omega$,
-  \item \label{lem:ea-coh}斉一性：各$\alpha < \beta < \omega_1$に対し，$|\Set{\xi < \alpha | e_\alpha(\xi) \neq e_\beta(\xi)}| < \aleph_0$.
+  \item 単射性：各$\alpha$について$e_\alpha : \alpha \xrightarrow{\text{1-1}} \omega$,
+  \item 斉一性：各$\alpha < \beta < \omega_1$に対し，$|\Set{\xi < \alpha | e_\alpha(\xi) \neq e_\beta(\xi)}| < \aleph_0$.
  \end{enumerate}
 \end{lemma}
 
 これを認めた上で先に定理1を示す．
 まず，このような列からAronszajn木が作れることを見ておく：
 
-\begin{lemma}\label{lem:coh-to-arons}
+\begin{lemma}
  補題1のような$\Braket{e_\alpha | \alpha < \omega_1}$に対し，$T \defeq \Set{e_\alpha \restr \beta | \beta \leq \alpha < \omega_1}$はAronszajn木となる．
 \end{lemma}
 \begin{proof}
@@ -276,7 +276,7 @@ $\beta$から$\alpha$に向けて$\Braket{C_\xi | \xi < \omega_1}$を梯子に�
 $\rho_1$はこの$\alpha$未満の有限の端数の所に注目して，一番長い所の長さを持ってきた物である．
 そして，この$\rho_1$が補題1の列を作る本質的な素になっている．
 
-\begin{lemma}\label{lem:rho1-prop}
+\begin{lemma}
  \begin{enumerate}
   \item $\rho_1(-, \beta)$は有限対一写像：任意の$n < \omega$に対し$|\Set{\xi < \beta | \rho_1(\xi, \beta) = n}| < \aleph_0$,
   \item $\rho_1$は斉一的(coherent)：任意の$\beta < \alpha < \omega_1$に対し$|\Set{\xi < \beta | \rho_1(\xi, \beta) \neq \rho_1(\xi, \alpha)}| < \aleph_0$.
