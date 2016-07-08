@@ -40,7 +40,6 @@ tag: 数学,数理論理学,集合論,無限組合せ論,極小歩,minimal walk,
 \begin{document}
 
 \maketitle
-
 \begin{abstract}
  Shelahは実数の集合の性質に関する記念碑的論文~\cite{Shelah:1984}において滅茶苦茶いろいろな事を示していて本当にヤバいんですが，その中で一節割いて「Cohen実数を付加するとSuslin木も足される」という事を示しています．
  原論文における構成は結構煩雑に見えますが，後にTodor\v{c}evi\'{c}~\cite{Todorcevic:1987fj}は彼の発明した\emph{minimal walk}の手法を用いて自然で比較的簡単な構成を与えました．
@@ -313,7 +312,7 @@ $\rho_1$はこの$\alpha$未満の有限の端数の所に注目して，一番�
         以上を踏まえれば，
         \begin{align*}
          \rho_1(\xi, \alpha) &= \max \{\ |C_\alpha \cap \xi|, \rho_1(\xi, s^{\alpha,\xi}_1) \ \}\\
-         &= \max \{\ \underbrace{|C_\alpha \cap \gamma |}_{\begin{smallmatrix}\rotatebox{-90}{\ensuremath{\scriptstyle =}}\\n\end{smallmatrix}}, \underbrace{\rho_1(\xi, \eta)}_{\begin{smallmatrix}\rotatebox{-90}{\ensuremath{\scriptstyle >}}\\n\end{smallmatrix}} \ \} = \rho_1(\xi, \eta).
+         &= \max \{\ \underbrace{|C_\alpha \cap \gamma |}_{= n}, \underbrace{\rho_1(\xi, \eta)}_{> n} \ \} = \rho_1(\xi, \eta).
         \end{align*}
         ここで，$\eta = \beta$なら$\rho_1(\xi, \alpha) = \rho_1(\xi, \beta)$となるので適当に$\xi \in B$を取ればそれが求めるものである．
         もし$\eta < \beta$であれば，$B$に帰納法の仮定が使え，$\xi \in B$で$\rho_1(\xi, \eta) = \rho_1(\xi, \beta)$を満たすものが取れ，上の議論と合わせて$\rho_1(\xi, \alpha) = \rho_1(\xi, \beta)$となる． \qed
