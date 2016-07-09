@@ -118,7 +118,7 @@ main = hakyllWith config $ do
       posts <- postList (Just 5) subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "updates" posts <> defaultContext)
-              >>= applyDefaultTemplate {- tags -} >>= relativizeUrls
+              >>= applyDefaultTemplate mempty {- tags -} >>= relativizeUrls
 
   match "archive.md" $ do
     route $ setExtension "html"
@@ -126,7 +126,7 @@ main = hakyllWith config $ do
       posts <- postList Nothing subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "children" posts <> defaultContext)
-              >>= applyDefaultTemplate {- tags -} >>= relativizeUrls
+              >>= applyDefaultTemplate mempty {- tags -} >>= relativizeUrls
 
   create [".ignore"] $ do
     route idRoute
@@ -142,7 +142,7 @@ main = hakyllWith config $ do
       chs <- listChildren True
       chl <- postList Nothing (fromList $ map itemIdentifier chs)
       myPandocCompiler >>= applyAsTemplate (constField "children" chl <> defaultContext)
-                       >>= applyDefaultTemplate >>= saveSnapshot "content"  >>= relativizeUrls
+                       >>= applyDefaultTemplate mempty >>= saveSnapshot "content"  >>= relativizeUrls
 
   match "t/**" $ route idRoute >> compile' copyFileCompiler
 
@@ -176,7 +176,7 @@ main = hakyllWith config $ do
                      def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
                         , writerExtensions = S.delete Ext_raw_tex $ writerExtensions def
                         } $ procCrossRef <$> conv'd
-      saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate item
+      saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate (pandocContext $ itemBody conv'd) item
 
   match "math/**.tex" $ version "pdf" $ do
     route $ setExtension "pdf"
@@ -188,7 +188,7 @@ main = hakyllWith config $ do
   match (("articles/**.md" .||. "articles/**.html" .||. "profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ do
     route $ setExtension "html"
     compile' $
-      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate >>= relativizeUrls
+      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate mempty >>= relativizeUrls
 
   create ["feed.xml"] $ do
     route idRoute
@@ -197,6 +197,21 @@ main = hakyllWith config $ do
         >>= myRecentFirst
         >>= return . take 10 . filter (matches ("index.md" .||. complement "**/index.md") . itemIdentifier)
         >>= renderAtom feedConf feedCxt
+
+pandocContext :: Pandoc -> Context a
+pandocContext (Pandoc meta _)
+  | Just abst <- lookupMeta "abstract" meta =
+        constField "abstract" $
+        writeHtmlString writerConf $ Pandoc meta (toBlocks abst)
+  | otherwise = mempty
+
+toBlocks :: MetaValue -> [Block]
+toBlocks (MetaMap _) = []
+toBlocks (MetaList v) = concatMap toBlocks v
+toBlocks (MetaBool b) = [ Plain  [ Str $ show b ] ]
+toBlocks (MetaString s) = [ Plain [ Str s ] ]
+toBlocks (MetaInlines ins) = [Plain ins]
+toBlocks (MetaBlocks bs) = bs
 
 compile' :: (Typeable a, Writable a, Binary a) => Compiler (Item a) -> Rules ()
 compile' d = compile $ d
@@ -219,7 +234,7 @@ addPDFLink plink (Pandoc meta body) = Pandoc meta body'
 
 appendBiblioSection :: Pandoc -> Pandoc
 appendBiblioSection (Pandoc meta bs) =
-    Pandoc meta $ bs ++ [Header 1 ("biblio", [], []) [Str "参考文献"]]
+    Pandoc meta $ bs ++ [Div ("biblio", [], []) [Header 1 ("biblio", [], []) [Str "参考文献"]]]
 
 listChildren :: Bool -> Compiler [Item String]
 listChildren recursive = do
@@ -334,8 +349,8 @@ myPandocCompiler =
 readHtml' :: ReaderOptions -> String -> Pandoc
 readHtml' opt = fromRight . readHtml opt
 
-applyDefaultTemplate :: Item String -> Compiler (Item String)
-applyDefaultTemplate item = do
+applyDefaultTemplate :: Context String -> Item String -> Compiler (Item String)
+applyDefaultTemplate addCtx item = do
   let navbar = field "navbar" $ makeNavBar . itemIdentifier
       bcrumb = field "breadcrumb" makeBreadcrumb
       date = field "date" itemDateStr
@@ -352,7 +367,7 @@ applyDefaultTemplate item = do
         return $ renderHtml $ do
           H5.meta ! H5.name "Keywords"    ! H5.content (H5.toValue tags)
           H5.meta ! H5.name "description" ! H5.content (H5.toValue desc)
-      cxt  = toc <> navbar <> bcrumb <> hdr <> meta <> date <> defaultContext
+      cxt  = mconcat [ addCtx, toc, navbar, bcrumb, hdr, meta, date, defaultContext]
   let item' = demoteHeaders . withTags addTableClass <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
   unsafeCompiler $ do
