@@ -6,6 +6,7 @@ module Lenses where
 import Control.Lens
 import Hakyll.Core.Configuration
 import Language.Haskell.TH       hiding (Inline (..))
+import Text.LaTeX.Base.Syntax
 import Text.Pandoc.Definition
 
 flip makeLensesWith ''Configuration $
@@ -20,6 +21,8 @@ makePrisms ''Inline
 makePrisms ''Block
 makeFields ''Inline
 makeFields ''Block
+makePrisms ''LaTeX
+makePrisms ''TeXArg
 
 imgOrLink :: Traversal' Inline (Attr, [Inline], Target)
 imgOrLink = failing _Link _Image

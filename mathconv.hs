@@ -2,6 +2,7 @@
 {-# LANGUAGE FlexibleContexts, GADTs, LambdaCase, MultiParamTypeClasses  #-}
 {-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, PatternGuards #-}
 {-# LANGUAGE StandaloneDeriving, TemplateHaskell, TypeOperators          #-}
+{-# LANGUAGE ViewPatterns                                                #-}
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 module MathConv where
 import Lenses
@@ -172,6 +173,7 @@ rewriteInlineCmd = concatMap step
         | Right t <- parseTeX src = rewrite t
     step i = [i]
     rewrite (TeXSeq l r) = rewrite l ++ rewrite r
+    rewrite (TeXComm "parpic" args) = procParpic args
     rewrite (TeXComm "ruby" [FixArg rb, FixArg rt]) =
       [RawInline "html" $ "<ruby><rb>"]
       ++ concatMap step (inlineLaTeX (render rb))
@@ -189,6 +191,25 @@ rewriteInlineCmd = concatMap step
         Just (Left inl) -> [inl $ concatMap step $ inlineLaTeX $ render arg]
         _ -> inlineLaTeX $ render c
     rewrite c = inlineLaTeX $ render c
+
+data Align = AlignL | AlignR
+           deriving (Read, Show, Eq, Ord)
+
+procParpic :: [TeXArg] -> [Inline]
+procParpic [OptArg "r", FixArg lat] = procParpic' AlignR lat
+procParpic [OptArg "l", FixArg lat] = procParpic' AlignL lat
+procParpic (fixArgs -> [lat]) = procParpic' AlignR lat
+procParpic _ = []
+
+procParpic' :: Align -> LaTeX -> [Inline]
+procParpic' al lat =
+  let pull = case al of
+        AlignL -> "pull-left"
+        AlignR -> "pull-right"
+  in [ Span ("", ["media", pull], [])  $ inlineLaTeX (render lat) ]
+
+fixArgs :: Foldable f => f TeXArg -> [LaTeX]
+fixArgs = toListOf (folded._FixArg)
 
 inlineLaTeX :: Text -> [Inline]
 inlineLaTeX src =
