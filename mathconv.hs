@@ -92,7 +92,7 @@ texToMarkdown fp src = do
       initial = T.unpack $ render $ preprocessTeX latexTree
       st0 = MachineState { _tikzPictures = mempty
                          , _macroDefs = macros
-                         , _imgPath = dropExtension pth
+                         , _imgPath = dropExtension fp
                          }
   (pan, s) <- runStateT (texToMarkdownM initial) st0
   let tikzs = toList $ s ^. tikzPictures
