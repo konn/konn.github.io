@@ -9,27 +9,29 @@ import Lenses
 
 import           Control.Applicative
 import           Control.Arrow                   (left)
-import           Control.Effect
 import           Control.Lens                    hiding (op, rewrite)
 import           Control.Lens.Extras             (is)
 import           Control.Monad.Identity
+import           Control.Monad.State.Strict      (runStateT)
+import           Control.Monad.State.Strict      (StateT)
+import           Control.Monad.Trans             (MonadIO)
 import           Data.Char                       (isAscii)
 import           Data.Char                       (isAlphaNum)
 import           Data.Char                       (isLatin1)
 import           Data.Char                       (isLetter)
 import           Data.Data
 import           Data.Default
+import           Data.Foldable                   (toList)
 import           Data.Maybe                      (fromMaybe)
 import           Data.Maybe                      (listToMaybe)
+import           Data.Sequence                   (Seq)
 import qualified Data.Set                        as S
 import qualified Data.Text                       as T
-import qualified Data.Text.IO                    as T
 import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
                                                   (</>))
 import qualified MyTeXMathConv                   as MyT
 import           Prelude                         hiding (FilePath)
 import           Shelly                          hiding (get)
-import           System.IO.Temp                  (withSystemTempDirectory)
 import           Text.LaTeX.Base                 hiding ((&))
 import           Text.LaTeX.Base.Class
 import           Text.LaTeX.Base.Parser
@@ -57,6 +59,15 @@ default (String)
 fromRight :: Either a b -> b
 fromRight ~(Right a) = a
 
+data MachineState = MachineState { _tikzPictures :: Seq LaTeX
+                                 , _macroDefs    :: [Macro]
+                                 , _imgPath      :: FilePath
+                                 }
+                  deriving (Show)
+makeLenses ''MachineState
+
+type Machine = StateT MachineState IO
+
 myReaderOpts :: ReaderOptions
 myReaderOpts = def { readerExtensions = S.insert Ext_raw_tex pandocExtensions
                    , readerParseRaw = True
@@ -65,18 +76,28 @@ myReaderOpts = def { readerExtensions = S.insert Ext_raw_tex pandocExtensions
 parseTeX :: String -> Either String LaTeX
 parseTeX = left show . P.parse latexParser "" . T.pack
 
+message :: MonadIO m => String -> m ()
+message = liftIO . putStrLn
+
 texToMarkdown :: FilePath -> String -> IO Pandoc
 texToMarkdown fp src = do
-  macros <- fst . parseMacroDefinitions <$> readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
+  pth <- liftIO $ shelly $ canonic fp
+  macros <- liftIO $ fst . parseMacroDefinitions <$>
+            readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
   let latexTree = view _Right $ parseTeX $ applyMacros macros $ src
-      rewritten = T.unpack $ render $ preprTeX latexTree
-      base = dropExtension fp
-  pandoc <- rewriteEnv $ fromRight $ readLaTeX myReaderOpts rewritten
-  let (pandoc',tikzs) = procTikz base $ adjustJapaneseSpacing pandoc
-      tlibs = queryWith (\a -> case a of { c@(TeXComm "usetikzlibrary" _) -> [c] ; _ -> []} )
+      tlibs = queryWith (\ case
+                            c@(TeXComm "usetikzlibrary" _) -> [c]
+                            _ -> [])
               latexTree
+      initial = T.unpack $ render $ preprocessTeX latexTree
+      st0 = MachineState { _tikzPictures = mempty
+                         , _macroDefs = macros
+                         , _imgPath = dropExtension pth
+                         }
+  (pan, s) <- runStateT (texToMarkdownM initial) st0
+  let tikzs = toList $ s ^. tikzPictures
   unless (null tikzs) $ shelly $ silently $ do
-    master <- canonic base
+    master <- canonic $ dropExtension pth
     mkdir_p master
     withTmpDir $ \tmp -> do
       cd tmp
@@ -86,7 +107,10 @@ texToMarkdown fp src = do
       when single $ mv "image.png" "image-0.png"
       pngs <- findWhen (return . hasExt "png") "."
       mapM_ (flip cp master) pngs
-  return pandoc'
+  return $ adjustJapaneseSpacing pan
+
+texToMarkdownM :: String -> Machine Pandoc
+texToMarkdownM src = procTikz =<< rewriteEnv (fromRight $ readLaTeX myReaderOpts src)
 
 adjustJapaneseSpacing :: Pandoc -> Pandoc
 adjustJapaneseSpacing = bottomUp procMathBoundary . bottomUp procStr
@@ -115,8 +139,8 @@ insertBoundary c p q = boundary p q <&> \(l, r) -> [l, c,  r]
 boundary :: (a -> Bool) -> (a -> Bool) -> RE a (a, a)
 boundary p q = (,) <$> psym p <*> psym q
 
-preprTeX :: LaTeX -> LaTeX
-preprTeX = bottomUp rewrite . bottomUp alterEnv
+preprocessTeX :: LaTeX -> LaTeX
+preprocessTeX = bottomUp rewrite . bottomUp alterEnv
   where
     expands = ["Set", "Braket"]
     alterEnv (TeXEnv env args body)
@@ -217,13 +241,13 @@ inlineLaTeX src =
                       readLaTeX myReaderOpts $ T.unpack src
   in query pure body
 
-rewriteEnv :: Pandoc -> IO Pandoc
+rewriteEnv :: Pandoc -> Machine Pandoc
 rewriteEnv (Pandoc meta bs) = Pandoc meta . bottomUp rewriteInlineCmd <$> rewriteBeginEnv bs
 
-rewriteBeginEnv :: [Block] -> IO [Block]
+rewriteBeginEnv :: [Block] -> Machine [Block]
 rewriteBeginEnv = concatMapM step
   where
-    step :: Block -> IO [Block]
+    step :: Block -> Machine [Block]
     step (RawBlock "latex" src)
       | Right (TeXEnv "enumerate!" args body) <- parseTeX src
       = pure <$> procEnumerate args body
@@ -235,17 +259,14 @@ rewriteBeginEnv = concatMapM step
                                        , procMathInline $
                                          unwords $ map (init . tail . T.unpack . render) args, "\">"
                                        ]
-          withSystemTempDirectory "intermidiatex" $ \tmp ->  do
-            let targ = tmp </> "interm.tex"
-            T.writeFile (encodeString targ) (render body)
-            Pandoc _ myBody <- texToMarkdown targ $  T.unpack $ render body
-            return $ RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
+          Pandoc _ myBody <- texToMarkdownM $  T.unpack $ render body
+          return $ RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
     step b = return [b]
 
 concatMapM :: Monad m => (a -> m [b]) -> [a] -> m [b]
 concatMapM f a = concat <$> mapM f a
 
-procEnumerate :: [TeXArg] -> LaTeX -> IO Block
+procEnumerate :: [TeXArg] -> LaTeX -> Machine Block
 procEnumerate args body = do
   Pandoc _ [OrderedList _ blcs] <- rewriteEnv $ fromRight $ readLaTeX myReaderOpts $
                                       T.unpack $ render $ TeXEnv "enumerate" [] body
@@ -298,17 +319,15 @@ buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
     ",compat=1.8,width=6cm"
   document $ mapM_ textell tkzs
 
-fresh :: (Enum s, EffectState s l) => Effect l s
-fresh = get <* modify succ
-
-procTikz :: FilePath -> Pandoc -> (Pandoc, [LaTeX])
-procTikz fp pan = runEffect $ runWriter $ evalState (0 :: Int) (bottomUpM step pan)
+procTikz :: Pandoc -> Machine Pandoc
+procTikz pan = bottomUpM step pan
   where
     step (RawBlock "latex" src)
       | Right ts <- parseTeX src = do
         liftM Plain $ forM [ t | t@(TeXEnv "tikzpicture" _ _) <- universe ts] $ \t -> do
-          tell [t]
-          n <- fresh
+          n <- uses tikzPictures length
+          tikzPictures %= (|> t)
+          fp <- use imgPath
           return $ Span ("", ["img-responsive"], [])
                    [Image ("", ["thumbnail", "media-object"], [])
                          [Str $ "Figure-" ++ show (n+1 :: Int)]
@@ -325,5 +344,3 @@ procMathInline = stringify . bottomUp go . fromRight . readLaTeX def
     go = bottomUp $ \a -> case a of
       Math _ math ->  Str $ stringify $ MyT.readTeXMath  math
       t -> t
-
-

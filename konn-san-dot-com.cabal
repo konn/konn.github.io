@@ -67,7 +67,6 @@ executable site
                      , template-haskell
                      , case-insensitive
                      , bytestring
-                     , effin
                      , hashable
                      , blaze-builder
   -- hs-source-dirs:      
