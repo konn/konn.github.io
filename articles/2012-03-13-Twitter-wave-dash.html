@@ -1,0 +1,114 @@
+------
+title: Twitter 波括弧事件についてまとめてみる
+author: 石井大海
+date: 2012/03/13 02:03:39 JST
+description: 大昔にTwitterで波括弧を書くとテンプレートとして展開されるという事件があって、その時の話をまとめた今となっては考古学的な資料。
+tags: Web,Twitter,メモ
+------
+<h1 id="概要">概要</h1>
+<ol type="1">
+<li>Twitter 公式Web で {{ }} に囲まれたツイートが見えないと<a href="http://togetter.com/li/272021">話題</a>になる。</li>
+<li>{{ }}の中に色々入れて遊ぶひとがでる</li>
+<li>どうやらキーワードによっては文字が展開されるらしい</li>
+<li>公式Webが完膚なきまでに破壊され、みんな遊びつくす</li>
+</ol>
+<h1 id="多分こういうこと">多分こういうこと</h1>
+<p>公式Webはテキストの整形に<a href="http://mustache.github.com/mustache.5.html">mustache</a> を使っていて、これが JavaScript によって<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup>一段階<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup>展開される。<strong>JavaScriptをその中で実行することは出来ない模様</strong>。</p>
+<p>整形に使われるデータは、恐らくREST API の /statuses/show とか Streaming API で流れてくる JSON のデータと同じ。つまり、<a href="https://dev.twitter.com/docs/api/1/get/users/show">ここ</a>の返値の内容で遊べる。 これがわかるのは何故かと云うと、 <code>{{ user.screen_name }}</code>は展開されるのに <code>{{ user.status.text }}</code> などは展開されないから。</p>
+<p>これを使えば、 bio を140文字以上に設定してあれば <code>{{user.description}}</code>でWeb上では140文字を越えているように見えるついーととかが出来たりする。あとは <code>{{user.created_at}}</code>とかで自分がついったー初めた日とかわかる。</p>
+<p><code>{{ retweet_count }}</code> とかを使うとリツイートされる度に数が増えたりする。mustacheの制御構造を使えば、リツイートの有無などによって表示内容を変えることも出来る。<a href="https://twitter.com/#!/necocen/status/179251722231873536">実際に @necocen さんがやってた</a>りする。</p>
+<p>使えそうなパラメタを一応下に挙げておきます。配列型は <code>{{#配列型}}子要素名{{/配列型}}</code>とかやると各要素ごとに展開出来る。存在しない場合の処理は # を ^ に変えたりするとよいみたいだけどたしかめてない（necocenさんはこれつかってた）。{{#hoge}}は、ハッシュタグとの兼ね合いで上手くいったりいかなかったりするもよう。 気をつける点としては、img とかを出してきても文字列として展開されるだけで、画像が埋め込まれたりはしない。</p>
+<h2 id="使えそうなデータ一覧">使えそうなデータ一覧</h2>
+<p>インデントされてるのは適宜 <code>.</code> で繋げるなりイテレートするなりして取り出してください。</p>
+<ul>
+<li>in_reply_to_screen_name</li>
+<li>id_str</li>
+<li>in_reply_to_status_id</li>
+<li>user
+<ul>
+<li>lang</li>
+<li>time_zone</li>
+<li>screen_name</li>
+<li>id_str</li>
+<li>profile_image_url</li>
+<li>geo_enabled</li>
+<li>default_profile_image</li>
+<li>name</li>
+<li>verified</li>
+<li>description</li>
+<li>profile_background_image_url</li>
+<li>profile_link_color</li>
+<li>following</li>
+<li>profile_background_tile</li>
+<li>show_all_inline_media</li>
+<li>utc_offset</li>
+<li>profile_image_url_https</li>
+<li>profile_background_image_url_https</li>
+<li>friends_count</li>
+<li>location</li>
+<li>id</li>
+<li>profile_sidebar_fill_color</li>
+<li>follow_request_sent</li>
+<li>listed_count</li>
+<li>default_profile</li>
+<li>profile_sidebar_border_color</li>
+<li>notifications</li>
+<li>statuses_count</li>
+<li>favourites_count</li>
+<li>profile_use_background_image</li>
+<li>followers_count</li>
+<li>profile_background_color</li>
+<li>url</li>
+<li>profile_text_color</li>
+<li>is_translator</li>
+<li>created_at</li>
+<li>contributors_enabled</li>
+<li>protected</li>
+</ul></li>
+<li>retweeted</li>
+<li>coordinates</li>
+<li>contributors</li>
+<li>favorited</li>
+<li>in_reply_to_user_id</li>
+<li>possibly_sensitive</li>
+<li>text</li>
+<li>entities
+<ul>
+<li>user_mentions (配列)
+<ul>
+<li>screen_name</li>
+<li>id_str</li>
+<li>name</li>
+<li>id</li>
+<li>indices (配列)</li>
+</ul></li>
+<li>hashtags (配列)
+<ul>
+<li>text</li>
+<li>indices (配列)</li>
+</ul></li>
+<li>urls (配列)
+<ul>
+<li>expanded_url</li>
+<li>indices (配列)</li>
+<li>display_url</li>
+<li>url</li>
+</ul></li>
+</ul></li>
+<li>geo</li>
+<li>id</li>
+<li>source</li>
+<li>in_reply_to_status_id_str</li>
+<li>retweet_count</li>
+<li>in_reply_to_user_id_str</li>
+<li>place</li>
+<li>created_at</li>
+<li>truncated</li>
+</ul>
+<section class="footnotes">
+<hr>
+<ol>
+<li id="fn1"><p>最初は {{ }} がマトモに表示されて中身が切り替わることからわかる。<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p><code>{{ text }}</code> はそのまま <code>{{ text }}</code> に展開された。<a href="#fnref2">↩</a></p></li>
+</ol>
+</section>

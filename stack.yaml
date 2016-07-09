@@ -1,0 +1,12 @@
+flags: {}
+packages:
+- '.'
+extra-deps:
+- HaTeX-qq-0.0.1.2
+- effin-0.3.0.1
+- antiquoter-0.1.1.0
+- pandoc-crossref-0.2.1.3
+- data-accessor-template-0.2.1.13
+- data-accessor-transformers-0.2.1.7
+- roman-numerals-0.5.1.5
+resolver: lts-5.2

@@ -1,0 +1,232 @@
+------
+title: QuickCheck / SmallCheck の紹介 〜オートマトンの例を通して〜
+author: 石井大海
+date: 2012/04/27 01:09:37 JST
+description: オートマトンの検証という例を通して、QuickCheck や SmallCheck による性質ベースのテスト手法を紹介します。
+tags: Haskell,SmallCheck,QuickCheck,形式手法,テスト
+------
+<h1 id="オートマトンの設計">オートマトンの設計</h1>
+<p>大学で計算理論の講義を取っていて，宿題で「n の倍数となる2進数文字列を受理するオートマトンの状態遷移図を描け(n=2,3,4,6)」と云う問題が出ました．</p>
+<p>まあそれは剰余に注目すれば簡単に解ける訳ですが，どうせなので状態数をゴルフしよう<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup>と思ったりするわけです． その為には，同じ入力に対して次の状態が同じものを同一視してやればいい<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup>訳ですが、合ってるとは思ってもちょっと不安です．</p>
+<p>そこで，Haskell の QuickCheck / smallcheck を使って、どうやら大丈夫そうだぞ、と云うのを確かめてみることにしました．</p>
+<h1 id="quickcheck-smallcheck-とは">QuickCheck / smallcheck とは？</h1>
+<p><a href="http://hackage.haskell.org/package/QuickCheck">QuickCheck</a>というのは，既に知っているひともいるかと思いますが、簡単に云って乱数テストを自動的に実行してくれるようなライブラリです．函数やデータ構造が満たしてほしい性質を記述すると、自動的にランダムに値を生成して、その性質が成り立つかをチェックしてくれるのです．詳しくは『<a href="http://www.amazon.co.jp/dp/4274068056?tag=konn06-22">関数プログラミングの楽しみ</a>』の第二章で解説されています。</p>
+<p>対して<a href="http://hackage.haskell.org/package/smallcheck">smallcheck</a>は，QuickCheck と Alloy を出会わせたような性格をしています．仕様を記述するまでは同じなんですが，QuickCheck が乱数を生成していたのに対して，SmallCheck は特定の「深さ」までのデータを<strong>全て</strong>，exhaustive に生成してチェックする，と云う違いがあります． Alloy を出会わせたような，と云うのは，Alloy の設計思想である「小スコープ仮説」と云うものに基づいているからです．小スコープ仮説と云うのは，「大きく複雑なケースで出て来るバグは，（複雑性の）小さなスコープでも再現する筈だ」と云うものです．勿論これだけ小さなスコープで再現すればOK！みたいな上限は存在しません．そんなのがあったらチューリングマシン停止問題が解けちゃいますから． じゃあどうするのか，と云うと，段々とデータの大きさ（スコープ）を大きくしていって，ある程度まで確かめて大丈夫だったらそれで良いだろう，とします．</p>
+<h1 id="実装してみよう">実装してみよう</h1>
+<p>取り敢えずは，素朴にオートマトンを実装してみたのが次です．</p>
+<pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+<span class="kw">import</span> <span class="dt">Test.QuickCheck</span>
+<span class="kw">import</span> <span class="dt">Data.Char</span>
+<span class="kw">import</span> <span class="dt">Numeric</span>
+<span class="kw">import</span> <span class="dt">Data.Maybe</span>
+<span class="kw">import</span> <span class="dt">Data.List</span>
+<span class="kw">import</span> <span class="dt">Data.Ord</span>
+<span class="kw">import</span> <span class="dt">Data.Function</span>
+<span class="kw">import</span> <span class="dt">Control.Arrow</span>
+<span class="kw">import</span> <span class="dt">Data.Word</span>
+<span class="kw">import</span> <span class="dt">Control.Applicative</span>
+
+<span class="kw">data</span> <span class="dt">Automaton</span> s i <span class="fu">=</span> <span class="dt">Automaton</span> {<span class="ot"> initial    ::</span> s
+                               ,<span class="ot"> accepted   ::</span> [s]
+                               ,<span class="ot"> transition ::</span> s <span class="ot">-&gt;</span> i <span class="ot">-&gt;</span> s
+                               }
+
+<span class="ot">runAutomaton ::</span> <span class="dt">Automaton</span> s i <span class="ot">-&gt;</span> [i] <span class="ot">-&gt;</span> s
+runAutomaton (<span class="dt">Automaton</span> q0  _ t) is <span class="fu">=</span> go q0 is
+  <span class="kw">where</span>
+    go q []     <span class="fu">=</span> q
+    go q (i<span class="fu">:</span>is) <span class="fu">=</span> go (t q i) is
+
+<span class="ot">isAccepted ::</span> <span class="kw">Eq</span> s <span class="ot">=&gt;</span> <span class="dt">Automaton</span> s i <span class="ot">-&gt;</span> [i] <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+isAccepted auto is <span class="fu">=</span> runAutomaton auto is <span class="ot">`elem`</span> accepted auto
+
+<span class="ot">fromList ::</span> (<span class="kw">Eq</span> i, <span class="kw">Eq</span> s, <span class="kw">Ord</span> s) <span class="ot">=&gt;</span> [(s, i, s)] <span class="ot">-&gt;</span> s <span class="ot">-&gt;</span> i <span class="ot">-&gt;</span> s
+fromList dic s i <span class="fu">=</span> fromJust <span class="fu">$$</span> <span class="fu">lookup</span> i <span class="fu">=&lt;&lt;</span> <span class="fu">lookup</span> s d&#39;
+  <span class="kw">where</span>
+    d&#39; <span class="fu">=</span> <span class="fu">map</span> (<span class="fu">fst</span> <span class="fu">.</span> <span class="fu">head</span> <span class="fu">&amp;&amp;&amp;</span> <span class="fu">map</span> <span class="fu">snd</span>)
+           <span class="fu">$$</span> groupBy ((<span class="fu">==</span>) <span class="ot">`on`</span> <span class="fu">fst</span>)
+           <span class="fu">$$</span> sortBy (comparing <span class="fu">fst</span>) <span class="fu">$$</span> <span class="fu">map</span> (\(a,b,c) <span class="ot">-&gt;</span> (a,(b,c))) dic</code></pre>
+<p>取り敢えず，<code>Automaton s i</code>は内部状態<code>s</code>で，<code>i</code>のリストを入力に取るオートマトンです． 遷移函数を一々記述するのが面倒なので，状態の一覧を書いた辞書リストから遷移関数を作ってくれるのが<code>fromList</code>ですね． <code>runAutomaton</code>や<code>isAccepted</code>は定義のまんまですね．走らせた後の状態が受理状態に入っていたら受理である，という．</p>
+<p>では，これらを使って，二進数の入力列を受け取って，6の倍数か判定するオートマトンを書いてみましょう．</p>
+<pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="ot">aDivBy6&#39; ::</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span>
+aDivBy6&#39; <span class="fu">=</span> <span class="dt">Automaton</span> <span class="dv">0</span> [<span class="dv">0</span>] go
+  <span class="kw">where</span>
+    go s i <span class="fu">=</span> (s <span class="fu">*</span> <span class="dv">2</span> <span class="fu">+</span> <span class="fu">digitToInt</span> i) <span class="ot">`mod`</span> <span class="dv">6</span>
+
+<span class="ot">aDivBy6 ::</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span>
+aDivBy6 <span class="fu">=</span> <span class="dt">Automaton</span> <span class="dv">0</span> [<span class="dv">0</span>] (fromList dic)
+  <span class="kw">where</span>
+    dic <span class="fu">=</span> [ (<span class="dv">0</span>, <span class="ch">&#39;0&#39;</span>, <span class="dv">0</span>), (<span class="dv">0</span>, <span class="ch">&#39;1&#39;</span>, <span class="dv">1</span>), (<span class="dv">1</span>, <span class="ch">&#39;0&#39;</span>, <span class="dv">2</span>), (<span class="dv">1</span>, <span class="ch">&#39;1&#39;</span>, <span class="dv">3</span>)
+          , (<span class="dv">2</span>, <span class="ch">&#39;0&#39;</span>, <span class="dv">1</span>), (<span class="dv">2</span>, <span class="ch">&#39;1&#39;</span>, <span class="dv">2</span>), (<span class="dv">3</span>, <span class="ch">&#39;0&#39;</span>, <span class="dv">0</span>), (<span class="dv">3</span>, <span class="ch">&#39;1&#39;</span>, <span class="dv">1</span>)
+          ]</code></pre>
+<p>最初のは素朴に桁がズレるごとに今の余りを二倍して新しい桁を足している，という素朴な実装です．これは明らかに6の倍数のみを受け付けるオートマトンです． 二番目のを出すのには工夫がいります．たとえば，最初のやつの状態遷移図を描いてみて，動作の同じ状態どうしを纏めて一つにしてみたものと見れます． 他にも，3の倍数かつ0で終わる（=2の倍数）ときに受理する，と云う風に読んでもいいです．</p>
+<h2 id="quickcheck-を使ってみる">QuickCheck を使ってみる</h2>
+<p>理屈の上では多分二番目のも素朴な<code>aDivBy6'</code>と同様に動いてくれる筈です．でも，ちょっと不安だなあ……． と云うわけで，早速 QuickCheck で確かめてみましょう！</p>
+<p>6で割れれば<code>aDivBy6</code>でその二進数表現が受理される，と云う条件を書きます．</p>
+<pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="ot">showBin ::</span> <span class="kw">Integral</span> r <span class="ot">=&gt;</span> r <span class="ot">-&gt;</span> <span class="dt">String</span>
+showBin <span class="fu">=</span> <span class="fu">flip</span> (showIntAtBase <span class="dv">2</span> <span class="fu">intToDigit</span>) <span class="st">&quot;&quot;</span>
+   
+<span class="ot">test_automaton0 ::</span> <span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> (<span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Property</span>)
+test_automaton0 base auto <span class="fu">=</span> \r <span class="ot">-&gt;</span> r <span class="ot">`mod`</span> base <span class="fu">==</span> <span class="dv">0</span> <span class="fu">==&gt;</span> isAccepted auto (showBin r)</code></pre>
+<p><code>showBin</code> は2進表現に変換するヘルパ函数ですね． <code>test_automaton0</code>は，底とチェックしたいオートマトンを受け取って，仕様を返す函数です． QuickCheck での「仕様」は，単なる<code>Bool</code>か<code>Property</code>，または何らかの引数を取って<code>Bool または Property</code>を返す函数のいずれかです．わかりやすいように，ここでは仕様になる部分を括弧で括って</p>
+<pre><code>Word -&gt; Property</code></pre>
+<p>と書いています．何らかの引数，と云いましたが，正確には QuickCheck が生成方法を知っている必要があるので，<code>Arbitrary</code>クラスのインスタンスであるひつようがあります．ここでは<code>Word</code>，すなわち正の整数です． なので，これは，「指定した底で割り切れるならオートマトン auto で受理される」のが仕様です．</p>
+<p>では，実際にテストしてみましょう！テストするには，<code>quickCheck</code>函数に喰わせるだけで大丈夫です．ライブラリが自動的に例を乱数生成して，仕様が満たされているかチェックしてくれます．</p>
+<pre><code>ghci&gt; quickCheck $$ test_automaton0 6 aDivBy6
++++ OK, passed 100 tests.</code></pre>
+<p>なんだか矢鱈時間が掛かりますね……．今回は上手くいきましたが，何度か試してみると……</p>
+<pre><code>ghci&gt; quickCheck $$ test_automaton0 6 aDivBy6
+*** Gave up! Passed only 92 tests.</code></pre>
+<p>のように，92の試験に合格したのちに，100に到達しきれなくてギブアップしてます． これは，6の倍数以外も全部生成して試しているからです．事前条件に引っ掛からなかった値は捨て去られるので，大量の無駄が発生してしまっているのです．</p>
+<p>では，最初から6の倍数だけ生成して試すようにしてみましょう．</p>
+<pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="ot">divisible ::</span> <span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Gen</span> <span class="dt">Word</span>
+divisible d <span class="fu">=</span> (d <span class="fu">*</span>) <span class="fu">&lt;$$&gt;</span> arbitrary <span class="ot">`suchThat`</span> (<span class="fu">&lt;</span>(<span class="fu">maxBound</span> <span class="ot">`div`</span> d))
+   
+<span class="ot">test_automaton1 ::</span> <span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> <span class="dt">Property</span>
+test_automaton1 base auto <span class="fu">=</span> forAll (divisible base) <span class="fu">$$</span> \r <span class="ot">-&gt;</span> isAccepted auto (showBin r)</code></pre>
+<p><code>divisible</code>で任意の自然数で割り切れる数だけを生成しているわけです．「d 倍しても桁溢れしない任意の数を用意して，それを d倍する」と，そのまま読み下せますね． <code>test_automaton01</code>のほうも，そのまま「任意のbaseで割り切れる自然数 r について，その2進表現が auto で受理される」と読めます．</p>
+<p>使ってみると……</p>
+<pre><code>ghci&gt; quickCheck $$ test_automaton1 6 aDivBy6
++++ OK, passed 100 tests.</code></pre>
+<p>こんどはすぐにテストをパスしています！上手くいったようですね．</p>
+<p>と，思いますが，よくよく考えたら問題は「6の倍数か判定するオートマトン」，つまり「6の倍数<strong>だけ</strong>を受理するオートマトン」を作ることでした．このままだと，6の倍数が受理されることはわかりますが，6の倍数でないものが受理される可能性があります．</p>
+<p>ではどうするか．折角定義した <code>divisible</code>を使うのをやめて，両方の場合を一気にチェックする函数に書き換えましょう．</p>
+<pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="ot">test_automaton2 ::</span> <span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> (<span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>)
+test_automaton2 q a <span class="fu">=</span>
+  \r <span class="ot">-&gt;</span> <span class="kw">if</span> r <span class="ot">`mod`</span> <span class="dv">6</span> <span class="fu">==</span> <span class="dv">0</span>
+        <span class="kw">then</span> isAccepted a (showBin r)
+        <span class="kw">else</span> <span class="fu">not</span> <span class="fu">$$</span> isAccepted a (showBin r)</code></pre>
+<p>仕様は<code>Property</code>でも<code>Word -&gt; Property</code>でもなく，単なる述語<code>Word -&gt; Bool</code>に変わっていますね．6で割れれば受理され，そうでなければ受理されないこと，とそのまま記述しています．</p>
+<p>では，これを使ってみましょう．</p>
+<pre><code>ghci&gt; quickCheck $$ test_automaton2 6 aDivBy6
++++ OK, passed 100 tests.</code></pre>
+<p>すぐに実行がおわって，テストを通過しました！やりましたね！</p>
+<h2 id="smallcheck-で書いてみよう">SmallCheck で書いてみよう</h2>
+<p>では，今度はSmallCheck で書いてみます．と云っても，やることは殆んどかわりません． QuickCheck をインポートしている部分を</p>
+<pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Test.SmallCheck</span>
+<span class="kw">import</span> <span class="dt">Test.SmallCheck.Series</span></code></pre>
+<p>に書き換えて……</p>
+<pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="ot">test_automaton2 ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> (<span class="dt">N</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>)
+test_automaton2 base auto <span class="fu">=</span>
+    \(<span class="dt">N</span> r) <span class="ot">-&gt;</span>
+      <span class="kw">if</span> r <span class="ot">`mod`</span> base <span class="fu">==</span> <span class="dv">0</span>
+      <span class="kw">then</span> isAccepted auto (showBin r)
+      <span class="kw">else</span> <span class="fu">not</span> <span class="fu">$$</span> isAccepted auto (showBin r)</code></pre>
+<p>とするだけです！殆んど変更になっていません！</p>
+<p><code>Word</code>が<code>N Int</code>になっていますね．SmallCheck は Word 型をサポートしていないかわりに，Num 型を <code>N</code> でラップしてやることで，正数しか生成しないようになります．</p>
+<p>では，早速試してみましょう．</p>
+<pre><code>ghci&gt; smallCheck 1000 $$ test_automaton2 6 aDivBy6&#39;
+Depth 0:
+    Completed 1 test(s) without failure.
+Depth 1:
+    Completed 2 test(s) without failure.
+...
+Depth 1000:
+    Completed 1001 test(s) without failure.</code></pre>
+<p>行が沢山出力されるので時間がかかるかと思いますが，実際には一瞬で終わっています． 先程までと違うところは，<code>quickCheck</code>のかわりに<code>smallCheck</code>を使っているところでしょうか．また，そのあとに<code>1000</code>と云う引数を渡していますね．これはなんでしょうか？</p>
+<p>これは，Depth，つまりデータ型の深さ・大きさです．先にも説明したように，SmallCheck は「深さ」ごとにデータを総当たり的に生成して，それらを全部チェックする，と云う戦略をとっています．深さが何を指すのはデータ型によって異なりますが，整数型の場合は特に最大値だと思えばよいです．<code>smallCheck</code>函数は深さ0から徐々に指定された深さまで増加させていって，包括的に調べる，と云う函数です．特定の深さだけを調べたい場合は<code>depthCheck</code>函数が使えます．</p>
+<p>なので，上のテストでは最大1000までの整数しかチェックできていなくて，ちょっと非効率的です．そこで，深さを最大値ではなくビット長とするように書き換えてみましょう．</p>
+<pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Bit</span> <span class="fu">=</span> <span class="dt">I</span> <span class="fu">|</span> <span class="dt">O</span> <span class="kw">deriving</span> (<span class="kw">Show</span>, <span class="kw">Read</span>, <span class="kw">Eq</span>)
+
+<span class="ot">bitToDigit ::</span> <span class="dt">Bit</span> <span class="ot">-&gt;</span> <span class="dt">Char</span>
+bitToDigit <span class="dt">I</span> <span class="fu">=</span> <span class="ch">&#39;1&#39;</span>
+bitToDigit <span class="dt">O</span> <span class="fu">=</span> <span class="ch">&#39;0&#39;</span>
+
+<span class="kw">instance</span> <span class="dt">Serial</span> <span class="dt">Bit</span> <span class="kw">where</span>
+  series <span class="fu">=</span> cons0 <span class="dt">O</span> \<span class="fu">/</span> cons0 <span class="dt">I</span>
+  coseries rs d <span class="fu">=</span> [ \m <span class="ot">-&gt;</span> <span class="kw">case</span> m <span class="kw">of</span>
+                            <span class="dt">O</span> <span class="ot">-&gt;</span> a
+                            <span class="dt">I</span> <span class="ot">-&gt;</span> b
+                  <span class="fu">|</span> a <span class="ot">&lt;-</span> alts0 rs d
+                  , b <span class="ot">&lt;-</span> alts0 rs d
+                  ]
+
+<span class="ot">readBits ::</span> <span class="kw">Integral</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> a
+readBits binary <span class="fu">=</span>
+  <span class="fu">maybe</span> <span class="dv">0</span> <span class="fu">fst</span> <span class="fu">$$</span> listToMaybe <span class="fu">$$</span> <span class="fu">readInt</span> <span class="dv">2</span> (\c <span class="ot">-&gt;</span> c <span class="fu">==</span> <span class="ch">&#39;0&#39;</span> <span class="fu">||</span> c <span class="fu">==</span> <span class="ch">&#39;1&#39;</span>) <span class="fu">digitToInt</span> binary
+
+<span class="ot">test_automaton3 ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> [<span class="dt">Bit</span>] <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+test_automaton3 q a <span class="fu">=</span>
+    \bits <span class="ot">-&gt;</span> 
+      <span class="kw">let</span> binary <span class="fu">=</span> <span class="fu">map</span> bitToDigit bits
+          r      <span class="fu">=</span> readBin binary
+      <span class="kw">in</span> <span class="kw">if</span> r <span class="ot">`mod`</span> q <span class="fu">==</span> <span class="dv">0</span>
+         <span class="kw">then</span> isAccepted a binary
+         <span class="kw">else</span> <span class="fu">not</span> <span class="fu">$$</span> isAccepted a binary</code></pre>
+<p><code>Bit</code>がBitを表わすデータ型で，その列を生成するように変更していますね．<code>Bit</code>を深さごとにexhaustiveに生成するために，<code>Serial</code>型クラスのインスタンスにしています．型からは一見なにをすればいいのかわかりづらいですが，<code>()</code>や<code>Maybe a</code>に対するインスタンス宣言を参考にしつつ，ヘルパ函数を使えば簡単にインスタンスが書けます．<code>series</code>函数は指定の深さのデータを生成する函数で，<code>coseries</code>は，<code>Bit</code>を含むような別のデータ構造を生成するときに使われます．</p>
+<p><code>test_automaton3</code>では，生成した2進表現を喰わせて，それが6進数であるかどうかとオートマトンに受理されるかどうかが同値であることを確かめているだけですね．</p>
+<p>では，確かめてみましょう．</p>
+<pre><code>ghci&gt; smallCheck 16 $$ test_automaton3 6 aDivBy6&#39;
+Depth 0:
+  Completed 1 test(s) without failure.
+Depth 1:
+  Completed 3 test(s) without failure.
+...
+Depth 15:
+  Completed 65535 test(s) without failure.
+Depth 16:
+  Completed 131071 test(s) without failure.</code></pre>
+<p>なんかかなり時間がかかりました．実行してみるとわかりますが，15を越えたあたりから急に遅くなりはじめます．指数爆発だ……． 実際のところどれくらい時間がかかるのか，ちょっと<code>:set +s</code>して測ってみましょう．</p>
+<pre><code>ghci&gt; depthCheck 15 $$ test_automaton3 6 aDivBy6&#39;
+Depth 15:
+  Completed 65535 test(s) without failure.
+(3.06 secs, 1224982104 bytes)
+
+ghci&gt; depthCheck 16 $$ test_automaton3 6 aDivBy6&#39;
+Depth 16:
+  Completed 131071 test(s) without failure.
+(6.45 secs, 2585880856 bytes)
+
+ghci&gt; depthCheck 17 $$ test_automaton3 6 aDivBy6&#39;
+Depth 17:
+  Completed 262143 test(s) without failure.
+(13.57 secs, 5465946920 bytes)</code></pre>
+<p>うへえ，これはひどい，メモリもかなりくってます．何とか枝刈りをしたいところです．</p>
+<p>ここでは，n-bit長の数値を生成しているわけですが，実際には頭に0が沢山ついてるような子，例えば</p>
+<pre><code>000101010
+010100101</code></pre>
+<p>みたいなのも生成しちゃってます．もちろん，こういった入力が来ても大丈夫なチェックにもなっているわけですが，ぶっちゃけ邪魔です． そこで，先頭が 1 であるものだけを判定するようにしてみましょう．</p>
+<pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="ot">test_automaton4 ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> [<span class="dt">Bit</span>] <span class="ot">-&gt;</span> <span class="dt">Property</span>
+test_automaton4 q a <span class="fu">=</span>
+    \bits <span class="ot">-&gt;</span> 
+      <span class="kw">let</span> binary <span class="fu">=</span> <span class="fu">map</span> bitToDigit bits
+          r      <span class="fu">=</span> <span class="fu">maybe</span> <span class="dv">0</span> <span class="fu">fst</span> <span class="fu">$$</span> listToMaybe <span class="fu">$$</span> <span class="fu">readInt</span> <span class="dv">2</span> (\c <span class="ot">-&gt;</span> c <span class="fu">==</span> <span class="ch">&#39;0&#39;</span> <span class="fu">||</span> c <span class="fu">==</span> <span class="ch">&#39;1&#39;</span>) <span class="fu">digitToInt</span> binary
+      <span class="kw">in</span> (<span class="fu">not</span> <span class="fu">$$</span> <span class="fu">null</span> bits) <span class="fu">&amp;&amp;</span> <span class="fu">head</span> bits <span class="fu">==</span> <span class="dt">I</span> <span class="fu">==&gt;</span>
+         <span class="kw">if</span> r <span class="ot">`mod`</span> q <span class="fu">==</span> <span class="dv">0</span>
+         <span class="kw">then</span> isAccepted a binary
+         <span class="kw">else</span> <span class="fu">not</span> <span class="fu">$$</span> isAccepted a binary</code></pre>
+<p>実行してみます．</p>
+<pre><code>Depth 15:
+  Completed 65535 test(s) without failure.
+  But 32768 did not meet ==&gt; condition.
+(1.71 secs, 659780920 bytes)
+
+ghci&gt; depthCheck 16 $$ test_automaton4 6 aDivBy6&#39;
+Depth 16:
+  Completed 131071 test(s) without failure.
+  But 65536 did not meet ==&gt; condition.
+(3.56 secs, 1386670368 bytes)
+
+ghci&gt; depthCheck 17 $$ test_automaton4 6 aDivBy6&#39;
+Depth 17:
+  Completed 262143 test(s) without failure.
+  But 131072 did not meet ==&gt; condition.
+(7.49 secs, 2915713216 bytes)</code></pre>
+<p>17bit に 7.49秒です．大分ましにはなりました．これで大体13万までは全部大丈夫，と云えます． 数学の証明にはまるでなりませんが，まあ，この値くらいまで平気であれば多分大丈夫だろう，と云うことにして，納得出来るのではないでしょうか．上限が小さすぎると云う場合は，QuickCheckの方でも乱数チェックをしているのでまあ多分大丈夫！ということで．</p>
+<h1 id="結論と補遺">結論と補遺</h1>
+<p>Haskell でプログラムが仕様を満たすかどうかをテストする方法として，QuickCheck と SmallCheck の二つの方法を紹介しました．QuickCheck はランダムテスト，SmallCheck は深さを制限した総当たりテストでした．</p>
+<p>SmallCheck には，Lazy SmallCheck と云うバリアントがあって，これは遅延評価を枝刈りに生かした実装になっています． 部分的に定義された値，例えば，</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tree</span> a <span class="fu">=</span> <span class="dt">Leaf</span> <span class="fu">|</span> <span class="dt">Branch</span> (<span class="dt">Tree</span> a) a (<span class="dt">Tree</span> a)
+hoge <span class="fu">=</span> <span class="dt">Branch</span> (<span class="dt">Branch</span> <span class="dt">Leaf</span> <span class="dv">12</span> <span class="dt">Leaf</span>) <span class="dv">23</span> <span class="fu">undefined</span></code></pre>
+<p>みたいな値を喰わせることで，最初の幾つかだけ見たら失敗するようなケースは纏めて排除出来ます．例えば，</p>
+<pre><code>ghci&gt; isSorted $$ 2:1:undefined</code></pre>
+<p>みたいなのは，最初の二つだけみれば，もうソート済みでないことはわかるので，これから始まる他の長さのデータももう調べなくて済みます．undefined まで到達したらさらに長いデータを喰わせて，適宜チェックしていくと云う訳です．</p>
+<p>これはすごい頭いいんですが，Laziness と云うのはなかなかむずかしくて，リスト全体を読む必要があるような場合だとLazy でない SmallCheck よりも効率がわるくなることがおおいみたいです．例えば，今回の例だと最後までリストを読まなければ倍数かどうかを判定出来ないので，Lazy は使えません．このあたりはまだちゃんと理解していないので，この先ちゃんと調べてみようとおもいます．</p>
+<p>授業前の思い付きから予想以上に長くなってしまいました……．そんなこんなで，誰がよむんだ，みたいな感じになってきたところでこの辺で．それでは！</p>
+<section class="footnotes">
+<hr>
+<ol>
+<li id="fn1"><p>「ゴルフする」って云うのは，コードゴルフとかのゴルフと同じで、つまりなるべく少なくしよう、と云う意味です．有限オートマトンには最小化アルゴリズムがあるので，それを使えば確実に出来てよいわけですが，そう云うのを知らなくて，ちゃんと動作するかどうかを確かめたい場合を考えます．<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>ただし，受理状態とそうでない状態は区別しないと駄目です．mod 6 での 0 と 3とか．<a href="#fnref2">↩</a></p></li>
+</ol>
+
