@@ -22,6 +22,9 @@ import           Data.Char                       (isLetter)
 import           Data.Data
 import           Data.Default
 import           Data.Foldable                   (toList)
+import qualified Data.HashMap.Strict             as HM
+import qualified Data.HashSet                    as HS
+import qualified Data.List                       as L
 import           Data.Maybe                      (fromMaybe)
 import           Data.Maybe                      (listToMaybe)
 import           Data.Sequence                   (Seq)
@@ -36,6 +39,12 @@ import           Text.LaTeX.Base                 hiding ((&))
 import           Text.LaTeX.Base.Class
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
+import           Text.LaTeX.CrossRef             (procCrossRef)
+import           Text.LaTeX.CrossRef             (RefOptions (..))
+import           Text.LaTeX.CrossRef             (Numeral (Arabic))
+import           Text.LaTeX.CrossRef             (RefItem (Item))
+import           Text.LaTeX.CrossRef             (LabelFormat (ThisCounter))
+import qualified Text.LaTeX.CrossRef             as R
 import           Text.Pandoc                     hiding (MathType, Writer)
 import           Text.Pandoc.Shared
 import           Text.Pandoc.Walk                (query)
@@ -84,7 +93,7 @@ texToMarkdown fp src = do
   pth <- liftIO $ shelly $ canonic fp
   macros <- liftIO $ fst . parseMacroDefinitions <$>
             readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
-  let latexTree = view _Right $ parseTeX $ applyMacros macros $ src
+  let latexTree = procCrossRef myCrossRefConf $ view _Right $ parseTeX $ applyMacros macros $ src
       tlibs = queryWith (\ case
                             c@(TeXComm "usetikzlibrary" _) -> [c]
                             _ -> [])
@@ -172,6 +181,13 @@ breakTeXOn s (TeXSeq l r) =
   <|> do (r0, r1) <- breakTeXOn s r
          return (TeXSeq l r0, r1)
 breakTeXOn _ _ = Nothing
+
+myCrossRefConf :: RefOptions
+myCrossRefConf = RefOptions { subsumes = HM.empty
+                            , formats  = HM.fromList
+                                         [(Item 1, [R.Str "(", ThisCounter Arabic, R.Str ")"])]
+                            , numberedEnvs = HS.fromList $ map T.pack $ L.delete "proof" envs
+                            }
 
 envs :: [String]
 envs = [ "prop", "proof", "theorem", "lemma", "axiom", "remark","exercise"
