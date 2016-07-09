@@ -1,0 +1,808 @@
+---
+title: Boole値モデルと強制法
+date: 2016/07/10 01:00:00 JST
+author: 石井大海
+description: 集合論における無矛盾性証明で用いられる主要な手法である**強制法**と，密接に関連する**Boole値モデル**の手法について，本稿では幾らか証明を省略しつつ概略を採り上げます．また，Hamkinsら~\cite{Hamkins:2012qv}の説明に基づいて，超冪とBoole値モデルの関係についても簡単に解説します．
+latexmk: -lualatex
+tag: Boole値モデル,無矛盾性証明,強制法,公理的集合論,集合論,超冪,数理論理学
+---
+\RequirePackage{luatex85}
+\documentclass[a4j]{ltjsarticle}
+\usepackage[no-math,hiragino-pron]{luatexja-preset}
+\usepackage{luatexja-otf}
+\usepackage{mystyle}
+\usepackage{unicode-math}
+\setmathfont{latinmodern-math.otf}
+\setmathfont[range={\setminus,\models}]{Asana Math}
+\setmathfont[range={bb}]{TeX Gyre Pagella Math}
+\setmathfont[range={up,sfup,cal}]{latinmodern-math.otf}
+\setmathfont[range={scr,bfscr}]{XITS Math}
+\newcommand{\mathds}[1]{\symbb{#1}}
+\newcommand{\llbracket}{\lBrack}
+\newcommand{\rrbracket}{\rBrack}
+\DeclareMathAlphabet{\mathrsfs}{U}{rsfso}{m}{n}
+\renewcommand{\mathscr}[1]{\mathup{\mathrsfs{#1}}}
+\usepackage{footnote}
+\usepackage{fixme}
+\usepackage[bookmarksnumbered,pdfproducer={LuaLaTeX},%
+            psdextra,luatex,pdfusetitle,pdfencoding=auto]{hyperref}
+\usepackage[backend=biber, style=math-numeric]{biblatex}
+\addbibresource{myreference.bib}
+\renewcommand{\emph}[1]{\textbf{\textgt{#1}}}
+\newcommand{\FL}{\mathord{\mathcal{F\!L}}}
+\DeclareMathOperator{\val}{val}
+\DeclareMathOperator{\Add}{\mathsf{Add}}
+\DeclareMathOperator{\spanning}{\downarrow}
+\newcommand{\reduce}{\mathbin{\downarrow}}
+
+\title{Boole値モデルと強制法}
+\author{石井大海}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+ 集合論における無矛盾性証明で用いられる主要な手法である\emph{強制法}と，密接に関連する\emph{Boole値モデル}の手法について，本稿では幾らか証明を省略しつつ概略を採り上げます．また，Hamkinsら~\cite{Hamkins:2012qv}の説明に基づいて，超冪とBoole値モデルの関係についても簡単に解説します．
+\end{abstract}
+
+\section{強制法の基本的な考え方とBoole値モデル}
+直観的には，現在の集合の宇宙$V$に新しい元$G$を付加した，新たな宇宙$V[G]$を得たい，というのが強制法のモチヴェーションです．
+しかし，そうはいっても集合の全体は既に$V$で確定しているので，「新しい元」というのはそのままでは意味を成しません．
+
+そこで，強制法では\emph{集合概念を拡張する}ことを考えます．
+どういう事でしょうか？
+まず，一般の集合$x \in V$は，と同一視することで，部分関数$x: V \dashrightarrow 2$と見做すことが出来ます．
+$2$というのは「各元が$x$に属すか？」という真偽値ですから，\emph{この真偽値を一般のBoole代数$\mathbb{B}$に一般化しよう}というというのが強制法の基本的なアイデアです．
+
+このように，所属関係の真偽値を完備Boole代数$\mathbb{B}$に一般化した集合のことを，\emph{$\mathbb{B}$-name}と呼びます．
+
+\begin{definition}[$\mathbb{B}$-nameの定義]
+ \begin{itemize}
+  \item $\left(\mathbb{B}, \leq, +, \cdot, -, \sum, \prod, \mathds{0}, \mathds{1}\right)$が\emph{完備Boole代数}（\textit{cBa}）$\defs$
+  \begin{enumerate}
+   \item $\leq$は$\mathbb{B}$上の半順序であり，$\mathds{0}$, $\mathds{1}$はそれぞれ$\leq$に関する最小・最大元．
+   \item $\sum, \prod: \Pow(\mathbb{B}) \to \mathbb{B}$はそれぞれ$\mathbb{B}$の部分集合の上限・下限を与える．
+         特に$x + y \defeq \sum \set{x, y}$, $x \cdot y \defeq \prod \set{x, y}$と書く．
+   \item 各$x \in \mathbb{B}$に対し，$-x$は$x$の\emph{補元}と呼ばれ，$x \cdot (-x) = 0$および$x + (-x) = \mathds{1}$を満たす．
+  \end{enumerate}
+  \item cBa $\mathbb{B}$に対して，\emph{$\mathbb{B}$-nameの全体}$V^{\mathbb{B}}$を次で定める：
+        \begin{gather*}
+         V^{\mathbb{B}}_0 \defeq \emptyset, \qquad
+         V^{\mathbb{B}}_{\alpha + 1} \defeq \Pow(V^{\mathbb{B}}_\alpha \times \mathbb{B}),\qquad
+         V^{\mathbb{B}}_\gamma \defeq \bigcup_{\beta < \gamma} V^{\mathbb{B}}_\beta \;(\gamma: \text{limit})\\
+        V^{\mathbb{B}} \defeq \bigcup_{\alpha \in \On} V^{\mathbb{B}}_\alpha.
+        \end{gather*}
+$V^{\mathbb{B}}$の元をギリシア文字$\sigma, \tau, \vartheta, \dots$やドット付き文字$\dot{x}, \dot{y}, \dots$などで表す．
+ \end{itemize}
+\end{definition}
+
+上では「部分関数」といいましたが，あとでcBa以外に一般化する際には，こっちの方が楽なので，ちょっと違う定義にしてあります．
+$\sigma \in V^{\mathbb{B}}$に対応する部分関数を仮に$\bar{\sigma}$と書くことにすれば，
+\[
+ \bar{\sigma}(\bar{\tau}) \defeq \sum \Set{b \in \mathbb{B} | \braket{\tau, b} \in \sigma}
+\]
+によって「部分関数」を復元出来ます．
+
+さて，当初の「宇宙を広げたい」という欲求からすれば，こうして創った$V^{\mathbb{B}}$の中に$V$が自然に埋め込まれてほしいです．
+それを可能にするのが，次の$\check{\;}$-作用素です．
+
+\begin{definition}
+ $x \in V$に対し，$\check{x} \in V^{\mathbb{B}}$を整礎帰納法により次で定める：
+ \[
+  \check{x} \defeq \Set{\braket{\check{y}, \mathds{1}} | y \in x}.
+ \]
+\end{definition}
+
+さて，このようにして一般化された集合の宇宙$V^{\mathbb{B}}$が定義出来ました．
+この$V^{\mathbb{B}}$を集合論のモデルとして解釈したい訳ですが，所属関係の真偽値を$\mathbb{B}$-値にしたので，モデルの解釈も$\mathbb{B}$-値で与える必要があります．
+
+\begin{definition}
+ \begin{itemize}
+  \item 強制法の言語$\FL$とは，二項述語記号$\mathord{\in}$および単項述語記号$\check{V}$を持つ言語である．
+        また，$x \in \check{V}$は$\check{V}(x)$の略記法とする．
+  \item 原子論理式$\varphi[\vec{x}] \in \FL$および$\vec{\sigma} \in V^{\mathbb{B}}$の\emph{真偽値}$\truth[\mathbb{B}]{\varphi[\vec{\sigma}]}$を次のような$V^{\mathbb{B}}$-ランクに関する帰納法で定める：
+        \begin{gather*}
+         \truth{\sigma \in \tau} \defeq \sum_{\braket{\vartheta, b} \in \tau} \truth{\vartheta = \sigma} \cdot b, \qquad
+         \truth{\sigma = \tau} \defeq \truth{\sigma \subseteq \tau} \cdot \truth{\tau \subseteq \sigma},\qquad
+         \truth{\sigma \in \check{V}} \defeq \sum_{x \in V} \truth{\check{x} = \sigma},\\
+         \text{where }
+         \truth{\sigma \subseteq \tau} \defeq \prod_{\theta \in \dom(\sigma)} \left(- \truth{\theta \in \sigma} + \truth{\theta \in \tau}\right).
+        \end{gather*}
+  \item 一般の$\FL$-論理式$\varphi[\vec{x}]$および$\vec{\sigma} \in V^{\mathbb{B}}$については，$\varphi$の複雑性に関するメタレベルの帰納法で次のように定める：
+        \begin{gather*}
+         \truth{\varphi[\vec{\sigma}] \wedge \psi[\vec{\sigma}] } \defeq \truth{\varphi[\vec{\sigma}]} \cdot \truth{\psi[\vec{\sigma}]}, \qquad
+         \truth{\neg \varphi[\vec{\sigma}]} \defeq - \truth{\varphi[\vec{\sigma}]},\\
+         \truth{\forall x \: \varphi[x, \vec{\sigma}]}
+         \defeq \prod_{\dot{x} \in V^{\mathbb{B}}} \truth{\varphi[\dot{x}, \vec{\sigma}]}.
+        \end{gather*}
+  \item $b \in \mathbb{B}$に対し，\emph{強制関係}を$b \Vdash \varphi[\vec{\sigma}] \defs b \leq \truth{\varphi[\vec{\sigma}]}$により定める．
+  \item $V^{\mathbb{B}} \models \varphi[\vec{\sigma}]$は$\truth{\varphi[\vec{\sigma}]} = \mathds{1}$の略記とする．
+ \end{itemize}
+\end{definition}
+これにより，$V^{\mathbb{B}}$において，強制法の論理式の解釈が$\mathbb{B}$-真偽値として定まりました．
+
+一つ注意しなくてはいけないのは，原子論理式に対する真偽値や$\Vdash$は$V$の中で一様に定義できていますが，一般の$\varphi$についてはそうではない，ということです．
+つまり，$\truth{-}$というのは関数スキーマであって，実際には$\varphi \in \FL$が決まる度に関数$\truth{\varphi[-]}: V^\mathbb{B} \to \mathbb{B}$という関数が個別に定義されている，ということです．
+同様に，$p \Vdash \varphi[\sigma]$も$\varphi$が決まるごとに，$p$と$\sigma$の間の二項関係が定義されている，ということになります．
+これは，例えば自明なcBa $\mathbf{2}$を考えると，$V^{\mathbf{2}} \simeq V$となってしまい，$V \models \varphi \iff \truth[\mathbf{2}]{\varphi} = \mathds{1}$となりますが，もしこれが$\varphi$の関数として$V$の中で定義出来たとすれば，$V$の真理述語が定義出来たことになり，Tarskiの真理定義不可能性に反します．
+
+こうして広げた$V^{\mathbb{B}}$は，常に集合論のモデルとなります：
+
+\begin{theorem}
+ $V^{\mathbb{B}} \models \ZFC$. \footnote{置換公理図式に現れる論理式に$\check{V}$を入れてよいかどうか？という疑問が沸くかもしれません．ここでは立ち入りませんが，実は$V^{\mathbb{B}}$で$V$を定義出来ることが知られています~\cite{Laver:2007sf}．なので，置換公理図式の中に$\check{V}$が入っていても問題はありません．}
+\end{theorem}
+これも，厳密には\emph{定理スキーマ}です．
+つまり，$\ZFC$の各公理$\varphi$について，$\truth[\mathbb{B}]{\varphi} = \mathds{1}$となることが個別に示せる，ということです．
+
+さて，強制法論理式では$\check{V}$という述語記号を定義しましたが，ちゃんとこれが真偽も含めて$V^{\mathbb{B}}$における$V$の写し身になっている，というのが次の二つの定理です：
+
+\begin{theorem}\label{thm:V-truth-emb-generic}
+ 集合論の論理式$\varphi[x_1, \dots, x_n]$と$a_1, \dots, a_n \in V$に対し，
+ \[
+  V \models \varphi[a_1, \dots, a_n] \iff V^{\mathbb{B}} \models \varphi^{\check{V}}[\check{a}_1, \dots, \check{a}_n].
+ \]
+ 但し，$\varphi^{\check{V}}$は$\varphi$に現れる量化子$\exists x$, $\forall x$を全て$\exists x \: \check{V}(x) \wedge \dots$および$\forall x \: \check{V}(x) \to \dots$で置き換えた$\FL$-論理式．
+\end{theorem}
+
+\begin{theorem}\label{thm:V-check-inner-model}
+ $V^{\mathbb{B}} \models \quoted{\check{V}: \text{推移的}, \On \subseteq \check{V}}$.
+\end{theorem}
+
+従って，$V$は$V^{\mathbb{B}}$に埋め込まれていると見てよい話です．
+$V^{\mathbb{B}}$は$V$と順序数も共通しているので，高さが同じで，幅を横に広げてやったものと思えます．
+これから色々な命題の独立性を調べていくにあたって，その際にどういった性質が強制拡大で保たれるのかが気になります．
+上の二つの定理から，次のような手頃な判断基準が得られます：
+
+\begin{theorem}
+ 推移的モデルについて絶対的な概念は，強制概念で動かない．
+ 特に$\Delta_1$-概念は強制法的に絶対．
+ 特に，有限集合，$\omega$である，関数である，順序数である，可算である，といった性質は動かない．
+\end{theorem}
+
+$V^{\mathbb{B}}$という物を考えたのは，$V$にはない元を付加するためでした．
+それが\emph{ジェネリックフィルター}です．
+\begin{definition}
+  \begin{itemize}
+   \item 擬順序集合$\mathbb{P}$について，$F \subseteq \mathbb{P}$が$\mathbb{P}$上のフィルター$\defs$ $\emptyset \neq F \subsetneq \mathbb{P}$, $x \geq y \in F \implies x \in F$, $x, y \in F \implies \exists z \in F \: z \leq x, y$.
+   \item フィルター$F \subseteq \mathbb{P}$が\emph{超フィルター}$\defs$ $F$は極大.
+   \item $D \subseteq \mathbb{P}$が$\mathbb{P}$で\emph{稠密}$\defs \forall x \in \mathbb{P} \: \exists y \in D \: y \leq x$.
+   \item $M$を何らかのクラスとする．
+         $G \subseteq \mathbb{B}$が\emph{$M$上の$\mathbb{B}$-ジェネリックフィルター}
+
+         $\defs$ $G$はフィルターであり，$\forall D \in M: \mathbb{B}\text{で稠密}\: D \cap G \neq \emptyset$.
+   \item $\dot{G} \defeq \Set{\braket{\check{b}, b} | b \in \mathbb{B}} \in V^{\mathbb{B}}$を\emph{$\mathbb{B}$のジェネリックフィルターの標準的名称}と呼ぶ．
+  \end{itemize}
+\end{definition}
+
+$D$を稠密集合とし，$d \defeq \sum D$と置きます．
+この時，$d < 1$ならば$0 < -d$となりますが，$D$の稠密性から$e \in D$で$0 < e \leq -d$となる物が必要です．
+しかし，$d$は$D$の上限なので$e \leq \sum D = d$となり，$e \cdot d \leq -d \cdot d = 0$となり矛盾します．
+よって$D$が稠密なら$\sum D = 1$となることがわかります．
+
+\begin{theorem}
+ $\mathbb{B}$がアトムを持たない（どんな元の下にも両立しない二元が存在する）なら，$V$上の$\mathbb{B}$-ジェネリックフィルターは$V$に存在しない．
+\end{theorem}
+\begin{proof}
+ まず，$\mathbb{B}$がアトムを持たない場合，一般に$\mathbb{B}$上のフィルター$F$に対し，$D \defeq \mathbb{B} \setminus F$は稠密集合となることを示す．
+ $x \in \mathbb{B}$を取れば，$p, q \leq x$で$p \cdot q = 0$を満たすものが存在する．
+ すると，$F$がフィルターである事から，$p, q$の少なくとも一方は$F$に属さない事がわかる．
+ 従って$p \in D$または$q \in D$のいずれか一方のみが成り立たなくてはならない．
+ $x$の選択は任意であったから，$D$は$\mathbb{B}$で稠密である．
+
+ 以上を踏まえれば，もしジェネリックフィルター$G$が$V$に属したとすると，$D \defeq \mathbb{B} \setminus G \in V$は稠密集合となり，$D \cap G \neq \emptyset$となってしまうが，これは矛盾である． \qed
+\end{proof}
+
+よって，十分複雑な$\mathbb{B}$についてはジェネリックフィルターは非自明なものであることがわかりました．
+このことから，次の補題により，「新しい元」が$V^{\mathbb{B}}$に付け加わっていると思うことが出来ます：
+\begin{theorem}
+ $V^{\mathbb{B}} \models \quoted{\dot{G}: \check{V}\text{上 }\check{\mathbb{B}}\text{-ジェネリック}}$.
+\end{theorem}
+\begin{proof}
+ 定義から$\displaystyle \truth{\check{b} \in \dot{G}} = \sum_{c \in \mathbb{B}} \truth{\check{c} = \check{b}} \cdot c = b$となる事に注意する．
+ すると，$V^{\mathbb{B}} \Vdash \check{\mathds{1}} \in \dot{G}, \check{0} \notin \dot{G}$はすぐにわかる．
+ 上に閉じていることも，
+ \[
+  \truth{\check{b} \leq \check{c} \wedge \check{b} \in \dot{G} \implies \check{c} \in \dot{G}} = - (\truth{\check{b} \leq \check{c}} \cdot \truth{\check{b} \in \dot{G}}) + \truth{\check{c} \in \dot{G}}
+ = - (\truth{\check{b} \leq \check{c}} \cdot b) + c = \mathds{1}.
+ \]
+ また，$\truth{\widecheck{b \cdot c} = (\check{b} \cdot \check{c}) \in \dot{G}} = b \cdot c = \truth{\check{b} \in \dot{G} \wedge \check{c} \in \dot{G}}$より$\dot{G}$の任意の二元は両立する．
+ よって$\dot{G}$はフィルターである．
+ 更に，$\truth{\check{b} \notin \dot{G}} = - \truth{\check{b} \in \dot{G}} = - b = \truth{-\check{b} \in \dot{G}}$なので，$\dot{G}$は超フィルターでもある．
+
+ 最後に，$D \in V$を稠密集合とすると，
+ \[
+ \truth{\check{D} \cap \dot{G} \neq \emptyset} =
+ \truth{\exists x \in \check{D} \: x \in \dot{G}} = \sum_{d \in D} \truth{d \in \dot{G}} = \sum D = \mathds{1}.
+ \]
+ よって$V^{\mathbb{B}} \models \quoted{\dot{G}: V\text{ 上 }\mathbb{B}\text{-ジェネリック}}$. \qed
+\end{proof}
+
+このようにして，$V^{\mathbb{B}}$の中では，$V$に存在しないジェネリックフィルターが存在しているかのように見えていることがわかりました．
+更に，実は$V^{\mathbb{B}}$は自分が$\check{V}$と$\dot{G}$を含む最小の$\ZFC$のモデルであると信じている事もわかります．
+
+それを述べるには，次のような定義が必要になります：
+
+\begin{definition}
+ \begin{itemize}
+  \item $F$を$\mathbb{B}$のフィルターとする．
+        $\mathbb{B}$-name $\tau$の$F$-\emph{解釈}$\tau^F \defeq \val(\tau, F)$を帰納的に次のように定める：
+        \[
+         \val(\tau, F) \defeq \Set{ \val(\sigma, F) | (\sigma, b) \in \tau, b \in F}.
+        \]
+  \item $M$を推移的な集合論のモデルとし，$\mathbb{B} \in M$をcBaとする．
+        $M$上の$\mathbb{B}$-ジェネリックフィルター$G$に対し，$M$の$G$による\emph{ジェネリック拡大}$M[G]$を次で定める：
+        \[
+         M[G] \defeq \Set{\sigma^G | \sigma \in M^{\mathbb{B}}}.
+        \]
+ \end{itemize}
+\end{definition}
+
+\begin{lemma}
+ $M[G]$は$M \subseteq N$と$G \in N$を満たす推移的モデル$N$の中で最小．
+\end{lemma}
+\begin{proof}
+ $N$が推移的で$M \subseteq N$かつ$G \in N$なら$M^{\mathbb{B}} \subseteq N$となることは明らか．
+ $\val$の値も明らかに推移的モデルについては絶対的なので，$M[G] \subseteq N$となる． \qed
+\end{proof}
+
+\begin{theorem}
+ 任意の$\tau \in V^{\mathbb{B}}$に対し，$V^{\mathbb{B}} \models \tau = \check{\tau}^{\dot{G}}$.
+
+ よって$V^{\mathbb{B}} \models \forall x \: x \in \check{V}[\dot{G}]$が成り立ち，$V^{\mathbb{B}}$は自分自身の事を$\check{V}[\dot{G}]$だと思い込んでいる．
+\end{theorem}
+\begin{proof}
+ $\tau$のランクに関する帰納法． \qed
+\end{proof}
+
+\parpic[r]{\begin{tikzpicture}[scale=.8]%
+   \coordinate (ctL) at ({-sqrt(0.75/0.8)},0.75);
+   \coordinate (ctR) at ({ sqrt(0.75/0.8)},0.75);
+   % ordinals
+   \draw[thick,densely dotted]
+   (ctL) -- (ctR);
+   \node[font=\scriptsize] at (0,-0.25) {$0$};
+   % omega
+   \path[draw=black,fill=transparent] (-0.1, 0.75) edge (0.1, 0.75);
+   \node (om) [font=\scriptsize,fill=white] at (0.4, 0.75) {$\omega$};
+   % delta, omega_1
+    \path[draw=black,fill=transparent] (-0.1, 2) edge (0.1, 2);
+    \node (omega1) [font=\scriptsize,fill=white] at ($(0.4,2)+(.2,0)$) {$\omega_1$};
+   % V[G]
+   \draw[thin]  (0,0) -- (0,5) node[above] {$\On$};
+   \draw[name path=V,thick] (-2.5,5) parabola bend (0,0) (2.5,5)
+   node[above]{$V[G]$};
+   \node[inner sep=1pt,circle,fill=black,label={above:{$\scriptsize G$}}] at (1.7, 3) {};
+   % V
+   \draw[thick] (-1.75,5) -- (ctL)
+      (ctR) -- (1.75,5) node[above]{$V$};
+ \end{tikzpicture}}
+よって以上から，$V^{\mathbb{B}}$を$V[G]$と同一視して，あたかも$V$上のジェネリックフィルター$G$が取れているかのように考えても差し支えないということがわかります．
+このような見方の下で，$V$と$V[G]$は，右図のような形をしています．
+
+\section{強制法の一般論へ}
+以上の理論はcBaについて構築してきましたが，実用上は\emph{擬順序集合}による強制法を考えるのが便利です．
+
+\begin{definition}
+\begin{itemize}
+ \item $\braket{\mathbb{P}, \leq, \mathds{1}}$が\emph{擬順序集合}（\textit{poset}）
+ $\defs$ $\leq$は$\mathbb{P}$上反射的かつ推移的であり，$\mathds{1}$はその最大元．
+ \item $p \compat q \defs \exists r \in \mathbb{P} \: r \leq p, q$.
+ \item $p \perp q \defs \neg (p \compat q)$.
+\end{itemize}
+\end{definition}
+
+問題は，cBaで量化子を解釈する際には無限演算$\prod$, $\sum$が使えたのに対し，posetの場合はそう素直にいかない事です．
+そこで，posetによる強制法を考える場合には，真偽値$\truth{\quad}$ではなく強制関係$\Vdash$を基本的な関係として考えます．
+
+まず，簡単な計算により，cBaの場合は$\Vdash$が次を満たすことがわかります：
+
+\begin{lemma}[Definability Lemma]
+ $\varphi, \psi$を強制法の論理式とする．
+ \begin{itemize}
+  \item $p \Vdash \sigma \in \tau \iff \Set{ q \leq p | \exists \braket{s, \theta} \in \tau \: q \leq s, q \Vdash \sigma = \theta}$が$p$以下で稠密．
+  \item $p \Vdash \sigma = \tau \iff \forall \vartheta \in \dom(\sigma) \cup \dom(\tau)\:\forall q \leq p \: [ q \Vdash \quoted{\vartheta \in \sigma} \iff q \Vdash \quoted{\vartheta \in \tau} ]$.
+  \item $p \Vdash \varphi \wedge \psi \iff  p \Vdash \varphi$かつ$p \Vdash \psi$.
+  \item $p \Vdash \neg \varphi \iff \Set{q | q \not\Vdash \varphi}$が$p$以下で稠密.
+  \item $p \Vdash \forall x \varphi(x) \iff \forall \sigma \in V^{\mathbb{P}} \: p \Vdash \varphi(\sigma)$.
+ \end{itemize}
+\end{lemma}
+
+そこで，一般のposetの場合はこれを逆に定義として採用してしまいましょう．
+
+\begin{definition}
+ Poset $\mathbb{P}$と$\varphi \in \FL$および$p \in \mathbb{P}$に対して，$p \Vdash_{\mathbb{P}} \varphi$を上の補題の各条件で定義する．
+
+ また$V^{\mathbb{P}} \models \varphi$は$\mathds{1} \Vdash_{\mathbb{P}} \varphi$の略記とする．
+\end{definition}
+
+これで形だけは定義出来た訳ですが，果してBoole値モデルとちゃんと対応してくれるでしょうか？
+それを見るためには，posetの埋め込みと完備化についての理論が必要になります．
+
+\begin{definition}
+ \begin{itemize}
+  \item 以下の三条件を満たすとき，$i: \mathbb{P} \to \mathbb{Q}$は\emph{稠密埋め込み}という：
+        \begin{enumerate}
+         \item $i(\mathds{1}_{\mathbb P}) = \mathds{1}_{\mathbb{Q}}$.
+         \item $p \leq_{\mathbb{P}} q \implies i(p) \leq_{\mathbb{Q}} i(q)$,
+         \item $p \compat q \iff i(p) \compat i(q)$,
+         \item $i[\mathbb{P}]$は$\mathbb{Q}$で稠密．
+        \end{enumerate}
+  \item $i: \mathbb{P} \to \mathbb{B}$が$\mathbb{P}$の\emph{Boole完備化}$\defs$ $\ran(i) \subseteq \mathbb{B} \setminus \set{0}$であり$i$は稠密．
+ \end{itemize}
+\end{definition}
+
+順序集合の一般論により，次が言えます：
+
+\begin{fact}
+ 任意のposet $\mathbb{P}$に対し，そのBoole完備化$\mathbb{B} = \mathbb{B}(\mathbb{P})$が同型を除いて一意に存在する．
+ 特に，$\mathbb{P}$の擬順序位相に関する正則開集合代数はその一つ．
+\end{fact}
+
+これらから，我々は$\mathbb{P}$による強制法と，$\mathbb{B}(\mathbb{P})$によるBoole値モデルの二つの方法を得た訳です．
+これらの関係を与えるのが次の補題です：
+
+\begin{lemma}
+ $i: \mathbb{P} \to \mathbb{Q}$を稠密埋め込みとする．
+ この時，$\tilde{\imath}: \Pow(\mathbb{P}) \to \Pow(\mathbb{Q})$および$i^*: V^{\mathbb{P}} \to V^{\mathbb{Q}}$を次で定める：
+ \begin{align*}
+  \tilde{\imath}(A) &\defeq \Set{q \in \mathbb{Q} | \exists p \in A \: i(p) \leq_{\mathbb{Q}} q},\\
+  i^*(\sigma) & \defeq \Set{\braket{i^*(\tau), i(p)} | \braket{\tau, p} \in \sigma},\\
+  i_*(\sigma) & \defeq \Set{\braket{i_*(\tau), p} | \braket{\tau, q} \in \sigma, i(p) \leq q}.
+ \end{align*}
+
+ \begin{itemize}
+  \item $V^{\mathbb{P}} \models \sigma = i_*(i^*(\sigma))$,
+        $V^{\mathbb{Q}} \models \sigma = i^*(i_*(\sigma))$.
+  \item $G$が$\mathbb{P}$-ジェネリックなら$H \defeq \tilde{\imath}(G)$は$\mathbb{Q}$-ジェネリックで$V[G] = V[H]$.
+  \item $H$が$\mathbb{Q}$-ジェネリックなら$G \defeq i^{-1}[H]$は$\mathbb{P}$-ジェネリックで$V[H] = V[G]$.
+  \item $p \Vdash_{\mathbb{P}} \varphi[\sigma_1, \dots, \sigma_n] \iff i(p) \Vdash_{\mathbb Q} \varphi[i^*(\sigma_1), \dots, i^*(\sigma_n)]$.
+ \end{itemize}
+\end{lemma}
+
+つまり，二つのposetの間に稠密埋め込みが存在した場合，それらは強制法としては同値になるのです．
+特に，$\mathbb{P}$による強制と，$\mathbb{B} = \mathbb{B}(\mathbb{P})$による強制とで結果は変わらない事がわかります．
+$\mathbb{B}$の方が見掛け上の真偽値が多く$V^{\mathbb{B}}$も大きく見えますが，表現出来る集合の数は本質的に$V^{\mathbb{P}}$と変わっていない訳です．
+
+\subsection{強制関係$\Vdash$の基本性質}
+Boole値モデルの場合は$\mathbb{B}$の各元は真偽値の集合と思った訳ですが，posetの場合は$\mathbb{P}$の各元は\emph{ジェネリックオブジェクトの近似}だと思って，$p \Vdash \varphi$は「近似$p$の下で$\varphi$が成立する」と読むのがわかりやすいでしょう．
+
+Posetの場合は真偽値の計算は出来ませんが，強制関係の計算によって何が成り立つのかを調べる事が出来ます．
+そうした計算上で，次の補題はよく使われます：
+
+\begin{lemma}\label{lem:aux-lem}
+ \begin{itemize}
+  \item $p \Vdash \varphi \iff \Set{q | q \Vdash \varphi}$が$p$以下で稠密．
+  \item $p \Vdash \exists x \in \check{a}\: \varphi(x) \iff \Set{q | \exists a \: p \Vdash \varphi(\check{a})}$が$p$以下で稠密．
+  \item 任意の$\varphi$と$p \in \mathbb{P}$に対し，
+        $\exists q \leq p\: (q \Vdash \varphi) \vee (q \Vdash \neg \varphi)$.
+  \item $V[G] \models \varphi \iff \exists p \in G\: p \Vdash \varphi$.
+ \end{itemize}
+\end{lemma}
+
+\section{連続体仮説の独立性}
+これらを使って，連続体仮説の独立性を証明したいと思います．
+
+\begin{definition}
+ \begin{itemize}
+  \item $\Add(\kappa) \defeq (\power{<\kappa}{2}, \supseteq)$を\emph{$\kappa$の部分集合を付け足すposet}と呼ぶ．
+  \item 基数$\kappa$について，posets $\Braket{(\mathbb{P}_i, \leq_i, \mathds{1}_i) | i \in I}$の\emph{$\kappa$-台直積}を次で定める：
+        \begin{gather*}
+         \prod_{i \in I}^{<\kappa} \mathbb{P}_i \defeq \Set{ p : \text{function} | \dom(p) \in [I]^{<\kappa}, \forall i \in \dom(p)\: p(i) \in \mathbb{P}_i},\\
+         \mathds{1} \defeq \emptyset,\\
+         p \leq q \defs \dom(p) \supseteq \dom(q) \wedge \forall i \in \dom(p)\: p(i) \leq_i q(i).
+        \end{gather*}
+  \item $\Add(\kappa, \gamma) \defeq \prod_{\alpha < \gamma}^{< \kappa} \Add(\kappa)$を\emph{$\kappa$の部分集合を$\gamma$個付け加えるposet}と呼ぶ．
+ \end{itemize}
+\end{definition}
+
+次でみるように，$\Add(\kappa)$は，$\kappa$から$2$への関数を付加するので，特性関数だと思えば確かに$\Add(\kappa)$は新たな$\kappa$の部分集合を付け足していると言える．
+\begin{lemma}
+ $G$を$V$上の$\Add(\kappa)$-ジェネリックフィルターとすると，$V[G] \models \bigcup\dot{G}: \omega \to 2$.
+\end{lemma}
+\begin{proof}
+ まず$G$がフィルターであり，特に任意の二元が両立することから，$\bigcup G$は関数となることに注意する．
+
+ なので，あとは$\bigcup G$が$\kappa$全域で定義されている事をみればよい．
+ ここで，以下の形の集合は$V$に属する$\Add(\kappa)$の稠密集合である：
+ \[
+  D_\alpha \defeq \Set{p \in \Add(\kappa) | \alpha \in \dom(p)}\;(\alpha < \kappa)
+ \]
+ よって，各$\alpha < \kappa$について$G \cap D_\alpha \neq \emptyset$.
+ 以上より$\kappa = \dom(\bigcup G)$. \qed
+\end{proof}
+
+$\kappa$が正則基数のとき$\Add(\kappa)$の組合せ論的性質として，次が成り立つことがわかる：
+
+\begin{definition}
+ Poset $\mathbb{P}$が\emph{$\gamma$-閉}$\defs$任意の$\alpha < \gamma$と降鎖$\Braket{p_\beta | \beta < \alpha}$（$\beta < \xi \implies p_\beta \leq p_\xi$）に対し，下界$p^*$が存在：$\forall \beta < \alpha\: p^* \leq p_\beta$.
+\end{definition}
+
+\begin{lemma}
+ $\kappa$が正則の時，$\Add(\kappa)$および$\Add(\kappa, \gamma)$は$\cf(\kappa)$-閉.
+\end{lemma}
+\begin{proof}
+ $\gamma < \cf \kappa$として$\Braket{p_\alpha | \alpha < \gamma}$を$\Add(\kappa)$の降鎖とする．
+ この時，$\xi < \cf \kappa$かつ$\dom(p) < \kappa$であることから，$\sup_{\alpha < \gamma} \dom(p_\alpha) < \kappa$.
+ よって$p^* \defeq \bigcup_{\alpha < \gamma} p_a \in \Add(\kappa)$がこの降鎖の下界となる．
+
+ $\Add(\kappa, \gamma)$の方も同様． \qed
+\end{proof}
+
+なぜこのような性質を考えるのかというと，$\kappa$-閉なposetによる強制法は$\kappa$以下の基数を保つからです．
+より具体的に次が成り立ちます：
+
+\begin{lemma}
+ $\mathbb{P}$が$\kappa$-閉の時，$V[G] \models \power{< \kappa}{V} \subseteq V$.
+\end{lemma}
+\begin{proof}
+ $\mathds{1} \Vdash \sigma \in \power{<\kappa}{V}$を満たす$\sigma \in V^{\mathbb{P}}$を固定し，$D \defeq \Set{p | p \Vdash \sigma \in \check{V}}$が$\mathbb{P}$で稠密となる事を示そう．
+ そこで$p$を任意に取る．
+ 補題~\ref{lem:aux-lem}より$q \Vdash \dom(\sigma) = \alpha$を満たすような$\alpha < \kappa$と$q \leq p$が取れる．
+ あとは，$q$以下の降鎖$\Braket{q_\gamma | \gamma < \alpha}$と$\Braket{x_\gamma \in V | \gamma < \alpha}$で$q_\gamma \Vdash \sigma(\check{\gamma}) = \check{x}_\gamma$を満たすものを，$\kappa$-閉性を使ってとっていく．
+ そして最終的に$q^*$を$q_\alpha$の下界とすれば，$p \geq q^* \Vdash \quoted{\sigma = \braket{\check{x}_\gamma | \gamma < \alpha} \in \check{V}}$となるので$q^* \in D$が求めるもの．
+
+ 以上から$V[G] \models \power{< \kappa}{V} \subseteq V$.
+\end{proof}
+
+\begin{corollary}
+ $\mathbb{P}$が$\kappa$-閉なら$\mathbb{P}$は$\kappa$以下の基数を保つ．
+\end{corollary}
+\begin{proof}
+ $\mathbb{P}$での強制によって短い列は増えないので，基数の壊れようがない． \qed
+\end{proof}
+
+\begin{lemma}
+ $\kappa$が正則で$G$が$V$上$\Add(\kappa)$-ジェネリックなら$V[G] \models 2^{< \kappa } = \kappa$.
+\end{lemma}
+\begin{proof}
+ $2^{< \kappa} \geq \kappa$は明らかなので，$\kappa$から$2^{<\kappa}$への全射が付け加わる事がわかればよい．
+ 特に，$\Add(\kappa)$は$\kappa$-閉なので，$2^{<\kappa}$は$V$と$V[G]$で全く同じである事に注意しよう．
+ そこで$\braket{-, -}: \kappa \times \kappa \congto \kappa$を標準的な全単射で，特に各切片が
+ 次の各集合$D_s$を考えよう：
+ \[
+  D_s \defeq \Set{p | \exists \alpha < \kappa \: \forall \gamma \in \dom(s) \:p(\braket{\alpha, \gamma}) = s(i)}\;(s \in \power{<\kappa}{2}).
+ \]
+ いま適当に$p \in \Add(\kappa)$を取れば，$\kappa$の正則性より$\eta \defeq \sup \Set{\alpha+1 | \exists \beta \: \braket{\alpha, \beta} \in \dom(p)} < \kappa$となる．
+ そこで$p'(\braket{\eta, \gamma}) \defeq s(\gamma)\;(\gamma < \dom(s))$として，余りは適当に埋めれば，$p' \leq p$かつ$p' \in D_s$を満たす．
+ よって各$D_s$は$\Add(\kappa)$で稠密である．
+
+ そこで，$V[G]$で$f \defeq \bigcup G$とおいて，$\mathcal{F} \defeq \Set{ f(\braket{\alpha, -}) \restr \gamma | \gamma, \alpha < \kappa}$とおけば，$|\mathcal{F}| \leq \kappa$である．
+ 一方，$s \in \power{<\kappa}{2}$を取れば，$\Add(\kappa)$の$\kappa$-閉性より$s \in V$であり，$G \cap D_s \neq \emptyset$を満たすので，定義から$s \in \mathcal{F}$となる．
+ よって$2^{<\kappa} \leq |\mathcal{F}| \leq \kappa$であるから，$V[G] \models 2^{<\kappa} = \kappa$が成り立つ． \qed
+\end{proof}
+
+\begin{corollary}
+ $G$: $V$上$\Add(\kappa^+)$-ジェネリック  $\implies$ $V[G] \models \quoted{\kappa: \text{基数} \wedge 2^\kappa = \kappa^+}$.
+
+ 特に$\Add(\omega_1)$は実数を一切足さずに連続体仮説を強制する．
+\end{corollary}
+\begin{proof}
+ 前の補題より$V[G] \models 2^\kappa = 2^{< \kappa^+} = \kappa^+$.
+ $\Add(\omega_1)$は$\omega_1$-閉なので可算列は増えず，従って実数も足さない． \qed
+\end{proof}
+
+このように$\CH$を強制することも出来ますが，元々は強制法は$\CH$を破るための発明でした．
+それにはどうすればいいでしょうか？
+取り敢えず，実数を一つ（対角化すれば可算個）付け加えるのは$\Add(\omega)$で出来ますから，これを$\aleph_2$回繰り返してやれば良さそうです．
+その際には，上で気にしたように基数を保存するかどうか？というのが重要になってきます．
+だって，$\aleph_2$個実数を足してやったところで，$\aleph_2^V$が$V[G]$で可算になっていたら意味がありませんから．
+その事を確かめるために閉性とともに良く用いられるのが\emph{$\kappa$-鎖条件}です．
+
+\begin{definition}
+ $\mathbb{P}$が\emph{$\kappa$-鎖条件}（\emph{$\kappa$-chain condition}, \emph{$\kappa$-c.c.}）を満たす$\defs$ $\mathbb{P}$の反鎖の濃度は$\kappa$未満．
+\end{definition}
+
+閉性は「小さい」基数を保つ条件でしたが，鎖条件は「大きな」基数を保つ条件です．
+
+\begin{theorem}\label{thm:cc-card-pres}
+ $\mathbb{P}$が$\kappa$-c.c.を満たすなら$\mathbb{P}$は$\kappa$以上の基数を保つ．
+ 即ち$V$の任意の基数$\lambda \geq \kappa$について$\mathbb{P} \models \quoted{\check{\lambda}: \text{基数}}$.
+\end{theorem}
+
+これには次の補題を用いることになります：
+
+\begin{lemma}\label{lem:cc-approx-fun}
+ $\mathbb{P}$が$\kappa$-c.c.で$\dot{f}$が$\mathbb{P} \Vdash \dot{f}: \check{A} \to \check{B}$を満たす関数の$\mathbb{P}$-名称なら，$F: A \to [B]^{< \kappa}$が存在して$\forall x \in \check{A} \:\mathbb{P} \Vdash \quoted{\dot{f}(\check{x}) \in \check{F}(\check{x})}$
+\end{lemma}
+\begin{proof}
+ 以下のように$F$を定める：
+ \[
+  F(x) \defeq \Set{y \in B | \exists p \in \mathbb{P} \: p \Vdash \quoted{\dot{f}(\check{x}) = \check{y}}}.
+ \]
+ すると，$\mathbb{P} \Vdash \dot{f}(\check{x}) \in \check{F}(\check{x})$は明らか．
+ このままだと$F: A \to \Pow(B)$ということしかわからないので，$|F(x)| < \lambda$を示そう．
+ そこで，定義により各$y \in F(x)$に対し$p_y \Vdash \dot{f}(\check{x}) = \check{y}$を取り，$A_x \defeq \Set{p_y \in \mathbb{P} | y \in F(x)}$とおく．
+ ここで，$p_y \compat p_z$とすると，$q \leq p_y, p_z$を取れば$q \Vdash \quoted{\check{y} = \dot{f}(\check{x}) = \check{z}}$となり，定理~\ref{thm:V-truth-emb-generic}から$y = z$となります．
+ この事から，特に対応$y \mapsto p_y$は単射なので$|F(x)| \leq |A_x|$となり，更に$A_x$は反鎖となることがわかります．
+ すると，$\kappa$-c.c.から$|F(x)| \leq |A_x| < \kappa$を得ます．これが示したかったことでした． \qed
+\end{proof}
+
+\begin{proof}[Proof of Theorem \ref{thm:cc-card-pres}]
+ 基数の極限は基数であり，極限基数は正則基数の極限で書けるので，$\kappa$以上の正則基数が保たれる事を示せばよい．
+
+ そこで，任意の正則基数$\lambda \geq \kappa$と$\gamma < \lambda$に対し，$\mathbb{P} \Vdash \dot{f}: \check{\gamma} \to \check{\lambda}$なら$\mathbb{P} \Vdash \quoted{\dot{f}: \text{有界}}$となる事を示しましょう．
+ この時，上の補題~\ref{lem:cc-approx-fun}から$F: \gamma \to [\lambda]^{<\kappa}$で任意の$\alpha < \gamma$に対し$p \Vdash \quoted{\dot{f}(\check{\alpha})} \in \check{F}(\check{\alpha})$を満たす関数が存在します．
+ 今，$\lambda \geq \kappa$かつ$|F(\alpha)| < \gamma$であるので，$\lambda$の正則性より$\xi \defeq \sup_{\alpha < \gamma} \sup F(\alpha) < \lambda$となります．
+ すると，各$\alpha < \gamma$について$p \Vdash \dot{f}(\check{\alpha}) \leq \sup \check{F}(\check{\alpha}) \leq \gamma < \lambda$. \qed
+\end{proof}
+
+\begin{fact}
+ $\Add(\kappa, \gamma)$は$(2^{<\kappa})^+$-c.c.を持つ．
+\end{fact}
+
+この事実の証明には$\Delta$-システム補題を使いますが，新しい概念を導入するのが面倒になったのでやりません．
+証明じたいはそこまで面倒なものではないので，気になった人はKunen~\cite{Kunen:2011}などを参考にしてください．
+
+\begin{corollary}
+ $\Add(\omega, \gamma)$は$\omega_1$-c.c.を持つ．
+ 特に，$\Add(\omega, \gamma)$は全ての基数を保存する．
+\end{corollary}
+
+\begin{lemma}
+ 基数$\lambda$に対し，$\Add(\omega, \lambda) \Vdash 2^{\aleph_0} \geq \lambda$.
+\end{lemma}
+\begin{proof}
+ 上の系から$\Add(\omega, \lambda)$は全ての基数を保つので，$\lambda$は依然として基数であることに注意．
+
+ そこで$G$を$V$上の$\Add(\omega, \lambda)$-ジェネリックフィルターとして，以下のように$f_\alpha : \omega \to 2$を定める：
+ \[
+  f_\alpha(n) \defeq \left(\bigcup G\right)(\alpha, n)\;(n < \omega, \alpha < \lambda).
+ \]
+ この時，次の$D_n, E^\alpha_\beta$はそれぞれ$\Add(\omega, \lambda)$で稠密である：
+ \begin{gather*}
+   D_n \defeq \Set{p \in \Add(\omega, \lambda) | \forall \alpha \in \dom(p) \: n \in \dom p(\alpha)}\; (n < \omega)\\
+  E^\alpha_\beta \defeq \Set{p \in \Add(\omega, \lambda) | \exists n \in \dom p(\alpha) \cap \dom p(\beta) \: p(\alpha)(n) \neq p(\beta)(n)} \; (\alpha < \beta < \lambda).
+ \end{gather*}
+ すると，$D_n \cap G \neq \emptyset$より各$f_\alpha : \omega \to 2$であり，$E^\alpha_\beta \cap G \neq \emptyset$より任意の$\alpha < \beta < \lambda$に対して$f_\alpha \neq f_\beta$となるから，$\set{f_\alpha}_\alpha$は$\lambda$の相異なる実数の列である．
+ よって$V[G] \models 2^\omega \geq \check{\lambda}$. \qed
+\end{proof}
+
+よって，$\Add(\omega, \aleph_2)$で強制すれば，$\CH$を破ることが出来た．
+実は，適切な仮定の下で$\Add(\omega, \lambda)$による強制拡大における連続体の濃度は決定できる．
+
+\begin{lemma}
+ $\mathbb{P}$が$\lambda$-c.c.を満たし$|\mathbb{P}| = \nu$とする．
+ 基数$\mu$に対して$\theta \defeq (\nu^{<\lambda})^\mu$とすると$\mathbb{P} \Vdash 2^{\check{\mu}} \leq \check{\theta}$.
+\end{lemma}
+\begin{proof}
+ まず，この補題の$\nu^{<\lambda}$というのは，$\mathbb{P}$の完備化の濃度の上界である．
+
+ 鎖条件は稠密埋め込みによって保たれることはすぐにわかる．
+ そこで$\mathbb{P}$の代わりに完備化$\mathbb{B} = \mathbb{B}(\mathbb{P})$を代わりに考えよう．
+ $\mathbb{B}$は$\mathbb{P}$の全ての部分集合の上限・下限を付け足して得られる訳だが，「重複」を除いて考えれば，$\mathbb{P}$の反鎖の上限・下限だけを考えればよい．
+ いま，$\mathbb{P}$は$\lambda$-c.c.を満たすから，反鎖の総数は高々$\nu^{<\lambda}$個しかない．
+ よって$|\mathbb{B}| \leq \nu^{<\lambda}$である．
+
+ そこで$\dot{x}$を$\mathbb{P} \Vdash_{\mathbb{B}} \dot{x} \subseteq \check{\mu}$を満たすものとする．
+ このとき，
+ \[
+  F_{\dot{x}}(\alpha) \defeq \truth[\mathbb{B}]{\check{\alpha} \in \dot{x}}
+ \]
+ により写像$F_{\dot{x}}: \mu \to \mathbb{B}$が定まる．
+ このような写像の総数は$|\power{\mu}{\mathbb{B}}| = |\mathbb{B}|^\mu \leq (\nu^{<\lambda})^\mu = \theta$.
+ $\mathbb{P} \Vdash \quoted{\dot{x} = \dot{y}}$ならば$F_{\dot{x}} = F_{\dot{y}}$となるから，
+ よって$\mu$の部分集合の名称は本質的に$\theta$個しか存在しないので，$\mathbb{P} \Vdash 2^{\mu} \leq \check{\theta}$. \qed
+\end{proof}
+
+\begin{corollary}
+ $\GCH$を仮定する．
+ $\cf \lambda > \omega$なら$\Add(\omega, \lambda) \Vdash 2^{\omega} = \check{\lambda}$.
+\end{corollary}
+\begin{proof}
+ $|\Add(\omega, \lambda)| = [\lambda]^{<\omega} \times 2^{<\omega} = \lambda \times \omega = \lambda$.
+ そこで，先の補題において$\lambda \defeq \omega_1$, $\nu \defeq \lambda$, $\mu \defeq \omega$とおけば，
+ $\theta = (\lambda^{<\omega_1})^\omega = \lambda^\omega = \lambda$（最後の$=$は$\GCH$および$\cf \lambda > \omega$より）．
+ よって$\Add(\omega, \lambda) \Vdash 2^\omega = \check{\lambda}.$ \qed
+\end{proof}
+
+\section{Hamkinsの〈自然主義〉強制法}
+最後に，Hamkins~\cite{Hamkins:2012qv}らの「自然主義的」な強制法の説明について説明しましょう．
+そのままでは$V^{\mathbb{B}}$はBoole値モデルであって普通のモデルではないが，それを$\mathbb{B}$上の超フィルターで割ることによって通常の（定義可能なクラス）モデルを得よう，という考え方です．
+
+\begin{definition}
+ $\mathcal{U}$を$\mathbb{B}$上の超フィルターとする．
+ この時，$V^{\mathbb{B}}/\mathcal{U}$, $\check{V}_{\mathcal{U}}$および$j_{\mathcal{U}}: V \to \check{V}_{\mathcal{U}}$を次で定める：
+ \begin{gather*}
+  \dot{x} \sim_{\mathcal{U}} \dot{y} \defs \truth{\dot{x} = \dot{y}} \in \mathcal{U}, \qquad
+  [\dot{x}]_{\mathcal{U}} \defeq \left(\Set{\dot{y} \in V^{\mathbb{B}} | \dot{x} \sim_{\mathcal{U}} \dot{y}} \text{の中でランク最小のもの全体}\right)\\
+  [\dot{x}]_{\mathcal{U}} \mathrel{E} [\dot{y}]_{\mathcal{U}} \defs \truth{\dot{x} \in \dot{y}} \in \mathcal{U},\qquad
+  V^{\mathbb{B}} / \mathcal{U} \defeq (\Set{[\dot{x}]_{\mathcal{U}} | \dot{x} \in V^{\mathbb{B}}}, \mathrel{E}),\\
+  \check{V}_{\mathcal{U}} \defeq \Set{[\sigma]_{\mathcal{U}} \in V^{\mathbb{B}}/\mathcal{U} | \truth{\sigma \in \check{V}} \in \mathcal{U}},\\
+  j_{\mathcal{U}}(x) \defeq [\check{x}]_{\mathcal{U}}.
+ \end{gather*}
+
+ $\check{V}_\mathcal{U}$を\emph{Boole超冪}と呼ぶ．
+\end{definition}
+
+\begin{theorem}
+ 任意のcBa $\mathbb{B}$に対して，定義可能なクラスへの初等埋め込み$j: V \precto \bar{V}$と$\bar{V}$上の$\bar{\mathbb{B}} \defeq j(\mathbb{B})$-ジェネリックフィルター$\bar{G} \in V$が存在する．
+ \[
+  V \prec \bar{V} \subseteq \bar{V}[\bar{G}].
+ \]
+ 特に，$\bar{V}[\bar{G}]$と$j$は$V$で定義可能クラスになっている．
+\end{theorem}
+\begin{proof}
+ $\mathcal{U}$を適当な$\mathbb{B}$上の超フィルターとして，$\bar{V} \defeq \check{V}_{\mathcal{U}}$, $j \defeq j_{\mathcal{U}}$，$\bar{G} \defeq [\dot{G}]_{\mathcal{U}}$とおけばよい． \qed
+\end{proof}
+
+ここで重要なのは，$\mathcal{U}$は超フィルターなら\emph{なんでもいい}という事です．
+これは，$V$は普通の$\in$-モデルであるのに対して，$\check{V}_{\mathcal{U}}$などは一般に整礎とは限らない$E$を所属関係に持ち，更に$\bar{G} \in V$は（メタ的に$V$上と見做せるにしても）$\bar{V}$上のジェネリックフィルターであって$V$上のものではないためです．
+
+更に，Łośの定理に相当する，次の定理が成り立ちます：
+
+\begin{theorem}[Łośの定理（Boole超冪版）]\label{thm:los}
+ 超フィルター$\mathcal{U}$に対し$\truth{\varphi(\tau)} \in \mathcal{U} \iff V^{\mathbb B} / \mathcal{U} \models \varphi([\tau]_{\mathcal{U}})$.
+\end{theorem}
+
+これには，次の定理が必要になります：
+
+\begin{theorem}[極大原理]
+ 論理式$\varphi[x, \vec{y}]$に対し，$\dot{x} \in V^{\mathbb{B}}$で$\truth{\exists x \: \varphi[x, \vec{\sigma}]} = \truth{\varphi[\dot{x}, \vec{\sigma}]}$を満たすものが存在する．
+\end{theorem}
+\begin{proof}
+ $b \defeq \truth{\exists x \: \varphi(\dot{x})}$とすると，定義から，
+ \[
+  b = \sum_{\dot{x} \in V^\mathbb{B}} \truth{\varphi(\dot{x})}.
+ \]
+ そこで$S \defeq \Set{ \truth{\varphi(\dot{x})} | \dot{x} \in V^{\mathbb{B}}}$とおいて，$S$の元以下の所で極大な反鎖$A \subseteq \mathop{\downarrow} S$を取る．
+ この時$\sum A = b$.
+ そこで，各元$p \in A$に対して，$p \leq \truth{\varphi(\sigma_p)}$となるような$\sigma_p$を固定しておく．
+すると，$\dot{x} \defeq \Set{\braket{\tau, p \cdot q} | p \in A, \braket{\tau, q} \in \sigma_p}$が求めるものとなる．
+ 定め方より各$p \in A$に対し$p \leq \truth{\varphi(\dot{x})}$となるので$b = \sum A \leq \truth{\varphi(\dot{x})}$.
+ 一方で$\dot{x} \in V^{\mathbb{B}}$なので定義より$\truth{\varphi(\dot{x})} \in S$となるので，$\truth{\varphi(\dot{x})} \leq \sum S = b$. \qed
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:los}]
+ 原子論理式については，定義から明らか．
+
+ 複合論理式については，論理式の長さに関する帰納法で示す．
+ Boole結合について：
+ \begin{alignat*}{2}
+  \truth{\neg \varphi} = - \truth{\varphi} \in \mathcal{U}
+  &\iff \truth{\varphi} \notin \mathcal{U} &\qquad& (\because\ \mathcal{U}: \text{フィルタ})\\
+  &\iff V^{\mathbb B}/\mathcal{U} \nvDash \varphi && (\text{帰納法の仮定})\\
+  &\iff V^{\mathbb B}/\mathcal{U} \models \neg \varphi.\\
+  \truth{\varphi \wedge \psi} = \truth{\varphi} \cdot \truth{\psi} \in \mathcal{U}
+  &\iff \truth{\varphi}, \truth{\psi} \in \mathcal{U} & & (\mathcal{U}: \text{フィルタ}) \\
+  &\iff V^{\mathbb{B}}/\mathcal{U} \models \varphi, \psi && (\text{帰納法の仮定})\\
+  &\iff V^{\mathbb{B}}/\mathcal{U} \models \varphi \wedge \psi
+ \end{alignat*}
+ 最後に量化子について．特に存在量化だけ考えればよい．
+ 極大原理により$\varphi(x)$に対して$\truth{\varphi(\dot{x})} = \truth{\exists x \: \varphi(x)}$となる$\dot{x}$を取れば，
+ \begin{align*}
+  \truth{\exists x \: \varphi(x)} = \truth{\varphi(\dot{x})} \in \mathcal{U}
+  \iff V^{\mathbb{B}}/{\mathcal{U}} \models \varphi([\dot{x}]_{\mathcal{U}}) \implies V^{\mathbb{B}}/\mathcal{U} \models \exists x \: \varphi(x).
+ \end{align*}
+ また，$V^{\mathbb{B}}/\mathcal{U} \models \exists x \: \varphi(x)$とすると，
+ $[\dot{y}] \in V^{\mathbb{B}}/\mathcal{U}$があって，
+ \begin{alignat*}{2}
+  V^{\mathbb{B}}/\mathcal{U} \models \exists x \: \varphi(x)
+  &\implies V^{\mathbb{B}}/\mathcal{U} \models \varphi([\dot{y}]_{\mathcal{U}})\\
+  &\iff \truth{\exists x \: \varphi(x)} = \sum_{\dot{z}} \truth{\varphi(\dot{z})} \geq \truth{\varphi(\dot{y})} \in \mathcal{U} &\quad& (\text{帰納法の仮定}).\\
+  &\implies \truth{\exists x \: \varphi(x)} \in \mathcal{U} && (\mathcal{U}: \text{フィルタ}).
+ \end{alignat*}
+ よって$\truth{\exists x \: \varphi(x)} \in \mathcal{U} \iff V^{\mathbb{B}}/\mathcal{U} \models \exists x \in \varphi(x)$. \qed
+\end{proof}
+
+\begin{corollary}
+ $V^{\mathbb{B}}/\mathcal{U} \models \ZFC$.
+\end{corollary}
+
+つまり，強制法とは$\truth{\varphi} \in \mathcal{U}$を満たす超フィルタを見付けて$V^{\mathbb{B}}/\mathcal{U}$を考えることに外ならなかった訳です．
+そして，多くの場合は$\truth{\varphi} = \mathds{1}$なので，これは自明になりたっていた，という事です．
+
+特に，ジェネリックフィルタ$G$によるBoole超冪である場合は，$\check{V}_G \simeq V$となります：
+
+\begin{theorem}
+ 必ずしも$V$に属するとは限らない超フィルタ$U$について，次は同値：
+ \begin{enumerate}
+  \item \label{item:U-generic}$U$が$V$上ジェネリック
+  \item \label{item:jU-iso}$j_U$は自明で$V$から$\check{V}_U$への同型射となる．
+ \end{enumerate}
+\end{theorem}
+\begin{proof}
+ $\ref{item:U-generic} \implies \ref{item:jU-iso}$を示す．
+ $[\sigma] \in \check{V}_U$をとれば，$b \defeq \truth{\sigma \in \check{V}} \in U$である．
+ この時，$A \defeq \Set{ \truth{\sigma = \check{x}} | x \in V, \truth{\sigma = \check{x}} \neq \mathds{0}} \in V$は$b$以下の極大反鎖なので，$U$のジェネリック性から$U \cap A \neq \emptyset$.
+ そこで唯一に決まる$\truth{\sigma = \check{x}} \in U$が取れ，$[\sigma] = [\check{x}] = j_U(x)$を得る．
+ したがって$j_U$は全射であり，初等性から同型となる．
+
+ 逆に$\ref{item:jU-iso} \implies \ref{item:U-generic}$を示す．
+ $j_U$を同型とする．
+ $A \in V$を$\mathbb{B}$の極大反鎖とした時，$a \in A$に対し$a = \truth{\check{a} = \sigma}$を満たすような$\mathbb{B}$-名称$\sigma \in V^{\mathbb{B}}$が取れる．
+ このとき$\truth{\tau \in \check{A}} = \mathds{1}$となるので，特に$\truth{\tau \in \check{V}} = \mathds{1}$となり$[\tau] \in \check{V}_U$.
+ いま，$j_U$は同型なので，$\truth{\sigma = \check{x}} \in U$を満たす$x \in V$が存在し，更に$\truth{\sigma \in \check{a}}$より$x \in A$でなくてはならない．
+ すると$x = \truth{x = \sigma} \in U$となり，$x \in A \cap U \neq \emptyset$を得，
+ 従って$U$は$V$上ジェネリック． \qed
+\end{proof}
+
+\section{通常の超冪とBoole超冪の関係}
+以下では，「Boole超冪」$\check{V}_{\mathcal{U}}$が本当に超冪の一般化となっている事を見ます．
+そのために，$\check{V}_{\mathcal{U}}$の代数的な表示を与えることにしましょう．
+
+\begin{definition}
+ \begin{itemize}
+  \item 極大反鎖$A, B \subseteq \mathbb{B}$に対し，$\forall x \in A \: \exists y \in B \: x \leq y$が成り立つとき，$A$は$B$の\emph{細分}であるといい$A \leq B$と書く．
+  \item 極大反鎖$A, B$に対し，$A \wedge B \defeq \Set{a \cdot b | a \in A, b \in B, a\cdot b > 0}$は$A \wedge B \leq A, B$となる最大の極大反鎖である．
+  \item $f: A \to M$が\emph{被覆関数} $\defs$ $A$は$\mathcal{B}$の極大反鎖．
+  \item $f: A \to M$を被覆関数，$B \leq A$を$A$の細分とする時，$f$の$B$への\emph{簡約}($f \reduce B$)を次で定める：
+        \[
+         (f \reduce B)(b) \defeq f(a) \quad \text{for the unique } a \in A \text{ with } a \geq b.
+        \]
+  \item $M^{\spanning \mathbb{B}} \defeq \Set{f: A \to M | f: \text{被覆関数}}$．
+  \item $f, g \in M^{\spanning \mathbb{B}}$と超フィルタ$\mathcal{U}$に対し，$f \equiv_\mathcal{U} g$を次で定める：
+        \[
+         f \equiv_{\mathcal{U}} g \iff \sum \Set{c \in A \wedge B | (f \reduce (A \wedge B))(c) = (g \reduce (A \wedge B))(c)} \in \mathcal{U}
+        \]
+        $f$の$\equiv_\mathcal{U}$に関する同値類を$[f]^*_{\mathcal{U}}$と表す．
+  \item $M^{\spanning \mathbb{B}}_\mathcal{U} \defeq \Set{[f]^*_{\mathcal{U}} | f \in M^{\spanning \mathbb{B}}}$を関数的Boole超冪と呼ぶ.
+
+        関係記号$R$の解釈は次で定める：
+        \[
+         M^{\spanning \mathbb{B}}_\mathcal{U} \models R([f_1], \dots, [f_n]) \defs \sum \Set{c \in \bigwedge_{1 \leq i \leq n} \dom(f_i) | M \models R(f_1(c), \dots f_n(c))} \in \mathcal{U}.
+        \]
+  \item $x \in M$に対し，$\hat{x}(\mathds{1}) = x$により$\hat{x}: \set{\mathds{1}} \to M$を定める．
+        $\hat{x} \in M^{\spanning \mathbb B}$であり，$j(x) = \hat{x}$は初等埋め込み．
+ \end{itemize}
+\end{definition}
+
+\begin{theorem}
+ 次の図式を可換にする同型$\pi$が存在する．
+ \begin{center}
+ \begin{tikzpicture}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+    |(MBU)| M^{\spanning \mathbb{B}}_{\mathcal{U}} & |(MU)| \check{M}_\mathcal{U}\\
+    |(M)| M \\
+  };
+  \draw[->]
+    (MBU) edge node[above,font=\scriptsize] {$\sim$}
+               node[below,font=\scriptsize] {$\pi$} (MU)
+    (M) edge node[above,sloped,font=\scriptsize] {$\prec$}
+             node[right,font=\scriptsize] {$j$} (MBU)
+    (M) edge node[above,sloped,font=\scriptsize] {$\prec$}
+             node[right,font=\scriptsize] {$j_{\mathcal{U}}$} (MU);
+ \end{tikzpicture}
+ \end{center}
+\end{theorem}
+\begin{proof}
+ $f: A \to M \in M^{\spanning \mathbb{B}}$に対して，$\pi(f) \defeq \tau_f \in M^{\mathbb B}$を次で定める：
+ \[
+  \tau_f \defeq \Set{ \braket{\check{x}, a} | a \in A, x \in f(a) }.
+ \]
+ ここで，$B \leq A$なら定義より$\truth{\tau_f = \tau_{f \reduce B}} = \mathds{1}$かつ$a \leq \truth{\tau_f = \widecheck{f(a)}}$となることに注意しよう．
+
+ まずこの対応が$\sim$と$\equiv$を保つことを観よう．
+ そこで，$f : A \to M$, $g: B \to M$を任意にとって$C \defeq A \wedge B$かつ$f^* = f \reduce C$, $g^* \defeq g \reduce C$とおく．
+ 今，任意の$c \in C$について，
+ \begin{align*}
+  c \cdot \truth{\tau_{f^*} = \tau_{g^*}} = c \cdot \truth{\widecheck{f^*(c)} = \widecheck{g^*(c)}} =
+  \begin{cases}
+   c & (f^*(c) = g^*(c))\\
+   0 & (\ow) 
+  \end{cases}
+ \end{align*}
+ したがって，
+ \begin{align*}
+  f \equiv_\mathcal{U} g
+  &\iff \truth{\tau_f = \tau_g} = \sum \Set{c \in C | (f \reduce C)(c) = (g \reduce C)(c)} \in \mathcal{U}\\
+  &\iff \tau_f \sim_{\mathcal{U}}  \tau_g.
+ \end{align*}
+ 以上から，写像$[f]^*_{\mathcal{U}} \mapsto [\tau_f]_{\mathcal{U}}$はwell-definedであり単射となる．
+ また，各関係記号についても同様の議論から$\check{M}_{\mathcal{U}} \models R([\tau_f]_{\mathcal{U}}) \iff M^{\spanning \mathbb{B}}_\mathcal{U} \models R([f]^*_{\mathcal{U}})$が言える．
+
+ よって，あとはこの対応が全射であることが言えればよい．
+ そこで，$[\tau]_\mathcal{U} \in \check{M}_\mathcal{U}$を取ると，$\sim_{\mathcal{U}}$の定義から$\truth{\tau \in \check{V}} = \mathds{1}$であるとしてよい．
+ そこで，$A = \Set{\truth{\tau = \check{x}} | x \in M, \truth{\tau = \check{x}} \neq \mathds{0}}$として，$f(\truth{\tau = \check{x}}) = x$により定めれば，明らかに$[\tau] = [\tau_{f_\tau}]$かつ$[f_{\tau_f}]^* = [f]^*$を満たす．
+ よってこれらは同型であり，更に$[\check{x}]$と$[\hat{x}]$を互いに写し合うので，初等埋め込みも可換． \qed
+\end{proof}
+
+\begin{theorem}
+ 通常の$I$上の超フィルターによる超冪は$\Pow(I)$によるBoole超冪と一致する．
+\end{theorem}
+\begin{proof}
+ $\Pow(I)$の場合，$\mathcal{A} \defeq \Set{\set{i} | i \in I}$が最小の極大反鎖となる．
+ ここで$\mathcal{A}$と$I$は自然に同一視出来，この同一視の下で超冪はBoole超冪と見做せるし，初等埋め込み写像も自然に同一視出来る． \qed
+\end{proof}
+\renewcommand{\emph}[1]{\textsf{\textgt{#1}}}
+\nocite{Hamkins:2012qv,Jech:2002,Kunen:2011,Kamo:2007,Shioya:2014fr}
+\printbibliography[title=参考文献]
+\end{document}
