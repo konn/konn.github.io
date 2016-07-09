@@ -30,6 +30,7 @@ import           Data.Maybe                      (listToMaybe)
 import           Data.Sequence                   (Seq)
 import qualified Data.Set                        as S
 import qualified Data.Text                       as T
+import qualified Debug.Trace                     as DT
 import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
                                                   (</>))
 import qualified MyTeXMathConv                   as MyT
@@ -96,6 +97,8 @@ texToMarkdown fp src = do
   let latexTree = procCrossRef myCrossRefConf $ view _Right $ parseTeX $ applyMacros macros $ src
       tlibs = queryWith (\ case
                             c@(TeXComm "usetikzlibrary" _) -> [c]
+                            c@(TeXComm "tikzset" _) -> [c]
+                            c@(TeXComm "pgfplotsset" _) -> [c]
                             _ -> [])
               latexTree
       initial = T.unpack $ render $ preprocessTeX latexTree
@@ -108,6 +111,7 @@ texToMarkdown fp src = do
   unless (null tikzs) $ shelly $ silently $ do
     master <- canonic $ dropExtension pth
     mkdir_p master
+    -- let tmp = "tmp" in do
     withTmpDir $ \tmp -> do
       cd tmp
       writefile "image.tex" $ render $ buildTikzer tlibs tikzs
@@ -206,47 +210,72 @@ commandDic = [("underline", Right "u"), ("bf", Left Strong)
              ,("textsf", Left Strong)
              ]
 
-rewriteInlineCmd :: [Inline] -> [Inline]
-rewriteInlineCmd = concatMap step
+rewriteInlineCmd :: [Inline] -> Machine [Inline]
+rewriteInlineCmd = fmap concat . mapM step
   where
     step (RawInline "latex" src)
         | Right t <- parseTeX src = rewrite t
-    step i = [i]
-    rewrite (TeXSeq l r) = rewrite l ++ rewrite r
+    step i = return [i]
+    rewrite (TeXSeq l r) = (++) <$> rewrite l <*> rewrite r
     rewrite (TeXComm "parpic" args) = procParpic args
-    rewrite (TeXComm "ruby" [FixArg rb, FixArg rt]) =
-      [RawInline "html" $ "<ruby><rb>"]
-      ++ concatMap step (inlineLaTeX (render rb))
-      ++
-      [RawInline "html" $ "</rb><rp>（</rp><rt>"]
-      ++ concatMap step (inlineLaTeX (render rt))
-      ++
-      [RawInline "html" $ "</rt><rp>）</rp><ruby>"]
+    rewrite (TeXComm "ruby" [FixArg rb, FixArg rt]) = do
+      rubyBody <- concat <$> mapM step (inlineLaTeX (render rb))
+      rubyText <- concat <$> mapM step (inlineLaTeX (render rt))
+      return $ [RawInline "html" $ "<ruby><rb>"]
+               ++ rubyBody
+               ++
+               [RawInline "html" $ "</rb><rp>（</rp><rt>"]
+               ++ rubyText
+               ++
+               [RawInline "html" $ "</rt><rp>）</rp><ruby>"]
     rewrite c@(TeXComm cm [FixArg arg]) =
       case lookup cm commandDic of
-        Just (Right t) ->
-             [ RawInline "html" $ "<" ++ t ++ ">" ]
-             ++ concatMap step (inlineLaTeX (render arg)) ++
-             [ RawInline "html" $ "</" ++ t ++ ">" ]
-        Just (Left inl) -> [inl $ concatMap step $ inlineLaTeX $ render arg]
-        _ -> inlineLaTeX $ render c
-    rewrite c = inlineLaTeX $ render c
+        Just (Right t) -> do
+          comBody <- concat <$> mapM step (inlineLaTeX (render arg))
+          return $ [ RawInline "html" $ "<" ++ t ++ ">" ]
+                   ++ comBody ++
+                   [ RawInline "html" $ "</" ++ t ++ ">" ]
+        Just (Left inl) -> pure . inl . concat <$> mapM step (inlineLaTeX $ render arg)
+        _ -> return $ inlineLaTeX $ render c
+    rewrite c = return $ inlineLaTeX $ render c
 
 data Align = AlignL | AlignR
            deriving (Read, Show, Eq, Ord)
 
-procParpic :: [TeXArg] -> [Inline]
+procParpic :: [TeXArg] -> Machine [Inline]
 procParpic [OptArg "r", FixArg lat] = procParpic' AlignR lat
 procParpic [OptArg "l", FixArg lat] = procParpic' AlignL lat
 procParpic (fixArgs -> [lat]) = procParpic' AlignR lat
-procParpic _ = []
+procParpic _ = return []
 
-procParpic' :: Align -> LaTeX -> [Inline]
-procParpic' al lat =
+procParpic' :: Align -> LaTeX -> Machine [Inline]
+procParpic' al lat = do
   let pull = case al of
         AlignL -> "pull-left"
         AlignR -> "pull-right"
-  in [ Span ("", ["media", pull], [])  $ inlineLaTeX (render lat) ]
+  pure . Span ("", ["media", pull], []) . concatMap getInlines . pandocBody <$>
+     texToMarkdownM (T.unpack $ render lat)
+
+getInlines :: Block -> [Inline]
+getInlines (Plain b) = b
+getInlines (Para b) = b
+getInlines (CodeBlock lang b2) = [Code lang b2]
+getInlines (RawBlock lang b) = [RawInline lang b]
+getInlines (BlockQuote b) = concatMap getInlines b
+getInlines (OrderedList _ b2) = concatMap (concatMap getInlines) b2
+getInlines (BulletList b) = concatMap (concatMap getInlines) b
+getInlines (DefinitionList b) = concat [lls++concatMap (concatMap getInlines) bs | (lls, bs)  <- b]
+getInlines (Header _ attr b3) = [Span attr b3]
+getInlines HorizontalRule = []
+getInlines (Table _b1 _b2 _b3 _b4 _b5) = []
+getInlines (Div b1 b2) = [Span b1 $ concatMap getInlines b2]
+getInlines Null = []
+
+traced :: Show a => String -> a -> a
+traced lab a = DT.trace (lab <> ": " <> show a) a
+
+pandocBody :: Pandoc -> [Block]
+pandocBody (Pandoc _ body) = body
 
 fixArgs :: Foldable f => f TeXArg -> [LaTeX]
 fixArgs = toListOf (folded._FixArg)
@@ -255,10 +284,10 @@ inlineLaTeX :: Text -> [Inline]
 inlineLaTeX src =
   let Pandoc _ body = either (const $ Pandoc undefined []) id $
                       readLaTeX myReaderOpts $ T.unpack src
-  in query pure body
+  in concatMap getInlines body
 
 rewriteEnv :: Pandoc -> Machine Pandoc
-rewriteEnv (Pandoc meta bs) = Pandoc meta . bottomUp rewriteInlineCmd <$> rewriteBeginEnv bs
+rewriteEnv (Pandoc meta bs) = Pandoc meta <$> (bottomUpM rewriteInlineCmd =<< rewriteBeginEnv bs)
 
 rewriteBeginEnv :: [Block] -> Machine [Block]
 rewriteBeginEnv = concatMapM step
@@ -323,16 +352,17 @@ buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
   usepackage [] "amsmath"
   usepackage [] "amssymb"
   usepackage [] "pgfplots"
+  usepackage [] "mymacros"
   comm1 "usetikzlibrary" "matrix,arrows,backgrounds,calc,shapes"
   mapM_ fromLaTeX tikzLibs
-  comm1 "tikzset" $ do
-    "node distance=2cm, auto, >=latex,"
-    "description/.style="
-    braces "fill=white,inner sep=1.5pt,auto=false"
-  comm1 "pgfplotsset" $ do
-    "tick label style="
-    braces "font=\\tiny"
-    ",compat=1.8,width=6cm"
+  -- comm1 "tikzset" $ do
+  --   "node distance=2cm, auto, >=latex,"
+  --   "description/.style="
+  --   braces "fill=white,inner sep=1.5pt,auto=false"
+  -- comm1 "pgfplotsset" $ do
+  --   "tick label style="
+  --   braces "font=\\tiny"
+  --   ",compat=1.8,width=6cm"
   document $ mapM_ textell tkzs
 
 procTikz :: Pandoc -> Machine Pandoc
