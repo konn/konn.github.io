@@ -605,14 +605,14 @@ myProcCites :: Style -> [Reference] -> Pandoc -> Pandoc
 myProcCites style bib p =
   let cs = extractCites p
       pars  = map (Para . pure . flip Cite []) $ cs ++ extractNoCites p
-      Pandoc _ bibs = processCites style bib (Pandoc mempty pars)
+      -- Pandoc _ bibs = processCites style bib (Pandoc mempty pars)
       Pandoc info pan' = processCites style bib p
       isReference (Div (_, ["references"], _) _) = True
       isReference _ = False
       body = filter (not . isReference) pan'
   in bottomUp removeTeXGomiStr $ if null pars
      then p
-     else Pandoc info (body ++ toList (header 1 "参考文献") ++ filter isReference bibs)
+     else Pandoc info (body ++ [Header 1 ("biblio", [], []) [Str "参考文献"]] ++ filter isReference pan')
 
 removeTeXGomiStr :: String -> String
 removeTeXGomiStr = packed %~ T.replace "\\qed" ""

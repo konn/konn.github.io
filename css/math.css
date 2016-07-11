@@ -38,7 +38,7 @@ h2:before {
   content: ""
 }
 
-#biblio h2:before {
+h2#biblio:before {
   content: ""
 }
 
