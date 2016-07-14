@@ -9,7 +9,7 @@ import Lenses
 
 import           Control.Applicative
 import           Control.Arrow                   (left)
-import           Control.Lens                    hiding (op, rewrite)
+import           Control.Lens                    hiding (op, rewrite, (<.>))
 import           Control.Lens.Extras             (is)
 import           Control.Monad.Identity
 import           Control.Monad.State.Strict      (runStateT)
@@ -27,6 +27,7 @@ import qualified Data.HashSet                    as HS
 import qualified Data.List                       as L
 import           Data.Maybe                      (fromMaybe)
 import           Data.Maybe                      (listToMaybe)
+import           Data.Maybe                      (mapMaybe)
 import           Data.Sequence                   (Seq)
 import qualified Data.Set                        as S
 import qualified Data.Text                       as T
@@ -48,7 +49,6 @@ import           Text.LaTeX.CrossRef             (LabelFormat (ThisCounter))
 import qualified Text.LaTeX.CrossRef             as R
 import           Text.Pandoc                     hiding (MathType, Writer)
 import           Text.Pandoc.Shared
-import           Text.Pandoc.Walk                (query)
 import qualified Text.Parsec                     as P
 import           Text.Regex.Applicative          (psym)
 import           Text.Regex.Applicative          (RE)
@@ -64,7 +64,7 @@ deriving instance Data MathType
 deriving instance Data LaTeX
 instance Plated LaTeX
 
-default (String)
+default (T.Text , Integer)
 
 fromRight :: Either a b -> b
 fromRight ~(Right a) = a
@@ -116,11 +116,28 @@ texToMarkdown fp src = do
       cd tmp
       writefile "image.tex" $ render $ buildTikzer tlibs tikzs
       cmd "xelatex" "-shell-escape" "image.tex"
-      single <- test_f "image.png"
-      when single $ mv "image.png" "image-0.png"
+       -- Generating PNGs
+      cmd "convert" "-density" "200" "image.pdf" "image-%d.png"
+      infos <- cmd "pdftk" "image.pdf" "dump_data_utf8"
+      let pages = fromMaybe (0 :: Integer) $ listToMaybe $ mapMaybe
+                   (readMaybe . T.unpack <=< T.stripPrefix "NumberOfPages: ")  (T.lines infos)
+      forM [0..pages - 1] $ \n -> do
+        let targ = fromString ("image-" <> show n) <.> "svg"
+        echo $ "generating " <> encode targ
+        cmd "pdf2svg" "image.pdf" targ (tshow $ n + 1)
       pngs <- findWhen (return . hasExt "png") "."
-      mapM_ (flip cp master) pngs
+      svgs <- findWhen (return . hasExt "svg") "."
+      mapM_ (flip cp master) (pngs ++ svgs)
   return $ adjustJapaneseSpacing pan
+
+tshow :: Show a => a -> Text
+tshow = T.pack . show
+
+readMaybe :: Read a => String -> Maybe a
+readMaybe str =
+  case reads str of
+    [(a, "")] -> Just a
+    _ -> Nothing
 
 texToMarkdownM :: String -> Machine Pandoc
 texToMarkdownM src = procTikz =<< rewriteEnv (fromRight $ readLaTeX myReaderOpts src)
@@ -346,7 +363,7 @@ parseEnumOpts args =
 
 buildTikzer :: [LaTeX] -> [LaTeX] -> LaTeX
 buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
-  documentclass ["tikz", "preview", "convert={density=175,outname=image}", "12pt"] "standalone"
+  documentclass ["tikz", "preview", "12pt"] "standalone"
   usepackage [] "zxjatype"
   usepackage ["hiragino"] "zxjafont"
   usepackage [] "amsmath"
@@ -377,7 +394,7 @@ procTikz pan = bottomUpM step pan
           return $ Span ("", ["img-responsive"], [])
                    [Image ("", ["thumbnail", "media-object"], [])
                          [Str $ "Figure-" ++ show (n+1 :: Int)]
-                         (encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".png"),"")
+                         (encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".svg"),"")
                    ]
     step a = return a
 

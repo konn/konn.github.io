@@ -182,7 +182,7 @@ main = hakyllWith config $ do
     route $ setExtension "pdf"
     compile' $ getResourceBody >>= compileToPDF
 
-  match ("math/**.png" .||. "math/**.jpg") $
+  match ("math/**.png" .||. "math/**.jpg" .||. "math/**.svg") $
     route idRoute >> compile' copyFileCompiler
 
   match (("articles/**.md" .||. "articles/**.html" .||. "profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ do
