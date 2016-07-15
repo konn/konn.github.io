@@ -233,3 +233,7 @@ h3:before {
 .label{
     font-weight: bold;
 }
+
+.img-responsive {
+    background: white;
+}
