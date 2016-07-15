@@ -35,6 +35,10 @@ cite {
     text-align: right;
 }
 
+.img-responsive {
+    background-color: white;
+}
+
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
 table.sourceCode { width: 100%; line-height: 100%; }
