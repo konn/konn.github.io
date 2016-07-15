@@ -35,8 +35,8 @@ cite {
     text-align: right;
 }
 
-img {
-    background-color: white;
+.img-responsive {
+    background: white;
 }
 
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
