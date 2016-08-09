@@ -208,6 +208,8 @@ myCrossRefConf = RefOptions { subsumes = HM.empty
                             , formats  = HM.fromList
                                          [(Item 1, [R.Str "(", ThisCounter Arabic, R.Str ")"])]
                             , numberedEnvs = HS.fromList $ map T.pack $ L.delete "proof" envs
+                            , remainLabel = True
+                            , useHyperlink = True
                             }
 
 envs :: [String]
@@ -235,6 +237,8 @@ rewriteInlineCmd = fmap concat . mapM step
     step i = return [i]
     rewrite (TeXSeq l r) = (++) <$> rewrite l <*> rewrite r
     rewrite (TeXComm "parpic" args) = procParpic args
+    rewrite (TeXComm "label" [FixArg lab]) =
+      return [ Link (T.unpack $ render lab, [], []) [] ("", "") ]
     rewrite (TeXComm "ruby" [FixArg rb, FixArg rt]) = do
       rubyBody <- concat <$> mapM step (inlineLaTeX (render rb))
       rubyText <- concat <$> mapM step (inlineLaTeX (render rt))

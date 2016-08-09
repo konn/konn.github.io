@@ -70,8 +70,6 @@ import qualified Data.Yaml            as Y
 import           Lenses
 import           Settings
 import           System.Exit          (ExitCode (..))
-import           Text.Pandoc.CrossRef (defaultCrossRefAction)
-import           Text.Pandoc.CrossRef (runCrossRef)
 
 default (T.Text)
 

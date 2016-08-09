@@ -3,7 +3,7 @@ packages:
 - '.'
 - location:
     git: git@github.com:konn/latex-crossref.git
-    commit: 6f56a3311d844c8bfc80c3d45ceda68440682c6a
+    commit: 9960ef8ef7e10b3e383866a0341293f483fb5ad7
   extra-dep: true
 extra-deps:
 - HaTeX-qq-0.0.1.2
