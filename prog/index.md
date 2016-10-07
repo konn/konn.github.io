@@ -17,6 +17,9 @@ tag: Haskell,Ruby,オートマトン,IRC
 
 プロジェクト関連
 ==============
+[computational-algebra](http://konn.github.io/computational-algebra/)
+:    Haskellの先進的な機能をフルに使って実装された計算代数ライブラリ。
+
 [MathChrome](https://github.com/konn/MathChrome)
 :    [mimetex](http://www.forkosh.com/mimetex.html) や [Google Chart](https://developers.google.com/chart/) で書かれた数式を [MathJax](http://www.mathjax.org/) を用いて描画するようにする Google Chrome 拡張機能。`.crx` をダウンロードしたら、拡張機能ウインドウを開いてドラッグ・アンド・ドロップすれば使えます。
 
