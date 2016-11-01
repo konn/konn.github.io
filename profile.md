@@ -85,7 +85,6 @@ Pre-publication Reviews
 
 Other Publications
 ------------------
-
 [Coqによる定理証明](http://tcug.jp/books/2013-12/)
 :    Tsukuba Coq Users' Group による、主に Coq による定理証明の技法についての同人誌。わたしの担当は第三章で、Haskell を定理証明系として用いる方法を解説する記事を書きました。[販促記事はこちら](/prog/2013-advent-calendar.html)。
 
