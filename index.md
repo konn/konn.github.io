@@ -6,14 +6,6 @@ tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オ�
 
 集合論など数理論理学関連を中心に、数学・関数型プログラミング・ミステリなどに関する情報を集積してあります。
 
-お知らせ
-=======
-* **2015/05/04** 第20回文学フリマ東京に出展する、[風狂殺人倶楽部](http://fukyomurderclub.web.fc2.com/)で編集その他に関わりました（ブース：オ-32）！  
-  頒布物は機関誌『[風狂通信vol.1](http://fukyomurderclub.web.fc2.com/publications.html#fukyo-vol-1)』および『[現代中国・台湾ミステリビギナーズガイドブック](http://fukyomurderclub.web.fc2.com/publications.html#chinese-mystery-printed)』です。
-* **2013/12/20** C85 で Tsukuba Coq Users' Group『[Coq による定理証明](http://tcug.jp/books/2013-12/)』を頒布します。僕は会場にはいません。Coq の本なのに Haskell を定理証明器として用いる方法について解説しました。おそらくHaskellの定理証明について解説した日本で唯一の文献です。[販促記事](prog/2013-advent-calendar.html)。
-* **2013/12/02** 株式会社ロングゲート様の技術書『[プログラミングの魔導書 〜Programmers' Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed Programming”](http://longgate.co.jp/books/grimoire-vol3.html)』に、合成可能な並行処理手法である STM の入門記事を執筆しました。拙稿以外にも並行・並列・分散に関する幅広い濃い記事が集まった一冊ですので、是非お買い求め下さい。
-
-
 更新履歴など{#updates}
 ==========
 

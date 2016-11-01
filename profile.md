@@ -37,6 +37,7 @@ tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オ�
 * 2014/04 筑波大学大学院 数理物質科学研究科 数学専攻入学
 * 2014/04 Google Summer of Code 2014 採択（Haskell による効率的なGröbner基底計算とそのための疎行列アルゴリズムの実装）
 * 2016/03 筑波大学大学院 数理物質科学研究科 数学専攻 博士前期課程修了
+* 2016/04〜 筑波大学大学院 数理物質科学研究科 数学専攻 博士後期課程
 
 Activity
 ========
@@ -51,6 +52,7 @@ Talks
 -----
 勉強会や社内セミナーなどでの発表記録。
 
+* 2016/10/23 数学基礎論若手の会2016＠清里高原『**On Projective Baire Property**』（[Slide](/math/projective-baire-fmyg16.pdf)）
 * 2016/06/04 [第4回つくばフレッシュマンセミナー](https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxzaGltaWtlbnh8Z3g6MWY5OWFiZDM2NTcyNzljZQ)「**集合論への招待　〜実数直線の集合論〜**」（[資料](math/freshman-2016-resume.pdf)）
 * 2016/03/08 [第18回プログラミングおよびプログラミング言語ワークショップ PPL 2016](http://logic.cs.tsukuba.ac.jp/ppl2016/) 「**Freer Monads, More Extensible Effects**」（[SlideShare](http://www.slideshare.net/konn/freer-monads-more-extensible-effects-59411772), [PDF](prog/freer-ppl16.pdf), [Keynote](prog/freer-ppl16.key)）
 * 2015/07/27 修士論文中間発表『**実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について**（公開版）』（[Slide](http://www.slideshare.net/konn/ss-50957683)）
