@@ -151,7 +151,7 @@ adjustJapaneseSpacing = bottomUp procMathBoundary . bottomUp procStr
                     . replace (insertBoundary ' ' japaneseLetter isAsciiAlphaNum)
 
 isAsciiAlphaNum :: Char -> Bool
-isAsciiAlphaNum c = isAscii c && isAlphaNum c
+isAsciiAlphaNum c = (isAscii c && isAlphaNum c) || isLatin1 c
 
 japaneseLetter :: Char -> Bool
 japaneseLetter c = not (isLatin1 c || isAscii c) && isLetter c
