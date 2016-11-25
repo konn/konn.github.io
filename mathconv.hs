@@ -17,8 +17,8 @@ import           Control.Monad.State.Strict      (StateT)
 import           Control.Monad.Trans             (MonadIO)
 import           Data.Char                       (isAscii)
 import           Data.Char                       (isAlphaNum)
-import           Data.Char                       (isLatin1)
-import           Data.Char                       (isLetter)
+import           Data.Char                       (isLatin1, isLower)
+import           Data.Char                       (isLetter, isUpper)
 import           Data.Data
 import           Data.Default
 import           Data.Foldable                   (toList)
@@ -151,7 +151,7 @@ adjustJapaneseSpacing = bottomUp procMathBoundary . bottomUp procStr
                     . replace (insertBoundary ' ' japaneseLetter isAsciiAlphaNum)
 
 isAsciiAlphaNum :: Char -> Bool
-isAsciiAlphaNum c = (isAscii c && isAlphaNum c) || isLatin1 c
+isAsciiAlphaNum c = (isAscii c && isAlphaNum c) || isLatin1 c || (isLower c || isUpper c)
 
 japaneseLetter :: Char -> Bool
 japaneseLetter c = not (isLatin1 c || isAscii c) && isLetter c
