@@ -154,7 +154,7 @@ isAsciiAlphaNum :: Char -> Bool
 isAsciiAlphaNum c = (isAscii c && isAlphaNum c) || isLatin1 c || (isLower c || isUpper c)
 
 japaneseLetter :: Char -> Bool
-japaneseLetter c = not (isLatin1 c || isAscii c) && isLetter c
+japaneseLetter c = not (isLatin1 c || isAscii c || isLower c || isUpper c) && isLetter c
 
 isStrStarting :: (Char -> Bool) -> Inline -> Bool
 isStrStarting p = maybe False p . preview (_Str . _head)
