@@ -52,7 +52,7 @@ Talks
 -----
 勉強会や社内セミナーなどでの発表記録。
 
-* 2017/03/06 筑波大学計算機数学グループ 春の合宿 in 館山 2017（[SlideShare](https://www.slideshare.net/konn/ss-72840520), [PDF](math/mocking-bird-tateyama.pdf), 録画(N/A)）
+* 2017/03/06 筑波大学計算機数学グループ 春の合宿 in 館山 2017『**ものまね鳥を愛でる 結合子論理と計算**』（[SlideShare](https://www.slideshare.net/konn/ss-72840520), [PDF](math/mocking-bird-tateyama.pdf), 録画(N/A)）
 * 2016/10/23 数学基礎論若手の会2016＠清里高原『**On Projective Baire Property**』（[Slide](/math/projective-baire-fmyg16.pdf)）
 * 2016/06/04 [第4回つくばフレッシュマンセミナー](https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxzaGltaWtlbnh8Z3g6MWY5OWFiZDM2NTcyNzljZQ)「**集合論への招待　〜実数直線の集合論〜**」（[資料](math/freshman-2016-resume.pdf)）
 * 2016/03/08 [第18回プログラミングおよびプログラミング言語ワークショップ PPL 2016](http://logic.cs.tsukuba.ac.jp/ppl2016/) 「**Freer Monads, More Extensible Effects**」（[SlideShare](http://www.slideshare.net/konn/freer-monads-more-extensible-effects-59411772), [PDF](prog/freer-ppl16.pdf), [Keynote](prog/freer-ppl16.key)）
