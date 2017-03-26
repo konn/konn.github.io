@@ -2,3 +2,7 @@
     line-height: 1.5;
     text-align: justify;
 }
+
+object svg {
+    fill: white;
+}

@@ -37,6 +37,10 @@ import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
 import qualified MyTeXMathConv                   as MyT
 import           Prelude                         hiding (FilePath)
 import           Shelly                          hiding (get)
+import           Text.Blaze.Html.Renderer.String (renderHtml)
+import           Text.Blaze.Html5                (img, object, toValue, (!))
+import           Text.Blaze.Html5.Attributes     (alt, class_, data_, src,
+                                                  type_)
 import           Text.LaTeX.Base                 hiding ((&))
 import           Text.LaTeX.Base.Class
 import           Text.LaTeX.Base.Parser
@@ -90,11 +94,11 @@ message :: MonadIO m => String -> m ()
 message = liftIO . putStrLn
 
 texToMarkdown :: FilePath -> String -> IO Pandoc
-texToMarkdown fp src = do
+texToMarkdown fp src_ = do
   pth <- liftIO $ shelly $ canonic fp
   macros <- liftIO $ fst . parseMacroDefinitions <$>
             readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
-  let latexTree = procCrossRef myCrossRefConf $ view _Right $ parseTeX $ applyMacros macros $ src
+  let latexTree = procCrossRef myCrossRefConf $ view _Right $ parseTeX $ applyMacros macros src_
       tlibs = queryWith (\ case
                             c@(TeXComm "usetikzlibrary" _) -> [c]
                             c@(TeXComm "tikzset" _) -> [c]
@@ -113,18 +117,21 @@ texToMarkdown fp src = do
     mkdir_p master
     -- let tmp = "tmp" in do
     withTmpDir $ \tmp -> do
+      cp ".latexmkrc" tmp
       cd tmp
       writefile "image.tex" $ render $ buildTikzer tlibs tikzs
-      cmd "xelatex" "-shell-escape" "image.tex"
-       -- Generating PNGs
+      cmd "latexmk" "-lualatex" "image.tex"
+      cmd "tex2img" "--latex=luajittex --fmt=luajitlatex.fmt" "--with-text" "image.tex" "image.svg"
+      mv "image.svg" "image-0.svg"
+      -- Generating PNGs
       cmd "convert" "-density" "200" "image.pdf" "image-%d.png"
       infos <- cmd "pdftk" "image.pdf" "dump_data_utf8"
       let pages = fromMaybe (0 :: Integer) $ listToMaybe $ mapMaybe
                    (readMaybe . T.unpack <=< T.stripPrefix "NumberOfPages: ")  (T.lines infos)
-      forM [0..pages - 1] $ \n -> do
+      forM [1..pages - 1] $ \n -> do
         let targ = fromString ("image-" <> show n) <.> "svg"
         echo $ "generating " <> encode targ
-        cmd "pdf2svg" "image.pdf" targ (tshow $ n + 1)
+        mv (fromString ("image-" <> show (n + 1)) <.> "svg") targ
       pngs <- findWhen (return . hasExt "png") "."
       svgs <- findWhen (return . hasExt "svg") "."
       mapM_ (flip cp master) (pngs ++ svgs)
@@ -140,7 +147,7 @@ readMaybe str =
     _ -> Nothing
 
 texToMarkdownM :: String -> Machine Pandoc
-texToMarkdownM src = procTikz =<< rewriteEnv (fromRight $ readLaTeX myReaderOpts src)
+texToMarkdownM = procTikz <=< rewriteEnv . fromRight . readLaTeX myReaderOpts
 
 adjustJapaneseSpacing :: Pandoc -> Pandoc
 adjustJapaneseSpacing = bottomUp procMathBoundary . bottomUp procStr
@@ -176,10 +183,10 @@ preprocessTeX = bottomUp rewrite . bottomUp alterEnv
     alterEnv (TeXEnv env args body)
       | Just env' <- lookup env envAliases = TeXEnv env' args body
     alterEnv e = e
-    rewrite (TeXComm comm [FixArg src]) | comm `elem` expands =
-      case breakTeXOn "|" src of
+    rewrite (TeXComm comm [FixArg src_]) | comm `elem` expands =
+      case breakTeXOn "|" src_ of
         Just (lhs, rhs) -> TeXComm comm [FixArg lhs, FixArg rhs]
-        Nothing -> TeXComm (T.unpack $ T.toLower $ T.pack comm) [FixArg src]
+        Nothing -> TeXComm (T.unpack $ T.toLower $ T.pack comm) [FixArg src_]
     rewrite t = t
 
 splitTeXOn :: Text -> LaTeX -> [LaTeX]
@@ -232,8 +239,8 @@ commandDic = [("underline", Right "u"), ("bf", Left Strong)
 rewriteInlineCmd :: [Inline] -> Machine [Inline]
 rewriteInlineCmd = fmap concat . mapM step
   where
-    step (RawInline "latex" src)
-        | Right t <- parseTeX src = rewrite t
+    step (RawInline "latex" src_)
+        | Right t <- parseTeX src_ = rewrite t
     step i = return [i]
     rewrite (TeXSeq l r) = (++) <$> rewrite l <*> rewrite r
     rewrite (TeXComm "parpic" args) = procParpic args
@@ -302,9 +309,9 @@ fixArgs :: Foldable f => f TeXArg -> [LaTeX]
 fixArgs = toListOf (folded._FixArg)
 
 inlineLaTeX :: Text -> [Inline]
-inlineLaTeX src =
+inlineLaTeX src_ =
   let Pandoc _ body = either (const $ Pandoc undefined []) id $
-                      readLaTeX myReaderOpts $ T.unpack src
+                      readLaTeX myReaderOpts $ T.unpack src_
   in concatMap getInlines body
 
 rewriteEnv :: Pandoc -> Machine Pandoc
@@ -314,10 +321,10 @@ rewriteBeginEnv :: [Block] -> Machine [Block]
 rewriteBeginEnv = concatMapM step
   where
     step :: Block -> Machine [Block]
-    step (RawBlock "latex" src)
-      | Right (TeXEnv "enumerate!" args body) <- parseTeX src
+    step (RawBlock "latex" src_)
+      | Right (TeXEnv "enumerate!" args body) <- parseTeX src_
       = pure <$> procEnumerate args body
-      | Right (TeXEnv env args body) <- parseTeX src
+      | Right (TeXEnv env args body) <- parseTeX src_
       , env `elem` envs = do
           let divStart
                   | null args = concat ["<div class=\"", env, "\">"]
@@ -367,9 +374,9 @@ parseEnumOpts args =
 
 buildTikzer :: [LaTeX] -> [LaTeX] -> LaTeX
 buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
-  documentclass ["tikz", "preview", "12pt"] "standalone"
-  usepackage [] "zxjatype"
-  usepackage ["hiragino"] "zxjafont"
+  fromLaTeX $ TeXComm "RequirePackage" [FixArg "luatex85"]
+  documentclass ["tikz", "preview"] "standalone"
+  usepackage ["hiragino-pron"] "luatexja-preset"
   usepackage [] "amsmath"
   usepackage [] "amssymb"
   usepackage [] "pgfplots"
@@ -389,16 +396,24 @@ buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
 procTikz :: Pandoc -> Machine Pandoc
 procTikz pan = bottomUpM step pan
   where
-    step (RawBlock "latex" src)
-      | Right ts <- parseTeX src = do
+    step (RawBlock "latex" src_)
+      | Right ts <- parseTeX src_ = do
         liftM Plain $ forM [ t | t@(TeXEnv "tikzpicture" _ _) <- universe ts] $ \t -> do
           n <- uses tikzPictures length
           tikzPictures %= (|> t)
           fp <- use imgPath
+          let dest = toValue $ encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".svg")
+              alts = toValue $ encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".png")
           return $ Span ("", ["img-responsive"], [])
-                   [Image ("", ["thumbnail", "media-object"], [])
-                         [Str $ "Figure-" ++ show (n+1 :: Int)]
-                         (encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".svg"),"")
+                   [
+                   -- Image ("", ["thumbnail", "media-object"], [])
+                   --       [Str $ "Figure-" ++ show (n+1 :: Int)]
+                   --
+                    RawInline "html" $
+                    renderHtml $
+                    object ! class_ "thumbnail media-object"
+                           ! type_ "image/svg+xml" ! data_ dest $
+                      img ! src alts ! alt "Diagram"
                    ]
     step a = return a
 

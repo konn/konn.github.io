@@ -2,12 +2,13 @@
 title: 第四回選択公理オフ：数理論理学の初歩の初歩の初歩の……
 author: 石井 大海
 tag: 数学,数理論理学,集合論,モデル理論,超積,超冪,超準解析,自然数,強制法
-latexmk: -xelatex
+latexmk: -lualatex
 description: 第四回選択公理オフでの発表資料．選択公理と関連するモデル理論の初歩の話です．初学者向けに論理式やモデルの定義から入り，超積や超冪と選択公理，超準解析の関わりなどを論じています．実は Łoś+超フィルター定理と選択公理は同値だよとかそういう話もあり．
 date: 2013/10/16 00:48:34 JST
 ----
-\documentclass[a4j,xelatex,ja=standard]{bxjsarticle}
-\usepackage[hiragino]{zxjafont}
+\RequirePackage{luatex85}
+\documentclass[a4j,xelatex,ja=standard]{ltjsarticle}
+\usepackage[hiragino-pron]{luatexja-preset}
 \usepackage{amsmath,amssymb}
 \usepackage{mystyle}
 \usepackage{bm}
