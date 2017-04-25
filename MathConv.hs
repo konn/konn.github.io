@@ -68,6 +68,7 @@ fromRight ~(Right a) = a
 data MachineState = MachineState { _tikzPictures :: Seq LaTeX
                                  , _macroDefs    :: [Macro]
                                  , _imgPath      :: FilePath
+                                 , _texMacros    :: TeXMacros
                                  }
                   deriving (Show)
 makeLenses ''MachineState
@@ -97,10 +98,11 @@ texToMarkdown macs fp src_ = do
                             c@(TeXComm "pgfplotsset" _) -> [c]
                             _ -> [])
               latexTree
-      initial = T.unpack $ render $ preprocessTeX $ applyTeXMacro macs latexTree
+      initial = T.unpack $ render $ applyTeXMacro macs $ preprocessTeX $ latexTree
       st0 = MachineState { _tikzPictures = mempty
                          , _macroDefs = macros
                          , _imgPath = dropExtension fp
+                         , _texMacros = macs
                          }
   (pan, s) <- runStateT (texToMarkdownM initial) st0
   let tikzs = toList $ s ^. tikzPictures

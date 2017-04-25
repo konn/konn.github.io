@@ -72,9 +72,11 @@ applyTeXMacro dic = rewrite matcher
       T.unpack src
     apply _ t = t
 
-    pat args = sym '#' *> ((args !!) . pred . read <$> some (psym isAsciiDigit)
+    pat args = sym '#' *> (chk . pred . read <$> some (psym isAsciiDigit)
                        <|> TeXRaw . T.pack <$> many (psym (/= '#')))
            <|> TeXRaw . T.pack <$> many (psym (/= '#'))
+      where chk i = if i < len then args !! i else TeXRaw $ "#" <> T.pack (show i)
+            len = length args
 
 isAsciiDigit :: Char -> Bool
 isAsciiDigit c = isDigit c && isAscii c
