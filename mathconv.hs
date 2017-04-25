@@ -5,7 +5,9 @@
 {-# LANGUAGE ViewPatterns                                                #-}
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 module MathConv where
+import Instances ()
 import Lenses
+import Macro
 
 import           Control.Applicative
 import           Control.Arrow                   (left)
@@ -19,7 +21,6 @@ import           Data.Char                       (isAscii)
 import           Data.Char                       (isAlphaNum)
 import           Data.Char                       (isLatin1, isLower)
 import           Data.Char                       (isLetter, isUpper)
-import           Data.Data
 import           Data.Default
 import           Data.Foldable                   (toList)
 import qualified Data.HashMap.Strict             as HM
@@ -59,15 +60,6 @@ import           Text.Regex.Applicative          (RE)
 import           Text.Regex.Applicative          (replace)
 import           Text.TeXMath.Readers.TeX.Macros
 
-deriving instance Typeable Measure
-deriving instance Data Measure
-deriving instance Typeable TeXArg
-deriving instance Data TeXArg
-deriving instance Typeable MathType
-deriving instance Data MathType
-deriving instance Data LaTeX
-instance Plated LaTeX
-
 default (T.Text , Integer)
 
 fromRight :: Either a b -> b
@@ -93,8 +85,8 @@ parseTeX = left show . P.parse latexParser "" . T.pack
 message :: MonadIO m => String -> m ()
 message = liftIO . putStrLn
 
-texToMarkdown :: FilePath -> String -> IO Pandoc
-texToMarkdown fp src_ = do
+texToMarkdown :: TeXMacros -> FilePath -> String -> IO Pandoc
+texToMarkdown macs fp src_ = do
   pth <- liftIO $ shelly $ canonic fp
   macros <- liftIO $ fst . parseMacroDefinitions <$>
             readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
@@ -105,7 +97,7 @@ texToMarkdown fp src_ = do
                             c@(TeXComm "pgfplotsset" _) -> [c]
                             _ -> [])
               latexTree
-      initial = T.unpack $ render $ preprocessTeX latexTree
+      initial = T.unpack $ render $ preprocessTeX $ applyTeXMacro macs latexTree
       st0 = MachineState { _tikzPictures = mempty
                          , _macroDefs = macros
                          , _imgPath = dropExtension fp

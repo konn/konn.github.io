@@ -68,6 +68,7 @@ import           Data.Foldable        (asum)
 import qualified Data.HashMap.Strict  as HM
 import qualified Data.Yaml            as Y
 import           Lenses
+import           Macro
 import           Settings
 import           System.Exit          (ExitCode (..))
 
@@ -90,6 +91,7 @@ main = hakyllWith config $ do
   setting "tree" (def :: SiteTree)
   setting "schemes" (def :: Schemes)
   setting "navbar" (def :: NavBar)
+  setting "macros" (HM.empty :: TeXMacros)
 
   match "config/schemes.yml" $ compile $ cached "schemes" $ do
     fmap (fromMaybe (Schemes HM.empty) . Y.decode . LBS.toStrict) <$> getResourceLBS
@@ -164,8 +166,9 @@ main = hakyllWith config $ do
       style <- unsafeCompiler . readCSLFile Nothing . Hakyll.toFilePath . itemIdentifier
                   =<< load (fromFilePath $ replaceExtension fp "csl")
                   <|> (load "default.csl" :: Compiler (Item CSL))
+      macs <- loadBody "config/macros.yml"
       let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib
-      ipandoc <- mapM (unsafeCompiler . texToMarkdown fp) =<< getResourceBody
+      ipandoc <- mapM (unsafeCompiler . texToMarkdown macs fp) =<< getResourceBody
       let ip' = fmap (myProcCites style bibs) ipandoc
       conv'd <- mapM (return . addPDFLink ("/" </> replaceExtension fp "pdf") .
                       addAmazonAssociateLink "konn06-22"

@@ -4,9 +4,9 @@
 module Settings where
 
 import           Control.Applicative  (empty)
-import           Control.Applicative  (pure, (<$>), (<*>))
 import           Control.Arrow        (first)
 import           Data.Binary          (Binary (..))
+import qualified Data.Binary          as B
 import           Data.Default         (Default (..))
 import           Data.HashMap.Strict  (HashMap)
 import qualified Data.HashMap.Strict  as HM
@@ -35,7 +35,7 @@ data SiteTree = SiteTree { title    :: T.Text
 instance Binary SiteTree
 
 instance Writable SiteTree where
-  write _ _ = return ()
+  write fp = write fp . fmap B.encode
 
 instance FromJSON SiteTree where
   parseJSON (String txt) = pure $ SiteTree txt HM.empty
@@ -62,7 +62,7 @@ instance FromJSON Scheme
 instance Binary Scheme
 instance ToJSON Scheme
 instance Writable Scheme where
-  write _ _ = return ()
+  write fp = write fp . fmap B.encode
 
 newtype Schemes  = Schemes { getSchemes :: HashMap T.Text Scheme
                            } deriving (Typeable, Show, Eq, Generic,
@@ -72,7 +72,7 @@ instance Default Schemes where
   def = Schemes HM.empty
 
 instance Writable Schemes where
-  write _ _ = return ()
+  write fp = write fp . fmap B.encode
 
 setting :: (Writable a, FromJSON a, Binary a, Typeable a)
         => String -> a -> Rules ()
@@ -83,7 +83,7 @@ newtype NavBar  = NavBar { runNavBar :: [(T.Text, String)] }
                   deriving (Typeable, Generic, Binary)
 
 instance Writable NavBar where
-  write _ _ = return ()
+  write fp = write fp . fmap B.encode
 
 instance FromJSON NavBar where
   parseJSON (Array vs) = NavBar <$> mapM p (toList vs)
