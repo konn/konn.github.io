@@ -54,5 +54,5 @@ deriving instance Binary LaTeX
 deriving instance Plated LaTeX
 
 instance FromJSON LaTeX where
-  parseJSON = withText "Text" $ either (const empty) return . parseLaTeX
+  parseJSON = withText "Text" $ either (fail . show) return . parseLaTeX
 
