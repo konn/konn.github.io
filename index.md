@@ -1,6 +1,6 @@
 ---
-title: konn-san.com 建設予定地
-description: konn-san.com: 数理論理学を中心に数学、Haskell、推理小説、評論など。
+title: "konn-san.com 建設予定地"
+description: "konn-san.com: 数理論理学を中心に数学、Haskell、推理小説、評論など。"
 tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オートマトン
 ---
 
