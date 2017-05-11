@@ -50,7 +50,7 @@ executable site
                      , tagsoup
                      , HaTeX
                      , HaTeX-qq
-                     , highlighting-kate
+                     , skylighting
                      , shakespeare
                      , blaze-html
                      , time

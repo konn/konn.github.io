@@ -81,7 +81,7 @@ myReaderOpts = def { readerExtensions = S.insert Ext_raw_tex pandocExtensions
                    }
 
 parseTeX :: String -> Either String LaTeX
-parseTeX = left show . P.parse latexParser "" . T.pack
+parseTeX = left show . P.runParser latexParser defaultParserConf "" . T.pack
 
 message :: MonadIO m => String -> m ()
 message = liftIO . putStrLn
@@ -280,6 +280,7 @@ procParpic' al lat = do
 
 getInlines :: Block -> [Inline]
 getInlines (Plain b) = b
+getInlines (LineBlock b) = concat b
 getInlines (Para b) = b
 getInlines (CodeBlock lang b2) = [Code lang b2]
 getInlines (RawBlock lang b) = [RawInline lang b]

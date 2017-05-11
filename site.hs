@@ -49,7 +49,7 @@ import           Text.CSL                        (Reference, Style,
                                                   readBiblioFile, readCSLFile)
 import           Text.CSL.Pandoc
 import           Text.Hamlet
-import           Text.Highlighting.Kate          hiding (Context (), Style)
+import           Skylighting                     hiding (Context (), Style)
 import           Text.HTML.TagSoup
 import           Text.HTML.TagSoup.Match
 import           Text.LaTeX.Base                 (render)

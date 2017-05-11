@@ -2,7 +2,6 @@
 {-# LANGUAGE StandaloneDeriving, TemplateHaskell               #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Instances (biblioToBibTeX, bibTeXToBiblio, BibTeX(..)) where
-import           Control.Applicative
 import           Control.Lens
 import           Data.Aeson
 import           Data.Binary
@@ -36,19 +35,12 @@ biblioToBibTeX (Biblio rs) = BibTeX rs
 bibTeXToBiblio :: BibTeX -> Biblio
 bibTeXToBiblio = Biblio . runBibTeX
 
-deriving instance Generic  Measure
 deriving instance Typeable Measure
-deriving instance Data Measure
 deriving instance Binary Measure
-deriving instance Generic TeXArg
 deriving instance Typeable TeXArg
-deriving instance Data TeXArg
 deriving instance Binary TeXArg
-deriving instance Generic  MathType
 deriving instance Typeable MathType
-deriving instance Data MathType
 deriving instance Binary MathType
-deriving instance Data LaTeX
 deriving instance Binary LaTeX
 
 deriving instance Plated LaTeX

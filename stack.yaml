@@ -3,14 +3,22 @@ packages:
 - '.'
 - location:
     git: git@github.com:konn/latex-crossref.git
-    commit: 9960ef8ef7e10b3e383866a0341293f483fb5ad7
+    commit: 79c9ac25f2bb1bfcb40f261a0ea4ffaefd295067
+  extra-dep: true
+- location:
+    git: git@github.com:konn/HaTeX-qq.git
+    commit: d95d77c5f5b5e557e43c87303f59e82fc0bf1b66
   extra-dep: true
 extra-deps:
-- HaTeX-qq-0.0.1.2
-- effin-0.3.0.1
-- antiquoter-0.1.1.0
-- pandoc-crossref-0.2.1.3
-- data-accessor-template-0.2.1.13
-- data-accessor-transformers-0.2.1.7
+# - HaTeX-qq-0.0.1.2
+- pandoc-crossref-0.2.5.0
 - roman-numerals-0.5.1.5
-resolver: lts-5.2
+- antiquoter-0.1.1.0
+# - HaTeX-qq-0.0.1.2
+# - effin-0.3.0.1
+# - pandoc-crossref-0.2.1.3
+# - data-accessor-template-0.2.1.13
+# - data-accessor-transformers-0.2.1.7
+# - roman-numerals-0.5.1.5
+resolver: lts-8.13
+
