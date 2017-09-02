@@ -6,6 +6,10 @@ description: SONYの電子ペーパーDPT-RP1とiPad Proを二ヶ月使ってみ
 tag: 電子ペーパー,レビュー,電化製品,iPad Pro,SONY,DPT-RP1,自慢,IT,ガジェット
 ---
 
+# 更新履歴
+* 2017/09/02 16:48:00 JST 公開
+* 2017/09/02 16:50:00 JST [ノートテンプレート](#templates)について追記。
+
 # 要旨 #
 
 科研費[^1]が使えるようになり、調子にのって SONY の電子ペーパーと iPad Pro とを買ったら予算がなくなった[^2]ので、自慢をする。
@@ -88,8 +92,9 @@ SONYが「[デジタル時代の「紙」をつく](https://www.sony.co.jp/SonyI
 
 適当なデモ：
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/OiDvqwj-9TI" frameborder="0" allowfullscreen></iframe>
-
+<div class="embed-responsive embed-responsive-16by9">
+<iframe class="embed-responsive-item" width="560" height="315" src="https://www.youtube.com/embed/OiDvqwj-9TI" frameborder="0" allowfullscreen></iframe>
+</div>
 ### ノート機能
 最初に使ってみて思ったのは、電子インクなので目に優しい、ということと、思いの外ペンの反応が良くて快適、ということだった。
 最初はペンの充電が足りず反応が悪かったので、ちょっと筆圧を掛けなくてはいけなかったが、充電すれば非常に快適になった。
@@ -139,6 +144,21 @@ Wi-Fiの設定はUSBケーブルで接続しないと出来ないのだが、な
 サポートに連絡してみるべきだろうか。
 
 まあBluetoothで接続すれば、遅いなりに同期は出来るので問題はないが。
+
+### ノートのテンプレートも豊富（追記） {#templates}
+普段数学をやる上では大学ノートのフォーマットしか使わないが、DPT-RP1には他にも幾つかノートのテンプレートが用意されている。
+更に、同期アプリを使えば**自作のテンプレートを追加**出来る。
+
+たとえば、あんまり研究で使い所はなさそうだが、興が乗って原稿用紙を創ってみたのが以下の動画だ：
+
+<div class="embed-responsive embed-responsive-16by9">
+<iframe class="embed-responsive-item" width="560" height="315" src="https://www.youtube.com/embed/ePdUGbB6A-o" frameborder="0" allowfullscreen></iframe>
+</div>
+
+1ページ分だけのPDFを、画面の寸法に合わせて作ればそれがテンプレートになる。
+横長なら横置き用のテンプレ、そうでなければ縦置き用として判断されるようだ。
+上の例では、PDFのページ送り属性を通常の「左→右」ではなく「右→左」に設定することで、縦書きに合致した方向に指をスワイプすれば次ページ・挿入が自動で出来るようになっている。
+この辺りの説明は特に説明書にはなかったが、流石はSONYだけあって、この辺りの縦書きに対する気配りも細やかで好印象である。
 
 ### PDFリーダとして──赤入れに最適
 DPT-RP1にはPDFリーダー機能もついている。
