@@ -138,7 +138,7 @@ readMaybe :: Read a => String -> Maybe a
 readMaybe str =
   case reads str of
     [(a, "")] -> Just a
-    _ -> Nothing
+    _         -> Nothing
 
 texToMarkdownM :: String -> Machine Pandoc
 texToMarkdownM = procTikz <=< rewriteEnv . fromRight . readLaTeX myReaderOpts
@@ -186,7 +186,7 @@ preprocessTeX = bottomUp rewrite . bottomUp alterEnv
 splitTeXOn :: Text -> LaTeX -> [LaTeX]
 splitTeXOn delim t =
   case breakTeXOn delim t  of
-    Nothing -> [tex]
+    Nothing     -> [tex]
     Just (a, b) -> a : splitTeXOn delim b
 
 breakTeXOn :: T.Text -> LaTeX -> Maybe (LaTeX, LaTeX)
@@ -267,8 +267,8 @@ data Align = AlignL | AlignR
 procParpic :: [TeXArg] -> Machine [Inline]
 procParpic [OptArg "r", FixArg lat] = procParpic' AlignR lat
 procParpic [OptArg "l", FixArg lat] = procParpic' AlignL lat
-procParpic (fixArgs -> [lat]) = procParpic' AlignR lat
-procParpic _ = return []
+procParpic (fixArgs -> [lat])       = procParpic' AlignR lat
+procParpic _                        = return []
 
 procParpic' :: Align -> LaTeX -> Machine [Inline]
 procParpic' al lat = do
@@ -399,14 +399,14 @@ procTikz pan = bottomUpM step pan
           fp <- use imgPath
           let dest = toValue $ encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".svg")
               alts = toValue $ encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".png")
-          return $ Span ("", ["img-responsive"], [])
+          return $ Span ("", ["img-fluid"], [])
                    [
                    -- Image ("", ["thumbnail", "media-object"], [])
                    --       [Str $ "Figure-" ++ show (n+1 :: Int)]
                    --
                     RawInline "html" $
                     renderHtml $
-                    object ! class_ "thumbnail media-object"
+                    object ! class_ "img-thumbnail media-object"
                            ! type_ "image/svg+xml" ! data_ dest $
                       img ! src alts ! alt "Diagram"
                    ]
@@ -420,4 +420,4 @@ procMathInline = stringify . bottomUp go . fromRight . readLaTeX def
     go :: Inline -> Inline
     go = bottomUp $ \a -> case a of
       Math _ math ->  Str $ stringify $ MyT.readTeXMath  math
-      t -> t
+      t           -> t

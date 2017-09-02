@@ -8,7 +8,7 @@ tag: 電子ペーパー,レビュー,電化製品,iPad Pro,SONY,DPT-RP1,自慢,I
 
 # 更新履歴
 * 2017/09/02 16:48:00 JST 公開
-* 2017/09/02 16:50:00 JST [ノートテンプレート](#templates)について追記。
+* 2017/09/02 18:00:00 JST [ノートテンプレート](#templates)について追記。
 
 # 要旨 #
 
@@ -23,9 +23,7 @@ tag: 電子ペーパー,レビュー,電化製品,iPad Pro,SONY,DPT-RP1,自慢,I
 --------------
 勿論自慢するためで、こちらが自慢です。
 
-<span class="img-responsive">
-<img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/jimans.jpg">
-</span>
+<img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/digital-paper-vs-ipad/jimans.jpg">
 
 ところで机の上が汚ないのは自慢にならない。
 
@@ -40,9 +38,7 @@ tag: 電子ペーパー,レビュー,電化製品,iPad Pro,SONY,DPT-RP1,自慢,I
 なんか高校でやったベン図とかカルノー図みたいなのを描いていると思ってもらえればいい。
 たとえば以下はうちの分野の人間が宇宙をどう見ているかという図です：
 
-<span class="img-responsive">
-<img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/universe.png">
-</span>
+<img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/digital-paper-vs-ipad/universe.png">
 
 これを宇宙だと思うのは集合論という分野の人間だけなので、他の人に見せて正気を疑われても責任は取りません。
 
@@ -82,9 +78,7 @@ tag: 電子ペーパー,レビュー,電化製品,iPad Pro,SONY,DPT-RP1,自慢,I
 ## SONYの電子ペーパー端末DPT-RP1
 これは内輪の研究集会やセミナーで先生が使っているのを見て、前々からこれは良さそうだぞ〜と思っていたものであった。
 
-<span class="img-responsive">
-<img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/dpt-rp1.jpg">
-</span>
+<img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/digital-paper-vs-ipad/dpt-rp1.jpg">
 
 SONYが「[デジタル時代の「紙」をつく](https://www.sony.co.jp/SonyInfo/design/works/products/DPT-RP1/)」った結果とのこと。
 オープンプライスなのでAmazonだと10万円くらいするけど、[SONYの公式ストア](http://www.sony.jp/digital-paper/products/DPT-RP1/)だと8万円ちょいで買え（2017年9月現在）、特に手続きなく満了後も私物化できる範囲内に収まる。
@@ -92,8 +86,8 @@ SONYが「[デジタル時代の「紙」をつく](https://www.sony.co.jp/SonyI
 
 適当なデモ：
 
-<div class="embed-responsive embed-responsive-16by9">
-<iframe class="embed-responsive-item" width="560" height="315" src="https://www.youtube.com/embed/OiDvqwj-9TI" frameborder="0" allowfullscreen></iframe>
+<div class="mx-auto d-block col-md-8 embed-responsive embed-responsive-4by3">
+<iframe class="embed-responsive-item" width="112" height="63" src="https://www.youtube.com/embed/OiDvqwj-9TI" frameborder="0" allowfullscreen></iframe>
 </div>
 ### ノート機能
 最初に使ってみて思ったのは、電子インクなので目に優しい、ということと、思いの外ペンの反応が良くて快適、ということだった。
@@ -127,10 +121,8 @@ SONYが「[デジタル時代の「紙」をつく](https://www.sony.co.jp/SonyI
 画面上では青が黒、赤がグレーがかって表示される。
 以下、一つ目が画面上の表示と、二つ目が実際に生成されるノートである。
 
-<span class="img-responsive">
-<img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/dpt-pens-monochrome.jpg">
-<img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/dpt-pens-color.png">
-</span>
+<img class="img-fluid img-thumbnail rounded float-left" src="./imgs/digital-paper-vs-ipad/dpt-pens-monochrome.jpg">
+<img class="img-fluid img-thumbnail rounded float-right" src="./imgs/digital-paper-vs-ipad/dpt-pens-color.png">
 
 ノートのデータはPDFとして保存されている。
 macOSのQuickLook（Finderでスペースバー押すとプレビューされるアレ）で見るとなんかすごく書き込みが滅茶苦茶にズレて見えるのだが、Preview.appやAdobe Readerで開けばちゃんと読める。これは多分QuickLookが悪いのではないかと思う。
@@ -151,8 +143,8 @@ Wi-Fiの設定はUSBケーブルで接続しないと出来ないのだが、な
 
 たとえば、あんまり研究で使い所はなさそうだが、興が乗って原稿用紙を創ってみたのが以下の動画だ：
 
-<div class="embed-responsive embed-responsive-16by9">
-<iframe class="embed-responsive-item" width="560" height="315" src="https://www.youtube.com/embed/ePdUGbB6A-o" frameborder="0" allowfullscreen></iframe>
+<div class="mx-auto d-block col-md-8 embed-responsive embed-responsive-4by3">
+<iframe class="embed-responsive-item" width="112" height="63" src="https://www.youtube.com/embed/ePdUGbB6A-o" frameborder="0" allowfullscreen></iframe>
 </div>
 
 1ページ分だけのPDFを、画面の寸法に合わせて作ればそれがテンプレートになる。
@@ -173,9 +165,7 @@ SONYの電子ペーパーといえば、電子書籍端末の「Reader」が先�
 
 一方で、**開いているPDFに対してサイドノートが作れる**のは良い点だと思う。
 
-<span class="img-responsive">
-<img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/sidenote.jpg">
-</span>
+<img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/digital-paper-vs-ipad/sidenote.jpg">
 
 また、PCに接続されている時に「**電子ペーパーに印刷**」という機能が使えて、これは普通の印刷ダイアログから任意の書類を「印刷」出来る、というシロモノである。
 たとえば、Wordの縦書きの書類を電子ペーパーに「印刷」したり、論文を「印刷」したり、書類を「印刷」したりすることが出来る。
@@ -210,9 +200,7 @@ PDFリーダとしては、数十ページ以上あるような**ブ厚い資料
 ## iPad Pro 10.5" (2017) (+ Apple Pencil, Smart Keyboard)
 こちらも発売されたばかりの iPad Pro 10.5インチ。
 
-<span class="img-responsive">
-<img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/ipad-pro-horizontal.jpg">
-</span>
+<img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/digital-paper-vs-ipad/ipad-pro-horizontal.jpg">
 
 こちらも机の上が汚なかったので中途半端にレタッチしたけど諦めた。
 買った動機はどちらかというと「資料読みようのタブレットが欲しい」というもの。
@@ -285,12 +273,8 @@ Apple Pencilの筆圧検知機能にも対応していて、筆圧によって�
 しかし、それでも堅い画面に文字を書こうとするとどうしても筆圧が強くなってしまって、ただでさえ下手な文字がもっと下手糞になってしまう。
 以下は、小栗虫太郎『黒死館殺人事件』をiPad Pro と電子ペーパーでそれぞれ書いてみた比較である。
 
-<span class="img-responsive">
-<img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/kokushikan-comparison.jpg">
-</span>
-<span class="img-responsive">
-<img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/ipad-kokushikan.jpg" alt="iPad Pro で書いた黒死館">
-</span>
+<img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/digital-paper-vs-ipad/kokushikan-comparison.jpg">
+<img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/digital-paper-vs-ipad/ipad-kokushikan.jpg" alt="iPad Pro で書いた黒死館">
 
 なんかこう、Webに合うように縮小してしまうとどっちも下手だなあ、という感じがするが、肉眼でみるとやっぱり iPad Pro の方が線がブレていてちょっと汚ない。
 また、iPad Pro はしっかり書いてしまうので、**悪筆家としては一文字を書くのに掛かる時間が電子ペーパーの二倍かかる**。
@@ -319,9 +303,7 @@ iPad向けに使える LaTeX エディタは幾つかあるが、いくらか試
 
 以下のような感じでリアルタイムにLaTeXを組版してくれる。
 
-<span class="img-responsive">
-<img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/texpad.png">
-</span>
+<img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/digital-paper-vs-ipad/texpad.png">
 
 追加でパッケージを幾つかインストールすれば、そんなに凝ったことをしない限り普段のマクロがそのまま使える。
 残念ながら日本語のTeXについてはクラウドサービスを使わないといけないが、まあ普通の論文書きには困らないだろう。
@@ -353,10 +335,10 @@ MacBook Proを一々持ち歩くのは嵩張るし、これは非常に身軽で
 * 筆圧に難の無い人間は、iPad Pro + Apple PencilでPDFリーダ、ノート取り共にOK。
     * 画面が堅いので書き味は悪く、高筆圧タイプの悪筆家には向かない。ペーパーライクな画面フィルムを貼るとより書き味が良くなる。
     * 出先で論文執筆が出来るのとてもいい。
-    * 以下は国際会議の待ち時間にぼくより大きな iPad Pro でソシャゲに勤しむ某氏です。
-      <span class="img-responsive"><img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/ipad-fgo.jpg"></span>
-    * 北欧では iPad がジュースサーバーになっていた。
-      <span class="img-responsive"><img class="thumbnail media-object" src="./imgs/digital-paper-vs-ipad/ipad-juice.jpg"></span>
+    * 以下は国際会議の待ち時間にぼくより大きな iPad Pro でソシャゲに勤しむ某氏です。  
+      <img class="img-fluid img-thumbnail rounded" src="./imgs/digital-paper-vs-ipad/ipad-fgo.jpg">
+    * 北欧では iPad がジュースサーバーになっていた。  
+      <img class="img-fluid img-thumbnail rounded" src="./imgs/digital-paper-vs-ipad/ipad-juice.jpg">
 
 * SONYの電子ペーパーはまだ若干ソフトウェアの機能が足りないが十分実用に足るし、紙に特化している分、書き味や読んでいる際の快適さがある。悪筆な人にお勧め。
     * 筆圧が軽くて済むので手にも優しい。

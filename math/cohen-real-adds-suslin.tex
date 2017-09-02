@@ -11,18 +11,11 @@ tag: 数学,数理論理学,集合論,無限組合せ論,極小歩,minimal walk,
 \usepackage[hiragino-pron]{luatexja-preset}
 \usepackage{mystyle}
 \usepackage{luatexja-otf}
-\usepackage{unicode-math}
 \usetikzlibrary{matrix,arrows,shapes,backgrounds,positioning}
 \usetikzlibrary{arrows,calc,decorations.pathmorphing}
 \usetikzlibrary{decorations.markings,intersections,decorations.pathreplacing}
-\setmathfont{latinmodern-math.otf}
-\setmathfont{Asana Math}[range={\setminus,\models,"029F5,"022A7}]
-\setmathfont{TeX Gyre Pagella Math}[range={bb}]
-\setmathfont{latinmodern-math.otf}[range={up,sfup,cal}]
-\setmathfont{XITS Math}[range={scr,bfscr,}]
-\newcommand{\mathds}[1]{\symbb{#1}}
+\usepackage{dsfont}
 \usepackage{luatexja-ruby}
-\renewcommand{\defeq}{\mathrel{\coloneq}}
 \DeclareMathAlphabet{\mathrsfs}{U}{rsfso}{m}{n}
 \renewcommand{\mathscr}[1]{\mathup{\mathrsfs{#1}}}
 \usepackage{fixme}

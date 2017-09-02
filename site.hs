@@ -40,6 +40,7 @@ import           Network.URI                     hiding (query)
 import           Prelude                         hiding (FilePath, div, mapM,
                                                   sequence, span)
 import           Shelly                          hiding (tag)
+import           Skylighting                     hiding (Context (), Style)
 import           System.IO                       (hPutStrLn, stderr)
 import           Text.Blaze.Html.Renderer.String
 import           Text.Blaze.Html5                ((!))
@@ -49,7 +50,6 @@ import           Text.CSL                        (Reference, Style,
                                                   readBiblioFile, readCSLFile)
 import           Text.CSL.Pandoc
 import           Text.Hamlet
-import           Skylighting                     hiding (Context (), Style)
 import           Text.HTML.TagSoup
 import           Text.HTML.TagSoup.Match
 import           Text.LaTeX.Base                 (render)
@@ -207,12 +207,12 @@ pandocContext (Pandoc meta _)
   | otherwise = mempty
 
 toBlocks :: MetaValue -> [Block]
-toBlocks (MetaMap _) = []
-toBlocks (MetaList v) = concatMap toBlocks v
-toBlocks (MetaBool b) = [ Plain  [ Str $ show b ] ]
-toBlocks (MetaString s) = [ Plain [ Str s ] ]
+toBlocks (MetaMap _)       = []
+toBlocks (MetaList v)      = concatMap toBlocks v
+toBlocks (MetaBool b)      = [ Plain  [ Str $ show b ] ]
+toBlocks (MetaString s)    = [ Plain [ Str s ] ]
 toBlocks (MetaInlines ins) = [Plain ins]
-toBlocks (MetaBlocks bs) = bs
+toBlocks (MetaBlocks bs)   = bs
 
 compile' :: (Typeable a, Writable a, Binary a) => Compiler (Item a) -> Rules ()
 compile' d = compile $ d
@@ -476,9 +476,9 @@ getActive _ "profile.md" = "/profile.html"
 getActive cDic ident = do
   fromMaybe "/" $ listToMaybe $ filter p $ map snd cDic
   where
-    p "/" = False
+    p "/"       = False
     p ('/':inp) = fromGlob (inp++"/**") `matches` ident
-    p _ = False
+    p _         = False
 
 makeBreadcrumb :: Item String -> Compiler String
 makeBreadcrumb item = do
@@ -491,12 +491,11 @@ makeBreadcrumb item = do
       bc | ident == "index.md" = []
          | otherwise = walkTree parents st
   return $ renderHtml [shamlet|
-      <ul .breadcrumb>
+      <ol .breadcrumb>
         $forall (path, title) <- bc
-          <li>
+          <li .breadcrumb-item>
             <a href=#{path}>#{title}
-            <span .divider>/
-        <li .active>
+        <li .li.breadcrumb-item .active>
           #{mytitle}
     |]
 
@@ -506,22 +505,21 @@ makeNavBar ident = do
   debugCompiler $ "cDic: " ++ show cDic
   let cats = [(pth, cat, getActive cDic ident == pth) | (cat, pth) <- cDic ]
   return $ renderHtml $  [shamlet|
-    <div .navbar .navbar-inverse .navbar-fixed-top>
-      <div .navbar-inner>
-        <div .container>
-          <button .btn .btn-navbar data-toggle="collapse" data-target=".nav-collapse">
-            $forall _ <- cDic
-              <span .icon-bar>
-          <a .brand href="/">konn-san.com
-          <div .nav-collapse .collapse>
-            <ul .nav>
-              $forall (path, cat, isActive) <- cats
-                $if isActive
-                   <li .active>
-                     <a href="#{path}">#{cat}
-                $else
-                   <li>
-                     <a href="#{path}">#{cat}
+    <nav .navbar .navbar-expand-lg .navbar-dark .bg-dark .fixed-top>
+       <a .navbar-brand href="/">konn-san.com
+       <button type=button .navbar-toggler data-toggle=collapse
+               data-target=#Navbar aria-controls=Navbar
+               aria-expanded=false aria-label="toggle navigation">
+         <span .navbar-toggler-icon>
+       <div .collapse .navbar-collapse #Navbar>
+         <ul .navbar-nav .mr-auto>
+           $forall (path, cat, isActive) <- cats
+             $if isActive
+                <li .nav-item .active>
+                  <a .nav-link href="#{path}">#{cat}
+             $else
+                <li .nav-item>
+                  <a .nav-link href="#{path}">#{cat}
    |]
 
 readHierarchy :: String -> [(String, String)]
@@ -565,14 +563,14 @@ isPublished item = do
   let ident = itemIdentifier item
       txtToBool txt = case txt & packed %~ T.strip & reads of
         [(b, "")] -> Just b
-        _ -> Nothing
+        _         -> Nothing
   pub <- fmap capitalize <$> getMetadataField ident "published"
   dra <- fmap capitalize <$> getMetadataField ident "draft"
   return $ fromMaybe True $ (txtToBool =<< pub)
                          <|> not <$> (txtToBool =<< dra)
 
 capitalize :: String -> String
-capitalize "" = ""
+capitalize ""      = ""
 capitalize (c: cs) = toUpper c : map toLower cs
 
 itemDate :: Item a -> Compiler ZonedTime
@@ -609,7 +607,7 @@ myProcCites style bib p =
       -- Pandoc _ bibs = processCites style bib (Pandoc mempty pars)
       Pandoc info pan' = processCites style bib p
       isReference (Div (_, ["references"], _) _) = True
-      isReference _ = False
+      isReference _                              = False
       body = filter (not . isReference) pan'
   in bottomUp removeTeXGomiStr $ if null pars
      then p
