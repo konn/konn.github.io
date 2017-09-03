@@ -33,7 +33,7 @@
   };
   </script>
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
   <!--[if lt IE 7]>
     <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
   <![endif]-->
@@ -71,10 +71,10 @@
     <hr>
     <div class="page-content">
       $if(abstract)$
-      <div class="lead" id="abstract">
+      <section class="lead" id="abstract">
         <h2>概要</h2>
         $abstract$
-      </div>
+      </section>
       $endif$
       $body$
     </div>

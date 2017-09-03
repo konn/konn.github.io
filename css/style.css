@@ -15,13 +15,14 @@ object svg {
     fill: white;
 }
 
-section {
+section, h1[id] {
     padding-top: 70px;
     margin-top:  -70px;
 }
 
 body {
     padding-top: 70px;
+    position: relative;
 }
 
 ul#socials {
