@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable, DeriveGeneric, DeriveTraversable  #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving, NoMonomorphismRestriction #-}
-{-# LANGUAGE OverloadedStrings, PatternGuards, ViewPatterns        #-}
+{-# LANGUAGE OverloadedStrings, PatternGuards                      #-}
 module Settings where
 
 import           Control.Applicative  (empty)
@@ -49,9 +49,11 @@ instance Default SiteTree where
 walkTree :: [FilePath] -> SiteTree -> [(FilePath, T.Text)]
 walkTree [] (SiteTree t _) = [("/", t)]
 walkTree (x : xs) (SiteTree t chs) = ("/", t) :
-  case HM.lookup x chs of
-    Nothing -> []
+  case HM.lookup (dropSlash x) chs of
+    Nothing  -> []
     Just st' -> map (first (("/" <> x) <> )) (walkTree xs st')
+  where
+    dropSlash = flip maybe T.unpack <*> T.stripSuffix "/" . T.pack
 
 data Scheme = Scheme { prefix  :: T.Text
                      , postfix :: Maybe T.Text
@@ -89,7 +91,7 @@ instance FromJSON NavBar where
   parseJSON (Array vs) = NavBar <$> mapM p (toList vs)
     where
       p (Object d) | [(k, v)] <- HM.toList d = (,) k <$> parseJSON v
-      p _ = empty
+      p _          = empty
   parseJSON _ = empty
 
 instance Default NavBar where
