@@ -338,6 +338,8 @@ writerConf =
   def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
      , writerHighlight = True
      , writerHighlightStyle = pygments
+     , writerSectionDivs = True
+     , writerHtml5 = True
      }
 
 myPandocCompiler :: Compiler (Item String)
