@@ -51,7 +51,7 @@ import           Text.CSL                        (Reference, Style,
 import           Text.CSL.Pandoc
 import           Text.Hamlet
 import           Text.HTML.TagSoup
-import           Text.HTML.TagSoup.Match
+import qualified Text.HTML.TagSoup               as TS
 import           Text.LaTeX.Base                 (render)
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
@@ -293,19 +293,6 @@ compileToPDF item = do
       Just opts -> run_ "latexmk" (map T.pack (words opts) ++ [Path.encode $ filename texPath])
     return ()
   makeItem $ TmpFile $ encodeString (tmpDir </> pdfPath)
-
-renderDocIndex :: [Item String] -> Compiler String
-renderDocIndex is = do
-  is' <- forM is $ \i -> ( , itemBody i) . fromJust <$> getRoute (itemIdentifier i)
-  return $ renderHtml $ forM_ is' $ \(pth, src) ->
-      let tags = parseTags src
-          content = innerText $ getTagContent "div" (anyAttrLit ("class", "doc")) tags
-          name = takeWhile (/= ':') $ innerText $
-            getTagContent "div" (anyAttrLit ("class", "description")) tags
-      in [shamlet| <dt>
-                     <a href="#{pth}">#{name}
-                   <dd>#{content}
-                 |]
 
 renderMeta :: [Inline] -> String
 renderMeta ils = writeHtmlString def $ Pandoc nullMeta [Plain ils]
@@ -597,6 +584,46 @@ extractCites = queryWith collect
   where
     collect (Cite t _) = [t]
     collect _          = []
+
+appendTOC :: Pandoc -> Pandoc
+appendTOC d@(Pandoc meta bdy) =
+  let toc = generateTOC d
+  in Pandoc meta $
+     [ Div ("", ["container-fluid"], [])
+       [ Div ("", ["row"], [])
+       [ RawBlock "html" toc
+       , Div ("", ["col-md-8"], [])
+         bdy
+       ] ]
+     ]
+
+generateTOC :: Pandoc -> String
+generateTOC pan =
+  let src = parseTags $ writeHtmlString
+            writerConf { writerTableOfContents = True
+                       , writerTemplate = Just "$toc$"
+                       }
+            pan
+      topAtts = [("class", "col-md-4 hidden-xs-down bg-light sidebar")
+                ,("id", "side-toc")
+                ]
+  in TS.renderTags $
+     [ TagOpen "nav" topAtts
+     , TagOpen "a" [("class","navbar-brand")]
+     , TagText "TOC"
+     , TagClose "a"
+     ] ++ mapMaybe rewriter src
+     ++ [TagClose "nav"]
+  where
+    rewriter (TagOpen "ul"  atts) =
+      Just $ TagOpen "nav" $ ("class", "nav nav-pills flex-column") : atts
+    rewriter (TagClose "ul") = Just $ TagClose "nav"
+    rewriter (TagOpen "a"  atts) =
+      Just $ TagOpen "a" $ ("class", "nav-link") : atts
+    rewriter (TagOpen "li" _) = Nothing
+    rewriter (TagClose "li" ) = Nothing
+    rewriter t = Just t
+
 
 extractNoCites :: Data c => c -> [[Citation]]
 extractNoCites = queryWith collect
