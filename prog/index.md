@@ -3,6 +3,7 @@ title: プログラミング関連
 author: Hiromi ISHII
 description: GitHub などへの外部リンクと昔につくったプロダクトの紹介。
 tag: Haskell,Ruby,オートマトン,IRC
+top-star: false
 ---
 
 ソフトウェアやプログラミング関連の記事を溜めておく場所です。
@@ -11,7 +12,7 @@ tag: Haskell,Ruby,オートマトン,IRC
 <div class="span9">
 記事一覧
 =======
-<dl>
+<dl id="#children">
 \$children\$
 </dl>
 

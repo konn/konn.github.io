@@ -2,6 +2,7 @@
 title: "konn-san.com 建設予定地"
 description: "konn-san.com: 数理論理学を中心に数学、Haskell、推理小説、評論など。"
 tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オートマトン
+top-star: false
 ---
 
 集合論など数理論理学関連を中心に、数学・関数型プログラミング・ミステリなどに関する情報を集積してあります。
@@ -9,7 +10,7 @@ tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オ�
 更新履歴など{#updates}
 ==========
 
-<dl>\$updates\$</dl>
+<dl id="children">\$updates\$</dl>
 
 上記最新5件以外は、[アーカイブ](./archive.html) をご覧ください。
 

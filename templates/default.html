@@ -19,6 +19,19 @@
   <script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button_wo_al.js" charset="utf-8" async="async"></script>
   <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_CHTML,http://konn-san.com/math/mathjax/config/local/local.js" async="async" type="text/javascript"></script>
+  <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script type="text/javascript">
+  Hatena.Star.Token = '009c576e6012411735c97f9daba2f456abf21238';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
 </head>
 <body>
   <!--[if lt IE 7]>
@@ -39,12 +52,19 @@
       <h1>$title$ <small>konn-san.com</small></h1>
     <div id="social">
       <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
       <div class="fb-like" data-href="http://konn-san.com$url$" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      <li>
       <a href="http://b.hatena.ne.jp/entry/http://konn-san.com$url$" class="hatena-bookmark-button" data-hatena-bookmark-title="$title$ - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+      <li>
       <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
       <div class="g-plusone" data-size="standard" data-count="true"></div>
+      <li>
       <a href="https://twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      <li id="hatena-star">
+      </ul>
     </div>
     <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on $date$</div>
     </div>
@@ -83,3 +103,4 @@
   </script>
 </body>
 </html>
+

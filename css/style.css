@@ -15,3 +15,42 @@ section {
 body {
     padding-top: 70px;
 }
+
+ul#socials {
+    text-align: left;
+    display: inline;
+    padding-left: 7px;
+}
+
+ul#socials > li {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 7px;
+}
+
+ul#socials > li#facebook {
+    margin-top: -10px;
+}
+
+ul#socials > li#hatena-star {
+    margin-top: -10px;
+}
+
+ul#socials > li:first-child {
+    margin-left: 0;
+}
+
+ul#socials > li:last-child {
+    margin-right: 0;
+}
+
+ul#socials iframe {
+    margin: 0 !important;
+}
+
+@media screen and (max-width: 780px){
+    ul#socials > li{
+	width: 80px !important;
+	margin: 0 7px 10px 0;
+    }
+}

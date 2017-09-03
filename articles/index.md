@@ -4,6 +4,7 @@ date: 2015/06/07 23:00:29 JST
 author: 石井大海
 description: ブログ『これは圏です』（blog.konn-san.com）の記事を移行しました。
 tag: ブログ
+top-star: false
 ---
 
 ブログ記事置き場
@@ -13,6 +14,6 @@ tag: ブログ
 Articles
 --------
 
-<dl>
+<dl id="children">
 \$children\$
 </dl>

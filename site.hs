@@ -6,8 +6,8 @@
 module Main where
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
-import           Control.Lens                    (rmapping, (%~), (.~), (<>~),
-                                                  (^?), _Unwrapping')
+import           Control.Lens                    (rmapping, (%~), (.~), (<&>),
+                                                  (<>~), (^?), _Unwrapping')
 import           Control.Monad                   hiding (mapM, sequence)
 import           Data.Binary
 import qualified Data.ByteString.Char8           as BS
@@ -26,8 +26,8 @@ import           Data.Text.Lens                  (packed)
 import           Data.Time
 import           Data.Traversable                hiding (forM)
 import           Filesystem
-import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
-                                                  (</>))
+import           Filesystem.Path.CurrentOS       hiding (concat, empty, null,
+                                                  (<.>), (</>))
 import qualified Filesystem.Path.CurrentOS       as Path
 import           Hakyll                          hiding (fromFilePath,
                                                   toFilePath)
@@ -115,17 +115,17 @@ main = hakyllWith config $ do
   match "index.md" $ do
     route $ setExtension "html"
     compile' $ do
-      posts <- postList (Just 5) subContentsWithoutIndex
+      (count, posts) <- postList (Just 5) subContentsWithoutIndex
       myPandocCompiler
-              >>= applyAsTemplate (constField "updates" posts <> defaultContext)
+              >>= applyAsTemplate (constField "child-count" (show count) <> constField "updates" posts <> defaultContext)
               >>= applyDefaultTemplate mempty {- tags -} >>= relativizeUrls
 
   match "archive.md" $ do
     route $ setExtension "html"
     compile' $ do
-      posts <- postList Nothing subContentsWithoutIndex
+      (count, posts) <- postList Nothing subContentsWithoutIndex
       myPandocCompiler
-              >>= applyAsTemplate (constField "children" posts <> defaultContext)
+              >>= applyAsTemplate (constField "child-count" (show count) <> constField "children" posts <> defaultContext)
               >>= applyDefaultTemplate mempty {- tags -} >>= relativizeUrls
 
   create [".ignore"] $ do
@@ -140,8 +140,8 @@ main = hakyllWith config $ do
     route $ setExtension "html"
     compile' $ do
       chs <- listChildren True
-      chl <- postList Nothing (fromList $ map itemIdentifier chs)
-      myPandocCompiler >>= applyAsTemplate (constField "children" chl <> defaultContext)
+      (count, chl) <- postList Nothing (fromList $ map itemIdentifier chs)
+      myPandocCompiler >>= applyAsTemplate (constField "child-count" (show count) <> constField "children" chl <> defaultContext)
                        >>= applyDefaultTemplate mempty >>= saveSnapshot "content"  >>= relativizeUrls
 
   match "t/**" $ route idRoute >> compile' copyFileCompiler
@@ -358,6 +358,10 @@ applyDefaultTemplate addCtx item = do
       bcrumb = field "breadcrumb" makeBreadcrumb
       date = field "date" itemDateStr
       toc = field "toc" $ return .renderHtml . buildTOC . readHtml' def . itemBody
+      noTopStar = field "no-top-star" $ \i ->
+        getMetadataField (itemIdentifier i) "top-star" <&> \case
+          Just t | Just False <- txtToBool t  -> return (error "NO Text Data")
+          _ -> empty
       hdr = field "head" $ \i -> return $
         if "math" `isPrefixOf` Hakyll.toFilePath (itemIdentifier i) && "math/index.md" /= toFilePath (itemIdentifier i)
         then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
@@ -370,7 +374,7 @@ applyDefaultTemplate addCtx item = do
         return $ renderHtml $ do
           H5.meta ! H5.name "Keywords"    ! H5.content (H5.toValue tags)
           H5.meta ! H5.name "description" ! H5.content (H5.toValue desc)
-      cxt  = mconcat [ addCtx, toc, navbar, bcrumb, hdr, meta, date, defaultContext]
+      cxt  = mconcat [ addCtx, toc, navbar, bcrumb, hdr, meta, date, noTopStar, defaultContext]
   let item' = demoteHeaders . withTags addTableClass <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
   unsafeCompiler $ do
@@ -530,7 +534,7 @@ readHierarchy = mapMaybe (toTup . words) . lines
     toTup (x:y:ys) = Just (y ++ unwords ys, x)
     toTup _        = Nothing
 
-postList :: Maybe Int -> Pattern -> Compiler String
+postList :: Maybe Int -> Pattern -> Compiler (Int, String)
 postList mcount pat = do
   postItemTpl <- loadBody "templates/update.html"
   posts <- fmap (maybe id take mcount) . myRecentFirst =<< loadAll pat
@@ -540,7 +544,8 @@ postList mcount pat = do
         descr <- getMetadataField' (itemIdentifier item) "description"
         return $ writeHtmlString writerConf $ fromRight $ readMarkdown def descr
 
-  applyTemplateList postItemTpl (pdfField <> myDateField <> descField <> defaultContext) posts
+  src <- applyTemplateList postItemTpl (pdfField <> myDateField <> descField <> defaultContext) posts
+  return (length posts, src)
 
 itemPDFLink :: Item a -> Compiler String
 itemPDFLink item
@@ -563,13 +568,16 @@ myRecentFirst is0 = do
 isPublished :: Item a -> Compiler Bool
 isPublished item = do
   let ident = itemIdentifier item
-      txtToBool txt = case txt & packed %~ T.strip & reads of
-        [(b, "")] -> Just b
-        _         -> Nothing
-  pub <- fmap capitalize <$> getMetadataField ident "published"
-  dra <- fmap capitalize <$> getMetadataField ident "draft"
+  pub <- getMetadataField ident "published"
+  dra <- getMetadataField ident "draft"
   return $ fromMaybe True $ (txtToBool =<< pub)
                          <|> not <$> (txtToBool =<< dra)
+
+txtToBool :: String -> Maybe Bool
+txtToBool txt =
+  case txt & capitalize & packed %~ T.strip & reads of
+    [(b, "")] -> Just b
+    _         -> Nothing
 
 capitalize :: String -> String
 capitalize ""      = ""
