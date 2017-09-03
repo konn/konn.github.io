@@ -63,3 +63,9 @@ ul#socials iframe {
 	margin: 0 7px 10px 0;
     }
 }
+
+@media screen and (min-width: 780px) {
+    #article-toc {
+        position: sticky;
+    }
+}
