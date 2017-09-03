@@ -121,8 +121,10 @@ SONYが「[デジタル時代の「紙」をつく](https://www.sony.co.jp/SonyI
 画面上では青が黒、赤がグレーがかって表示される。
 以下、一つ目が画面上の表示と、二つ目が実際に生成されるノートである。
 
-<img class="img-fluid img-thumbnail rounded float-left" src="./imgs/digital-paper-vs-ipad/dpt-pens-monochrome.jpg">
-<img class="img-fluid img-thumbnail rounded float-right" src="./imgs/digital-paper-vs-ipad/dpt-pens-color.png">
+<div class="mx-auto d-block">
+<img class="img-fluid img-thumbnail rounded" src="./imgs/digital-paper-vs-ipad/dpt-pens-monochrome.jpg">
+<img class="img-fluid img-thumbnail rounded" src="./imgs/digital-paper-vs-ipad/dpt-pens-color.png">
+</div>
 
 ノートのデータはPDFとして保存されている。
 macOSのQuickLook（Finderでスペースバー押すとプレビューされるアレ）で見るとなんかすごく書き込みが滅茶苦茶にズレて見えるのだが、Preview.appやAdobe Readerで開けばちゃんと読める。これは多分QuickLookが悪いのではないかと思う。
@@ -349,7 +351,6 @@ MacBook Proを一々持ち歩くのは嵩張るし、これは非常に身軽で
     * 検索は遅い。PDFのナビゲーションが貧弱。
     * ~~目を引くので国際学会で自慢出来る。~~
 * どっちも新時代の紙は選択範囲をコピーしたり移動したり出来るのが本当によい。
-
 
 [^1]: 正確には特別研究員奨励費？よくわからん。
 

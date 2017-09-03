@@ -340,6 +340,7 @@ writerConf =
      , writerHighlightStyle = pygments
      , writerSectionDivs = True
      , writerHtml5 = True
+     , writerTableOfContents = True
      }
 
 myPandocCompiler :: Compiler (Item String)
