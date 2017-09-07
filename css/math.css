@@ -3,6 +3,7 @@ body {
   counter-reset: definition;
   counter-reset: theorem;
   counter-reset: fact;
+  counter-reset: conjecture;
   counter-reset: lemma;
   counter-reset: question;
   counter-reset: exercise;
@@ -49,7 +50,7 @@ h3:before {
     content: "作成者：";
 }
 
-.question, .answer, .corollary, .prop, .theorem, .definition, .lemma, .fact, .axiom, .problem, .exercise {
+.question, .answer, .corollary, .prop, .theorem, .definition, .lemma, .fact, .axiom, .problem, .exercise, .conjecture {
     margin: 10px;
     border: 1px solid;
     padding: 10px;
@@ -193,6 +194,21 @@ h3:before {
   display: inline;
   content: "定義 " counter(definition) "．";
 }
+
+.conjecture {
+  counter-increment: conjecture;
+}
+
+.conjecture[name]:before{
+  content: "予想 " counter(conjecture) "（" attr(name) "）．";
+}
+
+.conjecture:before{
+  font-weight: bold;
+  display: inline;
+  content: "予想 " counter(conjecture) "．";
+}
+
 
 .proof[name]:before{
     content: attr(name) "．";
