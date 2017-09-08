@@ -513,6 +513,12 @@ makeNavBar ident = do
              $else
                 <li .nav-item>
                   <a .nav-link href="#{path}">#{cat}
+         <form .form-inline .my-2 .my-lg-0 action="https://cse.google.com/" target=_blank>
+           <input type=hidden name=cx value="008926939897329001532:wsmollxek8o">
+           <input .form-control .mr-sm-2 type=text name=q
+                  placeholder=Search aria-label=Search required>
+           <button .btn .btn-outline-secondary .my-2 .my-sm-0 type=submit>
+             <i .fa .fa-search>
    |]
 
 readHierarchy :: String -> [(String, String)]

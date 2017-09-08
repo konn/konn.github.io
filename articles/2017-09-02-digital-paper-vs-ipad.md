@@ -11,8 +11,7 @@ tag: 電子ペーパー,レビュー,電化製品,iPad Pro,SONY,DPT-RP1,自慢,I
 * 2017/09/02 18:00:00 JST [ノートテンプレート](#templates)について追記。
 * 2017/09/02 16:48:00 JST 公開
 
-# 要旨 #
-
+# 要旨
 科研費[^1]が使えるようになり、調子にのって SONY の電子ペーパーと iPad Pro とを買ったら予算がなくなった[^2]ので、自慢をする。
 
 <iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=konn06-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B072MXJZ6X&linkId=ff2cc56b82ece996923c7d8018106494"></iframe>
