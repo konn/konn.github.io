@@ -51,7 +51,7 @@ walkTree [] (SiteTree t _) = [("/", t)]
 walkTree (x : xs) (SiteTree t chs) = ("/", t) :
   case HM.lookup (dropSlash x) chs of
     Nothing  -> []
-    Just st' -> map (first (("/" <> x) <> )) (walkTree xs st')
+    Just st' -> map (first (("/" <> dropSlash x) <> )) (walkTree xs st')
   where
     dropSlash = flip maybe T.unpack <*> T.stripSuffix "/" . T.pack
 
