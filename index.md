@@ -14,9 +14,8 @@ top-star: false
 
 上記最新5件以外は、[アーカイブ](./archive.html) をご覧ください。
 
-<div class="row-fluid">
-
-<div class="span6">
+<div class="row">
+<div class="col-sm-6">
 <h2 id="toc">Table Of Contents</h2>
 [プロフィール](/profile.html)
 :    私について。最近の活動記録など。
@@ -34,7 +33,7 @@ top-star: false
 :    旧ブログ記事の保管庫です。消すには惜しい記事もあるので。
 </div>
 
-<div class="span6">
+<div class="col-sm-6">
 
 <h2 id="links">External Links</h2>
 
