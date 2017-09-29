@@ -29,8 +29,8 @@ top-star: false
 [Writings](/writing)
 :    その他の文書。サークル関連や暇潰しで書いた小説・評論などを気が向いたら載せます。
 
-[旧Blog記事保管庫](/articles)
-:    旧ブログ記事の保管庫です。消すには惜しい記事もあるので。
+[Blog](/articles)
+:    その他の雑多な雉や旧ブログ記事の保管庫です。
 </div>
 
 <div class="col-sm-6">
