@@ -78,7 +78,7 @@ $\mathrm{MA}(\kappa)$は「任意のc.c.c. poset $\mathbb{P}$に対し$\mathrm{M
 
 この定理は，もし$X$が孤立点を持つなら$MA(\kappa)$など仮定しなくても自明に成立する（孤立点は一点で開集合になるので）．これは，$\mathbb{P}$が\textbf{アトム}を持つ時に$\MA_{\mathbb{P}}(\kappa)$が自明に成立するのと似ている．
 \begin{definition}
- $r \in \mathbb{P}$が$\mathbb{P}$の\textbf{アトム}$\defs \forall p, q \leq r \, [p \not \perp q]$
+ $r \in \mathbb{P}$が$\mathbb{P}$の\textbf{アトム}$\defs \forall p, q \leq r \, [p \mathrel{\|} q]$
 \end{definition}
 
 特に，Hausdorff空間の場合，$r\in \mathbb{O}_X$がアトム$\Leftrightarrow |r| = 1$である．
@@ -153,10 +153,10 @@ $\mathrm{MA}(\kappa)$は「任意のc.c.c. poset $\mathbb{P}$に対し$\mathrm{M
   \forall Z \in \mathcal{W}_q\, [s_p \setminus s_q \subseteq Z] & \text{($p$は$q$の約束を破らない)}
  \end{numcases}
  これにより，$\braket{\mathbb{P}, \leq, \braket{\emptyset, \emptyset}}$がforcing posetとなるのは明らか．$\MA(\kappa)$を使いたいので，$\mathbb{P}$がc.c.c.を満たすことを示さなくてはならない．ここで，
- \begin{equation}
-  s_p = s_q \longrightarrow s_p \not\perp s_q \tag{*}\label{cond:cented}
- \end{equation}
- が成立する．なぜならこの時，$r = \braket{s_p, \mathcal{W}_p \cup \mathcal{W}_q}$とおけば明らかに$r \leq p, q$となるからである．特に各$s \in [\omega]^{<\omega}$は可算個しかないから，もし$A \subseteq \mathbb{P}$が非可算集合であったとすると，必ず$s_p = s_q$となる$p, q \in A$があり$s_p \not\perp s_q$となるので，$A$は反鎖ではない．よって$\mathbb{P}$はc.c.c.を満たす．
+ \begin{align*}
+  s_p = s_q \longrightarrow s_p \mathrel{\|} s_q \tag{*}\label{cond:cented}
+ \end{align*}
+ が成立する．なぜならこの時，$r = \braket{s_p, \mathcal{W}_p \cup \mathcal{W}_q}$とおけば明らかに$r \leq p, q$となるからである．特に各$s \in [\omega]^{<\omega}$は可算個しかないから，もし$A \subseteq \mathbb{P}$が非可算集合であったとすると，必ず$s_p = s_q$となる$p, q \in A$があり$s_p \mathrel{\|} s_q$となるので，$A$は反鎖ではない．よって$\mathbb{P}$はc.c.c.を満たす．
 
  $G \subseteq \mathbb{P}$をフィルターとするとき，$K_G \defeq \bigcup_p s_p$により$K_G \subseteq \omega$を定める．この時，$K_G$が$\mathcal{E}$の擬共通部分となるようにしたい．より具体的には，次の二条件を満たすようにしたい：
  \begin{enumerate}[label=(\alph*)]

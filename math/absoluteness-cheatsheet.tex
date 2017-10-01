@@ -2,13 +2,12 @@
 title: 絶対性チートシート
 author: 石井 大海
 tag: 数学,数理論理学,集合論,モデル理論
-latexmk: -pdfxe
+latexmk: -lualatex
 description: 公理的集合論においてあるモデルの性質を調べる際，様々な概念の絶対性を利用します．このプリントは，どのような条件下でどんな概念が絶対性を満たすのかをメモした個人的な覚書です．あくまで手軽に使うための覚え書きなので，そこまで踏み込んだ証明などは載せず，寧ろ一覧表のような体裁になる予定です．
 date: 2016/05/26 19:00:00 JST
 ---
-\documentclass[a4j,ja=standard,xelatex]{bxjsarticle}
-\usepackage{zxjatype}
-\usepackage[hiragino]{zxjafont}
+\documentclass[a4j]{ltjsarticle}
+\usepackage[hiragino-pron]{luatexja-preset}
 \usepackage{amsmath,amssymb}
 \usepackage{epstopdf}
 \usepackage{mystyle}
@@ -16,7 +15,7 @@ date: 2016/05/26 19:00:00 JST
 \addbibresource{myreference.bib}
 \usepackage{bm}
 \usepackage{cases}
-\usepackage{zxotf}
+\usepackage{luatexja-otf}
 \renewcommand{\emph}[1]{\textsf{\textgt{#1}}}
 \newcommand*{\BST}{\mathrm{BST}}
 \newcommand*{\absolute}{\preccurlyeq}

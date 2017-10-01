@@ -22,9 +22,9 @@ tag: Boole値モデル,無矛盾性証明,強制法,公理的集合論,集合論
 \addbibresource{myreference.bib}
 \renewcommand{\emph}[1]{\textbf{\textgt{#1}}}
 \newcommand{\FL}{\mathord{\mathcal{F\!L}}}
-\DeclareMathOperator{\val}{val}
-\DeclareMathOperator{\Add}{\mathsf{Add}}
-\DeclareMathOperator{\spanning}{\downarrow}
+\newcommand{\val}{\mathop{\mathrm{val}}}
+\newcommand{\Add}{\mathop{\mathsf{Add}}}
+\newcommand{\spanning}{\mathop{\downarrow}}
 \newcommand{\reduce}{\mathbin{\downarrow}}
 
 \title{Boole値モデルと強制法}
@@ -623,8 +623,8 @@ $\kappa$が正則基数のとき$\Add(\kappa)$の組合せ論的性質として�
  $\mathcal{U}$を$\mathbb{B}$上の超フィルターとする．
  この時，$V^{\mathbb{B}}/\mathcal{U}$, $\check{V}_{\mathcal{U}}$および$j_{\mathcal{U}}: V \to \check{V}_{\mathcal{U}}$を次で定める：
  \begin{gather*}
-  \dot{x} \sim_{\mathcal{U}} \dot{y} \defs \truth{\dot{x} = \dot{y}} \in \mathcal{U}, \qquad
-  [\dot{x}]_{\mathcal{U}} \defeq \left(\Set{\dot{y} \in V^{\mathbb{B}} | \dot{x} \sim_{\mathcal{U}} \dot{y}} \text{の中でランク最小のもの全体}\right)\\
+  \dot{x} \sim_{\mathcal{U}} \dot{y} \defs \truth{\dot{x} = \dot{y}} \in \mathcal{U}, \qquad{}
+  [\dot{x}]_{\mathcal{U}} \defeq \left(\Set{\dot{y} \in V^{\mathbb{B}} | \dot{x} \sim_{\mathcal{U}} \dot{y}} \text{の中でランク最小のもの全体}\right)\\{}
   [\dot{x}]_{\mathcal{U}} \mathrel{E} [\dot{y}]_{\mathcal{U}} \defs \truth{\dot{x} \in \dot{y}} \in \mathcal{U},\qquad
   V^{\mathbb{B}} / \mathcal{U} \defeq (\Set{[\dot{x}]_{\mathcal{U}} | \dot{x} \in V^{\mathbb{B}}}, \mathrel{E}),\\
   \check{V}_{\mathcal{U}} \defeq \Set{[\sigma]_{\mathcal{U}} \in V^{\mathbb{B}}/\mathcal{U} | \truth{\sigma \in \check{V}} \in \mathcal{U}},\\

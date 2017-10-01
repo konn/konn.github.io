@@ -3,11 +3,12 @@ title: 一意分解整域とその商体における Eisenstein の既約判定�
 date: 2014/01/24 22:04:00 JST
 author: 石井大海
 description: Eisenstein の既約判定法は Q[X] や Z[X] の既約多項式の判定法として広く知られていますが，実は係数環が一般の一意分解整域やその商体であっても使えることはそこまで知られていません．この事実を使うと，例えば多変数多項式環の既約元判定を簡単に行える場合があります．
+latexmk: -lualatex
 tag: 数学, 代数学, 代数幾何, Eisenstein 既約判定法, 多項式環, 多変数多項式環
 ---
 
-\documentclass[a4j,uplatex]{jsarticle}
-\usepackage[hiragino-elcapitan]{pxchfon}
+\documentclass[a4j]{ltjsarticle}
+\usepackage[hiragino-pron]{luatexja-preset}
 \usepackage{amsmath,amssymb}
 \usepackage{epstopdf}
 \usepackage{mystyle}
@@ -23,7 +24,7 @@ tag: 数学, 代数学, 代数幾何, Eisenstein 既約判定法, 多項式環, 
 \newcommand{\Th}{\mathrm{Th}}
 \newcommand{\divs}{ \mid }
 \newcommand{\GL}{\mathrm{GL}}
-\usepackage[dvipdfmx]{hyperref}
+\usepackage{hyperref}
 
 \title{一意分解整域とその商体における Eisenstein の既約判定法}
 \author{石井 大海（@mr\_konn）}
