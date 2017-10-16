@@ -1,30 +1,10 @@
 body {
-  counter-reset: prop;
-  counter-reset: definition;
-  counter-reset: theorem;
-  counter-reset: fact;
-  counter-reset: conjecture;
-  counter-reset: lemma;
-  counter-reset: question;
-  counter-reset: exercise;
-  counter-reset: corollary;
-  counter-reset: section;
-  counter-reset: subsection;
-  counter-reset: remark;
+  counter-reset: prop definition theorem  fact  conjecture  lemma  question  exercise  corollary  section  subsection  remark;
 }
 
 h2 {
-  counter-increment: section;
-  counter-reset: subsection;
-  /*
-  counter-reset: prop 0;
-  counter-reset: definition 0;
-  counter-reset: theorem 0;
-  counter-reset: fact 0;
-  counter-reset: lemma 0;
-  counter-reset: question 0;
-  counter-reset: corollary 0;
-  */
+  counter-increment: section !important;
+  counter-reset: subsection !important;
 }
 
 h3 {
@@ -37,6 +17,10 @@ h2:before {
 
 #abstract h2:before {
   content: ""
+}
+
+#abstract {
+  counter-reset: section -1;
 }
 
 h2#biblio:before {
