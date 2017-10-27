@@ -53,7 +53,7 @@ Talks
 -----
 勉強会や社内セミナーなどでの発表記録。
 
-* 2017/10/27 数学基礎論若手の会2017＠大学セミナーハウス『**正集合の反映原理と飽和イデアルの構成**』（[SlideShare](https://www.slideshare.net/secret/wSF434KHyCIv8h)、[Slide PDF](/math/wakate-2016.pdf)）
+* 2017/10/27 数学基礎論若手の会2017＠大学セミナーハウス『**正集合の反映原理と飽和イデアルの構成**』（[SlideShare](https://www.slideshare.net/secret/wSF434KHyCIv8h)、[Slide PDF](/math/wakate-2017.pdf)）
 * 2017/03/06 筑波大学計算機数学グループ 春の合宿 in 館山 2017『**ものまね鳥を愛でる 結合子論理と計算**』（[SlideShare](https://www.slideshare.net/konn/ss-72840520), [PDF](math/mocking-bird-tateyama.pdf), 録画(N/A)）
 * 2016/10/23 数学基礎論若手の会2016＠清里高原『**On Projective Baire Property**』（[Slide](/math/projective-baire-fmyg16.pdf)）
 * 2016/06/04 [第4回つくばフレッシュマンセミナー](https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxzaGltaWtlbnh8Z3g6MWY5OWFiZDM2NTcyNzljZQ)「**集合論への招待　〜実数直線の集合論〜**」（[資料](math/freshman-2016-resume.pdf)）
