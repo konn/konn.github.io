@@ -1,5 +1,5 @@
 body {
-  counter-reset: prop definition theorem  fact  conjecture  lemma  question  exercise  corollary  section  subsection  remark;
+  counter-reset: prop definition theorem  fact  conjecture  lemma  question  exercise  corollary  section  subsection  remark problem;
 }
 
 h2 {
@@ -61,6 +61,7 @@ h3:before {
   content: "公理 " counter(axiom) "．";
 }
 
+
 .remark{
   counter-increment: remark;
   margin-left: 8px;
@@ -85,6 +86,10 @@ h3:before {
   font-weight: bold;
   display: inline;
   content: "演習問題 " counter(remark) "．";
+}
+
+.problem {
+  counter-increment: problem;
 }
 
 .problem[name]:before {
@@ -163,6 +168,16 @@ h3:before {
   font-weight: bold;
   display: inline;
   content: "定理 " counter(theorem) "．";
+}
+
+.problem[name]:before{
+  content: "問題 " counter(problem) "（" attr(name) "）．";
+}
+
+.problem:before{
+  font-weight: bold;
+  display: inline;
+  content: "問題 " counter(problem) "．";
 }
 
 .definition {

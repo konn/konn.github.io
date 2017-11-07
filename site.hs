@@ -174,10 +174,7 @@ main = hakyllWith config $ do
       macs <- loadBody "config/macros.yml"
       let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib
       isKat <- useKaTeX =<< getResourceBody
-      mkat <- if isKat
-              then Just . T.decodeUtf8 <$> loadBody "data/katex.min.js"
-              else return Nothing
-      ipandoc <- mapM (unsafeCompiler . texToMarkdown macs fp mkat) =<< getResourceBody
+      ipandoc <- mapM (unsafeCompiler . texToMarkdown macs fp) =<< getResourceBody
       let ip' = fmap (myProcCites style bibs) ipandoc
       conv'd <- mapM (return . addPDFLink ("/" </> replaceExtension fp "pdf") .
                       addAmazonAssociateLink "konn06-22"
@@ -186,7 +183,9 @@ main = hakyllWith config $ do
                      def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
                         , writerExtensions = S.delete Ext_raw_tex $ writerExtensions def
                         } $ procCrossRef <$> conv'd
-      saveSnapshot "content" =<< relativizeUrls =<< applyDefaultTemplate (pandocContext $ itemBody conv'd) item
+          procKaTeX | isKat = unsafeCompiler . mapM prerenderKaTeX
+                    | otherwise = return
+      saveSnapshot "content" =<< procKaTeX =<< relativizeUrls =<< applyDefaultTemplate (pandocContext $ itemBody conv'd) item
 
   match "math/**.tex" $ version "pdf" $ do
     route $ setExtension "pdf"
@@ -579,7 +578,7 @@ useKaTeX :: MonadMetadata m => Item a -> m Bool
 useKaTeX item = do
   let ident = itemIdentifier item
   kat <- getMetadataField ident "katex"
-  return $ fromMaybe False $ txtToBool =<< kat
+  return $ fromMaybe True $ txtToBool =<< kat
 
 txtToBool :: String -> Maybe Bool
 txtToBool txt =
@@ -681,4 +680,8 @@ removeTeXGomiStr = packed %~ T.replace "\\qed" ""
 procCrossRef :: Pandoc -> Pandoc
 procCrossRef p = p
 
-
+prerenderKaTeX :: String -> IO String
+prerenderKaTeX src = shelly $ silently $ handleany_sh (const $ return src) $ do
+  cd "data"
+  setStdin $ T.pack src
+  T.unpack <$> cmd "node" "prerender.js"
