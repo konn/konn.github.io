@@ -435,7 +435,7 @@ tryRenderKaTeX kat i@(Math sty orig) = do
               `catch_sh` \(_ :: RunFailed) -> return Nothing
     case mans of
       Nothing  -> return i
-      Just ans | isDisp -> return $ RawInline "html" $ "<p>" <> T.unpack ans <> "</p>"
+      Just ans | isDisp -> return $ RawInline "html" $ "<span class=\"katex-display\">" <> T.unpack ans <> "</span>"
                | otherwise -> return $ RawInline "html" $ T.unpack ans
 tryRenderKaTeX _ i = return i
 
