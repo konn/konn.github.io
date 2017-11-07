@@ -1,8 +1,8 @@
-{-# LANGUAGE DataKinds, DeriveDataTypeable, ExtendedDefaultRules         #-}
-{-# LANGUAGE FlexibleContexts, GADTs, LambdaCase, MultiParamTypeClasses  #-}
-{-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, PatternGuards #-}
-{-# LANGUAGE StandaloneDeriving, TemplateHaskell, TypeOperators          #-}
-{-# LANGUAGE ViewPatterns                                                #-}
+{-# LANGUAGE DataKinds, DeriveDataTypeable, ExtendedDefaultRules          #-}
+{-# LANGUAGE FlexibleContexts, GADTs, LambdaCase, MultiParamTypeClasses   #-}
+{-# LANGUAGE NamedFieldPuns, NoMonomorphismRestriction, OverloadedStrings #-}
+{-# LANGUAGE PatternGuards, ScopedTypeVariables, StandaloneDeriving       #-}
+{-# LANGUAGE TemplateHaskell, TypeOperators, ViewPatterns                 #-}
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 module MathConv where
 import Instances ()
@@ -11,6 +11,7 @@ import Macro
 
 import           Control.Applicative
 import           Control.Arrow                   (left)
+import           Control.Exception               (IOException)
 import           Control.Lens                    hiding (op, rewrite, (<.>))
 import           Control.Lens.Extras             (is)
 import           Control.Monad.Identity
@@ -69,6 +70,7 @@ data MachineState = MachineState { _tikzPictures :: Seq LaTeX
                                  , _macroDefs    :: [Macro]
                                  , _imgPath      :: FilePath
                                  , _texMacros    :: TeXMacros
+                                 , _katexSource  :: Maybe Text
                                  }
                   deriving (Show)
 makeLenses ''MachineState
@@ -86,8 +88,8 @@ parseTeX = left show . P.runParser latexParser defaultParserConf "" . T.pack
 message :: MonadIO m => String -> m ()
 message = liftIO . putStrLn
 
-texToMarkdown :: TeXMacros -> FilePath -> String -> IO Pandoc
-texToMarkdown macs fp src_ = do
+texToMarkdown :: TeXMacros -> FilePath -> Maybe Text -> String -> IO Pandoc
+texToMarkdown macs fp mkatSrc src_ = do
   pth <- liftIO $ shelly $ canonic fp
   macros <- liftIO $ fst . parseMacroDefinitions <$>
             readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
@@ -103,8 +105,10 @@ texToMarkdown macs fp src_ = do
                          , _macroDefs = macros
                          , _imgPath = dropExtension fp
                          , _texMacros = macs
+                         , _katexSource = mkatSrc
                          }
-  (pan, s) <- runStateT (texToMarkdownM initial) st0
+  (pan, s) <- runStateT (liftIO . maybe return (bottomUpM . tryRenderKaTeX) mkatSrc
+                         =<< texToMarkdownM initial) st0
   let tikzs = toList $ s ^. tikzPictures
   unless (null tikzs) $ shelly $ silently $ do
     master <- canonic $ dropExtension pth
@@ -413,7 +417,27 @@ procTikz pan = bottomUpM step pan
                    ]
     step a = return a
 
-
+tryRenderKaTeX :: Text -> Inline -> IO Inline
+tryRenderKaTeX kat i@(Math sty orig) = do
+  liftIO $ shelly $ silently $ withTmpDir $ \tDir -> do
+    cd tDir
+    let katexPath =  tDir </> "katex.min.js"
+    writefile katexPath kat
+    let isDisp = sty == DisplayMath
+        tsrc | isDisp = unlines ["\\begin{aligned}", orig, "\\end{aligned}"]
+             | otherwise = orig
+        program =
+          T.concat ["console.log(require('"
+                   , encode katexPath
+                   ,"').renderToString(require('fs').readFileSync('/dev/stdin', 'utf8')));"]
+    setStdin $ T.pack tsrc
+    mans <- (Just <$> cmd "node" "-e" program)
+              `catch_sh` \(_ :: RunFailed) -> return Nothing
+    case mans of
+      Nothing  -> return i
+      Just ans | isDisp -> return $ RawInline "html" $ "<p>" <> T.unpack ans <> "</p>"
+               | otherwise -> return $ RawInline "html" $ T.unpack ans
+tryRenderKaTeX _ i = return i
 
 procMathInline :: String -> String
 procMathInline = stringify . bottomUp go . fromRight . readLaTeX def

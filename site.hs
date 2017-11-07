@@ -22,6 +22,7 @@ import           Data.Ord
 import qualified Data.Set                        as S
 import           Data.String
 import qualified Data.Text                       as T
+import qualified Data.Text.Encoding              as T
 import           Data.Text.Lens                  (packed)
 import           Data.Time
 import           Data.Traversable                hiding (forM)
@@ -93,12 +94,15 @@ main = hakyllWith config $ do
   setting "navbar" (def :: NavBar)
   setting "macros" (HM.empty :: TeXMacros)
 
+  match "data/katex.min.js" $ compile $ cached "katex" $
+    fmap (LBS.toStrict) <$> getResourceLBS
+
   match "config/schemes.yml" $ compile $ cached "schemes" $ do
     fmap (fromMaybe (Schemes HM.empty) . Y.decode . LBS.toStrict) <$> getResourceLBS
 
   match "*.css" $ route idRoute >> compile' compressCssCompiler
 
-  match ("js/**" .||. "robots.txt" .||. "**/*imgs/**" .||. "img/**" .||. "**/*img/**" .||. "favicon.ico" .||. "files/**") $
+  match ("js/**" .||. "robots.txt" .||. "**/*imgs/**" .||. "img/**" .||. "**/*img/**" .||. "favicon.ico" .||. "files/**" .||. "katex/**") $
     route idRoute >> compile' copyFileCompiler
 
   match "css/**" $
@@ -160,6 +164,7 @@ main = hakyllWith config $ do
   match "math/**.tex" $ version "html" $ do
     route $ setExtension "html"
     compile' $ do
+      -- kateSrc <- T.decodeUtf8 <$> loadBody "data/katex.min.js"
       fp <- decodeString . fromJust <$> (getRoute =<< getUnderlying)
       mbib <- fmap itemBody <$> optional (load $ fromFilePath $ replaceExtension fp "bib")
       gbib <- unsafeCompiler $ readBiblioFile $ encodeString globalBib
@@ -168,7 +173,11 @@ main = hakyllWith config $ do
                   <|> (load "default.csl" :: Compiler (Item CSL))
       macs <- loadBody "config/macros.yml"
       let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib
-      ipandoc <- mapM (unsafeCompiler . texToMarkdown macs fp) =<< getResourceBody
+      isKat <- useKaTeX =<< getResourceBody
+      mkat <- if isKat
+              then Just . T.decodeUtf8 <$> loadBody "data/katex.min.js"
+              else return Nothing
+      ipandoc <- mapM (unsafeCompiler . texToMarkdown macs fp mkat) =<< getResourceBody
       let ip' = fmap (myProcCites style bibs) ipandoc
       conv'd <- mapM (return . addPDFLink ("/" </> replaceExtension fp "pdf") .
                       addAmazonAssociateLink "konn06-22"
@@ -565,6 +574,12 @@ isPublished item = do
   dra <- getMetadataField ident "draft"
   return $ fromMaybe True $ (txtToBool =<< pub)
                          <|> not <$> (txtToBool =<< dra)
+
+useKaTeX :: MonadMetadata m => Item a -> m Bool
+useKaTeX item = do
+  let ident = itemIdentifier item
+  kat <- getMetadataField ident "katex"
+  return $ fromMaybe False $ txtToBool =<< kat
 
 txtToBool :: String -> Maybe Bool
 txtToBool txt =

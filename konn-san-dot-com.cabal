@@ -15,6 +15,8 @@ category:            Web
 build-type:          Simple
 -- extra-source-files:  
 cabal-version:       >=1.10
+data-dir:            data
+extra-source-files:  data/katex.min.js
 
 executable site
   main-is:             site.hs
@@ -28,8 +30,11 @@ executable site
   other-extensions:    DeriveDataTypeable, TemplateHaskell
   build-depends:       base    >= 4 && < 5
                      , binary
+                     , process
+                     , shakespeare
                      , hakyll
                      , vector
+                     , th-lift
                      , aeson
                      , temporary
                      , pandoc-citeproc

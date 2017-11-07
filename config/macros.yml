@@ -1,1 +1,78 @@
-
+defs: '\stackrel{\mathrm{def}}{\Longleftrightarrow}'
+set: [1, '\left\{ #1 \right\}']
+Set: [2, '\left\{ #1 \ \middle|\ #2 \right\}']
+braket: [1, '\left\langle #1 \right\rangle']
+Braket: [2, '\left\langle #1 \ \middle|\ #2 \right\rangle']
+dash:   '-'
+op: '\mathrm{op}'
+mono: '\rightarrowtail'
+epi:  '\twoheadrightarrow'
+bij:  '\xrightarrow[\mathrm{1-1}]{\mathrm{onto}}'
+Pow:  '\mathop{\mathcal{P}}'
+R:    '\mathbb{R}'
+Q:    '\mathbb{Q}'
+Z:    '\mathbb{Z}'
+N:    '\mathbb{N}'
+C:    '\mathbb{C}'
+Sets: '\mathbf{Sets}'
+Groups: '\mathbf{Groups}'
+Cat:  '\mathbf{Cat}'
+Mon:  '\mathbf{Mon}'
+On:    '\mathord{\mathrm{On}}'
+Pos:  '\mathbf{Pos}'
+symbb: [1, '\mathbb{#1}']
+Rel:  '\mathbf{Rel}'
+trcl: '\mathop{\mathrm{trcl}}'
+Hom:  '\mathrm{Hom}'
+dom:  '\mathrm{dom}'
+cod:  '\mathrm{cod}'
+rng:  '\mathrm{rng}'
+Dom:  '\mathrm{Dom}'
+Rng:  '\mathrm{Rng}'
+ZF:  '\mathrm{ZF}'
+ZFC:  '\mathrm{ZFC}'
+MA:  '\mathrm{MA}'
+DC:  '\mathrm{DC}'
+AC:  '\mathrm{AC}'
+AD:  '\mathrm{AD}'
+CH:  '\mathrm{CH}'
+GCH:  '\mathrm{GCH}'
+precto: '\xrightarrow{\prec}'
+Baire: '\power{\omega}{\omega}'
+ADLR:  '\mathrm{AD}^{L(\mathbb{R})}'
+Con:  '\mathop{\mathrm{Con}}'
+ran:  '\mathop{\mathrm{ran}}'
+mos:  '\mathop{\mathrm{mos}}'
+im:   '\mathrm{im}'
+truth: [2, '\left\| #2 \right\|_{\,#1}', '']
+widecheck: [1, '\check{#1}']
+congto: '\stackrel{\sim}{\to}'
+quot: [2, '#1/#2']
+compat: '\mathrel{\|}'
+Iff: '\mathrel{\mathrm{iff}}'
+braket: [1, '\langle #1 \rangle']
+defeq: '\mathrel{:=}'
+coloneq: '\mathrel{:=}'
+height: '\mathop{\mathrm{height}}'
+concat: '\mathbin{{}^\frown}'
+cf: '\mathrm{cf}'
+otp: '\mathop{\mathrm{otp}}'
+ow: '\text{otherwise}'
+rank: '\mathop{\mathrm{rank}}\nolimits'
+mathreg: [1, '\mathrm{#1}']
+restr: '\upharpoonright'
+power: [2, '{}^{#1} {#2}']
+boldface: [1, '\mathbf{#1}']
+quoted: [1, '\text{“}#1\text{”}']
+mathds: [1, '\mathbb{#1}']
+lh: '\mathop{\mathrm{lh}}'
+proj: '\mathbf{\exists}'
+BST: '\mathrm{BST}'
+HF: '\mathrm{HF}'
+finseq: [1, '\power{<\omega}{#1}']
+NS: '\mathrm{NS}'
+dots: '\ldots'
+iff:  '\mathrel{\Longleftrightarrow}'
+implies: '\mathrel{\Longrightarrow}'
+xrightarrow: [2, '\mathrel{\mathop{\stackrel{#1}{\longrightarrow}}\limits_{#2}}', '']
+operatorname: [1, '\mathop{\mathrm{#1}}']
