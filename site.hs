@@ -407,7 +407,7 @@ deploy _config = handle h $ shelly $ do
   let (gign, ign) = unzip $ map parseIgnorance ign0
   echo $ "ignoring: " <> T.intercalate "," ign
   writefile ".git/info/exclude" $ T.unlines gign
-  run_ "rsync" $ "--checksum" : "-av" : map ("--exclude=" <>) ign
+  run_ "rsync" $ "--delete-excluded" : "--checksum" : "-av" : map ("--exclude=" <>) ign
               ++ ["_site/", "sakura-vps:~/mighttpd/public_html/"]
   cmd "git" "add" "img" "math" "writing" "prog" "config"
   cmd "git" "commit" "-amupdated"
