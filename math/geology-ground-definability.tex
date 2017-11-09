@@ -1,5 +1,5 @@
 ---
-title: 集合論の地質学
+title: 集合論の地質学1：概観と基礎モデルの定義可能性
 author: 石井大海
 description: 集合論の宇宙$V$は何らかの内部モデルの強制拡大になっているか？そもそもそういった基礎モデルは幾つあるのか？——こうした問題を考えるのが**集合論の地質学**（*Set-theoretic geology*）です．本稿では，その入門的な部分の解説を行います．
 latexmk: -lualatex
@@ -27,10 +27,8 @@ tag: Boole値モデル,無矛盾性証明,強制法,公理的集合論,集合論
 \newcommand{\gM}{g\mathbb{M}}
 \theoremstyle{nonumberplain}
 \theoremsymbol{}
-\newframedtheorem{DefinabilityTheorem}{基礎モデルの一様定義可能性}
-\newframedtheorem{DirectedGroundsTheorem}{下方有向性原理}
 
-\title{集合論の地質学}
+\title{集合論の地質学1：概観と基礎モデルの定義可能性}
 \author{石井大海}
 \usepackage{amssymb}	% required for `\mathbb' (yatex added)
 \usepackage{amsmath}	% required for `\align*' (yatex added)
@@ -72,7 +70,7 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
  \]
 \end{theorem}
 この結果は単に一つの強制拡大について述べているだけだが，後にFuchs--Hamkins--Reitzらによって全ての基礎モデルが一様に定義出来ることが明らかにされた：
-\begin{DefinabilityTheorem}[Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}]
+\begin{theorem}[基礎モデルの一様定義可能性, Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}]
  $V$を$\ZFC$のモデルとする．
  次を満たす一階論理式$\varphi(x, v)$が存在する：
  \begin{enumerate}
@@ -82,7 +80,7 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
   \item $W_r$の定義は下方絶対的：$W_r \subseteq U \subseteq V$なる推移的モデル$U \models \ZFC$に対し，$W_r^U = W_r^V$.
   \item $W_r$の定義は上方絶対的：$r \in V \subseteq V[G]$に対し，$s \in V$で$W_r = W_s^V = W_s^{V[G]}$となる物が存在．
  \end{enumerate}
-\end{DefinabilityTheorem}
+\end{theorem}
 これによって，「$V$はいくつ基礎モデルを持つか？」といったような問題が考えられるようになる．
 分析上自然に持ち上がる概念を次に定義する：
 \begin{definition}
@@ -150,9 +148,9 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
 \end{lemma}
 知られている内部モデルは$\DDG$を満たすらしい事はFHRで指摘されていたが，流石に$\ZFC$では証明出来ないだろうと考えられ，反例のモデルの研究がされていた．
 しかし，薄葉\cite{Usuba:2017fp}は強い$\DDG$は$\ZFC$の定理であることを示した：
-\begin{DirectedGroundsTheorem}[Usuba 2016 \cite{Usuba:2017fp}]
+\begin{theorem}[下方有向性原理, Usuba 2016 \cite{Usuba:2017fp}]
  $\ZFC \vdash \sDDG$.
-\end{DirectedGroundsTheorem}
+\end{theorem}
 これが集合論の地質学における二つめの基本定理である．
 この事から，上に掲げた問題は次のようにして解決されることになる：
 \begin{theorem}[Usuba 2016 \cite{Usuba:2017fp}, Corollary 5.5]
@@ -232,7 +230,7 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
 
 \section{基礎モデルの定義可能性}
 本節では前掲の定義可能性定理を示す：
-\begin{DefinabilityTheorem}
+\begin{theorem}[基礎モデルの一様定義可能性]
  $V$を$\ZFC$のモデルとする．
  次を満たす一階論理式$\varphi(x, v)$が存在する：
  \begin{enumerate}
@@ -242,7 +240,7 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
   \item\label{item:Wr-dwnwd-abs} $W_r$の定義は下方絶対的：$W_r \subseteq U \subseteq V$なる推移的モデル$U \models \ZFC$に対し，$W_r^U = W_r^V$.
   \item\label{item:Wr-upwd-abs} $W_r$の定義は上方絶対的：$r \in V \subseteq V[G]$に対し，$s \in V$で$W_r = W_s^V = W_s^{V[G]}$となる物が存在．
  \end{enumerate}
-\end{DefinabilityTheorem}
+\end{theorem}
 これは次のような戦略で示される：
 \begin{enumerate}
  \item $V \subseteq V[G]$が強制拡大の時，$V$は$V[G]$に対して「良い性質」を持つ内部モデルとなる．
