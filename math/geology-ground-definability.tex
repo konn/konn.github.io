@@ -74,8 +74,8 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
  $V$を$\ZFC$のモデルとする．
  次を満たす一階論理式$\varphi(x, v)$が存在する：
  \begin{enumerate}
-  \item 任意の$r \in V$の対し，$W_r \defeq \Set{x \in V | \varphi(x, r)}$は$V$の基礎モデルで$r \in W_r$．
-  \item 任意の基礎モデル$W \subseteq V$に対し，$r \in W$で$W = W_r$となる物が存在．
+  \item 任意の$r \in V$の対し，$W_r \defeq \Set{x \in V | \varphi(x, r)}$は$\ZFC$を満たす$V$の基礎モデルで$r \in W_r$．
+  \item 任意の$\ZFC$を満たす基礎モデル$W \subseteq V$に対し，$r \in W$で$W = W_r$となる物が存在．
   \item ``$V$は$\mathbb{P} \in W_r$なる$(\mathbb{P}, W_r)$-生成フィルター$G$による強制拡大$W_r[G]$である''は$(r, \mathbb{P}, G)$をパラメータとして定義可能．
   \item $W_r$の定義は下方絶対的：$W_r \subseteq U \subseteq V$なる推移的モデル$U \models \ZFC$に対し，$W_r^U = W_r^V$.
   \item $W_r$の定義は上方絶対的：$r \in V \subseteq V[G]$に対し，$s \in V$で$W_r = W_s^V = W_s^{V[G]}$となる物が存在．
@@ -234,8 +234,8 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
  $V$を$\ZFC$のモデルとする．
  次を満たす一階論理式$\varphi(x, v)$が存在する：
  \begin{enumerate}
-  \item\label{item:Wr-defines-ground} 任意の$r \in V$の対し，$W_r \defeq \Set{x \in V | \varphi(x, r)}$は$V$の基礎モデルで$r \in W_r$．
-  \item\label{item:W-enum-grounds} 任意の基礎モデル$W \subseteq V$に対し，$r \in W$で$W = W_r$となる物が存在．
+  \item\label{item:Wr-defines-ground} 任意の$r \in V$の対し，$W_r \defeq \Set{x \in V | \varphi(x, r)}$は$\ZFC$を満たす$V$の基礎モデルで$r \in W_r$．
+  \item\label{item:W-enum-grounds} 任意の$\ZFC$を満たす基礎モデル$W \subseteq V$に対し，$r \in W$で$W = W_r$となる物が存在．
   \item\label{item:V-is-W[G]-defble} ``$V$は$\mathbb{P} \in W_r$なる$(\mathbb{P}, W_r)$-生成フィルター$G$による強制拡大$W_r[G]$である''は$(r, \mathbb{P}, G)$をパラメータとして定義可能．
   \item\label{item:Wr-dwnwd-abs} $W_r$の定義は下方絶対的：$W_r \subseteq U \subseteq V$なる推移的モデル$U \models \ZFC$に対し，$W_r^U = W_r^V$.
   \item\label{item:Wr-upwd-abs} $W_r$の定義は上方絶対的：$r \in V \subseteq V[G]$に対し，$s \in V$で$W_r = W_s^V = W_s^{V[G]}$となる物が存在．
@@ -367,7 +367,7 @@ $\ZFC$ではなくその部分体系$\ZFC_\delta$を考えるのは，次の一�
  \begin{align*}
   x \in W
   \iff \exists \theta \gg \delta\: &\exists M \subseteq V_\theta\\
-  &
+  \quad&
   \begin{cases}
    \beth_\theta = \theta, \cf(\theta) > \delta,
    (2^{<\delta})^M = r, (\delta^+)^M = (\delta^+)^V,\\
