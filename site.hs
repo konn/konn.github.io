@@ -102,7 +102,7 @@ main = hakyllWith config $ do
 
   match "*.css" $ route idRoute >> compile' compressCssCompiler
 
-  match ("js/**" .||. "robots.txt" .||. "**/*imgs/**" .||. "img/**" .||. "**/*img/**" .||. "favicon.ico" .||. "files/**" .||. "katex/**") $
+  match ("js/**" .||. "robots.txt" .||. "**/*imgs/**" .||. "img/**" .||. "**/*img/**" .||. "favicon.ico" .||. "files/**" .||. "katex/**" .||. "keybase.txt") $
     route idRoute >> compile' copyFileCompiler
 
   match "css/**" $
@@ -148,7 +148,7 @@ main = hakyllWith config $ do
       myPandocCompiler >>= applyAsTemplate (constField "child-count" (show count) <> constField "children" chl <> defaultContext)
                        >>= applyDefaultTemplate mempty >>= saveSnapshot "content"  >>= relativizeUrls
 
-  match "t/**" $ route idRoute >> compile' copyFileCompiler
+  match ("t/**" .||. ".well-known/**") $ route idRoute >> compile' copyFileCompiler
 
   match "prog/automaton/**" $ route idRoute >> compile' copyFileCompiler
 
