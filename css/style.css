@@ -19,8 +19,8 @@ object svg {
 section[id]:before, a[id^="fnref"]:before, .footnotes li[id^="fn"]:before, h1[id]:before, h2[id]:before, h3[id]:before, h4[id]:before, h5[id]:before, h6[id]:before, a[id]:before {
     display: block;
     position: relative;
-    margin-top: -70px;
-    height: 70px;
+    margin-top: -75px;
+    height: 75px;
     visibility: hidden;
 }
 
