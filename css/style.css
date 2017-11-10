@@ -16,9 +16,12 @@ object svg {
     fill: white;
 }
 
-section, a[id^="fnref"], .footnotes li[id^="fn"], h1[id], h2[id], h3[id], h4[id], h5[id], h6[id], a[id] {
-    padding-top: 70px;
-    margin-top:  -70px;
+section[id]:before, a[id^="fnref"]:before, .footnotes li[id^="fn"]:before, h1[id]:before, h2[id]:before, h3[id]:before, h4[id]:before, h5[id]:before, h6[id]:before, a[id]:before {
+    display: block;
+    position: relative;
+    margin-top: -70px;
+    height: 70px;
+    visibility: hidden;
 }
 
 body {
