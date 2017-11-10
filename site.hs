@@ -122,7 +122,7 @@ main = hakyllWith config $ do
       (count, posts) <- postList (Just 5) subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "child-count" (show count) <> constField "updates" posts <> defaultContext)
-              >>= applyDefaultTemplate mempty {- tags -} >>= relativizeUrls
+              >>= applyDefaultTemplate mempty {- tags -}
 
   match "archive.md" $ do
     route $ setExtension "html"
@@ -130,7 +130,7 @@ main = hakyllWith config $ do
       (count, posts) <- postList Nothing subContentsWithoutIndex
       myPandocCompiler
               >>= applyAsTemplate (constField "child-count" (show count) <> constField "children" posts <> defaultContext)
-              >>= applyDefaultTemplate mempty {- tags -} >>= relativizeUrls
+              >>= applyDefaultTemplate mempty {- tags -}
 
   create [".ignore"] $ do
     route idRoute
@@ -146,7 +146,7 @@ main = hakyllWith config $ do
       chs <- listChildren True
       (count, chl) <- postList Nothing (fromList $ map itemIdentifier chs)
       myPandocCompiler >>= applyAsTemplate (constField "child-count" (show count) <> constField "children" chl <> defaultContext)
-                       >>= applyDefaultTemplate mempty >>= saveSnapshot "content"  >>= relativizeUrls
+                       >>= applyDefaultTemplate mempty >>= saveSnapshot "content"
 
   match ("t/**" .||. ".well-known/**") $ route idRoute >> compile' copyFileCompiler
 
@@ -173,7 +173,6 @@ main = hakyllWith config $ do
                   <|> (load "default.csl" :: Compiler (Item CSL))
       macs <- loadBody "config/macros.yml"
       let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib
-      isKat <- useKaTeX =<< getResourceBody
       ipandoc <- mapM (unsafeCompiler . texToMarkdown macs fp) =<< getResourceBody
       let ip' = fmap (myProcCites style bibs) ipandoc
       conv'd <- mapM (return . addPDFLink ("/" </> replaceExtension fp "pdf") .
@@ -183,9 +182,7 @@ main = hakyllWith config $ do
                      def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
                         , writerExtensions = S.delete Ext_raw_tex $ writerExtensions def
                         } $ procCrossRef <$> conv'd
-          procKaTeX | isKat = unsafeCompiler . mapM prerenderKaTeX
-                    | otherwise = return
-      saveSnapshot "content" =<< procKaTeX =<< relativizeUrls =<< applyDefaultTemplate (pandocContext $ itemBody conv'd) item
+      saveSnapshot "content" =<< applyDefaultTemplate (pandocContext $ itemBody conv'd) item
 
   match "math/**.tex" $ version "pdf" $ do
     route $ setExtension "pdf"
@@ -197,7 +194,7 @@ main = hakyllWith config $ do
   match (("articles/**.md" .||. "articles/**.html" .||. "profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ do
     route $ setExtension "html"
     compile' $
-      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate mempty >>= relativizeUrls
+      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate mempty
 
   create ["feed.xml"] $ do
     route idRoute
@@ -376,8 +373,13 @@ applyDefaultTemplate addCtx item = do
     broken <- filterM isLinkBroken links
     forM_ broken $ \l -> hPutStrLn stderr $ "*** Link Broken: " ++ l
 
+  isKat <- useKaTeX =<< getResourceBody
+  let procKaTeX | isKat = unsafeCompiler . mapM prerenderKaTeX
+                | otherwise = return
   applyAsTemplate cxt item'
     >>= loadAndApplyTemplate "templates/default.html" cxt
+    >>= relativizeUrls
+    >>= procKaTeX
 
 isLinkBroken :: String -> IO Bool
 isLinkBroken _url = return False
