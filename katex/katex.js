@@ -3009,6 +3009,51 @@ var Parser = function () {
         }
 
         /**
+         * Parses a group, essentially returning the string formed by the
+         * brace-enclosed tokens plus some position information, possibly
+         * with nested braces.
+         *
+         * @param {string} modeName  Used to describe the mode in error messages
+         * @param {boolean=} optional  Whether the group is optional or required
+         * @return {?Token}
+         */
+
+    }, {
+        key: "parseStringGroupWithBalancedBraces",
+        value: function parseStringGroupWithBalancedBraces(modeName, optional) {
+            if (optional && this.nextToken.text !== "[") {
+                return null;
+            }
+            var outerMode = this.mode;
+            this.mode = "text";
+            this.expect(optional ? "[" : "{");
+            var str = "";
+            var nest = 0;
+            var firstToken = this.nextToken;
+            var lastToken = firstToken;
+            while (nest > 0 || this.nextToken.text !== (optional ? "]" : "}")) {
+                if (this.nextToken.text === "EOF") {
+                    throw new _ParseError2.default("Unexpected end of input in " + modeName, firstToken.range(this.nextToken, str));
+                }
+                lastToken = this.nextToken;
+                str += lastToken.text;
+                if (lastToken.text === "{") {
+                    nest += 1;
+                } else if (lastToken.text === "}") {
+                    if (nest <= 0) {
+                        throw new _ParseError2.default("Unbalanced brace of input in " + modeName, firstToken.range(this.nextToken, str));
+                    } else {
+                        nest -= 1;
+                    }
+                }
+                this.consume();
+            }
+            this.mode = outerMode;
+            this.expect(optional ? "]" : "}");
+            return firstToken.range(lastToken, str);
+        }
+
+        /**
          * Parses a regex-delimited group: the largest sequence of tokens
          * whose concatenated strings match `regex`. Returns the string
          * formed by the tokens plus some position information.
@@ -3063,7 +3108,7 @@ var Parser = function () {
     }, {
         key: "parseUrlGroup",
         value: function parseUrlGroup(optional) {
-            var res = this.parseStringGroup("url", optional);
+            var res = this.parseStringGroupWithBalancedBraces("url", optional);
             if (!res) {
                 return null;
             }

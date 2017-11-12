@@ -114,7 +114,7 @@ texToMarkdown macs fp src_ = do
       cp ".latexmkrc" tmp
       cd tmp
       writefile "image.tex" $ render $ buildTikzer tlibs tikzs
-      cmd "latexmk" "-lualatex" "image.tex"
+      cmd "latexmk" "-pdflua" "image.tex"
       cmd "tex2img" "--latex=luajittex --fmt=luajitlatex.fmt" "--with-text" "image.tex" "image.svg"
       mv "image.svg" "image-0.svg"
       -- Generating PNGs

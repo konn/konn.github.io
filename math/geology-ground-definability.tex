@@ -4,6 +4,7 @@ author: 石井大海
 description: 集合論の宇宙$V$は何らかの内部モデルの強制拡大になっているか？そもそもそういった基礎モデルは幾つあるのか？——こうした問題を考えるのが**集合論の地質学**（*Set-theoretic geology*）です．本稿では，その入門的な部分の解説を行います．
 latexmk: -lualatex
 tag: Boole値モデル,無矛盾性証明,強制法,公理的集合論,集合論,生成多元宇宙,集合論の地質学
+date: 2017/11/09 20:05:31 JST
 ---
 \documentclass[a4j,leqno]{ltjsarticle}
 \usepackage[hiragino-pron]{luatexja-preset}
@@ -153,7 +154,7 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
 \end{theorem}
 これが集合論の地質学における二つめの基本定理である．
 この事から，上に掲げた問題は次のようにして解決されることになる：
-\begin{theorem}[Usuba 2016 \cite{Usuba:2017fp}, Corollary 5.5]
+\begin{theorem}[Usuba 2016 \cite{Usuba:2017fp}, Corollary 5.5]\label{thm:conseq-of-ddg}
  \begin{enumerate}
   \item\label{item:M-zfc-gM=M} $\M \models \ZFC$, $\gM = \M$.
   \item\label{item:M-invariant} $\M$は強制法で不変のクラス．
@@ -367,8 +368,7 @@ $\ZFC$ではなくその部分体系$\ZFC_\delta$を考えるのは，次の一�
  \begin{align*}
   x \in W
   \iff \exists \theta \gg \delta\: &\exists M \subseteq V_\theta\\
-  \quad&
-  \begin{cases}
+   &\begin{cases}
    \beth_\theta = \theta, \cf(\theta) > \delta,
    (2^{<\delta})^M = r, (\delta^+)^M = (\delta^+)^V,\\
    x \in M \models \ZFC_\delta: \text{transitive},\\
