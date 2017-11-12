@@ -89,7 +89,7 @@ module.exports = {
     ParseError: _ParseError2.default
 };
 
-},{"./src/ParseError":84,"./src/Settings":87,"./src/buildTree":94,"./src/parseTree":110,"./src/utils":116}],2:[function(require,module,exports){
+},{"./src/ParseError":84,"./src/Settings":87,"./src/buildTree":94,"./src/parseTree":116,"./src/utils":122}],2:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
 },{"core-js/library/fn/array/from":12}],3:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
@@ -1672,7 +1672,7 @@ var MacroExpander = function () {
 
 exports.default = MacroExpander;
 
-},{"./Lexer":81,"./ParseError":84,"./Token":90,"./macros":108,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/toConsumableArray":11,"object-assign":80}],83:[function(require,module,exports){
+},{"./Lexer":81,"./ParseError":84,"./Token":90,"./macros":114,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/toConsumableArray":11,"object-assign":80}],83:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3070,8 +3070,8 @@ var Parser = function () {
             var raw = res.text;
             // hyperref package allows backslashes alone in href, but doesn't generate
             // valid links in such cases; we interpret this as "undefiend" behaviour,
-            // and keep them as-is. In some environment, they're replaced by slashes
-            // in url by browser.
+            // and keep them as-is. Some browser will replace backslashes with
+            // forward slashes.
             var url = raw.replace(/\\([#$%&~_^{}])/g, '$1');
             return newArgument(new _ParseNode2.default("url", url, this.mode), res);
         }
@@ -3241,7 +3241,7 @@ Parser.oldFontFuncs = {
 };
 exports.default = Parser;
 
-},{"./MacroExpander":82,"./ParseError":84,"./ParseNode":85,"./environments":99,"./functions":103,"./symbols":113,"./unicodeRegexes":114,"./units":115,"./utils":116,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],87:[function(require,module,exports){
+},{"./MacroExpander":82,"./ParseError":84,"./ParseNode":85,"./environments":99,"./functions":103,"./symbols":119,"./unicodeRegexes":120,"./units":121,"./utils":122,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3287,7 +3287,7 @@ var Settings = function Settings(options) {
 
 exports.default = Settings;
 
-},{"./utils":116,"babel-runtime/helpers/classCallCheck":8}],88:[function(require,module,exports){
+},{"./utils":122,"babel-runtime/helpers/classCallCheck":8}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4111,13 +4111,13 @@ exports.default = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":98,"./fontMetrics":101,"./symbols":113,"./utils":116}],92:[function(require,module,exports){
+},{"./domTree":98,"./fontMetrics":101,"./symbols":119,"./utils":122}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.buildGroup = exports.groupTypes = exports.makeNullDelimiter = exports.getTypeOfDomTree = exports.buildExpression = exports.spliceSpaces = undefined;
+exports.buildGroup = exports.makeLineSpan = exports.groupTypes = exports.makeNullDelimiter = exports.getTypeOfDomTree = exports.buildExpression = exports.spliceSpaces = undefined;
 
 var _stringify = require("babel-runtime/core-js/json/stringify");
 
@@ -4557,126 +4557,6 @@ groupTypes.supsub = function (group, options) {
     return makeSpan([mclass], [base, makeSpan(["msupsub"], [supsub])], options);
 };
 
-groupTypes.genfrac = function (group, options) {
-    // Fractions are handled in the TeXbook on pages 444-445, rules 15(a-e).
-    // Figure out what style this fraction should be in based on the
-    // function used
-    var style = options.style;
-    if (group.value.size === "display") {
-        style = _Style2.default.DISPLAY;
-    } else if (group.value.size === "text") {
-        style = _Style2.default.TEXT;
-    }
-
-    var nstyle = style.fracNum();
-    var dstyle = style.fracDen();
-    var newOptions = void 0;
-
-    newOptions = options.havingStyle(nstyle);
-    var numerm = buildGroup(group.value.numer, newOptions, options);
-
-    newOptions = options.havingStyle(dstyle);
-    var denomm = buildGroup(group.value.denom, newOptions, options);
-
-    var rule = void 0;
-    var ruleWidth = void 0;
-    var ruleSpacing = void 0;
-    if (group.value.hasBarLine) {
-        rule = makeLineSpan("frac-line", options);
-        ruleWidth = rule.height;
-        ruleSpacing = rule.height;
-    } else {
-        rule = null;
-        ruleWidth = 0;
-        ruleSpacing = options.fontMetrics().defaultRuleThickness;
-    }
-
-    // Rule 15b
-    var numShift = void 0;
-    var clearance = void 0;
-    var denomShift = void 0;
-    if (style.size === _Style2.default.DISPLAY.size) {
-        numShift = options.fontMetrics().num1;
-        if (ruleWidth > 0) {
-            clearance = 3 * ruleSpacing;
-        } else {
-            clearance = 7 * ruleSpacing;
-        }
-        denomShift = options.fontMetrics().denom1;
-    } else {
-        if (ruleWidth > 0) {
-            numShift = options.fontMetrics().num2;
-            clearance = ruleSpacing;
-        } else {
-            numShift = options.fontMetrics().num3;
-            clearance = 3 * ruleSpacing;
-        }
-        denomShift = options.fontMetrics().denom2;
-    }
-
-    var frac = void 0;
-    if (ruleWidth === 0) {
-        // Rule 15c
-        var candidateClearance = numShift - numerm.depth - (denomm.height - denomShift);
-        if (candidateClearance < clearance) {
-            numShift += 0.5 * (clearance - candidateClearance);
-            denomShift += 0.5 * (clearance - candidateClearance);
-        }
-
-        frac = _buildCommon2.default.makeVList({
-            positionType: "individualShift",
-            children: [{ type: "elem", elem: denomm, shift: denomShift }, { type: "elem", elem: numerm, shift: -numShift }]
-        }, options);
-    } else {
-        // Rule 15d
-        var axisHeight = options.fontMetrics().axisHeight;
-
-        if (numShift - numerm.depth - (axisHeight + 0.5 * ruleWidth) < clearance) {
-            numShift += clearance - (numShift - numerm.depth - (axisHeight + 0.5 * ruleWidth));
-        }
-
-        if (axisHeight - 0.5 * ruleWidth - (denomm.height - denomShift) < clearance) {
-            denomShift += clearance - (axisHeight - 0.5 * ruleWidth - (denomm.height - denomShift));
-        }
-
-        var midShift = -(axisHeight - 0.5 * ruleWidth);
-
-        frac = _buildCommon2.default.makeVList({
-            positionType: "individualShift",
-            children: [{ type: "elem", elem: denomm, shift: denomShift }, { type: "elem", elem: rule, shift: midShift }, { type: "elem", elem: numerm, shift: -numShift }]
-        }, options);
-    }
-
-    // Since we manually change the style sometimes (with \dfrac or \tfrac),
-    // account for the possible size change here.
-    newOptions = options.havingStyle(style);
-    frac.height *= newOptions.sizeMultiplier / options.sizeMultiplier;
-    frac.depth *= newOptions.sizeMultiplier / options.sizeMultiplier;
-
-    // Rule 15e
-    var delimSize = void 0;
-    if (style.size === _Style2.default.DISPLAY.size) {
-        delimSize = options.fontMetrics().delim1;
-    } else {
-        delimSize = options.fontMetrics().delim2;
-    }
-
-    var leftDelim = void 0;
-    var rightDelim = void 0;
-    if (group.value.leftDelim == null) {
-        leftDelim = makeNullDelimiter(options, ["mopen"]);
-    } else {
-        leftDelim = _delimiter2.default.customSizedDelim(group.value.leftDelim, delimSize, true, options.havingStyle(style), group.mode, ["mopen"]);
-    }
-    if (group.value.rightDelim == null) {
-        rightDelim = makeNullDelimiter(options, ["mclose"]);
-    } else {
-        rightDelim = _delimiter2.default.customSizedDelim(group.value.rightDelim, delimSize, true, options.havingStyle(style), group.mode, ["mclose"]);
-    }
-
-    return makeSpan(["mord"].concat(newOptions.sizingClasses(options)), [leftDelim, makeSpan(["mfrac"], [frac]), rightDelim], options);
-};
-
 groupTypes.spacing = function (group, options) {
     if (group.value === "\\ " || group.value === "\\space" || group.value === " " || group.value === "~") {
         // Spaces are generated by adding an actual space. Each of these
@@ -4694,272 +4574,7 @@ groupTypes.spacing = function (group, options) {
     }
 };
 
-groupTypes.lap = function (group, options) {
-    // mathllap, mathrlap, mathclap
-    var inner = void 0;
-    if (group.value.alignment === "clap") {
-        // ref: https://www.math.lsu.edu/~aperlis/publications/mathclap/
-        inner = makeSpan([], [buildGroup(group.value.body, options)]);
-        // wrap, since CSS will center a .clap > .inner > span
-        inner = makeSpan(["inner"], [inner], options);
-    } else {
-        inner = makeSpan(["inner"], [buildGroup(group.value.body, options)]);
-    }
-    var fix = makeSpan(["fix"], []);
-    return makeSpan(["mord", group.value.alignment], [inner, fix], options);
-};
-
-groupTypes.smash = function (group, options) {
-    var node = makeSpan(["mord"], [buildGroup(group.value.body, options)]);
-
-    if (!group.value.smashHeight && !group.value.smashDepth) {
-        return node;
-    }
-
-    if (group.value.smashHeight) {
-        node.height = 0;
-        // In order to influence makeVList, we have to reset the children.
-        if (node.children) {
-            for (var i = 0; i < node.children.length; i++) {
-                node.children[i].height = 0;
-            }
-        }
-    }
-
-    if (group.value.smashDepth) {
-        node.depth = 0;
-        if (node.children) {
-            for (var _i4 = 0; _i4 < node.children.length; _i4++) {
-                node.children[_i4].depth = 0;
-            }
-        }
-    }
-
-    // At this point, we've reset the TeX-like height and depth values.
-    // But the span still has an HTML line height.
-    // makeVList applies "display: table-cell", which prevents the browser
-    // from acting on that line height. So we'll call makeVList now.
-
-    return _buildCommon2.default.makeVList({
-        positionType: "firstBaseline",
-        children: [{ type: "elem", elem: node }]
-    }, options);
-};
-
-groupTypes.op = function (group, options) {
-    // Operators are handled in the TeXbook pg. 443-444, rule 13(a).
-    var supGroup = void 0;
-    var subGroup = void 0;
-    var hasLimits = false;
-    if (group.type === "supsub") {
-        // If we have limits, supsub will pass us its group to handle. Pull
-        // out the superscript and subscript and set the group to the op in
-        // its base.
-        supGroup = group.value.sup;
-        subGroup = group.value.sub;
-        group = group.value.base;
-        hasLimits = true;
-    }
-
-    var style = options.style;
-
-    // Most operators have a large successor symbol, but these don't.
-    var noSuccessor = ["\\smallint"];
-
-    var large = false;
-    if (style.size === _Style2.default.DISPLAY.size && group.value.symbol && !_utils2.default.contains(noSuccessor, group.value.body)) {
-
-        // Most symbol operators get larger in displaystyle (rule 13)
-        large = true;
-    }
-
-    var base = void 0;
-    if (group.value.symbol) {
-        // If this is a symbol, create the symbol.
-        var fontName = large ? "Size2-Regular" : "Size1-Regular";
-        base = _buildCommon2.default.makeSymbol(group.value.body, fontName, "math", options, ["mop", "op-symbol", large ? "large-op" : "small-op"]);
-    } else if (group.value.value) {
-        // If this is a list, compose that list.
-        var inner = buildExpression(group.value.value, options, true);
-        if (inner.length === 1 && inner[0] instanceof _domTree2.default.symbolNode) {
-            base = inner[0];
-            base.classes[0] = "mop"; // replace old mclass
-        } else {
-            base = makeSpan(["mop"], inner, options);
-        }
-    } else {
-        // Otherwise, this is a text operator. Build the text from the
-        // operator's name.
-        // TODO(emily): Add a space in the middle of some of these
-        // operators, like \limsup
-        var output = [];
-        for (var i = 1; i < group.value.body.length; i++) {
-            output.push(_buildCommon2.default.mathsym(group.value.body[i], group.mode));
-        }
-        base = makeSpan(["mop"], output, options);
-    }
-
-    // If content of op is a single symbol, shift it vertically.
-    var baseShift = 0;
-    var slant = 0;
-    if (base instanceof _domTree2.default.symbolNode) {
-        // Shift the symbol so its center lies on the axis (rule 13). It
-        // appears that our fonts have the centers of the symbols already
-        // almost on the axis, so these numbers are very small. Note we
-        // don't actually apply this here, but instead it is used either in
-        // the vlist creation or separately when there are no limits.
-        baseShift = (base.height - base.depth) / 2 - options.fontMetrics().axisHeight;
-
-        // The slant of the symbol is just its italic correction.
-        slant = base.italic;
-    }
-
-    if (hasLimits) {
-        // IE 8 clips \int if it is in a display: inline-block. We wrap it
-        // in a new span so it is an inline, and works.
-        base = makeSpan([], [base]);
-
-        var supm = void 0;
-        var supKern = void 0;
-        var subm = void 0;
-        var subKern = void 0;
-        var newOptions = void 0;
-        // We manually have to handle the superscripts and subscripts. This,
-        // aside from the kern calculations, is copied from supsub.
-        if (supGroup) {
-            newOptions = options.havingStyle(style.sup());
-            supm = buildGroup(supGroup, newOptions, options);
-
-            supKern = Math.max(options.fontMetrics().bigOpSpacing1, options.fontMetrics().bigOpSpacing3 - supm.depth);
-        }
-
-        if (subGroup) {
-            newOptions = options.havingStyle(style.sub());
-            subm = buildGroup(subGroup, newOptions, options);
-
-            subKern = Math.max(options.fontMetrics().bigOpSpacing2, options.fontMetrics().bigOpSpacing4 - subm.height);
-        }
-
-        // Build the final group as a vlist of the possible subscript, base,
-        // and possible superscript.
-        var finalGroup = void 0;
-        var top = void 0;
-        var bottom = void 0;
-        if (!supGroup) {
-            top = base.height - baseShift;
-
-            // Shift the limits by the slant of the symbol. Note
-            // that we are supposed to shift the limits by 1/2 of the slant,
-            // but since we are centering the limits adding a full slant of
-            // margin will shift by 1/2 that.
-            finalGroup = _buildCommon2.default.makeVList({
-                positionType: "top",
-                positionData: top,
-                children: [{ type: "kern", size: options.fontMetrics().bigOpSpacing5 }, { type: "elem", elem: subm, marginLeft: -slant + "em" }, { type: "kern", size: subKern }, { type: "elem", elem: base }]
-            }, options);
-        } else if (!subGroup) {
-            bottom = base.depth + baseShift;
-
-            finalGroup = _buildCommon2.default.makeVList({
-                positionType: "bottom",
-                positionData: bottom,
-                children: [{ type: "elem", elem: base }, { type: "kern", size: supKern }, { type: "elem", elem: supm, marginLeft: slant + "em" }, { type: "kern", size: options.fontMetrics().bigOpSpacing5 }]
-            }, options);
-        } else if (!supGroup && !subGroup) {
-            // This case probably shouldn't occur (this would mean the
-            // supsub was sending us a group with no superscript or
-            // subscript) but be safe.
-            return base;
-        } else {
-            bottom = options.fontMetrics().bigOpSpacing5 + subm.height + subm.depth + subKern + base.depth + baseShift;
-
-            finalGroup = _buildCommon2.default.makeVList({
-                positionType: "bottom",
-                positionData: bottom,
-                children: [{ type: "kern", size: options.fontMetrics().bigOpSpacing5 }, { type: "elem", elem: subm, marginLeft: -slant + "em" }, { type: "kern", size: subKern }, { type: "elem", elem: base }, { type: "kern", size: supKern }, { type: "elem", elem: supm, marginLeft: slant + "em" }, { type: "kern", size: options.fontMetrics().bigOpSpacing5 }]
-            }, options);
-        }
-
-        return makeSpan(["mop", "op-limits"], [finalGroup], options);
-    } else {
-        if (baseShift) {
-            base.style.position = "relative";
-            base.style.top = baseShift + "em";
-        }
-
-        return base;
-    }
-};
-
-groupTypes.mod = function (group, options) {
-    var inner = [];
-
-    if (group.value.modType === "bmod") {
-        // “\nonscript\mskip-\medmuskip\mkern5mu”
-        if (!options.style.isTight()) {
-            inner.push(makeSpan(["mspace", "negativemediumspace"], [], options));
-        }
-        inner.push(makeSpan(["mspace", "thickspace"], [], options));
-    } else if (options.style.size === _Style2.default.DISPLAY.size) {
-        inner.push(makeSpan(["mspace", "quad"], [], options));
-    } else if (group.value.modType === "mod") {
-        inner.push(makeSpan(["mspace", "twelvemuspace"], [], options));
-    } else {
-        inner.push(makeSpan(["mspace", "eightmuspace"], [], options));
-    }
-
-    if (group.value.modType === "pod" || group.value.modType === "pmod") {
-        inner.push(_buildCommon2.default.mathsym("(", group.mode));
-    }
-
-    if (group.value.modType !== "pod") {
-        var modInner = [_buildCommon2.default.mathsym("m", group.mode), _buildCommon2.default.mathsym("o", group.mode), _buildCommon2.default.mathsym("d", group.mode)];
-        if (group.value.modType === "bmod") {
-            inner.push(makeSpan(["mbin"], modInner, options));
-            // “\mkern5mu\nonscript\mskip-\medmuskip”
-            inner.push(makeSpan(["mspace", "thickspace"], [], options));
-            if (!options.style.isTight()) {
-                inner.push(makeSpan(["mspace", "negativemediumspace"], [], options));
-            }
-        } else {
-            Array.prototype.push.apply(inner, modInner);
-            inner.push(makeSpan(["mspace", "sixmuspace"], [], options));
-        }
-    }
-
-    if (group.value.value) {
-        Array.prototype.push.apply(inner, buildExpression(group.value.value, options, false));
-    }
-
-    if (group.value.modType === "pod" || group.value.modType === "pmod") {
-        inner.push(_buildCommon2.default.mathsym(")", group.mode));
-    }
-
-    return _buildCommon2.default.makeFragment(inner);
-};
-
-groupTypes.katex = function (group, options) {
-    // The KaTeX logo. The offsets for the K and a were chosen to look
-    // good, but the offsets for the T, E, and X were taken from the
-    // definition of \TeX in TeX (see TeXbook pg. 356)
-    var k = makeSpan(["k"], [_buildCommon2.default.mathsym("K", group.mode)], options);
-    var a = makeSpan(["a"], [_buildCommon2.default.mathsym("A", group.mode)], options);
-
-    a.height = (a.height + 0.2) * 0.75;
-    a.depth = (a.height - 0.2) * 0.75;
-
-    var t = makeSpan(["t"], [_buildCommon2.default.mathsym("T", group.mode)], options);
-    var e = makeSpan(["e"], [_buildCommon2.default.mathsym("E", group.mode)], options);
-
-    e.height = e.height - 0.2155;
-    e.depth = e.depth + 0.2155;
-
-    var x = makeSpan(["x"], [_buildCommon2.default.mathsym("X", group.mode)], options);
-
-    return makeSpan(["mord", "katex-logo"], [k, a, t, e, x], options);
-};
-
-var makeLineSpan = function makeLineSpan(className, options, thickness) {
+var makeLineSpan = exports.makeLineSpan = function makeLineSpan(className, options, thickness) {
     var line = makeSpan([className], [], options);
     line.height = thickness || options.fontMetrics().defaultRuleThickness;
     line.style.borderBottomWidth = line.height + "em";
@@ -5628,7 +5243,7 @@ function buildHTML(tree, options) {
     return htmlNode;
 }
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./delimiter":97,"./domTree":98,"./stretchy":111,"./units":115,"./utils":116,"babel-runtime/core-js/json/stringify":5}],93:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./delimiter":97,"./domTree":98,"./stretchy":117,"./units":121,"./utils":122,"babel-runtime/core-js/json/stringify":5}],93:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5900,42 +5515,6 @@ groupTypes.supsub = function (group, options) {
     return node;
 };
 
-groupTypes.genfrac = function (group, options) {
-    var node = new _mathMLTree2.default.MathNode("mfrac", [buildGroup(group.value.numer, options), buildGroup(group.value.denom, options)]);
-
-    if (!group.value.hasBarLine) {
-        node.setAttribute("linethickness", "0px");
-    }
-
-    if (group.value.leftDelim != null || group.value.rightDelim != null) {
-        var withDelims = [];
-
-        if (group.value.leftDelim != null) {
-            var leftOp = new _mathMLTree2.default.MathNode("mo", [new _mathMLTree2.default.TextNode(group.value.leftDelim)]);
-
-            leftOp.setAttribute("fence", "true");
-
-            withDelims.push(leftOp);
-        }
-
-        withDelims.push(node);
-
-        if (group.value.rightDelim != null) {
-            var rightOp = new _mathMLTree2.default.MathNode("mo", [new _mathMLTree2.default.TextNode(group.value.rightDelim)]);
-
-            rightOp.setAttribute("fence", "true");
-
-            withDelims.push(rightOp);
-        }
-
-        var outerNode = new _mathMLTree2.default.MathNode("mrow", withDelims);
-
-        return outerNode;
-    }
-
-    return node;
-};
-
 groupTypes.sqrt = function (group, options) {
     var node = void 0;
     if (group.value.index) {
@@ -5972,59 +5551,6 @@ groupTypes.spacing = function (group) {
 
         node.setAttribute("width", _buildCommon2.default.spacingFunctions[group.value].size);
     }
-
-    return node;
-};
-
-groupTypes.op = function (group, options) {
-    var node = void 0;
-
-    // TODO(emily): handle big operators using the `largeop` attribute
-
-    if (group.value.symbol) {
-        // This is a symbol. Just add the symbol.
-        node = new _mathMLTree2.default.MathNode("mo", [makeText(group.value.body, group.mode)]);
-    } else if (group.value.value) {
-        // This is an operator with children. Add them.
-        node = new _mathMLTree2.default.MathNode("mo", buildExpression(group.value.value, options));
-    } else {
-        // This is a text operator. Add all of the characters from the
-        // operator's name.
-        // TODO(emily): Add a space in the middle of some of these
-        // operators, like \limsup.
-        node = new _mathMLTree2.default.MathNode("mi", [new _mathMLTree2.default.TextNode(group.value.body.slice(1))]);
-
-        // TODO(ron): Append an <mo>&ApplyFunction;</mo> as in \operatorname
-        // ref: https://www.w3.org/TR/REC-MathML/chap3_2.html#sec3.2.2
-    }
-
-    return node;
-};
-
-groupTypes.mod = function (group, options) {
-    var inner = [];
-
-    if (group.value.modType === "pod" || group.value.modType === "pmod") {
-        inner.push(new _mathMLTree2.default.MathNode("mo", [makeText("(", group.mode)]));
-    }
-    if (group.value.modType !== "pod") {
-        inner.push(new _mathMLTree2.default.MathNode("mo", [makeText("mod", group.mode)]));
-    }
-    if (group.value.value) {
-        var space = new _mathMLTree2.default.MathNode("mspace");
-        space.setAttribute("width", "0.333333em");
-        inner.push(space);
-        inner = inner.concat(buildExpression(group.value.value, options));
-    }
-    if (group.value.modType === "pod" || group.value.modType === "pmod") {
-        inner.push(new _mathMLTree2.default.MathNode("mo", [makeText(")", group.mode)]));
-    }
-
-    return new _mathMLTree2.default.MathNode("mo", inner);
-};
-
-groupTypes.katex = function (group) {
-    var node = new _mathMLTree2.default.MathNode("mtext", [new _mathMLTree2.default.TextNode("KaTeX")]);
 
     return node;
 };
@@ -6189,33 +5715,6 @@ groupTypes.kern = function (group) {
     return node;
 };
 
-groupTypes.lap = function (group, options) {
-    // mathllap, mathrlap, mathclap
-    var node = new _mathMLTree2.default.MathNode("mpadded", [buildGroup(group.value.body, options)]);
-
-    if (group.value.alignment !== "rlap") {
-        var offset = group.value.alignment === "llap" ? "-1" : "-0.5";
-        node.setAttribute("lspace", offset + "width");
-    }
-    node.setAttribute("width", "0px");
-
-    return node;
-};
-
-groupTypes.smash = function (group, options) {
-    var node = new _mathMLTree2.default.MathNode("mpadded", [buildGroup(group.value.body, options)]);
-
-    if (group.value.smashHeight) {
-        node.setAttribute("height", "0px");
-    }
-
-    if (group.value.smashDepth) {
-        node.setAttribute("depth", "0px");
-    }
-
-    return node;
-};
-
 groupTypes.mclass = function (group, options) {
     var inner = buildExpression(group.value.value, options);
     return new _mathMLTree2.default.MathNode("mstyle", inner);
@@ -6298,7 +5797,7 @@ function buildMathML(tree, texExpression, options) {
     return _buildCommon2.default.makeSpan(["katex-mathml"], [math]);
 }
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./fontMetrics":101,"./mathMLTree":109,"./stretchy":111,"./symbols":113,"./utils":116}],94:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./fontMetrics":101,"./mathMLTree":115,"./stretchy":117,"./symbols":119,"./utils":122}],94:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7107,7 +6606,7 @@ exports.default = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./domTree":98,"./fontMetrics":101,"./symbols":113,"./utils":116}],98:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./domTree":98,"./fontMetrics":101,"./symbols":119,"./utils":122}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7397,9 +6896,7 @@ var anchor = function () {
             markup += "href=\"" + (markup += _utils2.default.escape(this.href)) + "\"";
             // Add the class
             if (this.classes.length) {
-                markup += " class=\"";
-                markup += _utils2.default.escape(createClass(this.classes));
-                markup += "\"";
+                markup += " class=\"" + _utils2.default.escape(createClass(this.classes)) + "\"";
             }
 
             var styles = "";
@@ -7418,9 +6915,7 @@ var anchor = function () {
             // Add the attributes
             for (var attr in this.attributes) {
                 if (attr !== "href" && Object.prototype.hasOwnProperty.call(this.attributes, attr)) {
-                    markup += " " + attr + "=\"";
-                    markup += _utils2.default.escape(this.attributes[attr]);
-                    markup += "\"";
+                    markup += " " + attr + "=\"" + _utils2.default.escape(this.attributes[attr]) + "\"";
                 }
             }
 
@@ -7825,7 +7320,7 @@ exports.default = {
     lineNode: lineNode
 };
 
-},{"./svgGeometry":112,"./unicodeRegexes":114,"./utils":116,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/slicedToArray":10}],99:[function(require,module,exports){
+},{"./svgGeometry":118,"./unicodeRegexes":120,"./utils":122,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/slicedToArray":10}],99:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7919,8 +7414,8 @@ function parseArray(parser, result, style) {
         } else if (next === "\\end") {
             // Arrays terminate newlines with `\crcr` which consumes a `\cr` if
             // the last line is empty.
-            var lastRow = body[body.length - 1][0].value;
-            if (body.length > 1 && lastRow.value.length === 1 && lastRow.value[0].value.length === 0) {
+            var lastRow = body[body.length - 1];
+            if (body.length > 1 && lastRow.length === 1 && lastRow[0].value.value[0].value.length === 0) {
                 body.pop();
             }
             break;
@@ -8127,7 +7622,7 @@ var alignedHandler = function alignedHandler(context, args) {
     //    and makes sure that each row doesn't exceed that number.
     // 2. Otherwise, just count number of columns = maximum number
     //    of cells in each row ("aligned" mode -- isAligned will be true).
-    // 
+    //
     // At the same time, prepend empty group {} at beginning of every second
     // cell in each row (starting with second cell) so that operators become
     // binary.  This behavior is implemented in amsmath's \start@aligned.
@@ -8150,10 +7645,10 @@ var alignedHandler = function alignedHandler(context, args) {
             ordgroup.value.unshift(emptyGroup);
         }
         if (!isAligned) {
-            // Case 1 
+            // Case 1
             var curMaths = row.length / 2;
             if (numMaths < curMaths) {
-                throw new _ParseError2.default("Too many math in a row: expected " + numMaths + ", but got " + curMaths, row);
+                throw new _ParseError2.default("Too many math in a row: " + ("expected " + numMaths + ", but got " + curMaths), row);
             }
         } else if (numCols < row.length) {
             // Case 2
@@ -8358,7 +7853,7 @@ var alignedHandler = function alignedHandler(context, args) {
     mathmlBuilder: mathmlBuilder
 });
 
-},{"../ParseError":84,"../ParseNode":85,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineEnvironment":95,"../mathMLTree":109,"../units":115,"../utils":116}],101:[function(require,module,exports){
+},{"../ParseError":84,"../ParseNode":85,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineEnvironment":95,"../mathMLTree":115,"../units":121,"../utils":122}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8657,7 +8152,7 @@ exports.default = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./fontMetricsData":102,"./unicodeRegexes":114}],102:[function(require,module,exports){
+},{"./fontMetricsData":102,"./unicodeRegexes":120}],102:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10444,9 +9939,21 @@ var _defineFunction2 = require("./defineFunction");
 
 var _defineFunction3 = _interopRequireDefault(_defineFunction2);
 
+require("./functions/katex");
+
 require("./functions/phantom");
 
-require("./functions/operators");
+require("./functions/mod");
+
+require("./functions/op");
+
+require("./functions/operatorname");
+
+require("./functions/genfrac");
+
+require("./functions/lap");
+
+require("./functions/smash");
 
 require("./functions/delimsizing");
 
@@ -10614,16 +10121,6 @@ defineFunction(["\\kern", "\\mkern"], {
     };
 });
 
-// A KaTeX logo
-defineFunction(["\\KaTeX"], {
-    numArgs: 0,
-    allowedInText: true
-}, function (context) {
-    return {
-        type: "katex"
-    };
-});
-
 // Math class commands except \mathop
 defineFunction(["\\mathord", "\\mathbin", "\\mathrel", "\\mathopen", "\\mathclose", "\\mathpunct", "\\mathinner"], {
     numArgs: 1
@@ -10661,28 +10158,6 @@ defineFunction(["\\stackrel"], {
         type: "mclass",
         mclass: "mrel",
         value: [supsub]
-    };
-});
-
-// \mod-type functions
-defineFunction(["\\bmod"], {
-    numArgs: 0
-}, function (context, args) {
-    return {
-        type: "mod",
-        modType: "bmod",
-        value: null
-    };
-});
-
-defineFunction(["\\pod", "\\pmod", "\\mod"], {
-    numArgs: 1
-}, function (context, args) {
-    var body = args[0];
-    return {
-        type: "mod",
-        modType: context.funcName.substr(1),
-        value: (0, _defineFunction2.ordargument)(body)
     };
 });
 
@@ -10743,138 +10218,6 @@ defineFunction(["\\int", "\\iint", "\\iiint", "\\oint"], {
         limits: false,
         symbol: true,
         body: context.funcName
-    };
-});
-
-// Limits, symbols
-defineFunction(["\\coprod", "\\bigvee", "\\bigwedge", "\\biguplus", "\\bigcap", "\\bigcup", "\\intop", "\\prod", "\\sum", "\\bigotimes", "\\bigoplus", "\\bigodot", "\\bigsqcup", "\\smallint"], {
-    numArgs: 0
-}, function (context) {
-    return {
-        type: "op",
-        limits: true,
-        symbol: true,
-        body: context.funcName
-    };
-});
-
-// \mathop class command
-defineFunction(["\\mathop"], {
-    numArgs: 1
-}, function (context, args) {
-    var body = args[0];
-    return {
-        type: "op",
-        limits: false,
-        symbol: false,
-        value: (0, _defineFunction2.ordargument)(body)
-    };
-});
-
-// Fractions
-defineFunction(["\\dfrac", "\\frac", "\\tfrac", "\\dbinom", "\\binom", "\\tbinom", "\\\\atopfrac"], {
-    numArgs: 2,
-    greediness: 2
-}, function (context, args) {
-    var numer = args[0];
-    var denom = args[1];
-    var hasBarLine = void 0;
-    var leftDelim = null;
-    var rightDelim = null;
-    var size = "auto";
-
-    switch (context.funcName) {
-        case "\\dfrac":
-        case "\\frac":
-        case "\\tfrac":
-            hasBarLine = true;
-            break;
-        case "\\\\atopfrac":
-            hasBarLine = false;
-            break;
-        case "\\dbinom":
-        case "\\binom":
-        case "\\tbinom":
-            hasBarLine = false;
-            leftDelim = "(";
-            rightDelim = ")";
-            break;
-        default:
-            throw new Error("Unrecognized genfrac command");
-    }
-
-    switch (context.funcName) {
-        case "\\dfrac":
-        case "\\dbinom":
-            size = "display";
-            break;
-        case "\\tfrac":
-        case "\\tbinom":
-            size = "text";
-            break;
-    }
-
-    return {
-        type: "genfrac",
-        numer: numer,
-        denom: denom,
-        hasBarLine: hasBarLine,
-        leftDelim: leftDelim,
-        rightDelim: rightDelim,
-        size: size
-    };
-});
-
-// Horizontal overlap functions
-defineFunction(["\\mathllap", "\\mathrlap", "\\mathclap"], {
-    numArgs: 1,
-    allowedInText: true
-}, function (context, args) {
-    var body = args[0];
-    return {
-        type: "lap",
-        alignment: context.funcName.slice(5),
-        body: body
-    };
-});
-
-// smash, with optional [tb], as in AMS
-defineFunction(["\\smash"], {
-    numArgs: 1,
-    numOptionalArgs: 1,
-    allowedInText: true
-}, function (context, args, optArgs) {
-    var smashHeight = false;
-    var smashDepth = false;
-    var tbArg = optArgs[0];
-    if (tbArg) {
-        // Optional [tb] argument is engaged.
-        // ref: amsmath: \renewcommand{\smash}[1][tb]{%
-        //               def\mb@t{\ht}\def\mb@b{\dp}\def\mb@tb{\ht\z@\z@\dp}%
-        var letter = "";
-        for (var i = 0; i < tbArg.value.length; ++i) {
-            letter = tbArg.value[i].value;
-            if (letter === "t") {
-                smashHeight = true;
-            } else if (letter === "b") {
-                smashDepth = true;
-            } else {
-                smashHeight = false;
-                smashDepth = false;
-                break;
-            }
-        }
-    } else {
-        smashHeight = true;
-        smashDepth = true;
-    }
-
-    var body = args[0];
-    return {
-        type: "smash",
-        body: body,
-        smashHeight: smashHeight,
-        smashDepth: smashDepth
     };
 });
 
@@ -11088,7 +10431,7 @@ defineFunction(["\\verb"], {
 
 // Hyperlinks
 
-},{"./ParseError":84,"./ParseNode":85,"./defineFunction":96,"./functions/delimsizing":104,"./functions/href":105,"./functions/operators":106,"./functions/phantom":107,"./utils":116}],104:[function(require,module,exports){
+},{"./ParseError":84,"./ParseNode":85,"./defineFunction":96,"./functions/delimsizing":104,"./functions/genfrac":105,"./functions/href":106,"./functions/katex":107,"./functions/lap":108,"./functions/mod":109,"./functions/op":110,"./functions/operatorname":111,"./functions/phantom":112,"./functions/smash":113,"./utils":122}],104:[function(require,module,exports){
 "use strict";
 
 var _buildCommon = require("../buildCommon");
@@ -11348,7 +10691,254 @@ function checkDelimiter(delim, context) {
     }
 });
 
-},{"../ParseError":84,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":109,"../utils":116}],105:[function(require,module,exports){
+},{"../ParseError":84,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":115,"../utils":122}],105:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _delimiter = require("../delimiter");
+
+var _delimiter2 = _interopRequireDefault(_delimiter);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _Style = require("../Style");
+
+var _Style2 = _interopRequireDefault(_Style);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _defineFunction2.default)({
+    type: "genfrac",
+    names: ["\\dfrac", "\\frac", "\\tfrac", "\\dbinom", "\\binom", "\\tbinom", "\\\\atopfrac"],
+    props: {
+        numArgs: 2,
+        greediness: 2
+    },
+    handler: function handler(context, args) {
+        var numer = args[0];
+        var denom = args[1];
+        var hasBarLine = void 0;
+        var leftDelim = null;
+        var rightDelim = null;
+        var size = "auto";
+
+        switch (context.funcName) {
+            case "\\dfrac":
+            case "\\frac":
+            case "\\tfrac":
+                hasBarLine = true;
+                break;
+            case "\\\\atopfrac":
+                hasBarLine = false;
+                break;
+            case "\\dbinom":
+            case "\\binom":
+            case "\\tbinom":
+                hasBarLine = false;
+                leftDelim = "(";
+                rightDelim = ")";
+                break;
+            default:
+                throw new Error("Unrecognized genfrac command");
+        }
+
+        switch (context.funcName) {
+            case "\\dfrac":
+            case "\\dbinom":
+                size = "display";
+                break;
+            case "\\tfrac":
+            case "\\tbinom":
+                size = "text";
+                break;
+        }
+
+        return {
+            type: "genfrac",
+            numer: numer,
+            denom: denom,
+            hasBarLine: hasBarLine,
+            leftDelim: leftDelim,
+            rightDelim: rightDelim,
+            size: size
+        };
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        // Fractions are handled in the TeXbook on pages 444-445, rules 15(a-e).
+        // Figure out what style this fraction should be in based on the
+        // function used
+        var style = options.style;
+        if (group.value.size === "display") {
+            style = _Style2.default.DISPLAY;
+        } else if (group.value.size === "text") {
+            style = _Style2.default.TEXT;
+        }
+
+        var nstyle = style.fracNum();
+        var dstyle = style.fracDen();
+        var newOptions = void 0;
+
+        newOptions = options.havingStyle(nstyle);
+        var numerm = html.buildGroup(group.value.numer, newOptions, options);
+
+        newOptions = options.havingStyle(dstyle);
+        var denomm = html.buildGroup(group.value.denom, newOptions, options);
+
+        var rule = void 0;
+        var ruleWidth = void 0;
+        var ruleSpacing = void 0;
+        if (group.value.hasBarLine) {
+            rule = html.makeLineSpan("frac-line", options);
+            ruleWidth = rule.height;
+            ruleSpacing = rule.height;
+        } else {
+            rule = null;
+            ruleWidth = 0;
+            ruleSpacing = options.fontMetrics().defaultRuleThickness;
+        }
+
+        // Rule 15b
+        var numShift = void 0;
+        var clearance = void 0;
+        var denomShift = void 0;
+        if (style.size === _Style2.default.DISPLAY.size) {
+            numShift = options.fontMetrics().num1;
+            if (ruleWidth > 0) {
+                clearance = 3 * ruleSpacing;
+            } else {
+                clearance = 7 * ruleSpacing;
+            }
+            denomShift = options.fontMetrics().denom1;
+        } else {
+            if (ruleWidth > 0) {
+                numShift = options.fontMetrics().num2;
+                clearance = ruleSpacing;
+            } else {
+                numShift = options.fontMetrics().num3;
+                clearance = 3 * ruleSpacing;
+            }
+            denomShift = options.fontMetrics().denom2;
+        }
+
+        var frac = void 0;
+        if (ruleWidth === 0) {
+            // Rule 15c
+            var candidateClearance = numShift - numerm.depth - (denomm.height - denomShift);
+            if (candidateClearance < clearance) {
+                numShift += 0.5 * (clearance - candidateClearance);
+                denomShift += 0.5 * (clearance - candidateClearance);
+            }
+
+            frac = _buildCommon2.default.makeVList({
+                positionType: "individualShift",
+                children: [{ type: "elem", elem: denomm, shift: denomShift }, { type: "elem", elem: numerm, shift: -numShift }]
+            }, options);
+        } else {
+            // Rule 15d
+            var axisHeight = options.fontMetrics().axisHeight;
+
+            if (numShift - numerm.depth - (axisHeight + 0.5 * ruleWidth) < clearance) {
+                numShift += clearance - (numShift - numerm.depth - (axisHeight + 0.5 * ruleWidth));
+            }
+
+            if (axisHeight - 0.5 * ruleWidth - (denomm.height - denomShift) < clearance) {
+                denomShift += clearance - (axisHeight - 0.5 * ruleWidth - (denomm.height - denomShift));
+            }
+
+            var midShift = -(axisHeight - 0.5 * ruleWidth);
+
+            frac = _buildCommon2.default.makeVList({
+                positionType: "individualShift",
+                children: [{ type: "elem", elem: denomm, shift: denomShift }, { type: "elem", elem: rule, shift: midShift }, { type: "elem", elem: numerm, shift: -numShift }]
+            }, options);
+        }
+
+        // Since we manually change the style sometimes (with \dfrac or \tfrac),
+        // account for the possible size change here.
+        newOptions = options.havingStyle(style);
+        frac.height *= newOptions.sizeMultiplier / options.sizeMultiplier;
+        frac.depth *= newOptions.sizeMultiplier / options.sizeMultiplier;
+
+        // Rule 15e
+        var delimSize = void 0;
+        if (style.size === _Style2.default.DISPLAY.size) {
+            delimSize = options.fontMetrics().delim1;
+        } else {
+            delimSize = options.fontMetrics().delim2;
+        }
+
+        var leftDelim = void 0;
+        var rightDelim = void 0;
+        if (group.value.leftDelim == null) {
+            leftDelim = html.makeNullDelimiter(options, ["mopen"]);
+        } else {
+            leftDelim = _delimiter2.default.customSizedDelim(group.value.leftDelim, delimSize, true, options.havingStyle(style), group.mode, ["mopen"]);
+        }
+        if (group.value.rightDelim == null) {
+            rightDelim = html.makeNullDelimiter(options, ["mclose"]);
+        } else {
+            rightDelim = _delimiter2.default.customSizedDelim(group.value.rightDelim, delimSize, true, options.havingStyle(style), group.mode, ["mclose"]);
+        }
+
+        return _buildCommon2.default.makeSpan(["mord"].concat(newOptions.sizingClasses(options)), [leftDelim, _buildCommon2.default.makeSpan(["mfrac"], [frac]), rightDelim], options);
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        var node = new _mathMLTree2.default.MathNode("mfrac", [mml.buildGroup(group.value.numer, options), mml.buildGroup(group.value.denom, options)]);
+
+        if (!group.value.hasBarLine) {
+            node.setAttribute("linethickness", "0px");
+        }
+
+        if (group.value.leftDelim != null || group.value.rightDelim != null) {
+            var withDelims = [];
+
+            if (group.value.leftDelim != null) {
+                var leftOp = new _mathMLTree2.default.MathNode("mo", [new _mathMLTree2.default.TextNode(group.value.leftDelim)]);
+
+                leftOp.setAttribute("fence", "true");
+
+                withDelims.push(leftOp);
+            }
+
+            withDelims.push(node);
+
+            if (group.value.rightDelim != null) {
+                var rightOp = new _mathMLTree2.default.MathNode("mo", [new _mathMLTree2.default.TextNode(group.value.rightDelim)]);
+
+                rightOp.setAttribute("fence", "true");
+
+                withDelims.push(rightOp);
+            }
+
+            var outerNode = new _mathMLTree2.default.MathNode("mrow", withDelims);
+
+            return outerNode;
+        }
+
+        return node;
+    }
+});
+
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":115}],106:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11402,10 +10992,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
          * 2. if it has more than two elements, and the classes
          *    of its first and last elements coincide, then use it;
          * 3. otherwise, we will inject an empty <span>s at both ends,
-         *    with the same classes of both ends of elements.
+         *    with the same classes of both ends of elements, with the
+         *    first span having the same class as the first element of body,
+         *    and the second one the same as the last.
          */
 
-        var classes = []; // null if the type of both ends differs.
+        var classes = []; // Default behaviour for Case 3.
         var first = void 0; // mathtype of the first child
         var last = void 0; // mathtype of the last child
         // Invariants: both first and last must be non-null if classes is null.
@@ -11420,18 +11012,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
                 classes = [first];
             } else {
                 // Case 3: both ends have different types.
-                classes = null;
+                var anc = _buildCommon2.default.makeAnchor(href, [], elements, options);
+                return new _buildCommon2.default.makeFragment([new _buildCommon2.default.makeSpan([first], [], options), anc, new _buildCommon2.default.makeSpan([last], [], options)]);
             }
-        } else {
-            // No elements at all, just ignore.
-            classes = [];
         }
-        if (!classes) {
-            var anc = _buildCommon2.default.makeAnchor(href, [], elements, options);
-            return new _buildCommon2.default.makeFragment([new _buildCommon2.default.makeSpan([first], [], options), anc, new _buildCommon2.default.makeSpan([last], [], options)]);
-        } else {
-            return new _buildCommon2.default.makeAnchor(href, classes, elements, options);
-        }
+        return new _buildCommon2.default.makeAnchor(href, classes, elements, options);
     },
     mathmlBuilder: function mathmlBuilder(group, options) {
         var inner = mml.buildExpression(group.value.body, options);
@@ -11441,7 +11026,522 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":109}],106:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":115}],107:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _defineFunction2.default)({
+    type: "katex",
+    names: ["\\KaTeX"],
+    props: {
+        numArgs: 0,
+        allowedInText: true
+    },
+    handler: function handler(context, args) {
+        return {
+            type: "katex"
+        };
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        // The KaTeX logo. The offsets for the K and a were chosen to look
+        // good, but the offsets for the T, E, and X were taken from the
+        // definition of \TeX in TeX (see TeXbook pg. 356)
+        var k = _buildCommon2.default.makeSpan(["k"], [_buildCommon2.default.mathsym("K", group.mode)], options);
+        var a = _buildCommon2.default.makeSpan(["a"], [_buildCommon2.default.mathsym("A", group.mode)], options);
+
+        a.height = (a.height + 0.2) * 0.75;
+        a.depth = (a.height - 0.2) * 0.75;
+
+        var t = _buildCommon2.default.makeSpan(["t"], [_buildCommon2.default.mathsym("T", group.mode)], options);
+        var e = _buildCommon2.default.makeSpan(["e"], [_buildCommon2.default.mathsym("E", group.mode)], options);
+
+        e.height = e.height - 0.2155;
+        e.depth = e.depth + 0.2155;
+
+        var x = _buildCommon2.default.makeSpan(["x"], [_buildCommon2.default.mathsym("X", group.mode)], options);
+
+        return _buildCommon2.default.makeSpan(["mord", "katex-logo"], [k, a, t, e, x], options);
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        var node = new _mathMLTree2.default.MathNode("mtext", [new _mathMLTree2.default.TextNode("KaTeX")]);
+
+        return node;
+    }
+});
+// A KaTeX logo
+
+},{"../buildCommon":91,"../defineFunction":96,"../mathMLTree":115}],108:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _defineFunction2.default)({
+    type: "lap",
+    names: ["\\mathllap", "\\mathrlap", "\\mathclap"],
+    props: {
+        numArgs: 1,
+        allowedInText: true
+    },
+    handler: function handler(context, args) {
+        var body = args[0];
+        return {
+            type: "lap",
+            alignment: context.funcName.slice(5),
+            body: body
+        };
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        // mathllap, mathrlap, mathclap
+        var inner = void 0;
+        if (group.value.alignment === "clap") {
+            // ref: https://www.math.lsu.edu/~aperlis/publications/mathclap/
+            inner = _buildCommon2.default.makeSpan([], [html.buildGroup(group.value.body, options)]);
+            // wrap, since CSS will center a .clap > .inner > span
+            inner = _buildCommon2.default.makeSpan(["inner"], [inner], options);
+        } else {
+            inner = _buildCommon2.default.makeSpan(["inner"], [html.buildGroup(group.value.body, options)]);
+        }
+        var fix = _buildCommon2.default.makeSpan(["fix"], []);
+        return _buildCommon2.default.makeSpan(["mord", group.value.alignment], [inner, fix], options);
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        // mathllap, mathrlap, mathclap
+        var node = new _mathMLTree2.default.MathNode("mpadded", [mml.buildGroup(group.value.body, options)]);
+
+        if (group.value.alignment !== "rlap") {
+            var offset = group.value.alignment === "llap" ? "-1" : "-0.5";
+            node.setAttribute("lspace", offset + "width");
+        }
+        node.setAttribute("width", "0px");
+
+        return node;
+    }
+});
+// Horizontal overlap functions
+
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":115}],109:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _Style = require("../Style");
+
+var _Style2 = _interopRequireDefault(_Style);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// \mod-type functions
+var htmlModBuilder = function htmlModBuilder(group, options) {
+    var inner = [];
+
+    if (group.value.modType === "bmod") {
+        // “\nonscript\mskip-\medmuskip\mkern5mu”
+        if (!options.style.isTight()) {
+            inner.push(_buildCommon2.default.makeSpan(["mspace", "negativemediumspace"], [], options));
+        }
+        inner.push(_buildCommon2.default.makeSpan(["mspace", "thickspace"], [], options));
+    } else if (options.style.size === _Style2.default.DISPLAY.size) {
+        inner.push(_buildCommon2.default.makeSpan(["mspace", "quad"], [], options));
+    } else if (group.value.modType === "mod") {
+        inner.push(_buildCommon2.default.makeSpan(["mspace", "twelvemuspace"], [], options));
+    } else {
+        inner.push(_buildCommon2.default.makeSpan(["mspace", "eightmuspace"], [], options));
+    }
+
+    if (group.value.modType === "pod" || group.value.modType === "pmod") {
+        inner.push(_buildCommon2.default.mathsym("(", group.mode));
+    }
+
+    if (group.value.modType !== "pod") {
+        var modInner = [_buildCommon2.default.mathsym("m", group.mode), _buildCommon2.default.mathsym("o", group.mode), _buildCommon2.default.mathsym("d", group.mode)];
+        if (group.value.modType === "bmod") {
+            inner.push(_buildCommon2.default.makeSpan(["mbin"], modInner, options));
+            // “\mkern5mu\nonscript\mskip-\medmuskip”
+            inner.push(_buildCommon2.default.makeSpan(["mspace", "thickspace"], [], options));
+            if (!options.style.isTight()) {
+                inner.push(_buildCommon2.default.makeSpan(["mspace", "negativemediumspace"], [], options));
+            }
+        } else {
+            Array.prototype.push.apply(inner, modInner);
+            inner.push(_buildCommon2.default.makeSpan(["mspace", "sixmuspace"], [], options));
+        }
+    }
+
+    if (group.value.value) {
+        Array.prototype.push.apply(inner, html.buildExpression(group.value.value, options, false));
+    }
+
+    if (group.value.modType === "pod" || group.value.modType === "pmod") {
+        inner.push(_buildCommon2.default.mathsym(")", group.mode));
+    }
+
+    return _buildCommon2.default.makeFragment(inner);
+};
+
+var mmlModBuilder = function mmlModBuilder(group, options) {
+    var inner = [];
+
+    if (group.value.modType === "pod" || group.value.modType === "pmod") {
+        inner.push(new _mathMLTree2.default.MathNode("mo", [mml.makeText("(", group.mode)]));
+    }
+    if (group.value.modType !== "pod") {
+        inner.push(new _mathMLTree2.default.MathNode("mo", [mml.makeText("mod", group.mode)]));
+    }
+    if (group.value.value) {
+        var space = new _mathMLTree2.default.MathNode("mspace");
+        space.setAttribute("width", "0.333333em");
+        inner.push(space);
+        inner = inner.concat(mml.buildExpression(group.value.value, options));
+    }
+    if (group.value.modType === "pod" || group.value.modType === "pmod") {
+        inner.push(new _mathMLTree2.default.MathNode("mo", [mml.makeText(")", group.mode)]));
+    }
+
+    return new _mathMLTree2.default.MathNode("mo", inner);
+};
+
+(0, _defineFunction2.default)({
+    type: "mod",
+    names: ["\\bmod"],
+    props: {
+        numArgs: 0
+    },
+    handler: function handler(context, args) {
+        return {
+            type: "mod",
+            modType: "bmod",
+            value: null
+        };
+    },
+    htmlBuilder: htmlModBuilder,
+    mathmlBuilder: mmlModBuilder
+});
+
+// Note: calling defineFunction with a type that's already been defined only
+// works because the same htmlBuilder and mathmlBuilder are being used.
+(0, _defineFunction2.default)({
+    type: "mod",
+    names: ["\\pod", "\\pmod", "\\mod"],
+    props: {
+        numArgs: 1
+    },
+    handler: function handler(context, args) {
+        var body = args[0];
+        return {
+            type: "mod",
+            modType: context.funcName.substr(1),
+            value: (0, _defineFunction.ordargument)(body)
+        };
+    },
+    htmlBuilder: htmlModBuilder,
+    mathmlBuilder: mmlModBuilder
+});
+
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":115}],110:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _domTree = require("../domTree");
+
+var _domTree2 = _interopRequireDefault(_domTree);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _utils = require("../utils");
+
+var _utils2 = _interopRequireDefault(_utils);
+
+var _Style = require("../Style");
+
+var _Style2 = _interopRequireDefault(_Style);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Limits, symbols
+var htmlBuilder = function htmlBuilder(group, options) {
+    // Operators are handled in the TeXbook pg. 443-444, rule 13(a).
+    var supGroup = void 0;
+    var subGroup = void 0;
+    var hasLimits = false;
+    if (group.type === "supsub") {
+        // If we have limits, supsub will pass us its group to handle. Pull
+        // out the superscript and subscript and set the group to the op in
+        // its base.
+        supGroup = group.value.sup;
+        subGroup = group.value.sub;
+        group = group.value.base;
+        hasLimits = true;
+    }
+
+    var style = options.style;
+
+    // Most operators have a large successor symbol, but these don't.
+    var noSuccessor = ["\\smallint"];
+
+    var large = false;
+    if (style.size === _Style2.default.DISPLAY.size && group.value.symbol && !_utils2.default.contains(noSuccessor, group.value.body)) {
+
+        // Most symbol operators get larger in displaystyle (rule 13)
+        large = true;
+    }
+
+    var base = void 0;
+    if (group.value.symbol) {
+        // If this is a symbol, create the symbol.
+        var fontName = large ? "Size2-Regular" : "Size1-Regular";
+        base = _buildCommon2.default.makeSymbol(group.value.body, fontName, "math", options, ["mop", "op-symbol", large ? "large-op" : "small-op"]);
+    } else if (group.value.value) {
+        // If this is a list, compose that list.
+        var inner = html.buildExpression(group.value.value, options, true);
+        if (inner.length === 1 && inner[0] instanceof _domTree2.default.symbolNode) {
+            base = inner[0];
+            base.classes[0] = "mop"; // replace old mclass
+        } else {
+            base = _buildCommon2.default.makeSpan(["mop"], inner, options);
+        }
+    } else {
+        // Otherwise, this is a text operator. Build the text from the
+        // operator's name.
+        // TODO(emily): Add a space in the middle of some of these
+        // operators, like \limsup
+        var output = [];
+        for (var i = 1; i < group.value.body.length; i++) {
+            output.push(_buildCommon2.default.mathsym(group.value.body[i], group.mode));
+        }
+        base = _buildCommon2.default.makeSpan(["mop"], output, options);
+    }
+
+    // If content of op is a single symbol, shift it vertically.
+    var baseShift = 0;
+    var slant = 0;
+    if (base instanceof _domTree2.default.symbolNode) {
+        // Shift the symbol so its center lies on the axis (rule 13). It
+        // appears that our fonts have the centers of the symbols already
+        // almost on the axis, so these numbers are very small. Note we
+        // don't actually apply this here, but instead it is used either in
+        // the vlist creation or separately when there are no limits.
+        baseShift = (base.height - base.depth) / 2 - options.fontMetrics().axisHeight;
+
+        // The slant of the symbol is just its italic correction.
+        slant = base.italic;
+    }
+
+    if (hasLimits) {
+        // IE 8 clips \int if it is in a display: inline-block. We wrap it
+        // in a new span so it is an inline, and works.
+        base = _buildCommon2.default.makeSpan([], [base]);
+
+        var supm = void 0;
+        var supKern = void 0;
+        var subm = { height: 0, depth: 0 }; // Make flow happy
+        var subKern = void 0;
+        var newOptions = void 0;
+        // We manually have to handle the superscripts and subscripts. This,
+        // aside from the kern calculations, is copied from supsub.
+        if (supGroup) {
+            newOptions = options.havingStyle(style.sup());
+            supm = html.buildGroup(supGroup, newOptions, options);
+
+            supKern = Math.max(options.fontMetrics().bigOpSpacing1, options.fontMetrics().bigOpSpacing3 - supm.depth);
+        }
+
+        if (subGroup) {
+            newOptions = options.havingStyle(style.sub());
+            subm = html.buildGroup(subGroup, newOptions, options);
+
+            subKern = Math.max(options.fontMetrics().bigOpSpacing2, options.fontMetrics().bigOpSpacing4 - subm.height);
+        }
+
+        // Build the final group as a vlist of the possible subscript, base,
+        // and possible superscript.
+        var finalGroup = void 0;
+        var top = void 0;
+        var bottom = void 0;
+        if (!supGroup) {
+            top = base.height - baseShift;
+
+            // Shift the limits by the slant of the symbol. Note
+            // that we are supposed to shift the limits by 1/2 of the slant,
+            // but since we are centering the limits adding a full slant of
+            // margin will shift by 1/2 that.
+            finalGroup = _buildCommon2.default.makeVList({
+                positionType: "top",
+                positionData: top,
+                children: [{ type: "kern", size: options.fontMetrics().bigOpSpacing5 }, { type: "elem", elem: subm, marginLeft: -slant + "em" }, { type: "kern", size: subKern }, { type: "elem", elem: base }]
+            }, options);
+        } else if (!subGroup) {
+            bottom = base.depth + baseShift;
+
+            finalGroup = _buildCommon2.default.makeVList({
+                positionType: "bottom",
+                positionData: bottom,
+                children: [{ type: "elem", elem: base }, { type: "kern", size: supKern }, { type: "elem", elem: supm, marginLeft: slant + "em" }, { type: "kern", size: options.fontMetrics().bigOpSpacing5 }]
+            }, options);
+        } else if (!supGroup && !subGroup) {
+            // This case probably shouldn't occur (this would mean the
+            // supsub was sending us a group with no superscript or
+            // subscript) but be safe.
+            return base;
+        } else {
+            bottom = options.fontMetrics().bigOpSpacing5 + subm.height + subm.depth + subKern + base.depth + baseShift;
+
+            finalGroup = _buildCommon2.default.makeVList({
+                positionType: "bottom",
+                positionData: bottom,
+                children: [{ type: "kern", size: options.fontMetrics().bigOpSpacing5 }, { type: "elem", elem: subm, marginLeft: -slant + "em" }, { type: "kern", size: subKern }, { type: "elem", elem: base }, { type: "kern", size: supKern }, { type: "elem", elem: supm, marginLeft: slant + "em" }, { type: "kern", size: options.fontMetrics().bigOpSpacing5 }]
+            }, options);
+        }
+
+        return _buildCommon2.default.makeSpan(["mop", "op-limits"], [finalGroup], options);
+    } else {
+        if (baseShift) {
+            base.style.position = "relative";
+            base.style.top = baseShift + "em";
+        }
+
+        return base;
+    }
+};
+
+var mathmlBuilder = function mathmlBuilder(group, options) {
+    var node = void 0;
+
+    // TODO(emily): handle big operators using the `largeop` attribute
+
+    if (group.value.symbol) {
+        // This is a symbol. Just add the symbol.
+        node = new _mathMLTree2.default.MathNode("mo", [mml.makeText(group.value.body, group.mode)]);
+    } else if (group.value.value) {
+        // This is an operator with children. Add them.
+        node = new _mathMLTree2.default.MathNode("mo", mml.buildExpression(group.value.value, options));
+    } else {
+        // This is a text operator. Add all of the characters from the
+        // operator's name.
+        // TODO(emily): Add a space in the middle of some of these
+        // operators, like \limsup.
+        node = new _mathMLTree2.default.MathNode("mi", [new _mathMLTree2.default.TextNode(group.value.body.slice(1))]);
+
+        // TODO(ron): Append an <mo>&ApplyFunction;</mo> as in \operatorname
+        // ref: https://www.w3.org/TR/REC-MathML/chap3_2.html#sec3.2.2
+    }
+
+    return node;
+};
+
+(0, _defineFunction2.default)({
+    type: "op",
+    names: ["\\coprod", "\\bigvee", "\\bigwedge", "\\biguplus", "\\bigcap", "\\bigcup", "\\intop", "\\prod", "\\sum", "\\bigotimes", "\\bigoplus", "\\bigodot", "\\bigsqcup", "\\smallint"],
+    props: {
+        numArgs: 0
+    },
+    handler: function handler(context, args) {
+        return {
+            type: "op",
+            limits: true,
+            symbol: true,
+            body: context.funcName
+        };
+    },
+    htmlBuilder: htmlBuilder,
+    mathmlBuilder: mathmlBuilder
+});
+
+// Note: calling defineFunction with a type that's already been defined only
+// works because the same htmlBuilder and mathmlBuilder are being used.
+(0, _defineFunction2.default)({
+    type: "op",
+    names: ["\\mathop"],
+    props: {
+        numArgs: 1
+    },
+    handler: function handler(context, args) {
+        var body = args[0];
+        return {
+            type: "op",
+            limits: false,
+            symbol: false,
+            value: (0, _defineFunction.ordargument)(body)
+        };
+    },
+    htmlBuilder: htmlBuilder,
+    mathmlBuilder: mathmlBuilder
+});
+
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":115,"../utils":122}],111:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11539,7 +11639,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":109}],107:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":115}],112:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11661,7 +11761,128 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":109}],108:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":115}],113:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _defineFunction2.default)({
+    type: "smash",
+    names: ["\\smash"],
+    props: {
+        numArgs: 1,
+        numOptionalArgs: 1,
+        allowedInText: true
+    },
+    handler: function handler(context, args, optArgs) {
+        var smashHeight = false;
+        var smashDepth = false;
+        var tbArg = optArgs[0];
+        if (tbArg) {
+            // Optional [tb] argument is engaged.
+            // ref: amsmath: \renewcommand{\smash}[1][tb]{%
+            //               def\mb@t{\ht}\def\mb@b{\dp}\def\mb@tb{\ht\z@\z@\dp}%
+            var letter = "";
+            for (var i = 0; i < tbArg.value.length; ++i) {
+                letter = tbArg.value[i].value;
+                if (letter === "t") {
+                    smashHeight = true;
+                } else if (letter === "b") {
+                    smashDepth = true;
+                } else {
+                    smashHeight = false;
+                    smashDepth = false;
+                    break;
+                }
+            }
+        } else {
+            smashHeight = true;
+            smashDepth = true;
+        }
+
+        var body = args[0];
+        return {
+            type: "smash",
+            body: body,
+            smashHeight: smashHeight,
+            smashDepth: smashDepth
+        };
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        var node = _buildCommon2.default.makeSpan(["mord"], [html.buildGroup(group.value.body, options)]);
+
+        if (!group.value.smashHeight && !group.value.smashDepth) {
+            return node;
+        }
+
+        if (group.value.smashHeight) {
+            node.height = 0;
+            // In order to influence makeVList, we have to reset the children.
+            if (node.children) {
+                for (var i = 0; i < node.children.length; i++) {
+                    node.children[i].height = 0;
+                }
+            }
+        }
+
+        if (group.value.smashDepth) {
+            node.depth = 0;
+            if (node.children) {
+                for (var _i = 0; _i < node.children.length; _i++) {
+                    node.children[_i].depth = 0;
+                }
+            }
+        }
+
+        // At this point, we've reset the TeX-like height and depth values.
+        // But the span still has an HTML line height.
+        // makeVList applies "display: table-cell", which prevents the browser
+        // from acting on that line height. So we'll call makeVList now.
+
+        return _buildCommon2.default.makeVList({
+            positionType: "firstBaseline",
+            children: [{ type: "elem", elem: node }]
+        }, options);
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        var node = new _mathMLTree2.default.MathNode("mpadded", [mml.buildGroup(group.value.body, options)]);
+
+        if (group.value.smashHeight) {
+            node.setAttribute("height", "0px");
+        }
+
+        if (group.value.smashDepth) {
+            node.setAttribute("depth", "0px");
+        }
+
+        return node;
+    }
+});
+// smash, with optional [tb], as in AMS
+
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":115}],114:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11958,7 +12179,7 @@ defineMacro("\\simcoloncolon", "\\sim\\mathrel{\\mkern-1.2mu}\\dblcolon");
 defineMacro("\\approxcolon", "\\approx\\mathrel{\\mkern-1.2mu}\\vcentcolon");
 defineMacro("\\approxcoloncolon", "\\approx\\mathrel{\\mkern-1.2mu}\\dblcolon");
 
-},{"./Token":90,"./symbols":113,"./utils":116}],109:[function(require,module,exports){
+},{"./Token":90,"./symbols":119,"./utils":122}],115:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12108,7 +12329,7 @@ exports.default = {
     TextNode: TextNode
 };
 
-},{"./utils":116,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],110:[function(require,module,exports){
+},{"./utils":122,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],116:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12138,7 +12359,7 @@ var parseTree = function parseTree(toParse, settings) {
 
 exports.default = parseTree;
 
-},{"./Parser":86}],111:[function(require,module,exports){
+},{"./Parser":86}],117:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12369,6 +12590,9 @@ var svgSpan = function svgSpan(group, options) {
         align = _katexImagesData$labe[3];
 
         var numSvgChildren = paths.length;
+        if (1 > numSvgChildren || numSvgChildren > 3) {
+            throw new Error("Correct katexImagesData or update code below to support\n                " + numSvgChildren + " children.");
+        }
         height = viewBoxHeight / 1000;
 
         for (var i = 0; i < numSvgChildren; i++) {
@@ -12389,17 +12613,15 @@ var svgSpan = function svgSpan(group, options) {
             svgNode = new _domTree2.default.svgNode([path], attributes);
 
             if (numSvgChildren === 1) {
-                span = _buildCommon2.default.makeSpan(["hide-tail"], [svgNode], options);
+                spans.push(_buildCommon2.default.makeSpan(["hide-tail"], [svgNode], options));
             } else {
-                span = _buildCommon2.default.makeSpan([widthClass], [svgNode], options);
-                span.style.height = height + "em";
-                spans.push(span);
+                var _span = _buildCommon2.default.makeSpan([widthClass], [svgNode], options);
+                _span.style.height = height + "em";
+                spans.push(_span);
             }
         }
 
-        if (numSvgChildren > 1) {
-            span = _buildCommon2.default.makeSpan(["stretchy"], spans, options);
-        }
+        span = numSvgChildren === 1 ? spans[0] : _buildCommon2.default.makeSpan(["stretchy"], spans, options);
     }
 
     // Note that we are returning span.depth = 0.
@@ -12470,7 +12692,7 @@ exports.default = {
     svgSpan: svgSpan
 };
 
-},{"./buildCommon":91,"./domTree":98,"./mathMLTree":109,"./utils":116,"babel-runtime/helpers/slicedToArray":10}],112:[function(require,module,exports){
+},{"./buildCommon":91,"./domTree":98,"./mathMLTree":115,"./utils":122,"babel-runtime/helpers/slicedToArray":10}],118:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12588,7 +12810,7 @@ var path = {
 
 exports.default = { path: path };
 
-},{}],113:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13310,7 +13532,7 @@ defineSymbol(text, main, textord, "\u2019", "’");
 defineSymbol(text, main, textord, "\u201C", "“");
 defineSymbol(text, main, textord, "\u201D", "”");
 
-},{}],114:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13328,7 +13550,7 @@ var hangulRegex = exports.hangulRegex = /[\uAC00-\uD7AF]/;
 // Notably missing are halfwidth Katakana and Romanji glyphs.
 var cjkRegex = exports.cjkRegex = /[\u3000-\u30FF\u4E00-\u9FAF\uAC00-\uD7AF\uFF00-\uFF60]/;
 
-},{}],115:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13439,7 +13661,7 @@ var calculateSize = exports.calculateSize = function calculateSize(sizeValue, op
     return Math.min(sizeValue.number * scale, options.maxSize);
 };
 
-},{"./Options":83,"./ParseError":84}],116:[function(require,module,exports){
+},{"./Options":83,"./ParseError":84}],122:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
