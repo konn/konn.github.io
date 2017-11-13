@@ -1,0 +1,513 @@
+---
+title: 強い選出原理としての強制公理
+author: 石井大海
+description: |
+  **強制公理**（*Forcing Axiom*）とは，ある種類の強制法による拡大と現在の宇宙がある意味で「近い」ことを述べる公理ですが，これは現代数学で用いられる選出原理である**Zornの補題**や**従属選択公理（$\mathrm{DC}$）**の一般化と見ることも可能です．後者の説明は，強制法の理論に関する知識が必要ないため，集合論以外の分野の人にもある程度理解しやすいことが期待されます．  
+  そこで本稿では，強制公理の**強い選出原理としての側面**に焦点を当てて，強制法に馴染みの無い人にも強制公理がどんなものなのかを解説し，ついでに強制法とは何かについても軽く説明していきたいと思います．対象読者層としては，学部三〜四年程度の数学を知っていてZornの補題を使って何かを作る議論をしたことがあれば十分なようにしたつもりです．
+tag: 無矛盾性証明,強制法,公理的集合論,集合論,強制公理,強制法公理,選択公理
+latexmk: -pdflua
+---
+\documentclass[a4j,leqno]{ltjsarticle}
+\usepackage[hiragino-pron]{luatexja-preset}
+\usepackage{mystyle}
+\usepackage{luatexja-otf}
+\usepackage{dsfont}
+\DeclareMathAlphabet{\mathrsfs}{U}{rsfso}{m}{n}
+\renewcommand{\mathscr}[1]{\mathup{\mathrsfs{#1}}}
+\usepackage{fixme}
+\usepackage[super]{nth}
+\usepackage[bookmarksnumbered,pdfproducer={LuaLaTeX},%
+            luatex,psdextra,pdfusetitle,pdfencoding=auto]{hyperref}
+\usepackage[backend=biber, style=math-numeric]{biblatex}
+\addbibresource{myreference.bib}
+\newcommand{\defax}{\mathrel{{:\equiv}}}
+\DeclareMathOperator{\len}{length}
+\newcommand{\WO}{\mathrm{WO}}
+\newcommand{\Zorn}{\mathrm{Zorn}}
+\newcommand{\FA}{\mathrm{FA}}
+\renewcommand{\emph}[1]{\textbf{\textsf{#1}}}
+\renewcommand{\C}{\mathbb{C}}
+\newcommand{\MM}{\mathrm{MM}}
+
+\title{強い選択公理としての強制公理}
+\author{石井大海}
+\usepackage{amssymb}	% required for `\mathbb' (yatex added)
+\usepackage{amsmath}	% required for `\gather*' (yatex added)
+\begin{document}
+\maketitle
+
+\begin{abstract}
+ \textbf{強制公理}（\emph{Forcing Axiom}）とは，ある種類の強制法による拡大と現在の宇宙がある意味で「近い」ことを述べる公理ですが，これは\textbf{Zornの補題}や\textbf{従属選択公理}（$\mathrm{DC}$）の一般化と見ることも可能です．後者の説明は，強制法の理論に関する知識が必要ないため，集合論以外の分野の人にもある程度理解しやすいことが期待されます．
+ 
+  そこで本稿では，強制公理の\textbf{強い選出原理としての側面}に焦点を当てて，強制法に馴染みの無い人にも強制公理がどんなものなのかを解説し，ついでに強制法とは何かについても軽く説明していきたいと思います．対象読者層としては，学部三〜四年程度の数学を知っていてZornの補題を使って何かを作る議論をしたことがあれば十分なようにしたつもりです．
+\end{abstract}
+
+\section{復習：選択公理とZornの補題，従属選択公理}
+\emph{選択公理}が現代数学にとって不可欠な公理であることは，構成的数学や直観主義数学を別にすれば，多くの数学者が認める所だろう．
+実際，次に挙げるような命題は，全て選択公理から導かれる：
+\begin{theorem}[ZFC]
+ 次は$\ZFC$の定理：
+ \begin{enumerate}
+  \item 任意のベクトル空間は基底を持つ．
+  \item \emph{Krullの定理}：任意の単位的可換環は真の極大イデアルを持つ．
+  \item \emph{Tychonoffの定理}：コンパクト空間の任意集合個の直積はコンパクト．
+  \item \emph{Baireの範疇定理}：完備距離空間の可算個の稠密開集合の共通部分は稠密．
+ \end{enumerate}
+\end{theorem}
+他の選択公理と数学の諸分野の定理の関連については\href{http://alg-d.com/math/ac/}{alg\_d氏のサイト}~\cite{alg-d}が異様に詳しい．
+
+これらは直接選択公理から示すこともできるが，大抵は次の特徴付けを使って，Zornの補題から示される：
+\begin{theorem}
+ $\ZF$上次は同値：
+ \begin{enumerate}
+  \item \emph{選択公理}（$\AC$）：任意の集合$\Lambda$と空でない集合の族$\Braket{X_\lambda | \lambda \in \Lambda}$に対し，その直積$\prod_{\lambda \in \Lambda} X_\lambda$は空ではない．
+  \item \emph{整列可能定理}（$\WO$）：任意の集合$X$に対し，$X$上の整列順序が存在する．
+  \item \emph{Zornの補題}（$\Zorn$）：任意の帰納的順序集合は極大元を持つ．
+        ここで，$\mathbb{P}$が帰納的順序集合であるとは，$\mathbb{P}$の任意の全順序部分集合が上界を持つことである．
+ \end{enumerate}
+\end{theorem}
+
+では試しにKrullの定理を証明してみよう．
+
+\begin{proof}[Krullの定理の証明]
+ $(R, {+}, {\cdot}, 0, 1)$を単位的可換環とし，$\mathfrak{I}$を$R$の真のイデアル全体とする．
+ $(0) \in \mathfrak{I}$なので$\mathfrak{I}$は空ではないことに注意する．
+ Zornの補題を使いたいので，$(\mathfrak{I}, {\subseteq})$が帰納的順序集合となることを示そう．
+ 実際，$\Braket{I_\lambda | \lambda \in \Lambda}$を$\mathfrak{I}$の全順序部分集合とするとき，$I^* \defeq \bigcup_\lambda I_\lambda$は$R$の真のイデアルとなっている．
+ $1 \notin I^*$であるのは$1 \notin I_\lambda$が任意の$\lambda \in \Lambda$について成り立つことから明らか．
+ また，$a, b \in I^*$とすると，$a \in I_{\lambda_a}$, $b \in I_{\lambda_b}$となる$\lambda_a, \lambda_b \in \Lambda$が取れるが，全順序性より$I_{\lambda_a} \subseteq I_{\lambda_b}$として一般性を失わない．
+ すると，$I_{\lambda_b}$がイデアルであることから$a - b \in I_{\lambda_b} \subseteq I^*$となるのである．
+ $R I^* \subseteq I^*$も明らか．よって$I^* \in \mathfrak{I}$であるから，$\mathfrak{I}$は帰納的である．
+ よって$\mathfrak{I}$は$\subseteq$-極大元$J \in \mathfrak{I}$を持つが，これは$J$が真の極大イデアルであるということである． \qed
+\end{proof}
+
+一方，実は上で挙げたBaireの範疇定理については，選択公理より真に弱い原理から導かれる事が知られている．
+
+\begin{definition}
+ \emph{従属選択公理}（Axiom of Dependent Choice, $\DC$）とは次の主張である：
+
+ 任意の空でない集合$X$とその上の二項関係$R$について，$X$が$R$-極大元を持たないなら，$R$-無限昇鎖が存在する．
+ 即ち，$\Braket{x_n \in X | n \in \N}$で$x_n \mathrel{R} x_{n+1}$となるものが取れる．
+\end{definition}
+
+\begin{lemma}
+ $\ZF$の下で$\DC$は次と同値：
+
+ 任意の空でない$X$とその上の極大元を持たない二項関係$R$について，\emph{任意の$x_0 \in X$から始まる}$R$-無限昇鎖$x_0 \mathrel{R} x_1 \mathrel{R} x_2 \mathrel{R} \dots $が存在する．
+\end{lemma}
+\begin{proof}
+ $\mathbb{S}$を次で定める：
+ \begin{gather*}
+  \mathbb{S} \defeq
+  \Set{ \sigma : X\text{の有限列}
+      | \sigma_n \mathrel{R} \sigma_{n+1} \;(\forall n < \len(\sigma)), \sigma_0 = x_0}\\
+ \end{gather*}
+ $X$が$R$-極大元を持たないことから，$(\mathbb{S}, \subsetneq)$が極大元を持たないことは明らか．
+ そこで$\mathbb{S}$の無限昇鎖$\Braket{\sigma^n | n < \omega}$を取る．
+ このとき$\sigma \defeq \bigcup_n \sigma^n$とおけば，$\sigma_n \mathrel{R} \sigma_{n+1}$であり，$\sigma_0 = x_0$となっている． \qed
+\end{proof}
+
+\begin{theorem}[ZF+DC]
+ $\ZF+\DC$の下で，任意の完備距離空間の可算個の稠密開集合の共通部分は稠密．
+\end{theorem}
+\begin{proof}
+ $(X, d)$を完備距離空間とし，$\Braket{D_n | n \in \N}$を稠密開集合の可算列とする．
+ $X$は距離空間なので，任意の$x \in X$と$r \in \Q$に対して，$B(x; r) \cap \bigcap_n X_n \neq \emptyset$を示せればよい．
+ 適宜$x, r$を取り直せば，以下$B(x; r) \subseteq D_0$であるとして一般性を失わない．
+ そこで，$(x_n, r_n)_{n \in \N}$を次を満たすように取る：
+ \begin{enumerate}
+  \item $x_0 \defeq x$, $r_0 \defeq r, r_{n+1}< r_n/2$,
+  \item $d(x_n, x_{n+1}) < r_n/4$,
+  \item $B(x_n, r_n) \subseteq D_n$.
+ \end{enumerate}
+ こうした$\Braket{x_n | n \in \N}$は明らかにCauchy列であり，$d(x^*, x_n) \leq r_n / 2$を満たすので任意の$n$について$x^* \in B(x_n; r_n) D_n$であり更に$x^* \in B(x; r) = B(x_0; r_0)$も言える．
+ よって$x^* \in \bigcap_n D_n \cap B(x; r)$を得る．
+
+ 後は実際に上の3条件を満たす$(x_n, r_n)_n$が取れることを見ればよい．
+ 普通にやろうとすると，まず$n = 0$の場合を満たす$x_0, r_0$を取るのは$D_0$の稠密開性から自明で，次に$(x_n, r_n)$まで取れたとすると……という形で帰納法により議論を進める．
+
+ これは本質的に$\DC$を使った議論になっている．
+ これを見るため，$\mathbb{P}$とその上の関係$\lhd$を次で定める：
+ \begin{gather*}
+  \mathbb{P} \defeq \Set{(n, z, q) \in \N \times X \times \Q | B(z, q) \subseteq D_{n} },\\
+  (n, z, q) \lhd (n', z', q') \defs
+  n' = n + 1 \land q' < \frac{q}{2} \land d(z, z') < \frac{q}{4}.
+ \end{gather*}
+ このとき$(0, x, r) \in \mathbb{P}$なので，$\mathbb{P}$は空ではない．
+ 極大元を持たないことを示すため，適当な$(n, z, q) \in \mathbb{P}$を取り，$(n, z, q) \lhd (n+1, z', q')$となる$(n', q')$を探そう．
+ このとき$D_{n+1}$の稠密開性より$U \defeq B(z, q/4) \cap D_{n+1}$は空でない開集合である．
+ そこで適当な$z' \in U$を取る．
+ $U$は開なので，十分小さな$q' < q/2$で$B(z', q') \subseteq U \subseteq D_{n+1}$を満たすものが取れる．
+ すると，取り方から明らかに$(n, z, q) \lhd (n', z', q')$となる．
+
+ よって$\mathbb{P}$の$\lhd$-無限昇鎖$\Braket{x_n, r_n | n \in \N}$で$(0, x, r)$から始まるものが取れ，これこそ求めるものである． \qed
+\end{proof}
+
+\section{選出原理と，近似論法としての強制法公理}
+上で見たいずれの証明も，最終的に欲しいものの「部分近似」の全体を考え，それらを極限まで貼り合わせたものをZornの補題や従属選択公理を使ってとってくる，ということをやっている．
+実際，Krullの定理では極大イデアルの近似として真のイデアルを持ってきているし，Baireの範疇定理では$B(x; r) \cap \bigcap_n D_n$の中への収束列の有限部分列を「近似」として取ってきている．
+しかも，これらの近似の間には或る種の順序のようなものが入っていた．
+
+そこで，こうした近似の理論を一般化した枠組みを定義しよう．
+ただし，集合論の伝統と合わせるために上とは順序の順番が逆になるようになっている．
+\begin{definition}
+ \begin{itemize}
+  \item $(\mathbb{P}, {\leq}_{\mathbb{P}}, \mathds{1}_{\mathbb{P}})$が\emph{擬順序}（\emph{poset}）または\emph{強制概念}$\defs$ $\leq_{\mathbb{P}}$は$\mathbb{P}$上の反射・推移的な二項関係であり，$\mathds{1}$が最大元．
+  \item $D \subseteq \mathbb{P}$が\emph{稠密}$\defs$任意の$p \in \mathbb{P}$に対して，ある$d \in D$があって$d \leq_{\mathbb{P}} p$.
+  \item $F \subsetneq \mathbb{P}$が\emph{フィルター}$\defs$ $\mathds{1} \in F$, $p, q \in F \implies F$, $q \geq p \in F \implies q \in F$.
+  \item $\mathcal{D}$を$\mathbb{P}$の稠密集合からなる族とする．
+        フィルター$G$が\emph{$\mathcal{D}$-生成的}（\emph{$\mathcal{D}$-generic}）$\defs$任意の$D \in \mathcal{D}$に対し$D \cap G \neq \emptyset$.
+  \item （\emph{強制公理}）$\mathcal{K}$を擬順序のクラスとする．
+        このとき$\FA_\kappa(\mathcal{K})$は次の言明である：
+
+        \begin{quotation}
+         任意の擬順序$\mathbb{P} \in \mathcal{K}$と$\mathbb{P}$の濃度$\kappa$の稠密集合の族$\mathcal{D}$に対し$\mathcal{D}$-生成フィルターが存在．
+        \end{quotation}
+
+        $\FA_\kappa(\mathcal{K})$の形の公理を\emph{強制公理}と呼ぶ．
+        また，特に$\FA_\kappa(\mathbb{P}) \mathrel{{:}{\equiv}} \FA_\kappa(\set{\mathbb{P}})$と略記する．
+  \item $(\mathbb{P}, \leq)$が\emph{Zorn的}であるとは，双対順序$(\mathbb{P}, \geq)$が帰納的順序集合であること．
+        即ち，$\mathbb{P}$の任意の全順序部分集合が\emph{下界}を持つこと．
+  \item $p$と$q$が\emph{両立する}（記号：$p \compat q$）$\defs$ $r \leq p, q$となる$r \in \mathbb{P}$が存在する．
+
+        $p$と$q$が両立しないとき$p \perp q$と書く．
+  \item $(\mathbb{P}, \leq)$が\emph{半分離的}$\defs$任意の$p \in \mathbb{P}$について，$p$が極小でないなら，両立しない$q, r \leq p$が存在する．
+ \end{itemize}
+\end{definition}
+これを使うと，次のようにして$\DC$と$\Zorn$を特徴付けることができる：
+\begin{theorem}[Fern\'{a}ndez-Bret\'{o}n--Lauri~\cite{Fernandez-Breton:2016ph}]
+ \begin{enumerate}
+  \item $\DC   \iff \FA_{\aleph_0}(\text{任意の擬順序})$，
+  \item $\Zorn \iff \forall \kappa\: \FA_\kappa(\text{半分離Zorn的順序集合})$．
+ \end{enumerate}
+\end{theorem}
+\begin{proof}
+ \begin{enumerate}
+  \item $(\DC \implies \FA_{\aleph_0})$：
+        $(\mathbb{P}, \leq)$を任意の擬順序とし，$\mathcal{D} = \Set{D_n \subseteq \mathbb{P} | n < \omega}$を$\mathbb{P}$の稠密集合の族とする．
+        以下を満たすような$\Braket{p_n \in \mathbb{P} | n \in \N}$を取ればよい：
+        \[
+         p_0 \defeq 1_{\mathbb{P}},\; p_n \geq p_{n+1} \in D_n.
+        \]
+        これが取れれば，$G \defeq \Set{q \in \mathbb{P} | \exists n \: q \geq p_n}$が求めるものとなる．
+        実際，定義から$G$は上に閉じており，$q, r \in G$なら$p_n \leq q$かつ$p_m \leq r$となる$n, m$が取れる．
+        このとき$n \leq m$として一般性を失わず，$p_n \leq p_m$より$p_n \leq q, r$を得る．
+        従って$G$はフィルターを成す．
+        更に$p_{n+1} \in D_n \cap G$より$\mathcal{D}$-生成的にもなっている．
+
+        こうした$\Braket{p_n | n \in \N}$は$\DC$を認めれば簡単に取れる．
+        実際，$p_n$が出来ていれば，$D_n$の稠密性から$p_{n+1} \leq p_n$となる$p_{n+1} \in D_n$は常に存在する．
+        これに$\DC$を適用すれば，求める可算列$\Braket{p_n | n \in \N}$が取れるのは，上のBaireの範疇定理の証明と同様である．
+
+        $(\FA_{\aleph_0} \implies \DC)$：$X$を$\lhd$-極大元を持たない集合とする．
+        $(\mathbb{P}, {\leq})$を次で定める：
+        \begin{align*}
+         \sigma \in \mathbb{P} &\defs\exists n \in N 
+         \begin{cases}
+          \sigma : n \to X,\\
+          \forall i < n - 1\: \left[\sigma(i) \lhd \sigma(i+1)\right],
+         \end{cases}\\
+         \sigma \leq \tau &\defs \tau \supseteq \sigma.
+        \end{align*}
+        このとき，各$n \in \N$に対して，$D_n \defeq \Set{ \sigma \in \mathbb{P} | \len(\sigma) > n}$は$\mathbb{P}$で稠密である．
+        実際，$\lhd$が極大元を持たないことから，任意の$\sigma \in \mathbb{P}$について，$\sigma$の長さが$n$よりも小さければ，$\sigma$の最後の元よりも$\lhd$の意味で大きな元を付け足す作業を任意有限回繰り返せば，$n$よりも長さが$n$より大きな有限列に拡張出来る．
+
+        いま$\FA_{\aleph_0}(\mathbb{P})$を使えば，フィルター$G$で任意の$n$に対し$D_n \cap G \neq \emptyset$を満たすものが取れる．
+        そこで$f \defeq \bigcup G$とおけば，$G$がフィルターであることから$f$は関数であり，特に$D_n \cap G \neq \emptyset$より任意の$n \in \N$について$n \in \dom(f)$となっている．
+        よって$f: \N \to X$であり，$\mathbb{P}$の定義から$f(n) \lhd f(n+1)$が任意の$n$について言える．
+        これが求めるものであった．
+
+  \item $(\Zorn \implies \forall \kappa\: \FA_\kappa(\text{半分離}\Zorn))$：
+        $\Zorn$の補題を仮定し，Zorn的順序集合$(\mathbb{P}, {\leq})$を固定する．
+        この時，$\mathbb{P}$は$\leq$-極小元$p \in \mathbb{P}$を持つ．
+        ここで$G \defeq \Set{q \in \mathbb{P} | q \geq p}$とおく．
+        $G$がフィルターであることは明らか．
+        あとは$G$が$\mathbb{P}$の任意の稠密集合$D$と交わる事を示せばよいが，$D$の稠密性により$d \leq p$となるものを取ると，$p$の極小性から$d = p$となり$p \in D \cap G$となる．
+        よって$G$は任意の稠密集合と交わるので，$\FA_\kappa(\mathbb{P})$が任意の$\kappa$について成り立つ．
+
+        $(\forall \kappa\: \FA_\kappa(\text{半分離}\Zorn) \implies \Zorn)$：
+        $(\mathbb{P}, \leq)$をZorn的順序集合として，$\mathbb{P}$が$\leq$-極小元を持つことを示せばよい．
+        そこで，$\mathbb{P}$が極小元を持たなかったとして矛盾を導く（\emph{背理法}）．
+        $\FA_{2^{\lvert\mathbb{P}\rvert}}(\mathbb{P})$により，$\mathbb{P}$の任意の稠密集合と交わるフィルター$G \subseteq \mathbb{P}$が取れる．
+        このとき，$D \defeq \mathbb{P} \setminus G$が稠密集合になってしまうことが示せれば，$G \cap D = \emptyset$なので矛盾が言える．
+        そこで任意に$p \in \mathbb{P}$を取れば，仮定より極小元ではなく，半分離性より$q, r \leq p$で$q \perp r$となるものが取れる．
+        $G$はフィルターなので，$q, r$の少なくとも一方は$G$に属さない．
+        よって$D$は稠密となり，$G$は生成的では有り得ない． \qed
+ \end{enumerate}
+\end{proof}
+
+\begin{remark}
+ 集合論を良く知っている人向けに言えば，結局Zornの補題は（そしてそれと同値な選択公理は）「帰納的順序集合は強制法として自明」という事を述べているのに外ならない．
+\end{remark}
+
+という訳で，我々が普段の議論で使う構成の幾つかは，何らかの生成的フィルターの存在として述べられそうだという事がわかった．
+では試しに，制限されたHahn--Banachの定理を$\DC$から証明してみよう\footnote{ところで，Solovay~\cite{Solovay:1970}は「（$p$に関する連続性を仮定しない）可分\emph{Banach}空間に対するのHahn--Banachは一瞬で$\DC$から出て来るよ」って言ってるんですが何か上手くいかない気がするので，出来たよという人は御一報下さい．}．
+\begin{theorem}
+ $\ZF+\DC$において次の制限されたHahn--Banachの定理が成り立つ：
+
+ $V$を可分Banach空間，$p: V \to \R$を原点で連続な劣線型汎関数，$W \subseteq V$を部分空間，$f: W \to \R$を$f \leq_W p$なる線型汎関数とする．
+ このとき線型汎関数$\bar{f}: V \to \R$で$\bar{f} \restr W = f$かつ$\bar{f} \leq_V p$を満たすものが存在する．
+\end{theorem}
+まず，普通にHahn--Banachを示すときに使われる次の補題は，$\ZF+\DC$でも成り立つので認めてしまう：
+\begin{lemma}
+ $\ZF+\DC$で次が成立：
+
+ $W \subseteq V$を実線型空間とする．$p, f$に関する上の仮定の下で，任意の$\mathbf{z} \in V \setminus W$に対し，線型汎関数$f' : W + \R\mathbf{z} \to \R$で$f' \restr W = f$かつ$f' \leq_{W + \R\mathbf{z}} p$を満たすものが取れる．
+\end{lemma}
+\begin{proof}[Proof of Restricted Hahn--Banach Theorem]
+ $\mathbb{P}$とその上の順序$\leq$を次で定める：
+ \begin{gather*}
+  \mathbb{P} \defeq \Set{ g : W' \to \R | W \subseteq W' \subseteq V, g \supseteq f, g \leq_{W'} p}\\
+  g \leq h \defs g \supseteq h.
+ \end{gather*}
+ 可分なHilbert空間は可算な完全正規直交系を持つ（このことは$\ZF+\DC$で示せる）ので，その一つを$\Braket{\mathbf{e}_n | n < \omega}$とおく．
+ すると，各$D_n \defeq \Set{g \in \mathbb{P} | d_n \in \dom(g)}$は$\mathbb{P}$で稠密である．
+ 実際，$\mathbb{e}_n \notin \dom(g) \eqdef W_g$となるような$g \in \mathbb{P}$があれば，上の補題から$W' \defeq W + \R\mathbf{e}_n$上定義された$h \supseteq g$で$h \restr W = g$かつ$h \leq_{W'} p$を満たすものが取れる．
+ よって$h \leq_{\mathbb{P}} g$かつ$h \in D_n$となる．
+
+ そこで$\FA_{\aleph_0}(\mathbb{P})$により，フィルター$G \subseteq \mathbb{P}$で任意の$n < \omega$に対し$G \cap D_n \neq \emptyset$となるものを取る．
+ $f' \defeq \bigcup G$, $U \defeq \dom(f')$とおくと，$W \subseteq U \subseteq V$であり，$\bar{f}$は$U$上で定義された線型汎関数となる．
+ 特に$G \cap D_n \neq \emptyset$より$\mathbf{e}_n \in U$となっているから，$f'$は$V$の稠密部分空間上で定義された線型汎関数である．
+
+ いま，稠密性より任意の$\mathbf{x} \in V$はある$\Braket{\mathbf{x}_n \in U | n < \omega}$によって$\mathbf{x} = \lim_{n \to \infty} \mathbf{x}_n$の形で書けている．
+ そこで$\bar{f}(\mathbf{x}) \defeq \lim_n f'(\mathbf{x}_n)$により$\bar{f}: V \to \R$を定める．
+ まず個別の$\vec{\mathbf{x}}$について$\lim_n f'(\mathbf{x}_n)$は収束列である．
+ 実際，$p$が原点で連続なので，
+ \[
+    f'(\mathbf{x}_n) - f'(\mathbf{x}_m)
+  = f'(\mathbf{x}_n - \mathbf{x}_m)
+  \leq p(\mathbf{x}_n - \mathbf{x}_m) \to 0\quad (\text{as } n, m \to \infty).
+ \]
+ 次いでwell-defined性を確かめる．$\mathbf{x}_n \to \mathbf{x}$かつ$\mathbf{x}'_n \to \mathbf{x}$なる二つの列を取れば，再び$p$の原点での連続性から
+ \[
+  f'(\mathbf{x}_n) - f'(\mathbf{x}'_n) \leq p(\mathbf{x}_n - \mathbf{x}) + p(\mathbf{x} - \mathbf{x}'_n) \to 0 \quad (\text{as } n, m \to \infty).
+ \]
+ 線型性と$p$で上から押さえられる事は明らか． \qed
+\end{proof}
+
+\section{強制法とより強い強制公理$\MA$}
+前節まででZornの補題を初めとした選出原理が$\FA_\kappa(\mathcal{K})$の形で定式化される事をみた．
+Zornの補題も$\DC$も$\ZFC$から出て来る選出原理だが，$\FA$の形の特徴付けを使って$\ZFC$からはみ出す形で強化出来ないだろうか？
+そうして得られる最も典型的なものが次のMartinの公理である：
+\begin{definition}
+ \begin{itemize}
+  \item $\mathcal{A} \subseteq \mathbb{P}$が\emph{反鎖}$\defs$任意の相異なる$p, q \in \mathcal{A}$に対し$p \perp q$.
+  \item $\mathbb{P}$が\emph{可算鎖条件}（countable chain condition; c.c.c.）を満たす$\defs$ $\mathbb{P}$の任意の反鎖の濃度は高々可算．
+  \item $\MA \deffml \forall \kappa < 2^{\aleph_0}\: \FA_{\kappa}(\text{c.c.c.})$を\emph{Martinの公理}と呼ぶ．
+ \end{itemize}
+\end{definition}
+
+$\MA$が$2^{\aleph_0}$未満までしか主張していないのは，$2^{\aleph_0}$個までいくと明白に矛盾するからである：
+\begin{lemma}
+ $\ZF \vdash \neg \FA_{2^{\aleph_0}}(\text{c.c.c.})$
+\end{lemma}
+\begin{proof}
+ $\C \defeq \finseq{2} \defeq (0, 1\text{の無限列の全体})$とする．
+ $\neg \mathrm{FA}_{2^{\aleph_0}}(\mathbb{C})$を示す．
+ $|\mathbb{C}| = \aleph_0$なので，どんな順序を入れようが自明にc.c.c.を満たす．
+ この時$\C$に逆向きの包含関係で順序を入れたものを考えると，次は$\C$で稠密となる：
+ \begin{gather*}
+  D_n \defeq \Set{p \in \mathbb{C} | \dom(p) > n} \;(n \in \N),\\
+  E_x \defeq \Set{p \in \mathbb{C} | x \restr \dom(p) \neq p}\; (x \in \R).
+ \end{gather*}
+ 但し，ここでは実数を$2 = \set{0, 1}$の無限列と同一視している．
+ $D_n$は「$n$桁目まで伸びること」，$E_x$は「$x \in \R$とはどこかの桁で異なっていること」を意味する．
+ すると，$\Set{D_n | n < \omega} \cup \Set{E_x | x \in \R}$の全体は高々濃度$2^{\aleph_0}$なので，$\mathrm{FA}_{2^{\aleph_0}}(\mathbb{C})$より全ての$D_n$, $E_x$と交わるフィルター$G \subseteq \mathbb{C}$が取れる．
+ このとき$x_G \defeq \bigcup G$とおけば$x_G: \omega \to 2$である．
+ よって生成性から$G \cap E_{x_G} \neq \emptyset$を得，$x_G \restr \dom(p) \neq p$となる$p \in G$が取れるが，定義より$p \subseteq x_G$なのでこれは$x_G \neq x_G$を意味し矛盾． \qed
+\end{proof}
+一言で言ってしまえば，上で挙げたような稠密集合と全部交わる$\C$のフィルターから得られる実数は$V$にある実数全てと異なるから，そんなものは$V$に存在し得ない，ということである．
+
+一方，$\DC$を素直に一般化しようとするなら，$\FA_{\aleph_1}(\text{任意の擬順序})$では駄目なのか？という疑問が沸くかもしれない．
+しかし，$\omega_1$が可算集合になってしまうのでそんなことはできない：
+\begin{lemma}
+ c.c.c.でない擬順序$\mathbb{P}$で$\neg \FA_{\aleph_1}(\mathbb{P})$となるものが存在．
+\end{lemma}
+\begin{proof}
+ $\mathbb{P} \defeq \mathrm{Col}(\omega, \omega_1) \defeq (\finseq{\omega_1}, {\supseteq})$とする．
+ 即ち，$\mathbb{P}$は$\omega_1$の元の有限列に逆向きの包含関係で順序を入れた集合である．
+ このとき，$n < \omega$および$\alpha < \omega_1$に対して次は$\mathbb{P}$で稠密である：
+ \[
+  D_n \defeq \Set{p \in \mathbb{P} | n \in \dom(p)}, \quad
+  E_\alpha \defeq \Set{p \in \mathbb{P} | \alpha \in \ran(p)}.
+ \]
+ 実際，$p \in \mathbb{P}$は有限列なので，長さが$n$以下だったら適当に延ばしてやればいいし，像に$\alpha < \omega_1$が入っていなかったら後ろに$\alpha$を付け足してやればいいだけだ．
+ ここでもし$\FA_{\aleph_1}(\mathbb{P})$が成り立つなら，フィルター$G \subseteq \mathbb{P}$で全ての$D_n$および$E_\alpha$と交わるものが取れる．
+ $f \defeq \bigcup G$と置けば$G \cap D_n \neq \emptyset$より$f: \omega \to \omega_1$である．
+ 更に，各$\alpha < \omega_1$について$G \cap E_\alpha \neq \emptyset$となるから，任意の$\alpha < \omega_1$について$f(n) = \alpha$となる$n < \omega$が取れる．
+ よって$f: \omega \to \omega_1$は全射となる．しかし$\omega_1$は定義上$\omega$から全射が存在しない最小の順序数なのでこれは矛盾．
+
+ $\mathbb{P}$がc.c.c.を満たさないことは，例えば$\Set{\braket{\alpha} | \alpha < \omega_1}$は互いに両立しない濃度$\aleph_1$の集合になっている事から明らか． \qed
+\end{proof}
+この例についても，結局$\mathrm{Col}(\omega, \omega_1)$は$\omega$から$V$における$\omega_1$への全射の近似の全体になっているので，$V$にそんなものは定義上存在し得ない，ということである．
+
+では$V$の外には有り得るの？というツッコミに答えると，勿論「$V$の外側」なんてものはないので字義通りには存在し得ないが，それでも仮想的に「外側にある」と思って議論できる枠組みがあり，それが\emph{強制法}と呼ばれている．
+
+\begin{definition}
+ 以下，$M$を$\ZFC$のモデル（$V$とか）とし，$\mathbb{P} \in M$を擬順序とする．
+ \begin{itemize}
+  \item フィルター$\mathbb{G} \subseteq \mathbb{P}$が\emph{$(M, \mathbb{P})$-生成的}$\defs$ $\Set{ D \subseteq \mathbb{P} | D \in M, D \text{は} P \text{で稠密}}$-生成的．
+  \item $G$を$(M, \mathbb{P})$-生成的とするとき，$M$の$G$による\emph{強制拡大}$M[G]$とは$M[G] \supseteq M$かつ$G \in M[G]$なる最小のモデルの事である．
+ \end{itemize}
+\end{definition}
+\begin{theorem}[強制法の基本定理（の気持ち）]
+ $V$の任意の擬順序$\mathbb{P}$に対し，その強制拡大$V[G]$があたかも存在するかのように扱うことが出来るし，$V$から$V[G]$の真偽をあるていど計算出来る．
+
+ より詳しく，以下を満たす$(V^{\mathbb{P}}, {\Vdash_{\mathbb{P}}})$が$V$で定義可能である．
+ \begin{enumerate}
+  \item $\mathds{1} \Vdash_{\mathbb{P}} \exists G \subseteq \mathbb{P}: (V, \mathbb{P})\text{-generic}\:\text{``俺は}V[G]\text{だ．全ての元は}\dot{x} \in V^{\mathbb{P}}\text{に対して}\dot{x}^G\text{の形に書けてるぜ．''}$,
+  \item 任意の$p \in \mathbb{P}$と論理式$\varphi(\dot{x}_1, \dots, \dot{x}_n)$に対し，
+        $q \leq p$で$q \Vdash \varphi(\dot{x}_1, \dots, \dot{x}_n)$または$q \Vdash \neg\varphi(\dot{x}_1, \dots, \dot{x}_n)$となるものが取れる．
+  \item $G$が$(V, \mathbb{P})$-生成的で$V[G] \models \varphi$なら$p \in G$で$p \Vdash \varphi$を満たすものが取れるし，逆も然り．
+ \end{enumerate}
+\end{theorem}
+
+かなりフワッとした書き方だが，たとえば$\mathbb{C}$による強制法を考えると$\mathds{1}_{\mathbb{C}} \Vdash \quoted{\bigcup G \notin V}$となっていて，$V[G]$では$V$にない実数が足されていることがわかる．
+$\mathrm{Col}(\omega, \omega_1)$の場合については結局$\omega_1$が可算に潰れちゃってるんじゃないの？矛盾しない？と言う気がするかもしれないが，あくまで$V$の$\omega_1$が可算に潰されているだけであって，$\omega_1^{V[G]}$は別の，もっと大きな順序数になっている．
+
+このように捉えれば，逆に$\DC$は「どんな擬順序であっても，可算個くらいの条件を満たす近似であればそれは$V[G]$に行くまでもなく$V$にある」という意味になるし，Zornの補題（＝選択公理）は「Zorn的順序集合は自明すぎてつまらないからフルの生成フィルターが$V$に存在する」という風に捉え直せる．
+つまり，種々の選出原理たちは「$V$がどれだけ$V[G]$に近いか」という事を主張する命題だったと思える．
+現代数学における集合論は数学的概念を構成するための砂場なので，作りたいもの，近似出来そうなものが結構な頻度で手に届く位置にある事を保証してくれるのが選択公理をはじめとした選出原理だと言うことも出来る．
+だから選択公理は強力なのだ，という見方も出来るだろう．
+
+さて，$\ZFC+\MA$は無矛盾だろうか？
+勿論，$\DC$から$\FA_{\aleph_0}(\text{c.c.c.})$は出るので，もし$2^{\aleph_0} = \aleph_1$が成り立つなら，$\MA$は自明に成り立つ．
+なので，興味があるのは$\ZFC+\MA+ \neg \CH$の無矛盾性だ．
+ここで証明はしないが，\emph{反復強制法}という手法を用いることで，実は$\ZF$が無矛盾なら$\ZFC+\MA+\neg \CH$も，$\MA$の否定を付け加えた体系も無矛盾である事が示せる：
+\begin{theorem}
+ 次の体系は無矛盾性の意味で等価：
+ \begin{enumerate}
+  \item $\ZF$,
+  \item $\ZFC$,
+  \item $\ZFC+2^{\aleph_0}\text{が好きなだけ大きい} + \MA$,
+  \item $\ZFC+2^{\aleph_0}\text{が好きなだけ大きい} + \neg \MA$.
+ \end{enumerate}
+\end{theorem}
+だから，日頃から「現代数学が矛盾するかも……」と思っているのでもない限り，$\MA$を仮定してたとしても「矛盾するかも……」と心配する必要はない，ということになる．
+それはそれとして「正しい」「妥当な」公理なのか，ということについては，仮定してみて面白いことが言えたらそれで良いし，否定してみて面白いことが言えたらそれでもまた良し，自分の面白そうな方を時々によって仮定する，というような態度で良いと思う．
+
+応用として，ある命題が$\ZFC$と無矛盾である事を示すのに，$\MA$からその命題を証明してみる，というのがある．
+
+例えば，次の形のBaireの範疇定理の一般化が証明出来る：
+\begin{theorem}
+ $X$をコンパクトHausdorff空間とし，更に$X$の互いに交わらない開集合の族の濃度は高々可算であるとする．
+ $\kappa < 2^{\aleph_0}$について$\MA_{\kappa}$が成り立つなら，$X$の$\kappa$個の稠密開集合は交わりを持つ．
+\end{theorem}
+\begin{proof}
+ $X$に関する後半の仮定は，空でない開集合全体の族$\mathcal{O}_X$に包含関係で順序を入れた擬順序がc.c.c.を持つという条件と同値である事に注意する．
+ $\Braket{U_\alpha \subseteq X | \alpha < \kappa}$を$X$の稠密開集合の列とする．
+ このとき，$D_\alpha \defeq \Set{ O \in \mathcal{O}_X | \bar{O} \subseteq U_\alpha}$は$\mathcal{O}_X$で稠密となる（ここで$\bar{O}$は$O$の位相的な閉包）．
+ 実際，適当に空でない開集合$O \in \mathcal{O}_X$を取れば，各$U_\alpha$の稠密開性より$\emptyset \neq O' \defeq O \cap U_\alpha \subseteq O$．
+ いまコンパクトHausdorff空間は正則空間なので，$O'$を適宜取り直せば$\bar{O}' \subseteq U_\alpha$であるとしてよく，よって各$D_\alpha$たちは稠密となる．
+
+ そこで，$\MA_\kappa(\mathcal{O}_X)$により各$D_\alpha$たちと交わるフィルター$G \subseteq \mathcal{O}_X$を取る．
+ 特に$G$は有限交叉性を持つ開集合の族なので，コンパクト性の特徴付けから$G$は集積点$x \in \bigcap \bar{G}$を持つ．
+ $G \cap D_\alpha \neq \emptyset$より任意の$\alpha < \kappa$に対し$x \in U_\alpha$が成り立つので，望み通り$\bigcap_\alpha U_\alpha \neq \emptyset$を得る． \qed
+\end{proof}
+
+実は，$\MA_\kappa$は上の結論と同値である．
+
+\begin{theorem}
+ $\kappa < 2^{\aleph_0}$とする．
+ もし$\MA_{\kappa}$が不成立なら，c.c.c.なコンパクトHausdorff空間とその稠密開集合の$\kappa$個の族で交わりを持たないものが存在する．
+\end{theorem}
+\begin{proof}
+ $(\mathbb{P}, {\leq})$および$D_\alpha \subseteq \mathbb{P}\; (\alpha < \kappa)$が$\MA_\kappa(\mathbb{P})$の反例となっているとする．
+ このとき，$\mathbb{P}$に下に閉じた集合を開集合とする位相を入れる．
+ 即ち$U \subseteq \mathbb{P}$が開$\iff$任意の$p \in U, q \leq p$について$q \in U$とする．
+ 各$\alpha$につき$U_\alpha \defeq {\downarrow}D_\alpha \defeq \Set{q \in \mathbb{P} | \exists p \in D_\alpha \: q \leq p}$と定めれば，開集合の定義から各$U_\alpha$は位相的な意味でも稠密開集合になっている．
+ ここでもし$q \in \bigcap_{\alpha < \kappa} U_\alpha$となるような$q$が取れれば，$G \defeq \Set{p \in \mathbb{P} | q \leq p}$は$\mathbb{P}$のフィルターとなり，更に任意の$D_\alpha$と交わる．
+ これは$D_\alpha$たちの取り方に反する． \qed
+\end{proof}
+
+よって，上の$\ZFC+\MA+\neg\CH$および$\ZFC+\neg\MA+\neg\CH$の無矛盾性を認めれば，上の形のBaireの範疇定理は$\ZFC$上独立であることがわかる．
+$\MA$からわかる他の独立命題についてはKunen~\cite{Kunen:2011}を参照されたい．
+
+\subsection{もっと強い強制公理：$\mathrm{PFA}$と$\mathrm{MM}$}
+さて，上で導入されたMartinの公理$\MA$は$\ZFC$からは独立だが，無矛盾性の強さは$\ZFC$と同等であった．
+
+それより更に強い強制公理として，\emph{適正強制公理} $\PFA$と\emph{Martin's Maximum} $\MM$がある：
+\begin{definition}
+ \begin{itemize}
+  \item 集合$X$に対し，その可算無限部分集合の全体を$[X]^{\aleph_0} \defeq \Set{ A \subseteq X | {|A| = \aleph_0}}$と表す．
+  \item $\mathcal{S} \subseteq [X]^{\aleph_0}$が\emph{定常}（\emph{stationary}）$\defs$ $\mathcal{S}$はどんな関数$f: \finseq{X} \to X$についても閉包点を持つ．
+        即ち
+        \[
+        \forall f: \finseq{X} \to X \: \exists z \in \mathcal{S} \: f[\finseq{z}] \subseteq z.
+        \]
+  \item 強制概念$\mathbb{P}$が\emph{適正}（\emph{proper}）$\defs$ $\mathbb{P}$は任意の$[X]^{\aleph_0}$の定常集合を保つ．
+        即ち，
+        \[
+         \forall X \: \forall \mathcal{S} \subseteq [X]^{\aleph_0} \: \mathds{1} \Vdash_{\mathbb{P}} \quoted{\mathcal{S}: [X]^{\aleph_0}\text{で定常}}.
+        \]
+  \item \emph{適正強制公理}（\emph{Proper Forcing Axiom}, $\PFA$）とは$\FA_{\aleph_1}(\text{proper})$の事．
+  \item \emph{Martin's Maximum} ($\MM$)とは$\FA_{\aleph_1}([\omega_1]^{\aleph_0}\text{の定常集合を保つ強制概念})$.
+ \end{itemize}
+\end{definition}
+定義から明らかに$\PFA$より$\MM$の方が強い．
+では$\PFA$と$\MA$の強さはどうか？
+実はc.c.c.を持つ擬順序は全ての$[X]^{\aleph_0}$の定常集合を保つことが示せ，従って適正であることがわかる．
+しかし，$\MA$では「連続体濃度未満の全ての$\kappa$について$\FA_\kappa(\text{c.c.c.})$」という形になっており，$\PFA$は$\FA_{\aleph_1}(\text{proper})$という形になっている．
+しかも上で述べたように$\MA$の下で連続体濃度はいくらでも大きく出来るので，真に一般化になっているのかはパッと見た限りではわからない．
+しかし，Todorcevicは$\PFA$から$2^{\aleph_0} = \aleph_2$が導かれる事を示した：
+\begin{theorem}[Todorcevic]
+ $\PFA \implies 2^{\aleph_0} = \aleph_2$.
+\end{theorem}
+よって$\PFA$は$\MA$の真の一般化になっているし，$\MA$が決定出来なかった連続体の濃度まで決めてくれることがわかる．
+
+こうした$\PFA$や$\MM$の無矛盾性は，$\ZFC$よりも真に強いことがわかっている．
+\begin{theorem}
+ $\MM$および$\PFA$の無矛盾性の強さは「$\ZFC$+Woodin基数の存在」と「$\ZFC$+超コンパクト基数」の間のどこかにある．
+\end{theorem}
+このWoodin基数や超コンパクト基数というのがどのくらい強いのか？というと，「$\ZFC$よりは遥かに強いが，現代集合論者は縦横無尽に使っていて，これらが矛盾する事がわかったらかなり驚く」というくらいの強さである．
+
+だいたい無矛盾性の強さがどういう感じに並ぶのか，というのが下図\footnote{巨大基数がこれだけしかない，という訳ではなくて，間の歯抜けになっていたりする部分にも幾つも変種がある．}である（但し$\mathrm{BP}$は「任意の実数の集合がBaireの性質を持つ」，$\mathrm{LM}$は「任意の実数の集合がLebesgue可測」という，選択公理とは矛盾する公理）．
+\begin{center}
+ \begin{tikzpicture}
+  \draw[->] (0,0) node[left]{弱} to (0,10) node[left]{強};
+  \draw
+    (-.1,9.5) -- ++ (.2, 0) node[right]{$0 = 1$};
+  \draw
+    (-.1,7) coordinate(sc) -- ++ (.2, 0) node[right]{$\ZFC+\text{超コンパクト}$};
+  \draw
+    (-.1,6) -- ++ (.2, 0) node[right]{$\ZFC+\quoted{\text{Woodinが沢山ある}}$};
+  \draw
+    (-.1,5) coordinate (wd) -- ++ (.2, 0) node[right]{$\ZFC+\text{Woodin}$};
+  \draw
+    (-.1,3.25) -- ++ (.2, 0) node[right]{$\quoted{\ZFC + \text{到達不能基数が沢山ある}}$};
+  \draw
+    (-.1,2.25) -- ++ (.2, 0)
+      node[right,anchor=mid west]{$\begin{aligned}[t]
+                    \quoted{\ZFC + \text{到達不能基数}} &\sim \quoted{\ZFC+\text{Grothendieck宇宙}}\\
+                    &\sim \quoted{\ZF+\DC+\LM}
+                   \end{aligned}             
+  $};
+  \draw
+    (-.1, 1) -- ++ (.2, 0)
+  node[right,anchor=mid west]{$
+  \begin{aligned}[t]
+   \ZF &\sim \ZFC \sim \quoted{\ZFC+\text{連続体濃度デカい}+\MA}\\
+   &\sim \quoted{\ZF+\DC+\BP} \sim \quoted{\ZF+\LM}
+  \end{aligned}$};
+  \draw [decorate,decoration={brace,amplitude=5pt},thick]
+    ($(wd.west)-(2pt,0)$) -- ($(sc.west)-(2pt,0)$)
+  node[midway,anchor=east,text width=5.75em,xshift=-2pt]
+      {$\PFA$と$\MM$はこのどっか};
+ \end{tikzpicture}
+\end{center}
+上図で$\sim$は「同値」という意味ではなく「無矛盾性が同じ」ということである．
+つまり，Woodinなり超コンパクトなりがあるからといって，$\MM$や$\PFA$が成り立つ訳ではない．
+
+上で述べたように$\PFA$や$\MM$は連続体の濃度を決定してくれるが，それ以外にも組合せ論的な命題の真偽も決めてくれる．
+筆者は詳しくないが，作用素環の同型に関する独立命題についても真偽を決めてくれるらしい．
+
+連続体の濃度が$\ZFC$から独立なのは有名だが，G\"{o}delは自然な巨大基数公理の階層を調べていけば，その何処かで連続体濃度を決定できるのではないかと提唱した．
+これをG\"{o}delのプログラムというが，かなり早い段階で単に巨大基数の存在だけからは連続体を決定出来ない，ということは明らかにされた．
+しかし，巨大基数公理の帰結ではなくとも，それと密接に結び付く$\PFA$や$\MM$といった強制公理によって連続体濃度を決定できる．
+強制公理は強制拡大と現在の宇宙が「近い」という意味でも自然だし，あるいは本稿で見たようにそれが選択公理の一般化になっている，という意味でも自然な主張である．
+その意味で，強制公理は拡張されたG\"{o}delのプログラムの一部である，と見ることが出来るのだ\footnote{強制公理だけが連続体問題の決着への唯一の解と考えられている訳ではなく，例えばWoodinによる強制公理とも密接に関連した強制法的絶対性の論理を構築することで連続体濃度を決定しようという\emph{$\Omega$-論理}という試みもある．詳細は依岡\cite{Yorioka:2009}などを参照．}．
+
+\nocite{alg-d,Jech:1997ai,Kunen:2011,Yorioka:2009}
+\nocite{Lauri:2016rw}
+\printbibliography[title=参考文献]
+\end{document}
