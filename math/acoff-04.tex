@@ -4,6 +4,8 @@ author: 石井 大海
 tag: 数学,数理論理学,集合論,モデル理論,超積,超冪,超準解析,自然数,強制法
 latexmk: -lualatex
 description: 第四回選択公理オフでの発表資料．選択公理と関連するモデル理論の初歩の話です．初学者向けに論理式やモデルの定義から入り，超積や超冪と選択公理，超準解析の関わりなどを論じています．実は Łoś+超フィルター定理と選択公理は同値だよとかそういう話もあり．
+macros: |
+  'card':  '\mathop{\mathrm{card}}'
 date: 2013/10/16 00:48:34 JST
 ----
 \RequirePackage{luatex85}
@@ -338,9 +340,9 @@ $\mathcal{L}$-構造の族が与えられた時に，その「殆んど至ると
  ここで，$\mathcal{I}$ がイデアルの時，$\mathcal{F} = \Set{ X^c \subseteq I | X \in \mathcal{I}}$ と置けば $\mathcal{F}$ は $I$ 上のフィルターとなる．よって，対応する族が選択関数を持たない $J \subseteq I$ の全体は $I$ 上のフィルターとなる．そこで，{\bfseries ウルトラフィルターの補題により} $\mathcal{F} \subseteq \mathcal{U}$ となるウルトラフィルター $\mathcal{U}$ を取ろう．
 
  この時，超冪 $\power{I}{\mathfrak{A}}/\mathcal{U}$ を考えよう．今，$A$ および $\relR$ の定義より $\mathfrak{A} \models \forall u \exists v(v \relR u)$ が成立している．{\bfseries \Los の定理より}，$\mathfrak{A} \equiv \power{I}{\mathfrak{A}}/\mathcal{U}$ であるので，$\power{I}{\mathfrak{A}}/\mathcal{U} \models \forall u \exists v(v \relR u)$ となる．そこで，特に $u = [\mathrm{id}_I]$ と置けば，ある $v \in \power{I}{\mathfrak{A}}$ が存在して $[v] \relR [\mathrm{id}_I]$ となる．すると，超積の定義から，
- \begin{equation}\label{eqn:J-is-in-U}
-  J \defeq \Set{i \in I | v(i) \relR \mathrm{id}_I(i)} \in \mathcal{U} 
- \end{equation}
+ \[
+ J \defeq \Set{i \in I | v(i) \relR \mathrm{id}_I(i)} \in \mathcal{U}
+ \]
  となる．すると，$\relR$ の定義より $v(i) \relR i \Leftrightarrow v(i) \in X_i$ であるので，$J = \Set{ i \in I | v(i) \in X_i} \in \mathcal{U}$ となる．よって，$f \restr J$ は $\{X_j\}_{j \in J}$ の選択関数である\footnote{ここで「従って $J \notin \mathcal{U}$ でなくてはならず矛盾．証明終了」としては{\bfseries いけない}．$\mathcal{F}$ の定義は確かに「対応する族が選択関数を持たない添字集合全体」であったが，ウルトラフィルターの補題によりそれを拡大したものが $\mathcal{U}$ なので，$\mathcal{U}$ には選択関数を持つものが入っているかもしれないからである．}．従って $J \in \mathcal{I}$ であり，$I \setminus J \in \mathcal{F} \subseteq \mathcal{U}$ となる．すると $(1)$ と合わせて $\emptyset = J \cap (I \setminus J) \in \mathcal{U}$ となり，$\mathcal{U}$ がフィルターであることに矛盾する．\qed
 \end{proof}
 
