@@ -89,7 +89,7 @@ module.exports = {
     ParseError: _ParseError2.default
 };
 
-},{"./src/ParseError":84,"./src/Settings":87,"./src/buildTree":94,"./src/parseTree":116,"./src/utils":122}],2:[function(require,module,exports){
+},{"./src/ParseError":84,"./src/Settings":87,"./src/buildTree":94,"./src/parseTree":117,"./src/utils":123}],2:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
 },{"core-js/library/fn/array/from":12}],3:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
@@ -1672,7 +1672,7 @@ var MacroExpander = function () {
 
 exports.default = MacroExpander;
 
-},{"./Lexer":81,"./ParseError":84,"./Token":90,"./macros":114,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/toConsumableArray":11,"object-assign":80}],83:[function(require,module,exports){
+},{"./Lexer":81,"./ParseError":84,"./Token":90,"./macros":115,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/toConsumableArray":11,"object-assign":80}],83:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3286,7 +3286,7 @@ Parser.oldFontFuncs = {
 };
 exports.default = Parser;
 
-},{"./MacroExpander":82,"./ParseError":84,"./ParseNode":85,"./environments":99,"./functions":103,"./symbols":119,"./unicodeRegexes":120,"./units":121,"./utils":122,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],87:[function(require,module,exports){
+},{"./MacroExpander":82,"./ParseError":84,"./ParseNode":85,"./environments":99,"./functions":103,"./symbols":120,"./unicodeRegexes":121,"./units":122,"./utils":123,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3332,7 +3332,7 @@ var Settings = function Settings(options) {
 
 exports.default = Settings;
 
-},{"./utils":122,"babel-runtime/helpers/classCallCheck":8}],88:[function(require,module,exports){
+},{"./utils":123,"babel-runtime/helpers/classCallCheck":8}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4156,7 +4156,7 @@ exports.default = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":98,"./fontMetrics":101,"./symbols":119,"./utils":122}],92:[function(require,module,exports){
+},{"./domTree":98,"./fontMetrics":101,"./symbols":120,"./utils":123}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5288,7 +5288,7 @@ function buildHTML(tree, options) {
     return htmlNode;
 }
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./delimiter":97,"./domTree":98,"./stretchy":117,"./units":121,"./utils":122,"babel-runtime/core-js/json/stringify":5}],93:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./delimiter":97,"./domTree":98,"./stretchy":118,"./units":122,"./utils":123,"babel-runtime/core-js/json/stringify":5}],93:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5842,7 +5842,7 @@ function buildMathML(tree, texExpression, options) {
     return _buildCommon2.default.makeSpan(["katex-mathml"], [math]);
 }
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./fontMetrics":101,"./mathMLTree":115,"./stretchy":117,"./symbols":119,"./utils":122}],94:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./fontMetrics":101,"./mathMLTree":116,"./stretchy":118,"./symbols":120,"./utils":123}],94:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6651,7 +6651,7 @@ exports.default = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./domTree":98,"./fontMetrics":101,"./symbols":119,"./utils":122}],98:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./domTree":98,"./fontMetrics":101,"./symbols":120,"./utils":123}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7365,7 +7365,7 @@ exports.default = {
     lineNode: lineNode
 };
 
-},{"./svgGeometry":118,"./unicodeRegexes":120,"./utils":122,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/slicedToArray":10}],99:[function(require,module,exports){
+},{"./svgGeometry":119,"./unicodeRegexes":121,"./utils":123,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/slicedToArray":10}],99:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7898,7 +7898,7 @@ var alignedHandler = function alignedHandler(context, args) {
     mathmlBuilder: mathmlBuilder
 });
 
-},{"../ParseError":84,"../ParseNode":85,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineEnvironment":95,"../mathMLTree":115,"../units":121,"../utils":122}],101:[function(require,module,exports){
+},{"../ParseError":84,"../ParseNode":85,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineEnvironment":95,"../mathMLTree":116,"../units":122,"../utils":123}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8197,7 +8197,7 @@ exports.default = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./fontMetricsData":102,"./unicodeRegexes":120}],102:[function(require,module,exports){
+},{"./fontMetricsData":102,"./unicodeRegexes":121}],102:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10004,6 +10004,8 @@ require("./functions/delimsizing");
 
 require("./functions/href");
 
+require("./functions/mathchoice");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // WARNING: New functions should be added to src/functions and imported here.
@@ -10476,7 +10478,10 @@ defineFunction(["\\verb"], {
 
 // Hyperlinks
 
-},{"./ParseError":84,"./ParseNode":85,"./defineFunction":96,"./functions/delimsizing":104,"./functions/genfrac":105,"./functions/href":106,"./functions/katex":107,"./functions/lap":108,"./functions/mod":109,"./functions/op":110,"./functions/operatorname":111,"./functions/phantom":112,"./functions/smash":113,"./utils":122}],104:[function(require,module,exports){
+
+// MathChoice
+
+},{"./ParseError":84,"./ParseNode":85,"./defineFunction":96,"./functions/delimsizing":104,"./functions/genfrac":105,"./functions/href":106,"./functions/katex":107,"./functions/lap":108,"./functions/mathchoice":109,"./functions/mod":110,"./functions/op":111,"./functions/operatorname":112,"./functions/phantom":113,"./functions/smash":114,"./utils":123}],104:[function(require,module,exports){
 "use strict";
 
 var _buildCommon = require("../buildCommon");
@@ -10736,7 +10741,7 @@ function checkDelimiter(delim, context) {
     }
 });
 
-},{"../ParseError":84,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":115,"../utils":122}],105:[function(require,module,exports){
+},{"../ParseError":84,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":116,"../utils":123}],105:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -10983,7 +10988,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":115}],106:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":116}],106:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11071,7 +11076,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":115}],107:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],107:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11128,7 +11133,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 // A KaTeX logo
 
-},{"../buildCommon":91,"../defineFunction":96,"../mathMLTree":115}],108:[function(require,module,exports){
+},{"../buildCommon":91,"../defineFunction":96,"../mathMLTree":116}],108:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11199,7 +11204,85 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 // Horizontal overlap functions
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":115}],109:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],109:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _Style = require("../Style");
+
+var _Style2 = _interopRequireDefault(_Style);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _defineFunction2.default)({
+    type: "mathchoice",
+    names: ["\\mathchoice"],
+    props: {
+        numArgs: 4
+    },
+    handler: function handler(context, args) {
+        return {
+            type: "mathchoice",
+            display: (0, _defineFunction.ordargument)(args[0]),
+            text: (0, _defineFunction.ordargument)(args[1]),
+            script: (0, _defineFunction.ordargument)(args[2]),
+            scriptscript: (0, _defineFunction.ordargument)(args[3])
+        };
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        var style = options.style;
+        var body = group.value.text;
+        if (style.size === _Style2.default.DISPLAY.size) {
+            body = group.value.display;
+        } else if (style.size === _Style2.default.TEXT.size) {
+            body = group.value.text;
+        } else if (style.size === _Style2.default.SCRIPT.size) {
+            body = group.value.script;
+        } else if (style.size === _Style2.default.SCRIPTSCRIPT.size) {
+            body = group.value.scriptscript;
+        }
+        var elements = html.buildExpression(body, options, false);
+        return new _buildCommon2.default.makeFragment(elements);
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        var style = options.style;
+        var body = group.value.text;
+        if (style === _Style2.default.DISPLAY) {
+            body = group.value.display;
+        } else if (style === _Style2.default.TEXT) {
+            body = group.value.text;
+        } else if (style === _Style2.default.SCRIPT) {
+            body = group.value.script;
+        } else if (style === _Style2.default.SCRIPTSCRIPT) {
+            body = group.value.scriptscript;
+        }
+        var elements = mml.buildExpression(body, options, false);
+        return new _mathMLTree2.default.MathNode("mrow", elements);
+    }
+});
+
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],110:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11337,7 +11420,7 @@ var mmlModBuilder = function mmlModBuilder(group, options) {
     mathmlBuilder: mmlModBuilder
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":115}],110:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],111:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11586,7 +11669,7 @@ var mathmlBuilder = function mathmlBuilder(group, options) {
     mathmlBuilder: mathmlBuilder
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":115,"../utils":122}],111:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":116,"../utils":123}],112:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11684,7 +11767,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":115}],112:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":116}],113:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11806,7 +11889,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":115}],113:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],114:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11927,7 +12010,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 // smash, with optional [tb], as in AMS
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":115}],114:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],115:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12224,12 +12307,16 @@ defineMacro("\\simcoloncolon", "\\sim\\mathrel{\\mkern-1.2mu}\\dblcolon");
 defineMacro("\\approxcolon", "\\approx\\mathrel{\\mkern-1.2mu}\\vcentcolon");
 defineMacro("\\approxcoloncolon", "\\approx\\mathrel{\\mkern-1.2mu}\\dblcolon");
 
-},{"./Token":90,"./symbols":119,"./utils":122}],115:[function(require,module,exports){
+},{"./Token":90,"./symbols":120,"./utils":123}],116:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _getIterator2 = require("babel-runtime/core-js/get-iterator");
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
 
 var _classCallCheck2 = require("babel-runtime/helpers/classCallCheck");
 
@@ -12249,6 +12336,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * This node represents a general purpose MathML node of any type. The
  * constructor requires the type of node to create (for example, `"mo"` or
  * `"mspace"`, corresponding to `<mo>` and `<mspace>` tags).
+ */
+
+
+/**
+ * MathML node types used in KaTeX. For a complete list of MathML nodes, see
+ * https://developer.mozilla.org/en-US/docs/Web/MathML/Element.
  */
 var MathNode = function () {
     function MathNode(type, children) {
@@ -12286,8 +12379,29 @@ var MathNode = function () {
                 }
             }
 
-            for (var i = 0; i < this.children.length; i++) {
-                node.appendChild(this.children[i].toNode());
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = (0, _getIterator3.default)(this.children), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var child = _step.value;
+
+                    node.appendChild(child.toNode());
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
             }
 
             return node;
@@ -12328,6 +12442,7 @@ var MathNode = function () {
 /**
  * This node represents a piece of text.
  */
+
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -12374,7 +12489,7 @@ exports.default = {
     TextNode: TextNode
 };
 
-},{"./utils":122,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],116:[function(require,module,exports){
+},{"./utils":123,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],117:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12404,7 +12519,7 @@ var parseTree = function parseTree(toParse, settings) {
 
 exports.default = parseTree;
 
-},{"./Parser":86}],117:[function(require,module,exports){
+},{"./Parser":86}],118:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12737,7 +12852,7 @@ exports.default = {
     svgSpan: svgSpan
 };
 
-},{"./buildCommon":91,"./domTree":98,"./mathMLTree":115,"./utils":122,"babel-runtime/helpers/slicedToArray":10}],118:[function(require,module,exports){
+},{"./buildCommon":91,"./domTree":98,"./mathMLTree":116,"./utils":123,"babel-runtime/helpers/slicedToArray":10}],119:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12855,7 +12970,7 @@ var path = {
 
 exports.default = { path: path };
 
-},{}],119:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13577,7 +13692,7 @@ defineSymbol(text, main, textord, "\u2019", "’");
 defineSymbol(text, main, textord, "\u201C", "“");
 defineSymbol(text, main, textord, "\u201D", "”");
 
-},{}],120:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13595,7 +13710,7 @@ var hangulRegex = exports.hangulRegex = /[\uAC00-\uD7AF]/;
 // Notably missing are halfwidth Katakana and Romanji glyphs.
 var cjkRegex = exports.cjkRegex = /[\u3000-\u30FF\u4E00-\u9FAF\uAC00-\uD7AF\uFF00-\uFF60]/;
 
-},{}],121:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13706,7 +13821,7 @@ var calculateSize = exports.calculateSize = function calculateSize(sizeValue, op
     return Math.min(sizeValue.number * scale, options.maxSize);
 };
 
-},{"./Options":83,"./ParseError":84}],122:[function(require,module,exports){
+},{"./Options":83,"./ParseError":84}],123:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

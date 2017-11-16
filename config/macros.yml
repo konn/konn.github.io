@@ -1,4 +1,4 @@
-defs: '\stackrel{\mathrm{def}}{\Longleftrightarrow}'
+defs: '\xLeftrightarrow{\mathrm{def}}'
 set: [1, '\left\{ #1 \right\}']
 Set: [2, '\left\{ #1 \ \middle|\ #2 \right\}']
 braket: [1, '\left\langle #1 \right\rangle']

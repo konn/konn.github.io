@@ -164,7 +164,6 @@ main = hakyllWith config $ do
   match "math/**.tex" $ version "html" $ do
     route $ setExtension "html"
     compile' $ do
-      -- kateSrc <- T.decodeUtf8 <$> loadBody "data/katex.min.js"
       fp <- decodeString . fromJust <$> (getRoute =<< getUnderlying)
       mbib <- fmap itemBody <$> optional (load $ fromFilePath $ replaceExtension fp "bib")
       gbib <- unsafeCompiler $ readBiblioFile $ encodeString globalBib
@@ -172,8 +171,9 @@ main = hakyllWith config $ do
                   =<< load (fromFilePath $ replaceExtension fp "csl")
                   <|> (load "default.csl" :: Compiler (Item CSL))
       macs <- loadBody "config/macros.yml"
+      cmacs <- itemMacros =<< getResourceBody
       let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib
-      ipandoc <- mapM (unsafeCompiler . texToMarkdown macs fp) =<< getResourceBody
+      ipandoc <- mapM (unsafeCompiler . texToMarkdown (cmacs <> macs) fp) =<< getResourceBody
       let ip' = fmap (myProcCites style bibs) ipandoc
       conv'd <- mapM (return . addPDFLink ("/" </> replaceExtension fp "pdf") .
                       addAmazonAssociateLink "konn06-22"
@@ -575,6 +575,11 @@ isPublished item = do
   dra <- getMetadataField ident "draft"
   return $ fromMaybe True $ (txtToBool =<< pub)
                          <|> not <$> (txtToBool =<< dra)
+
+itemMacros :: Item a -> Compiler TeXMacros
+itemMacros item = do
+  msrc <- getMetadataField (itemIdentifier item) "macros"
+  return $ fromMaybe HM.empty $ Y.decode . T.encodeUtf8 . T.pack =<< msrc
 
 useKaTeX :: MonadMetadata m => Item a -> m Bool
 useKaTeX item = do
