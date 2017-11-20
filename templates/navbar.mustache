@@ -1,0 +1,28 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse"
+          data-target="#Navbar" aria-controls="Navbar"
+          aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     {{#.}}
+      {{#active}}
+        <li class="nav-item active"><a class="nav-link" href="{{path}}">{{category}}</a></li>
+      {{/active}}
+      {{^active}}
+        <li class="nav-item"><a class="nav-link" href="{{path}}">{{category}}</a></li>
+      {{/active}}
+     {{/.}}
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q"
+             placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>

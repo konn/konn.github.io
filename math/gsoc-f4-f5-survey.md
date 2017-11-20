@@ -3,6 +3,7 @@ title: F4, F5 アルゴリズムに関するサーベイ（A survey on F_4 and F
 author: 石井大海
 description: Gröbner基底の効率的な計算法である F4, F5 アルゴリズムに関するサーベイ、メモ（A note on F4 and F5 algorithms to efficiently compute Gröbner bases）。
 tag: 数学, 計算機代数, GSoC 2014, Gröbner基底
+date: 2014/07/19 02:27:08 JST
 ---
 
 F_5 algorithm

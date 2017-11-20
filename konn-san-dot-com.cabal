@@ -33,6 +33,8 @@ executable site
                      , process
                      , shakespeare
                      , hakyll
+                     , hakyll-shakespeare
+                     , stache
                      , vector
                      , th-lift
                      , aeson
@@ -67,6 +69,7 @@ executable site
                      , containers
                      , data-default
                      , parsec
+                     , megaparsec
                      , lens
                      , regex-applicative
                      , system-filepath

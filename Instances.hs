@@ -16,6 +16,8 @@ import           Text.CSL                 hiding (Citation, Cite)
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
 import           Text.LaTeX.CrossRef      ()
+import qualified Text.Megaparsec          as MegaParsec
+import qualified Text.Mustache            as Mus
 
 newtype BibTeX = BibTeX { runBibTeX :: [Reference] }
     deriving (Read, Show, Eq, Typeable, Generic)
@@ -48,3 +50,14 @@ deriving instance Plated LaTeX
 instance FromJSON LaTeX where
   parseJSON = withText "Text" $ either (fail . show) return . parseLaTeX
 
+instance Binary MegaParsec.Pos where
+  get = do
+    i <- get
+    either (fail . show) return $ MegaParsec.mkPos (i :: Int)
+  put = put . MegaParsec.unPos
+instance Binary Mus.Key
+instance Binary Mus.PName
+instance Binary Mus.Node
+instance Binary Mus.Template
+instance Writable Mus.Template where
+  write _ _ = return ()

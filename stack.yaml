@@ -14,6 +14,7 @@ extra-deps:
 - pandoc-crossref-0.2.5.0
 - roman-numerals-0.5.1.5
 - antiquoter-0.1.1.0
+- hakyll-shakespeare-0.1.0.0.2
 # - HaTeX-qq-0.0.1.2
 # - effin-0.3.0.1
 # - pandoc-crossref-0.2.1.3

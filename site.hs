@@ -9,6 +9,7 @@ import           Control.Applicative
 import           Control.Lens                    (rmapping, (%~), (.~), (<&>),
                                                   (<>~), (^?), _Unwrapping')
 import           Control.Monad                   hiding (mapM, sequence)
+import           Control.Monad.Error.Class       (throwError)
 import           Data.Binary
 import qualified Data.ByteString.Char8           as BS
 import qualified Data.CaseInsensitive            as CI
@@ -23,6 +24,7 @@ import qualified Data.Set                        as S
 import           Data.String
 import qualified Data.Text                       as T
 import qualified Data.Text.Encoding              as T
+import qualified Data.Text.Lazy                  as LT
 import           Data.Text.Lens                  (packed)
 import           Data.Time
 import           Data.Traversable                hiding (forM)
@@ -56,6 +58,7 @@ import qualified Text.HTML.TagSoup               as TS
 import           Text.LaTeX.Base                 (render)
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
+import qualified Text.Mustache                   as Mus
 import           Text.Pandoc
 import           Text.Pandoc.Builder             hiding (fromList)
 import qualified Text.Pandoc.Builder             as Pan
@@ -67,6 +70,7 @@ import           Control.Lens         (imap)
 import qualified Data.ByteString.Lazy as LBS
 import           Data.Foldable        (asum)
 import qualified Data.HashMap.Strict  as HM
+import           Data.Yaml            (object, toJSON, (.=))
 import qualified Data.Yaml            as Y
 import           Lenses
 import           Macro
@@ -86,6 +90,13 @@ home = $(litE . stringL . encodeString =<< runIO getHomeDirectory)
 
 globalBib :: FilePath
 globalBib = home </> "Library/texmf/bibtex/bib/myreference.bib"
+
+mustacheCompiler :: Compiler (Item Mus.Template)
+mustacheCompiler = cached "mustacheCompiler" $ do
+  item <- getResourceString
+  file <- getResourceFilePath
+  either (throwError . lines . show) (return . Item (itemIdentifier item)) $
+    Mus.compileMustacheText (fromString file) . LT.pack $ itemBody item
 
 main :: IO ()
 main = hakyllWith config $ do
@@ -108,7 +119,8 @@ main = hakyllWith config $ do
   match "css/**" $
     route idRoute >> compile' compressCssCompiler
 
-  match "templates/**" $ compile' templateCompiler
+  match ("templates/**" .&&. complement "**.mustache") $ compile' templateCompiler
+  match ("templates/**.mustache") $ compile' mustacheCompiler
 
   {-
   tags <- buildTagsWith myGetTags
@@ -346,8 +358,10 @@ readHtml' opt = fromRight . readHtml opt
 
 applyDefaultTemplate :: Context String -> Item String -> Compiler (Item String)
 applyDefaultTemplate addCtx item = do
-  let navbar = field "navbar" $ makeNavBar . itemIdentifier
-      bcrumb = field "breadcrumb" makeBreadcrumb
+  bc <- makeBreadcrumb item
+  nav <- makeNavBar $ itemIdentifier item
+  let navbar = constField "navbar" nav
+      bcrumb = constField "breadcrumb" bc
       date = field "date" itemDateStr
       toc = field "toc" $ return .renderHtml . buildTOC . readHtml' def . itemBody
       noTopStar = field "no-top-star" $ \i ->
@@ -483,6 +497,17 @@ getActive cDic ident = do
     p ('/':inp) = fromGlob (inp++"/**") `matches` ident
     p _         = False
 
+data Breadcrumb = Breadcrumb { parents      :: [(String, T.Text)]
+                             , currentTitle :: String
+                             }
+                deriving (Show, Eq, Ord)
+
+instance Y.ToJSON Breadcrumb where
+  toJSON (Breadcrumb cbs ctr) =
+    object ["breadcrumbs" .= [object ["path" .= fp, "name" .= name] | (fp, name) <- cbs ]
+             ,"currentTitle" .= ctr
+             ]
+
 makeBreadcrumb :: Item String -> Compiler String
 makeBreadcrumb item = do
   let ident = itemIdentifier item
@@ -490,46 +515,25 @@ makeBreadcrumb item = do
   st <- loadBody "config/tree.yml"
   let dropIndex fp | filename fp == "index.md" = parent $ dirname fp
                    | otherwise = fp
-      parents = map encodeString $ splitDirectories $ dropIndex $ toFilePath ident
+      pars = map encodeString $ splitDirectories $ dropIndex $ toFilePath ident
       bc | ident == "index.md" = []
-         | otherwise = walkTree parents st
-  return $ renderHtml [shamlet|
-      <ol .breadcrumb>
-        $forall (path, title) <- bc
-          <li .breadcrumb-item>
-            <a href=#{path}>#{title}
-        <li .li.breadcrumb-item .active>
-          #{mytitle}
-    |]
+         | otherwise = walkTree pars st
+  src <- loadBody "templates/breadcrumb.mustache"
+  let obj = toJSON $ Breadcrumb bc mytitle
+  return $ LT.unpack $ Mus.renderMustache src obj
 
 makeNavBar :: Identifier -> Compiler String
 makeNavBar ident = do
   NavBar cDic <- loadBody "config/navbar.yml"
   debugCompiler $ "cDic: " ++ show cDic
-  let cats = [(pth, cat, getActive cDic ident == pth) | (cat, pth) <- cDic ]
-  return $ renderHtml $  [shamlet|
-    <nav .navbar .navbar-expand-lg .navbar-dark .bg-dark .fixed-top>
-       <a .navbar-brand href="/">konn-san.com
-       <button type=button .navbar-toggler data-toggle=collapse
-               data-target=#Navbar aria-controls=Navbar
-               aria-expanded=false aria-label="toggle navigation">
-         <span .navbar-toggler-icon>
-       <div .collapse .navbar-collapse #Navbar>
-         <ul .navbar-nav .mr-auto>
-           $forall (path, cat, isActive) <- cats
-             $if isActive
-                <li .nav-item .active>
-                  <a .nav-link href="#{path}">#{cat}
-             $else
-                <li .nav-item>
-                  <a .nav-link href="#{path}">#{cat}
-         <form .form-inline .my-2 .my-lg-0 action="https://cse.google.com/" target=_blank>
-           <input type=hidden name=cx value="008926939897329001532:wsmollxek8o">
-           <input .form-control .mr-sm-2 type=text name=q
-                  placeholder=Search aria-label=Search required>
-           <button .btn .btn-outline-secondary .my-2 .my-sm-0 type=submit>
-             <i .fa .fa-search>
-   |]
+  let cats = toJSON [object ["path" .= pth
+                            ,"category" .= cat
+                            ,"active" .= (getActive cDic ident == pth)
+                            ]
+                    | (cat, pth) <- cDic
+                    ]
+  src <- loadBody "templates/navbar.mustache"
+  return $ LT.unpack $ Mus.renderMustache src cats
 
 readHierarchy :: String -> [(String, String)]
 readHierarchy = mapMaybe (toTup . words) . lines
