@@ -3,6 +3,7 @@ title: konn-san.comの数式描画を支える技術：KaTeX、MathJax、tex2img
 date: 2017/11/18 15:24:41 JST
 author: 石井大海
 description: 最近 konn-san.com の数式描画エンジンをMathJax単体から KaTeX + MathJax に切り替えました。そもそもどのようにしてLaTeXからHTMLとPDFを同時に生成しているのかなども含め、その辺りの体験記を書きます。
+published: false
 tag: 数式,MathJax,KaTeX,Pandoc,LaTeX,TeX
 ---
 

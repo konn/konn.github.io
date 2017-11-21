@@ -477,16 +477,6 @@ amazons = "www.amazon.com":"amazon.com":concatMap (\cc -> [T.concat [www,"amazon
 ccTLDs :: [T.Text]
 ccTLDs = ["jp"]
 
-catDic :: [(Html, String)]
-catDic = [("Home", "/")
-         ,("Profile", "/profile.html")
-         ,("Math", "/math")
-         ,("Programming", "/prog")
-         ,("Writings", "/writing")
-         ,("Archive", "/archive.html")
-         ,("Blog", "http://blog.konn-san.com/")
-         ]
-
 getActive :: [(T.Text, String)] -> Identifier -> String
 getActive _ "archive.md" = "/archive.html"
 getActive _ "profile.md" = "/profile.html"
