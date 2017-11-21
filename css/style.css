@@ -27,6 +27,10 @@ section[id]:before, a[id^="fnref"]:before, .footnotes li[id^="fn"]:before, h1[id
 body {
     padding-top: 70px;
     position: relative;
+    line-height: 1.15;
+
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
 }
 
 ul#socials {
