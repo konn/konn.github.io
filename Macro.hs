@@ -41,6 +41,10 @@ instance FromJSON TeXMacro where
                        parseJSON
                        (v V.!? 1)
              <*> mapM parseJSON (drop 2 $ V.toList v)
+  parseJSON (Object dic) =
+    TeXMacro <$> dic .: "argNums"
+             <*> dic .: "body"
+             <*> dic .: "optArgs"
   parseJSON _ = empty
 
 type TeXMacros = HashMap String TeXMacro

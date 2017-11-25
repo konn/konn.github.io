@@ -23,7 +23,6 @@ import           Data.Ord
 import qualified Data.Set                        as S
 import           Data.String
 import qualified Data.Text                       as T
-import qualified Data.Text.Encoding              as T
 import qualified Data.Text.Lazy                  as LT
 import           Data.Text.Lens                  (packed)
 import           Data.Time
@@ -67,6 +66,7 @@ import           Text.Pandoc.Walk
 
 import           Control.Exception    (IOException, handle)
 import           Control.Lens         (imap)
+import           Data.Aeson           (Result (..), fromJSON)
 import qualified Data.ByteString.Lazy as LBS
 import           Data.Foldable        (asum)
 import qualified Data.HashMap.Strict  as HM
@@ -570,10 +570,15 @@ isPublished item = do
   return $ fromMaybe True $ (txtToBool =<< pub)
                          <|> not <$> (txtToBool =<< dra)
 
+maybeResult :: Result a -> Maybe a
+maybeResult (Success a) = Just a
+maybeResult _           = Nothing
+
 itemMacros :: Item a -> Compiler TeXMacros
 itemMacros item = do
-  msrc <- getMetadataField (itemIdentifier item) "macros"
-  return $ fromMaybe HM.empty $ Y.decode . T.encodeUtf8 . T.pack =<< msrc
+  metas <- getMetadata (itemIdentifier item)
+  let obj = HM.lookup "macros" metas
+  return $ fromMaybe HM.empty $ maybeResult . fromJSON =<< obj
 
 useKaTeX :: MonadMetadata m => Item a -> m Bool
 useKaTeX item = do

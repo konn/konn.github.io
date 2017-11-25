@@ -173,7 +173,7 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
 次の補題が必要になる：
 \begin{fact}\label{lem:interm-ext}
  $G$を$V$上の$\mathbb{B}$-生成フィルター，$W \models \ZFC$を推移的モデル，$V \subseteq W \subseteq V[G]$とする．
- このとき$\mathbb{B}$の完備部分Boole代数$\mathbb{B}_0$で$W = V[G \cap \mathbb{B}_0]$となる物が存在する．
+ このとき$\mathbb{B}$の完備部分Boole代数$\mathbb{B}_0$で$W = V[G \cap \mathbb{B}_0]$となる物が存在し，更に$V[G]$は$W$の生成拡大となる．
 \end{fact}
 
 \begin{proof}
@@ -268,7 +268,7 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
  \end{enumerate}
 \end{remark}
 基礎モデルは擬基礎モデルになっている事は次の定理によってわかる\footnote{実際にはより一般に戦略閉性という性質を持つ順序との反復が$\delta^+$-擬基礎モデルになることが示せる．詳細はHamkins--Johston~\cite[Lemma 2.10]{Hamkins:2010uq}の証明を参照．}：
-\begin{lemma}
+\begin{lemma}\label{lem:ground-is-pseudoground}
  $\mathbb{P}$を擬順序，$G$を$(V, \mathbb{P})$-生成フィルター，$|\mathbb{P}| \leq \delta$とする．
  この時$V$は$V[G]$の擬基礎モデルとなる．
  特に$(\delta^{++})^V = (\delta^{++})^W$であり，$V \subseteq W$は$\delta^+$-被覆性質および$\delta^+$-近似性質を満たす．
@@ -315,9 +315,9 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
 $\ZFC$ではなくその部分体系$\ZFC_\delta$を考えるのは，次の一意性定理が$\ZFC$で証明出来るからである：
 \begin{theorem}\label{thm:2-d-determ-pg}
  $W, W', V$を$\ZFC_\delta$の推移的モデルとし，$W, W' \subseteq V$とする．
- $W \subseteq V$, $W' \subseteq V$がそれぞれ$\delta$-擬基礎モデルで$(2^{<\delta})^W = (2^{<\delta})^{W'}$が成り立つなら，$W = W'$.
+ $W \subseteq V$, $W' \subseteq V$がそれぞれ$\delta$-擬基礎モデルで$(\power{<\delta}{2})^W = (\power{<\delta}{2})^{W'}$が成り立つなら，$W = W'$.
  
- 特に，$\ZFC_\delta$の$\delta$-擬基礎モデルは$(2^{<\delta})$の値によって一意に決定される．
+ 特に，$\ZFC_\delta$の$\delta$-擬基礎モデルは$(\power{<\delta}{2})$の値によって一意に決定される．
 \end{theorem}
 \begin{proof}
  まず最初に，$\delta$-近似性質から，$\Pow^W(\delta) = \Pow^{W'}(\delta)$が成り立つことに注意する．
@@ -360,17 +360,17 @@ $\ZFC$ではなくその部分体系$\ZFC_\delta$を考えるのは，次の一�
 \end{proof}
 以上から擬基礎モデルの定義可能性が従う：
 \begin{lemma}\label{lem:cb-defn}
- $W \subseteq V$が$\delta$-擬基礎モデルなら，$W$は$r \defeq (2^{<\delta})^W$をパラメータに使って$V$で定義可能．
+ $W \subseteq V$が$\delta$-擬基礎モデルなら，$W$は$r \defeq (\power{<\delta}{2})^W$をパラメータに使って$V$で定義可能．
 \end{lemma}
 \begin{proof}
- $x \in W$は「十分大きな$\theta$について$x \in V_\theta^{W}$」というのと同値だが，上の~\ref{thm:2-d-determ-pg}より$V_\theta^{W}$は$r = (2^{<\delta})^W$によって一意に定まる．
+ $x \in W$は「十分大きな$\theta$について$x \in V_\theta^{W}$」というのと同値だが，上の~\ref{thm:2-d-determ-pg}より$V_\theta^{W}$は$r = (\power{<\delta}{2})^W$によって一意に定まる．
  そこで次のように書いてやれば良い：
  \begin{align*}
   x \in W
   \iff \exists \theta \gg \delta\: &\exists M \subseteq V_\theta\\
    &\begin{cases}
    \beth_\theta = \theta, \cf(\theta) > \delta,
-   (2^{<\delta})^M = r, (\delta^+)^M = (\delta^+)^V,\\
+   (\power{<\delta}{2})^M = r, (\delta^+)^M = (\delta^+)^V,\\
    x \in M \models \ZFC_\delta: \text{transitive},\\
    M \subseteq V_\theta \mathrel{\text{has}} \delta\text{-AP} \text{ and } \delta\text{-CP}.
   \end{cases}
@@ -383,7 +383,7 @@ $\ZFC$ではなくその部分体系$\ZFC_\delta$を考えるのは，次の一�
  \]
 \end{corollary}
 \begin{proof}
- $r = (2^{<\delta})^M$の形になっていなければ$V$の元にして，それ以外なら上の$M$を返す． \qed
+ $r = (\power{<\delta}{2})^M$の形になっていなければ$V$の元にして，それ以外なら上の$M$を返す． \qed
 \end{proof}
 よって，あとは$\Set{(x, r) | \psi(x, r)}$の中から$\ZFC$のモデルで$V$の基礎モデルになっているものだけ見付けてくれば良い．
 それには，次の事実を使えばよい：
@@ -405,7 +405,7 @@ $\ZFC$のモデルになっているかは，これに加えて選択公理が�
  まず\ref{item:Wr-dwnwd-abs}について．
  $W_r \subsetneq U \subsetneq V$の場合だけ考えればよい．
  この時，$W_r$における完備Boole代数$\mathbb{B} \in W_r$と$(W_r, \mathbb{B})$-生成フィルター$G$で$W_r[G] = V$となる物を取る．
- $\delta \defeq |\mathbb{B}|$とおいて$r$を適宜取り直せば，$r = (2^{<\delta})^{W_r}$として良い．
+ $\delta \defeq |\mathbb{B}|$とおいて$r$を適宜取り直せば，$r = (\power{<\delta}{2})^{W_r}$として良い．
  このとき，中間拡大補題~\ref{lem:interm-ext}より$\mathbb{B}_0 \lessdot \mathbb{B}$で$U = W_r[G \cap \mathbb{B}_0]$となるものが取れる．
  このとき$|\mathbb{B}_0| \leq |\mathbb{B}| = \delta$なので$W_r \subseteq U$は$\delta^+$-擬基礎モデルになっている．
  よって$W_r^V = W_r^U$となる．
