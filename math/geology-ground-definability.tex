@@ -291,40 +291,42 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
 \end{proof}
 続いてこうした擬基礎モデルがきちんと定義出来ることを見よう．
 上で宣言した通り，擬基礎モデルは一つのパラメータで完全に決定することが出来る．
-そのための議論に十分な$\ZFC$の部分理論$\ZFC_\delta$を定義する．
-\begin{definition}[$\ZFC_\delta$, Reitz~\cite{Reitz:2007af}]
- $\ZFC_\delta$の言語は述語記号$\in$に加え定数記号$\delta$を持ち，公理は以下で与えられる．
+そのための議論に十分な$\ZFC$の部分理論$\ZFC^{<\lambda}$を定義する．
+\begin{definition}[$\ZFC^{<\lambda}$]
+ $\ZFC^{<\lambda}_\delta$の言語は述語記号$\in$に加え定数記号$\delta, \lambda$を持ち，公理は以下で与えられる．
  \begin{enumerate}
-  \item $\mathrm{ZC}$-集合論の公理：内包，対，和集合，冪，無限，基礎，選択公理，
-  \item 「$\delta$は正則基数である」，
-  \item $\leq\delta$-置換公理：$\delta$を定義域とする関数による集合の像は集合．
-  \item 順序数コードの公理：任意の集合$X$に対して，順序数$\alpha$と$E \subseteq \alpha \times \alpha$で$(\trcl(\set{X}), {\in}) \simeq (\alpha, E)$となる物が存在．
+  \item $\mathrm{ZC}-$冪集合公理：内包，対，和集合，無限，基礎，整列定理，
+  \item 「$\lambda$は順序数」「$\delta$は正則基数」，
+  \item ${\leq}\delta$-置換公理：任意の$f: \delta \to V$と集合$A$に対し像$f[A]$が存在。
+  \item ${<}\lambda$-冪集合公理：任意の濃度$\lambda$未満の集合$A$に対し冪集合$\Pow(A)$が存在する．
  \end{enumerate}
 \end{definition}
 \begin{remark}
  \begin{enumerate}
-  \item $\theta$が$\beth_\theta = \theta$かつ$\cf(\theta) > \delta$を満たすなら，$(V_\theta, {\in}, \delta) \models \ZFC_\delta$.
-  \item $(\alpha, E)$が集合$x$をコードするとする．
+  \item $\ZFC^{<\kappa}_\delta$は有限公理化可能である．
+  \item $\theta$が$\theta > 2^{<\lambda}$を満たす正則基数なら$H_\theta \models \ZFC^{<\lambda}$.
+  \item 整列定理があるので，任意の集合は順序数の集合でコード出来る．
+        特に$\kappa \defeq |\trcl(\set{X})|$とおいて$f: \kappa \congto \trcl(\set{X})$を全単射とすれば，
         \[
-         h(\xi) \defeq \Set{ h(\beta) | \beta \mathrel{E} \xi },
+         \xi \mathrel{E} \eta \defs f(\xi) \in f(\eta)
         \]
-        とおけば，$\Set{h(\xi) | \xi < \alpha}$の$\in$-最大限として$x$は復元出来る．
-        特に，$(\alpha, E)$さえ与えられれば，どの推移的モデルにおいても$x$は一意に復元される．
+        により同型$(\kappa, E) \simeq (\trcl(\set{X}), {\in})$が定まり，$X$は$\kappa$の$E$-最大限と対応している．
+        逆にこういった$(\alpha, E)$さえ与えられれば，どの推移的モデルにおいても$X$は一意に復元される．
  \end{enumerate}
 \end{remark}
-$\ZFC$ではなくその部分体系$\ZFC_\delta$を考えるのは，次の一意性定理が$\ZFC$で証明出来るからである：
+$\ZFC$ではなくその部分体系$\ZFC^{<\kappa}_\delta$を考えるのは，次の一意性定理が$\ZFC$で証明出来るからである：
 \begin{theorem}\label{thm:2-d-determ-pg}
- $W, W', V$を$\ZFC_\delta$の推移的モデルとし，$W, W' \subseteq V$とする．
+ $\kappa > \delta$, $W, W', V$を$\ZFC^{<\kappa}_\delta$の推移的モデルとし，$W, W' \subseteq V$とする．
  $W \subseteq V$, $W' \subseteq V$がそれぞれ$\delta$-擬基礎モデルで$(\power{<\delta}{2})^W = (\power{<\delta}{2})^{W'}$が成り立つなら，$W = W'$.
  
- 特に，$\ZFC_\delta$の$\delta$-擬基礎モデルは$(\power{<\delta}{2})$の値によって一意に決定される．
+ 特に，$\ZFC^{<\kappa}_\delta$の$\delta$-擬基礎モデルは$(\power{<\delta}{2})$の値によって一意に決定される．
 \end{theorem}
 \begin{proof}
  まず最初に，$\delta$-近似性質から，$\Pow^W(\delta) = \Pow^{W'}(\delta)$が成り立つことに注意する．
  また，擬基礎モデルの定義より$(\delta^+)^W = (\delta^+)^V =  (\delta^+)^{W'}$となるので，「$|A| < \delta$」という論理式には（$A$を点として持っていれば）曖昧性はない．
  更に，$\delta$-被覆性質より$|A| = \delta$という表現も曖昧性を持たない．
 
- 順序数コード公理より，$W$と$W'$が同じ順序数の部分集合を持つことがわかれば良い．
+ 上の注意より，$W$と$W'$が同じ順序数の部分集合を持つことがわかれば良い．
  特に，$W$と$W'$が共に$\delta$-近似性質を満たすことから，$[\On]^{<\delta} \cap W = [\On]^{<\delta} \cap W'$が示せれば良い．
  
  まず，$W, W'$両方で通用するような弱い被覆性質が成り立つ：
@@ -332,18 +334,18 @@ $\ZFC$ではなくその部分体系$\ZFC_\delta$を考えるのは，次の一�
   $A \in [\On]^{<\delta} \cap V \implies \exists B \in [\On]^{\leq \delta} \cap W \cap W'\: A \subseteq B$.
  \end{claim}
  \begin{subproof}
-  $A \subseteq \alpha$とし，$\lhd \in V$を$\Pow^V(\alpha)$の整列順序とする．
-  $W, W' \subseteq V$の被覆性質を使って，次を満たす$\Braket{B_\xi | \xi < \kappa}$を帰納的に取る：
+  $A \subseteq \alpha$とし，$W, W' \subseteq V$の被覆性質を使って，次を満たす$\Braket{B_\xi | \xi < \kappa}$を帰納的に取る：
   \begin{enumerate}
    \item $B_\xi \in [\alpha]^{<\delta}$, $B_0 = A$,
-   \item $B_\xi \in W \implies B_{\xi + 1}$は$B_\xi \subseteq B_{\xi+1} \in W'$なる$\lhd$-最小元,
-   \item $B_\xi \notin W \implies B_{\xi + 1}$は$B_\xi \subseteq B_{\xi+1} \in W$なる$\lhd$-最小元,
-   \item 極限順序数$\xi$に対して，$V \models \quoted{{\leq\delta}\text{-置換公理}}$により$B_\xi \defeq \bigcup_{\gamma < \xi} B_\gamma \in V$とおく．
+   \item $B_\xi \in W \implies B_{\xi + 1}$は$B_\xi \subseteq B_{\xi+1} \in W'$なる元,
+   \item $B_\xi \notin W \implies B_{\xi + 1}$は$B_\xi \subseteq B_{\xi+1} \in W$なる元,
+   \item 極限順序数$\xi$に対して，$B_\xi \defeq \bigcup_{\gamma < \xi} B_\gamma \in V$とおく．
   \end{enumerate}
+  最後の極限順序数の場合の処置は，$W'$で$\leq\delta$-置換公理が成り立つことから可能である．
   最後に$B \defeq \bigcup_{\xi < \delta} B_\xi$とおく．
   これが求めるものであることを見る．
   同様に$B \in W'$も示せるので，特に$B \in W$だけ示す．
-  いま$W$は$\delta$-近似性質を持っているから，任意の$C \in [\alpha]^{<\kappa} \cap W$に対して$B \cap C \in W$となる事が言えればよい．
+  いま$W$は$\delta$-近似性質を持っているから，任意の$C \in [\alpha]^{<\delta} \cap W$に対して$B \cap C \in W$となる事が言えればよい．
   いま，$\delta$の正則性から任意の$\xi > \eta$に対し$B \cap C = B_\xi \cap C$となる$\eta < \delta$が存在する．
   構成より，$B_\xi \in W$となるような$\xi < \delta$は共終的に存在するから，特に$B \cap C = B_\xi \cap C \in W$となるような$\xi$は必ず存在する．
   これが示したかったことである．
@@ -354,7 +356,7 @@ $\ZFC$ではなくその部分体系$\ZFC_\delta$を考えるのは，次の一�
  上の主張から，$B \in [\On]^{\leq \delta} \cap W \cap W'$で$A \subseteq B$となるものが取れる．
  特に，$\otp(B) < \delta^+$なので，二項関係$w \in W$で$\otp(\delta, w) = \otp(B, {<})$となる物が取れる．
  いま$w \subseteq \delta \times \delta$であり，$\delta$の部分集合としてコードできるので，仮定より$\Pow^W(\delta) = \Pow^{W'}(\delta)$に注意すれば，$w \in W'$とできる．
- すると，$w$は$B$の列挙$B = \Set{b_\alpha | \alpha < \delta'}$を誘導し，$W'$は$\leq\delta$-置換公理を満たすので$\Braket{b_\alpha | \alpha < \delta'} \in W'$となる．
+ すると，$w$は$B$の列挙$B = \Set{b_\alpha | \alpha < \delta'}$を誘導し，$W'$の$\leq\delta$-置換公理より$\Braket{b_\alpha | \alpha < \delta'} \in W'$となる．
  一方，$A^* = \Set{\alpha < \delta' | b_\alpha \in A}$は$W$で定義可能であり，再び$\Pow^W(\delta) = \Pow^{W'}(\delta)$より$A^* \in W'$を得る．
  逆に$A$は$A^*$と$\Braket{b_\alpha | \alpha < \delta'}$だけを用いて定義可能なので，$A \in W'$を得る． \qed
 \end{proof}
@@ -371,7 +373,7 @@ $\ZFC$ではなくその部分体系$\ZFC_\delta$を考えるのは，次の一�
    &\begin{cases}
    \beth_\theta = \theta, \cf(\theta) > \delta,
    (\power{<\delta}{2})^M = r, (\delta^+)^M = (\delta^+)^V,\\
-   x \in M \models \ZFC_\delta: \text{transitive},\\
+   x \in M \models \ZFC^{{\leq}\delta}_\delta: \text{transitive},\\
    M \subseteq V_\theta \mathrel{\text{has}} \delta\text{-AP} \text{ and } \delta\text{-CP}.
   \end{cases}
  \end{align*}

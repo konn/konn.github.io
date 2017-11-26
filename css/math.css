@@ -1,5 +1,5 @@
 body {
-  counter-reset: prop definition theorem  fact  conjecture  lemma  question  exercise  corollary  section  subsection  remark problem;
+  counter-reset: prop definition theorem  fact  conjecture  lemma  question  exercise  corollary  section  subsection  remark problem claim;
 }
 
 h2 {
@@ -34,7 +34,7 @@ h3:before {
     content: "作成者：";
 }
 
-.question, .answer, .corollary, .prop, .theorem, .definition, .lemma, .fact, .axiom, .problem, .exercise, .conjecture {
+.claim, .notation, .question, .answer, .corollary, .prop, .theorem, .definition, .lemma, .fact, .axiom, .problem, .exercise, .conjecture {
     margin: 10px;
     border: 1px solid;
     padding: 10px;
@@ -47,8 +47,25 @@ h3:before {
     padding-left: 15px;
 }
 
+.subproof {
+    margin: 10px;
+    border-left: 4px solid;
+    padding: 10px;
+    padding-left: 15px;
+}
+
 .axiom {
     counter-increment: axiom;
+}
+
+.claim {
+    counter-increment: claim;
+}
+
+.claim:before{
+  font-weight: bold;
+  display: inline;
+  content: "主張 " counter(claim) "．";
 }
 
 .axiom[name]:before{
@@ -243,6 +260,19 @@ h3:before {
     text-align: right;
     display: block;
     content: "■";
+}
+
+.subproof:before{
+    content: "[∵] ";
+    display: inline;
+    font-weight: bold;
+}
+
+.subproof:after{
+    text-align: right;
+    display: block;
+    font-size: small;
+    content: "□ (Claim " counter(claim) ")";
 }
 
 .label{

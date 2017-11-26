@@ -216,7 +216,7 @@ myCrossRefConf = RefOptions { subsumes = HM.empty
 envs :: [String]
 envs = [ "prop", "proof", "theorem", "lemma", "axiom", "remark","exercise"
        , "definition", "question", "answer", "problem", "corollary"
-       , "fact", "conjecture"
+       , "fact", "conjecture", "claim", "subproof", "notation"
        ]
 
 envAliases :: [(String, String)]
