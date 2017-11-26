@@ -365,16 +365,16 @@ $\ZFC$ではなくその部分体系$\ZFC^{<\kappa}_\delta$を考えるのは，
  $W \subseteq V$が$\delta$-擬基礎モデルなら，$W$は$r \defeq (\power{<\delta}{2})^W$をパラメータに使って$V$で定義可能．
 \end{lemma}
 \begin{proof}
- $x \in W$は「十分大きな$\theta$について$x \in V_\theta^{W}$」というのと同値だが，上の~\ref{thm:2-d-determ-pg}より$V_\theta^{W}$は$r = (\power{<\delta}{2})^W$によって一意に定まる．
+ $x \in W$は「十分大きな$\theta$について$x \in H_\theta \cap W$」というのと同値だが，上の定理~\ref{thm:2-d-determ-pg}より$H_\theta \cap W$は$r = (\power{<\delta}{2})^W$によって一意に定まる．
  そこで次のように書いてやれば良い：
  \begin{align*}
   x \in W
-  \iff \exists \theta \gg \delta\: &\exists M \subseteq V_\theta\\
+  \iff \exists \theta \gg \delta\: &\exists M \subseteq H_\theta\\
    &\begin{cases}
-   \beth_\theta = \theta, \cf(\theta) > \delta,
-   (\power{<\delta}{2})^M = r, (\delta^+)^M = (\delta^+)^V,\\
-   x \in M \models \ZFC^{{\leq}\delta}_\delta: \text{transitive},\\
-   M \subseteq V_\theta \mathrel{\text{has}} \delta\text{-AP} \text{ and } \delta\text{-CP}.
+     \theta > 2^{\delta}: \text{正則非可算},
+     (\power{<\delta}{2})^M = r, (\delta^+)^M = (\delta^+)^V,\\
+     x \in M \models \ZFC^{{\leq}\delta}_\delta: \text{transitive},\\
+     M \subseteq H_\theta \mathrel{\text{has}} \delta\text{-AP} \text{ and } \delta\text{-CP}.
   \end{cases}
  \end{align*}
 \end{proof}
