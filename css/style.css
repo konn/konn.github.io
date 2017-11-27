@@ -168,3 +168,7 @@ h6,
     font-size: 3.5rem;
     font-weight: 300;
 }
+
+.pull-right, .pull-left {
+    margin: 1em;
+}

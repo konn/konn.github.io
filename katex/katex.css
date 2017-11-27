@@ -395,6 +395,9 @@
 .katex .mspace.negativethinspace {
   margin-left: -0.16667em;
 }
+.katex .mspace.muspace {
+  width: 0.055556em;
+}
 .katex .mspace.thinspace {
   width: 0.16667em;
 }

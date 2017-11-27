@@ -62,6 +62,12 @@ h3:before {
     counter-increment: claim;
 }
 
+.notation:before{
+  font-weight: bold;
+  display: inline;
+  content: "記法．";
+
+}
 .claim:before{
   font-weight: bold;
   display: inline;

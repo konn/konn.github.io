@@ -679,6 +679,7 @@ myProcCites style bib p =
 removeTeXGomiStr :: String -> String
 removeTeXGomiStr = packed %~ T.replace "\\qed" ""
                            . T.replace "\\mbox" ""
+                           . T.replace "~" ""
                            . T.replace "\\printbibliography" ""
                            . T.replace "\\printbibliography[title=参考文献]" ""
                            . T.replace "\\RequirePackage{luatex85}" ""

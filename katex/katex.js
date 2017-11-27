@@ -11449,11 +11449,14 @@ var htmlModBuilder = function htmlModBuilder(group, options) {
     var inner = [];
 
     if (group.value.modType === "bmod") {
-        // “\nonscript\mskip-\medmuskip\mkern5mu”
+        // “\nonscript\mskip-\medmuskip\mkern5mu”, where \medmuskip is
+        // 4mu plus 2mu minus 1mu, translates to 1mu space in
+        // display/textstyle and 5mu space in script/scriptscriptstyle.
         if (!options.style.isTight()) {
-            inner.push(_buildCommon2.default.makeSpan(["mspace", "negativemediumspace"], [], options));
+            inner.push(_buildCommon2.default.makeSpan(["mspace", "muspace"], [], options));
+        } else {
+            inner.push(_buildCommon2.default.makeSpan(["mspace", "thickspace"], [], options));
         }
-        inner.push(_buildCommon2.default.makeSpan(["mspace", "thickspace"], [], options));
     } else if (options.style.size === _Style2.default.DISPLAY.size) {
         inner.push(_buildCommon2.default.makeSpan(["mspace", "quad"], [], options));
     } else if (group.value.modType === "mod") {
@@ -11470,10 +11473,11 @@ var htmlModBuilder = function htmlModBuilder(group, options) {
         var modInner = [_buildCommon2.default.mathsym("m", group.mode), _buildCommon2.default.mathsym("o", group.mode), _buildCommon2.default.mathsym("d", group.mode)];
         if (group.value.modType === "bmod") {
             inner.push(_buildCommon2.default.makeSpan(["mbin"], modInner, options));
-            // “\mkern5mu\nonscript\mskip-\medmuskip”
-            inner.push(_buildCommon2.default.makeSpan(["mspace", "thickspace"], [], options));
+            // “\mkern5mu\nonscript\mskip-\medmuskip” as above
             if (!options.style.isTight()) {
-                inner.push(_buildCommon2.default.makeSpan(["mspace", "negativemediumspace"], [], options));
+                inner.push(_buildCommon2.default.makeSpan(["mspace", "muspace"], [], options));
+            } else {
+                inner.push(_buildCommon2.default.makeSpan(["mspace", "thickspace"], [], options));
             }
         } else {
             Array.prototype.push.apply(inner, modInner);
@@ -13268,7 +13272,7 @@ defineSymbol(math, main, rel, "\u22A5", "\\perp");
 defineSymbol(math, main, rel, "\u2AAF", "\\preceq", true);
 defineSymbol(math, main, rel, "\u2AB0", "\\succeq", true);
 defineSymbol(math, main, rel, "\u2243", "\\simeq", true);
-defineSymbol(math, main, rel, "\u2223", "\\mid");
+defineSymbol(math, main, rel, "\u2223", "\\mid", true);
 defineSymbol(math, main, rel, "\u226A", "\\ll");
 defineSymbol(math, main, rel, "\u226B", "\\gg", true);
 defineSymbol(math, main, rel, "\u224D", "\\asymp", true);
