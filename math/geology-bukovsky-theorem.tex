@@ -26,6 +26,7 @@ macros:
       }{\left[\!\!\left[#2\right]\!\!\right]
       }{\left[\!\!\left[#2\right]\!\!\right]}}_{#1}
     optArgs: ['']
+published: false
 ---
 \documentclass[a4j,leqno]{ltjsarticle}
 \usepackage[hiragino-pron]{luatexja-preset}
@@ -160,41 +161,33 @@ $\gM$と$\M$は一致するのか？これらは$\ZFC$のモデルになるの�
         $\xi_\alpha \notin S$なら$p_\alpha$と$q_\alpha$の役割を逆にする．
  \end{enumerate}
  \parpic[r]{\begin{tikzpicture}
-   \node (p_0) {$p_0$}
-    child {
-     node (p_1){ $p_1$}
-       child {
-         node (p_2) {$p_2$}
-           child {
-             node[rotate=60] (p_3) {$\dots$}
-                child{ node{$p$}}
-                child[missing]
-           }
-           child { node (q_3) {$q_3$}}
-       }
-       child { node (q_2) {$q_2$}}
-    }
-    child {node (q_1) {$q_1$}};
-   \node[right=1cm of p_0] (q_0) {$q_0$};
-   \tikzmath{
-     coordinate \begn, \dest;
-     \begn = (q_0);
-     \dest = (q_3);
-     real \longi, \dx, \dy, \angl;
-     \dx = \begnx - \destx;
-     \dy = \begny - \desty;
-     \longi = veclen(\dx, \dy) / 2 + 5mm;
-     \angl = atan(\dy / \dx);
-   }
-   \begin{pgfonlayer}{background}
-    \path[fill=gray, opacity=.5,rotate=\angl]
-     ($(q_0)!.5!(q_3)$) ellipse (\longi pt and 5mm);
-   \end{pgfonlayer}
-   \node at ($0.5*(p_0)+0.5*(q_0)$) {$\perp$};
-   \node at ($0.5*(p_1)+0.5*(q_1)$) {$\perp$};
-   \node at ($0.5*(p_2)+0.5*(q_2)$) {$\perp$};
-   \node[below right of=q_2] {$\mathcal{A}$};
- \end{tikzpicture}}
+ \node (A) [dashed,draw,rotate=60,ellipse,label={above right:$\dot{A}$},minimum width=6cm,minimum height=3cm] {};
+ \node (M) [anchor=north west,fill=none,draw,below left=8mm and -8mm of A.south east,ellipse,minimum height=3.8cm,minimum width=5cm,label={below right:$M$}] {};
+ \begin{scope}
+   \clip (M) ellipse (2.5cm and 1.9cm);
+   \fill [rotate=60,fill=gray,fill opacity=.5] (A) ellipse (3cm and 15mm);
+ \end{scope}
+ \node [above=1mm of M] {$S$};
+ \begin{scope}[sibling distance=1.6cm,level distance=1cm]
+  \node (x0l) at ($(A)!.5!(M) + (1cm,1cm)$) {$\xi_0$}
+      child {
+        node (x1l) {$\xi_1$}
+          child[very thick,densely dotted] {
+              node (xal) {$\xi_\alpha$}
+                    child[densely dotted,very thick] {node  {$\phantom{\xi_\alpha}$} }
+                    child[thin,solid,level distance=8mm] {node (xar) {$\xi_\alpha$}}
+          }
+          child { node (x1r) {$\xi_1$} }
+      }
+      child { 
+        node (x0r) {$\xi_0$}
+      };
+      \foreach \lab/\l/\r in {0/x0l/x0r,1/x1l/x1r,\alpha/xal/xar} {
+       \node[left=0mm of \l,anchor=east,inner sep=0pt] {$p_{\lab} \Vdash$};
+       \node[right=0mm of \r,anchor=west, inner sep=0pt] {$\mathrel{\reflectbox{$\Vdash$}} q_{\lab}$};
+      }
+ \end{scope}
+\end{tikzpicture}}
  こうすれば，$\mathcal{A} = \Set{q_\alpha | \alpha < \kappa}$が濃度$\kappa$の反鎖となるのは明らかである．
 
  では実際にとっていく．
