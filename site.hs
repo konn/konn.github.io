@@ -227,7 +227,7 @@ main = hakyllWith config $ do
     route idRoute
     compile $ do
       items <- filterM isPublished
-               =<< loadAll  (("**.html" .||. "**.md" .||. "**.tex") .&&. complement "t/**")
+               =<< loadAll  (("**.md" .||. ("math/**.tex" .&&. hasVersion "html")) .&&. complement ("t/**" .||. "templates/**"))
       tpl <- loadBody "templates/sitemap-item.xml"
       loadAndApplyTemplate "templates/sitemap.xml"
         defaultContext

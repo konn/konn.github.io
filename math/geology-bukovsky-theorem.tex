@@ -414,40 +414,42 @@ $g$の選び方によってはどうあっても矛盾するので$\mathbb{P}_g 
  よって$V$は$W$の$\kappa$-\cc{}拡大である． \qed
 \end{proof}
 
-% \section{$\ZFC$の部分体系への一般化と一意性定理}
-% これまでの証明を注意深く分析すれば，$\ZFC$よりも弱い体系についてBukovsk\'{y}の定理が成り立つことがわかる．
+\section{$\ZFC$の部分体系への一般化と一意性定理}
+これまでの証明を注意深く分析すれば，$\ZFC$よりも弱い体系についてBukovsk\'{y}の定理が成り立つことがわかる．
 
-% 特に，第一回に定義した以下の体系$\ZFC^{<\kappa}_\delta$のモデルについてもBukovsk\'{y}の定理は成り立つ：
-% \begin{definition}[$\ZFC^{<\lambda}$]
-%  $\ZFC^{<\lambda}_\delta$の言語は述語記号$\in$に加え定数記号$\delta, \lambda$を持ち，公理は以下で与えられる．
-%  \begin{enumerate}
-%   \item $\mathrm{ZC}-$冪集合公理：内包，対，和集合，無限，基礎，整列定理，
-%   \item 「$\lambda$は順序数」「$\delta$は正則基数」，
-%   \item ${\leq}\delta$-置換公理：任意の$f: \delta \to V$と集合$A$に対し像$f[A]$が存在．
-%   \item ${<}\lambda$-冪集合公理：任意の濃度$\lambda$未満の集合$A$に対し冪集合$\Pow(A)$が存在する．
-%  \end{enumerate}
-% \end{definition}
+特に，第一回に定義した以下の体系$\ZFC_\delta^*$に置換公理を加えたモデルについてもBukovsk\'{y}の定理は成り立つ：
+\begin{definition}[$\ZFC_\delta^*$]
+ $\ZFC_\delta^*$の言語は述語記号$\in$に加え定数記号$\delta, \lambda$を持ち，公理は以下で与えられる．
+ \begin{enumerate}
+  \item $\mathrm{ZC}-\mathrm{Power}$：内包，対，和集合，無限，基礎，整列定理，
+  \item 「$\delta$は正則基数」，
+  \item ${\leq}\delta$-置換公理：任意の$f: \delta \to V$と集合$A$に対し像$f[A]$が存在．
+  \item ${\leq}\delta$-冪集合公理：任意の集合$A$に対し濃度$\delta$以下の部分集合全体からなる集合$[A]^{\leq\delta}$が存在．
+  \item $\Pow(\power{<\delta}{2})$が存在する．
+  \item 順序数コード公理：任意の集合$A$は順序数$\alpha$とその上の二項関係$E$により$\braket{\trcl(\set{A}), {\in}} \simeq \braket{\alpha, E}$の形でコード出来る．
+ \end{enumerate}
+\end{definition}
 
-% \begin{corollary}
-%  $\kappa$を十分大きく取り，$W \subseteq V$を共に$\ZFC^{<\kappa}_{\delta^+}$の推移的モデルとする．
-%  この時，$(W, V)$が$\delta$-大域被覆性性質を持つことと$V$が$W$の$\delta$-\cc{}拡大であることは同値．
-% \end{corollary}
-% \begin{proof}
-%  強制法が$\ZFC^{<\kappa}_\delta$の公理を保存する事と，$A = \Pow^V(\power{<\delta}{2})$にMostowski絶対性を適用するのにフルの置換公理と冪集合は必要ない事などに気を付ければ，これまでの証明が通ることがわかる． \qed
-% \end{proof}
-% これから直ちに次が従う．
-% \begin{lemma}[$\delta$-大域被覆性質を持つモデルの一意性]\label{lem:global-covering-unique}
-%  $\mu \defeq (2^{<\delta})^+$とおく．
-%  $W, W' \subseteq V$が十分に大きな$\kappa$について$\ZFC^{< \kappa}_{\mu}$の推移的モデルで$(W, V)$および$(W', V)$が共に$\delta$-大域被覆性質を持つとする．
-%  もし$\power{<\mu}{2} \cap W = \power{<\mu}{2} \cap W'$なら$W = W'$となる．
-% \end{lemma}
-% \begin{proof}
-%  $\delta$-大域被覆性質から$V$は$W$および$W'$の$\delta$-\cc{}拡大になっている事がわかる．
-%  すると補題~\ref{lem:nontriv-2<kappa}の証明から$(W, V)$および$(W', V)$は$\mu$-近似性質を持つ．
-%  また，明らかに大域被覆性質は上に遺伝するので，これらは$\mu$-大域被覆性質を持ち，$\mu$の正則性より特に$\mu$-被覆性質も持つ．
-%  また，$\mu$-大域被覆性質より$\mu^{+W} = \mu^{+W'} = \mu^{+V}$も成り立つ．
-%  したがって前回示した$\ZFC^{<\kappa}_\delta$のモデルの一意性から$W = W'$となる． \qed
-% \end{proof}
+\begin{corollary}
+ $W \subseteq V$を共に$\ZFC_{\delta}^* + \text{フルの置換公理}$の推移的モデルとする．
+ この時，$(W, V)$が$\delta$-大域被覆性性質を持つことと$V$が$W$の$\delta$-\cc{}拡大であることは同値．
+\end{corollary}
+\begin{proof}
+ 強制法が$\ZFC^{<\kappa}_\delta$の公理を保存する事と，$A = \Pow^V(\power{<\delta}{2})$にMostowski絶対性を適用するのにフルの冪集合は必要ない事などに気を付ければ，これまでの証明が通ることがわかる． \qed
+\end{proof}
+これから直ちに次が従う．
+\begin{lemma}[$\delta$-大域被覆性質を持つモデルの一意性]\label{lem:global-covering-unique}
+ $\mu \defeq (2^{<\delta})^+$とおく．
+ $W, W' \subseteq V$が十分に大きな$\kappa$について$\ZFC_{\mu}^* + \text{フルの置換公理}$の推移的モデルで$(W, V)$および$(W', V)$が共に$\delta$-大域被覆性質を持つとする．
+ もし$\power{<\mu}{2} \cap W = \power{<\mu}{2} \cap W'$なら$W = W'$となる．
+\end{lemma}
+\begin{proof}
+ $\delta$-大域被覆性質から$V$は$W$および$W'$の$\delta$-\cc{}拡大になっている事がわかる．
+ すると補題~\ref{lem:nontriv-2<kappa}の証明から$(W, V)$および$(W', V)$は$\mu$-近似性質を持つ．
+ また，明らかに大域被覆性質は上に遺伝するので，これらは$\mu$-大域被覆性質を持ち，$\mu$の正則性より特に$\mu$-被覆性質も持つ．
+ また，$\mu$-大域被覆性質より$\mu^{+W} = \mu^{+W'} = \mu^{+V}$も成り立つ．
+ したがって前回示した$\ZFC_\delta^*$のモデルの一意性から$W = W'$となる． \qed
+\end{proof}
 
 
 \nocite{Fuchs:2014fj,Usuba:2017fp}

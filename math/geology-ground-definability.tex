@@ -291,35 +291,31 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
 \end{proof}
 続いてこうした擬基礎モデルがきちんと定義出来ることを見よう．
 上で宣言した通り，擬基礎モデルは一つのパラメータで完全に決定することが出来る．
-そのための議論に十分な$\ZFC$の部分理論$\ZFC^{<\lambda}$を定義する．
-\begin{definition}[$\ZFC^{<\lambda}$]
- $\ZFC^{<\lambda}_\delta$の言語は述語記号$\in$に加え定数記号$\delta, \lambda$を持ち，公理は以下で与えられる．
+そのための議論に十分な$\ZFC$の部分理論$\ZFC_\delta^*$を定義する．
+\begin{definition}[$\ZFC_\delta^*$]
+ $\ZFC_\delta^*$の言語は述語記号$\in$に加え定数記号$\delta, \lambda$を持ち，公理は以下で与えられる．
  \begin{enumerate}
-  \item $\mathrm{ZC}-$冪集合公理：内包，対，和集合，無限，基礎，整列定理，
-  \item 「$\lambda > 2^{2^{<\delta}}$は基数」「$\delta$は正則基数」，
-  \item ${\leq}\delta$-置換公理：任意の$f: \delta \to V$と集合$A$に対し像$f[A]$が存在。
-  \item ${<}\lambda$-冪集合公理：任意の濃度$\lambda$未満の集合$A$に対し冪集合$\Pow(A)$が存在する．
+  \item $\mathrm{ZC}-\mathrm{Power}$：内包，対，和集合，無限，基礎，整列定理，
+  \item 「$\delta$は正則基数」，
+  \item ${\leq}\delta$-置換公理：任意の$f: \delta \to V$と集合$A$に対し像$f[A]$が存在．
+  \item ${\leq}\delta$-冪集合公理：任意の集合$A$に対し濃度$\delta$以下の部分集合全体からなる集合$[A]^{\leq\delta}$が存在．
+  \item $\Pow(\power{<\delta}{2})$が存在する．
+  \item 順序数コード公理：任意の集合$A$は順序数$\alpha$とその上の二項関係$E$により$\braket{\trcl(\set{A}), {\in}} \simeq \braket{\alpha, E}$の形でコード出来る．
  \end{enumerate}
 \end{definition}
 \begin{remark}
  \begin{enumerate}
-  \item $\ZFC^{<\kappa}_\delta$は有限公理化可能である．
-  \item $\theta$が$\theta > 2^{<\lambda}$を満たす正則基数なら$H_\theta \models \ZFC^{<\lambda}$.
-  \item 整列定理があるので，任意の集合は順序数の集合でコード出来る．
-        特に$\kappa \defeq |\trcl(\set{X})|$とおいて$f: \kappa \congto \trcl(\set{X})$を全単射とすれば，
-        \[
-         \xi \mathrel{E} \eta \defs f(\xi) \in f(\eta)
-        \]
-        により同型$(\kappa, E) \simeq (\trcl(\set{X}), {\in})$が定まり，$X$は$\kappa$の$E$-最大限と対応している．
-        逆にこういった$(\alpha, E)$さえ与えられれば，どの推移的モデルにおいても$X$は一意に復元される．
+  \item $\ZFC_\delta^*$は有限公理化可能である．
+  \item $\chi$が$\chi > 2^{<\lambda}$を満たす強極限基数で$\theta \defeq \chi^+$なら$H_\theta \models \ZFC_\delta^* + \text{フルの置換公理}$.
+  \item 順序数コード公理が与える$(\alpha, E)$さえあれば，どの推移的モデルにおいても$X$は最大限として一意に復元される．
  \end{enumerate}
 \end{remark}
-$\ZFC$ではなくその部分体系$\ZFC^{<\kappa}_\delta$を考えるのは，次の一意性定理が$\ZFC$で証明出来るからである：
+$\ZFC$ではなくその部分体系$\ZFC_\delta^*$を考えるのは，次の一意性定理が$\ZFC$で証明出来るからである：
 \begin{theorem}\label{thm:2-d-determ-pg}
- $\kappa > \delta$, $W, W', V$を$\ZFC^{<\kappa}_\delta$の推移的モデルとし，$W, W' \subseteq V$とする．
+ $\kappa > \delta$, $W, W', V$を$\ZFC_\delta^*$の推移的モデルとし，$W, W' \subseteq V$とする．
  $W \subseteq V$, $W' \subseteq V$がそれぞれ$\delta$-擬基礎モデルで$(\power{<\delta}{2})^W = (\power{<\delta}{2})^{W'}$が成り立つなら，$W = W'$.
  
- 特に，$\ZFC^{<\kappa}_\delta$の$\delta$-擬基礎モデルは$(\power{<\delta}{2})$の値によって一意に決定される．
+ 特に，$\ZFC_\delta^*$の$\delta$-擬基礎モデルは$(\power{<\delta}{2})$の値によって一意に決定される．
 \end{theorem}
 \begin{proof}
  まず最初に，$\delta$-近似性質から，$\Pow^W(\delta) = \Pow^{W'}(\delta)$が成り立つことに注意する．
@@ -373,7 +369,7 @@ $\ZFC$ではなくその部分体系$\ZFC^{<\kappa}_\delta$を考えるのは，
    &\begin{cases}
      \theta > 2^{\delta}: \text{正則非可算},
      (\power{<\delta}{2})^M = r, (\delta^+)^M = (\delta^+)^V,\\
-     x \in M \models \ZFC^{{\leq}\delta}_\delta: \text{transitive},\\
+     x \in M \models \ZFC_\delta^*: \text{transitive},\\
      M \subseteq H_\theta \mathrel{\text{has}} \delta\text{-AP} \text{ and } \delta\text{-CP}.
   \end{cases}
  \end{align*}
