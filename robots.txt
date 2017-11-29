@@ -1,3 +1,8 @@
 # robotstxt.org/
 
 User-agent: *
+Disallow: /t/
+
+{{#disallowed}}
+Disallow: {{.}}
+{{/disallowed}}

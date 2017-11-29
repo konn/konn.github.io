@@ -41,6 +41,7 @@ import           Network.HTTP.Types
 import           Network.URI                     hiding (query)
 import           Prelude                         hiding (FilePath, div, mapM,
                                                   sequence, span)
+import qualified Prelude                         as P
 import           Shelly                          hiding (tag)
 import           Skylighting                     hiding (Context (), Style)
 import           System.IO                       (hPutStrLn, stderr)
@@ -113,7 +114,7 @@ main = hakyllWith config $ do
 
   match "*.css" $ route idRoute >> compile' compressCssCompiler
 
-  match ("js/**" .||. "robots.txt" .||. "**/*imgs/**" .||. "img/**" .||. "**/*img/**" .||. "favicon.ico" .||. "files/**" .||. "katex/**" .||. "keybase.txt") $
+  match ("js/**" .||. "**/*imgs/**" .||. "img/**" .||. "**/*img/**" .||. "favicon.ico" .||. "files/**" .||. "katex/**" .||. "keybase.txt") $
     route idRoute >> compile' copyFileCompiler
 
   match "css/**" $
@@ -147,10 +148,16 @@ main = hakyllWith config $ do
   create [".ignore"] $ do
     route idRoute
     compile $ do
-      drafts <- mapM (\i -> let ident = itemIdentifier i in (ident,) . fromMaybe (Hakyll.toFilePath ident) <$> getRoute ident)
-                =<< filterM (liftM not . isPublished)
-                =<< (loadAll subContentsWithoutIndex :: Compiler [Item String])
+      drafts <- listDrafts
       makeItem $ unlines $ ".ignore" : map (\(a, b) -> Hakyll.toFilePath a ++ "\t" ++ b) drafts
+
+  match "robots.txt" $ do
+    route idRoute
+    compile $ do
+      tmplt <- itemBody <$> mustacheCompiler
+      drafts <- map snd <$> listDrafts
+      let obj = object ["disallowed" .= map ('/':) drafts]
+      makeItem $ LT.unpack $ Mus.renderMustache tmplt obj
 
   match "*/index.md" $ do
     route $ setExtension "html"
@@ -216,6 +223,19 @@ main = hakyllWith config $ do
         >>= return . take 10 . filter (matches ("index.md" .||. complement "**/index.md") . itemIdentifier)
         >>= renderAtom feedConf feedCxt
 
+  create ["sitemap.xml"] $ do
+    route idRoute
+    compile $ do
+      items <- filterM isPublished
+               =<< loadAll  (("**.html" .||. "**.md" .||. "**.tex") .&&. complement "t/**")
+      tpl <- loadBody "templates/sitemap-item.xml"
+      loadAndApplyTemplate "templates/sitemap.xml"
+        defaultContext
+        =<< makeItem
+        =<< applyTemplateList tpl
+               (defaultContext  <> modificationTimeField "date" "%Y-%m-%d")
+               items
+
 pandocContext :: Pandoc -> Context a
 pandocContext (Pandoc meta _)
   | Just abst <- lookupMeta "abstract" meta =
@@ -230,6 +250,12 @@ toBlocks (MetaBool b)      = [ Plain  [ Str $ show b ] ]
 toBlocks (MetaString s)    = [ Plain [ Str s ] ]
 toBlocks (MetaInlines ins) = [Plain ins]
 toBlocks (MetaBlocks bs)   = bs
+
+listDrafts :: Compiler [(Identifier, P.FilePath)]
+listDrafts = do
+  mapM (\i -> let ident = itemIdentifier i in (ident,) . fromMaybe (Hakyll.toFilePath ident) <$> getRoute ident)
+    =<< filterM (liftM not . isPublished)
+    =<< (loadAll subContentsWithoutIndex :: Compiler [Item String])
 
 compile' :: (Typeable a, Writable a, Binary a) => Compiler (Item a) -> Rules ()
 compile' d = compile $ d
@@ -360,8 +386,10 @@ applyDefaultTemplate :: Context String -> Item String -> Compiler (Item String)
 applyDefaultTemplate addCtx item = do
   bc <- makeBreadcrumb item
   nav <- makeNavBar $ itemIdentifier item
+  pub <- isPublished item
   let navbar = constField "navbar" nav
       bcrumb = constField "breadcrumb" bc
+      unpublished = boolField "unpublished" $ \_ -> not pub
       date = field "date" itemDateStr
       toc = field "toc" $ return .renderHtml . buildTOC . readHtml' def . itemBody
       noTopStar = field "no-top-star" $ \i ->
@@ -380,7 +408,7 @@ applyDefaultTemplate addCtx item = do
         return $ renderHtml $ do
           H5.meta ! H5.name "Keywords"    ! H5.content (H5.toValue tags)
           H5.meta ! H5.name "description" ! H5.content (H5.toValue desc)
-      cxt  = mconcat [ addCtx, toc, navbar, bcrumb, hdr, meta, date, noTopStar, defaultContext]
+      cxt  = mconcat [ unpublished, addCtx, toc, navbar, bcrumb, hdr, meta, date, noTopStar, defaultContext]
   let item' = demoteHeaders . withTags addTableClass <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
   unsafeCompiler $ do
