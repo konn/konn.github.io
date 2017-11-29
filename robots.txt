@@ -6,3 +6,5 @@ Disallow: /t/
 {{#disallowed}}
 Disallow: {{.}}
 {{/disallowed}}
+
+Sitemap: /sitemap.xml
