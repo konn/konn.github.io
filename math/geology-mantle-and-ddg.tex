@@ -213,7 +213,7 @@ $\DDG$はこれらに対し，どちらも肯定的な解を与える．
 
 \begin{lemma}
  \begin{enumerate}
-  \item $\mathbf{M}_V$は下に有向である．
+  \item \label{item:multiverse-down-dir}$\mathbf{M}_V$は下に有向である．
   \item $\mathbf{M}_V$において包含関係と基礎モデル関係は一致する．
  \end{enumerate}
 \end{lemma}
@@ -231,7 +231,7 @@ $\DDG$はこれらに対し，どちらも肯定的な解を与える．
         状況を整理すると$W_0 \searrow W' \nearrow W_n \searrow W_{n+1}$で，$W'$と$W_{n+1}$は$W_n$の基礎モデルとなっているから，$\DDG$により共通の下界$W' \searrow W'' \nearrow W_{n+1}$が取れる．
         このとき$W''$は$W_0$と$W_{n+1}$の共通の下界である．
   \item $W \subseteq U$とする．
-        このとき$U$における$\DDG$により共通の基礎モデル$W' \subseteq U \cap W$が取れる．
+        このときより上の\ref{item:multiverse-down-dir}より$U, W$共通の基礎モデル$W' \subseteq U \cap W$が取れる．
         すると$W' \subseteq W \subseteq U$となるが，$U$が$W'$の生成拡大であることから，前回使った\href{http://konn-san.com/math/geology-ground-definability.html\#lem:interm-ext}{中間拡大補題}から$W$は$W'$の生成拡大であり，なおかつ$U$は$W$の生成拡大となる．
         これが言いたかったことである． \qed
  \end{enumerate}
