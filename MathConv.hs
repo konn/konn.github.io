@@ -320,8 +320,8 @@ rewriteBeginEnv = concatMapM step
     step (RawBlock "latex" src_)
       | Right (TeXEnv "enumerate!" args body) <- parseTeX src_
       = pure <$> procEnumerate args body
-      | Right (TeXEnv env args body) <- parseTeX src_
-      , env `elem` envs = do
+      | Right (TeXEnv env0 args body) <- parseTeX src_
+      , Just env <- lookupEnv env0 envs = do
           let divStart
                   | null args = concat ["<div class=\"", env, "\">"]
                   | otherwise = concat ["<div class=\"", env, "\" name=\""
@@ -331,6 +331,11 @@ rewriteBeginEnv = concatMapM step
           Pandoc _ myBody <- texToMarkdownM $  T.unpack $ render body
           return $ RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
     step b = return [b]
+
+lookupEnv :: String -> [String] -> Maybe String
+lookupEnv e es =
+      e <$ guard (e `elem` es)
+  <|> e ++ "-plain" <$ guard (e ++ "*" `elem` es)
 
 concatMapM :: Monad m => (a -> m [b]) -> [a] -> m [b]
 concatMapM f a = concat <$> mapM f a
