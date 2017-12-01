@@ -117,8 +117,12 @@ main = hakyllWith config $ do
   match ("js/**" .||. "**/*imgs/**" .||. "img/**" .||. "**/*img/**" .||. "favicon.ico" .||. "files/**" .||. "katex/**" .||. "keybase.txt") $
     route idRoute >> compile' copyFileCompiler
 
-  match "css/**" $
+  match "**.css" $
     route idRoute >> compile' compressCssCompiler
+
+  match "css/**.sass" $ do
+    route $ setExtension "css"
+    compile $ getResourceString >>= withItemBody (unixFilter "sassc" ["-s", "-tcompressed"])
 
   match ("templates/**" .&&. complement "**.mustache") $ compile' templateCompiler
   match ("templates/**.mustache") $ compile' mustacheCompiler

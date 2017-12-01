@@ -15,14 +15,22 @@ object svg {
     fill: white;
 }
 
-section[id], a[id^="fnref"], .footnotes li[id^="fn"], a[id] {
-    margin-top: -70px;
-    padding-top: 70px;
+/* section[id], a[id^="fnref"], .footnotes li[id^="fn"], a[id] {
+     margin-top: -70px;
+     padding-top: 70px;
+} */
+
+.page-content *[id]:before {
+    content: '';
+    width: 0px;
+    padding-top: 80px;
+    margin-top: -80px;
+    display: inline-block; /* required for webkit browsers */
+    visibility: hidden;
 }
 
-h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
-    margin-top: -70px;
-    padding-top: 100px;
+h1, h2, h3, h4, h5, h6 {
+     margin-top: 10px;
 }
 
 body {
