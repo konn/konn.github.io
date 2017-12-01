@@ -1,0 +1,187 @@
+body {
+  counter-reset: prop definition theorem  fact  conjecture lemma  question  exercise  corollary  section  subsection  remark problem claim;
+}
+
+h2 {
+  counter-increment: section !important;
+  counter-reset: subsection !important;
+}
+
+h3 {
+    counter-increment: subsection;
+}
+
+h2:before {
+  content: counter(section) ". "
+}
+
+#abstract h2:before {
+  content: ""
+}
+
+#abstract {
+  counter-reset: section -1;
+}
+
+h2#biblio:before {
+  content: ""
+}
+
+h3:before {
+  content: counter(section) "." counter(subsection) ". "
+}
+.author:before{
+    content: "作成者：";
+}
+
+@mixin new_theorem($counter, $label, $clear) {
+  .#{$counter}-plain {
+    @content
+  }
+
+  @if $clear {
+    .#{$counter}[name] {
+      @extend .#{$counter}-plain;
+      counter-increment: $counter 0, !important;
+    }
+  }
+
+  .#{$counter} {
+    @extend .#{$counter}-plain;
+    counter-increment: $counter;
+  }
+
+  .#{$counter} a[id]:first-of-type {
+    visbility: hidden;
+    width: 0pt;
+  }
+
+
+  .#{$counter} p:first-of-type {
+    display: inline;
+  }
+
+  .#{$counter}-plain:before {
+    font-weight: bold;
+    display: inline;
+    content: $label "．"
+  } 
+
+  .#{$counter}-plain[name]:before {
+    font-weight: bold;
+    display: inline;
+    @if $clear {
+      content: attr(name) "．";
+    } @else {
+      content: $label "（" attr(name) "）．"
+    }
+  }
+
+  .#{$counter}[name]:before {
+    font-weight: bold;
+    display: inline;
+    @if $clear {
+      content: attr(name) "．";
+    } @else {
+      content: $label " " counter($counter) "（" attr(name) "）．";
+    }
+  }
+
+  .#{$counter}:before {
+    font-weight: bold;
+    display: inline;
+    content: $label " " counter($counter) "．";
+  }
+}
+
+@mixin border_theorem($counter, $label, $clear) {
+  @include new_theorem($counter, $label, $clear) {
+    margin-left: 8px;
+    padding-left: 10px;
+    border-left: 2px solid gray;
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+}
+
+@mixin framed_theorem($counter, $label, $clear) {
+  @include new_theorem($counter, $label, $clear) {
+      margin: 10px;
+      border: 1px solid;
+      padding: 10px;
+  }
+}
+
+@each $thm, $label, $clear
+   in (axiom, "公理", true),
+      (claim, "主張", false),
+      (notation, "記法", false),
+      (question, "問", false),
+      (answer, "答", false),
+      (corollary, "系", false),
+      (prop, "命題", false),
+      (theorem, "定理", false),
+      (definition, "定義", false),
+      (lemma, "補題", false),
+      (fact, "事実", false),
+      (problem, "問題", true),
+      (question, "演習問題", false),
+      (conjecture, "予想", true)
+   {
+     @include framed_theorem($thm, $label, $clear);
+}
+
+@include border_theorem(remark, "注意", false);
+
+.proof {
+    margin: 10px;
+    border-left: 2px solid;
+    padding: 10px;
+    padding-left: 15px;
+}
+
+.subproof {
+    margin: 10px;
+    border-left: 4px solid;
+    padding: 10px;
+    padding-left: 15px;
+}
+
+.proof[name]:before{
+    content: attr(name) "．";
+    display: inline;
+    font-weight: bold;
+}
+
+.proof:before{
+    content: "証明．";
+    display: inline;
+    font-weight: bold;
+}
+
+.proof:after{
+    text-align: right;
+    display: block;
+    content: "■";
+}
+
+.subproof:before{
+    content: "[∵] ";
+    display: inline;
+    font-weight: bold;
+}
+
+.subproof:after{
+    text-align: right;
+    display: block;
+    font-size: small;
+    content: "□ (Claim " counter(claim) ")";
+}
+
+.label{
+    font-weight: bold;
+}
+
+img {
+    background: white;
+}
