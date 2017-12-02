@@ -189,13 +189,15 @@ $\DDG$や$\sDDG$は自然だがちょっと強すぎるようにも思える．
 
 とりあえず本稿では，ラフに次のインフォーマルな定義を使う\footnote{$\ZFC$でも$\NBG$でも一般的な（定義可能とは限らない）クラスの集まり（！）などというものをオフィシャルに扱う方法はない，という意味でこれはインフォーマルな定義である}：
 \begin{definition}
- $V$の\emph{生成多宇宙}$\mathbf{M}_V$とは$V$から基礎モデルと生成拡大を取る操作で閉じた$\ZFC$のモデルの最小の集まりである．
+ $V$の\emph{生成多宇宙}$\mathcal{M}_V$とは$V$から基礎モデルと生成拡大を取る操作で閉じた$\ZFC$のモデルの最小の集まりである．
 \end{definition}
 
 \begin{remark}
  \begin{itemize}
-  \item 任意の$W, U \in \mathbf{M}_V$に対し，$W$から始めて基礎モデルと生成拡大を取る操作を有限回繰り返して$U$に到達出来る．
+  \item 任意の$W, U \in \mathcal{M}_V$に対し，$W$から始めて基礎モデルと生成拡大を取る操作を有限回繰り返して$U$に到達出来る．
         これを$W$から$U$へのpathと呼ぼう．
+  \item 生成多宇宙のpathにおいて$W_{k}$から$W_{k+1}$が生成拡大を取ることで得られる時$W_k \nearrow W_{k+1}$，基礎モデルを取ることで得られる時$W_k \searrow W_{k+1}$と表す．
+        また，pathにおいて$\leadsto$は$\nearrow$か$\searrow$のいずれかを表すものとする．
   \item 有限反復強制法を使えば，複数回の基礎モデル・生成拡大を取る操作を一回に纏められる．
         従って，$W$から$U$へのpathには基礎モデルを取る操作と生成拡大を取る操作が一回ずつ交互に現れるとしてよい．
  \end{itemize}
@@ -204,8 +206,8 @@ $\DDG$や$\sDDG$は自然だがちょっと強すぎるようにも思える．
 こうした概念が定義された当初，以下のような未解決問題があった：
 \begin{question}
  \begin{enumerate}
-  \item $\mathbf{M}_V$は下に有向か？つまり，どんな$W, U \in \mathbf{M}_V$に対しても共通の基礎モデルが取れるか\footnote{上に有向でないことは，例えば$\ZFC$のモデル$M$に対して，Cohen実数$x,y$で$x,y$両方の情報があると$M$の順序数を可算に潰してしまうようなものが存在するのでわかる．}？
-  \item $\mathbf{M}_V$における包含関係$W \subseteq U$と「$W$は$U$の基礎モデルである」という関係は一致するか？
+  \item $\mathcal{M}_V$は下に有向か？つまり，どんな$W, U \in \mathcal{M}_V$に対しても共通の基礎モデルが取れるか\footnote{上に有向でないことは，例えば$\ZFC$のモデル$M$に対して，Cohen実数$x,y$で$x,y$両方の情報があると$M$の順序数を可算に潰してしまうようなものが存在するのでわかる．}？
+  \item $\mathcal{M}_V$における包含関係$W \subseteq U$と「$W$は$U$の基礎モデルである」という関係は一致するか？
  \end{enumerate}
 \end{question}
 
@@ -213,13 +215,13 @@ $\DDG$はこれらに対し，どちらも肯定的な解を与える．
 
 \begin{lemma}
  \begin{enumerate}
-  \item \label{item:multiverse-down-dir}$\mathbf{M}_V$は下に有向である．
-  \item $\mathbf{M}_V$において包含関係と基礎モデル関係は一致する．
+  \item \label{item:multiverse-down-dir}$\mathcal{M}_V$は下に有向である．
+  \item $\mathcal{M}_V$において包含関係と基礎モデル関係は一致する．
  \end{enumerate}
 \end{lemma}
 \begin{proof}
  \begin{enumerate}
-  \item $W, U \in \mathbf{M}_V$とし，$W$から$U$に至るpathの長さに関する帰納法で示す．
+  \item $W, U \in \mathcal{M}_V$とし，$W$から$U$に至るpathの長さに関する帰納法で示す．
         $W = W_0 \leadsto W_1 \leadsto \dots \leadsto W_{n-1} = U$を$W$から$U$に至るpathとする．
         $n \leq 2$の場合は明らか．
 
