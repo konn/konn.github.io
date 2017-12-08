@@ -9,7 +9,6 @@ import Instances ()
 import Lenses
 import Macro
 
-import           Control.Applicative
 import           Control.Arrow                   (left)
 import           Control.Lens                    hiding (op, rewrite, (<.>))
 import           Control.Lens.Extras             (is)
@@ -17,6 +16,7 @@ import           Control.Monad.Identity
 import           Control.Monad.State.Strict      (runStateT)
 import           Control.Monad.State.Strict      (StateT)
 import           Control.Monad.Trans             (MonadIO)
+import           Data.Char                       (isSpace)
 import           Data.Char                       (isAscii)
 import           Data.Char                       (isAlphaNum)
 import           Data.Char                       (isLatin1, isLower)
@@ -55,7 +55,7 @@ import qualified Text.LaTeX.CrossRef             as R
 import           Text.Pandoc                     hiding (MathType, Writer)
 import           Text.Pandoc.Shared
 import qualified Text.Parsec                     as P
-import           Text.Regex.Applicative          (psym)
+import           Text.Regex.Applicative          (psym, (<|>))
 import           Text.Regex.Applicative          (RE)
 import           Text.Regex.Applicative          (replace)
 import           Text.TeXMath.Readers.TeX.Macros
@@ -98,7 +98,7 @@ texToMarkdown macs fp src_ = do
                             c@(TeXComm "pgfplotsset" _) -> [c]
                             _ -> [])
               latexTree
-      initial = T.unpack $ render $ applyTeXMacro macs $ preprocessTeX $ latexTree
+      initial = applyMacros macros $ T.unpack $ render $ applyTeXMacro macs $ preprocessTeX $ latexTree
       st0 = MachineState { _tikzPictures = mempty
                          , _macroDefs = macros
                          , _imgPath = dropExtension fp
@@ -311,7 +311,8 @@ inlineLaTeX src_ =
   in concatMap getInlines body
 
 rewriteEnv :: Pandoc -> Machine Pandoc
-rewriteEnv (Pandoc meta bs) = Pandoc meta <$> (bottomUpM rewriteInlineCmd . bottomUp amendAlignat =<< rewriteBeginEnv bs)
+rewriteEnv (Pandoc meta bs) =
+  Pandoc meta <$> (bottomUpM rewriteInlineCmd =<< rewriteBeginEnv (bottomUp amendAlignat bs))
 
 rewriteBeginEnv :: [Block] -> Machine [Block]
 rewriteBeginEnv = concatMapM step
@@ -346,13 +347,33 @@ procEnumerate args body = do
                                       T.unpack $ render $ TeXEnv "enumerate" [] body
   return $ OrderedList (parseEnumOpts args) blcs
 
+tr :: Show a => String -> a -> a
+tr lab s = DT.trace (lab <> ": " <> show s) s
+
+splitLeftMostBrace :: LaTeX -> Maybe (LaTeX, LaTeX)
+splitLeftMostBrace = loop Nothing
+  where
+    isEmpty TeXEmpty     = True
+    isEmpty (TeXRaw t)   = T.all isSpace t
+    isEmpty TeXComment{} = True
+    isEmpty _            = False
+    loop mrest (TeXBraces t) = Just (t, fromMaybe TeXEmpty mrest)
+    loop mrest (TeXSeq l r)
+      | isEmpty l = loop mrest r
+      | isEmpty r = loop mrest l
+      | otherwise = loop (Just $ maybe r (TeXSeq r) mrest) l
+    loop _ _      = Nothing
+
+-- Fixes long-standing bad behaviour of parsing alignat(*) in Pandoc parser.
 amendAlignat :: Inline -> Inline
-amendAlignat (Math DisplayMath (lines -> beg : next : rest))
-  | Right (TeXComm "begin" (FixArg (TeXRaw env) : _)) <- parseLaTeX (T.pack beg)
+amendAlignat (Math DisplayMath tsrc)
+  | Right (TeXEnv (T.pack -> env) [] body) <- parseLaTeX $ T.pack tsrc
   , env `elem` ["aligned", "aligned*"]
-  , Right (TeXBraces (TeXRaw nums)) <- parseLaTeX (T.pack next)
-  , [(_ :: Int, "")] <- reads $ T.unpack (T.strip nums)
-  = Math DisplayMath $ unlines $ (beg ++ next) : rest
+  , Just (TeXRaw nums, body') <- splitLeftMostBrace body
+  , [(i :: Int, "")] <- reads $ T.unpack (T.strip nums)
+  = let envedName = T.replace "ed" "edat" env
+        args = [FixArg $ TeXRaw $ T.pack $ show i]
+    in Math DisplayMath $ T.unpack $ render $ TeXEnv (T.unpack envedName) args body'
 amendAlignat i = i
 
 parseEnumOpts :: [TeXArg] -> ListAttributes
