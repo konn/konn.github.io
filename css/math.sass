@@ -188,6 +188,10 @@ img {
 
 
 .katex-display {
-  overflow-x: scroll;
-  overflow-y: visible;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+}
+
+.katex-display::-webkit-scrollbar {
+  display: none;
 }
