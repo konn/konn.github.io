@@ -186,6 +186,10 @@ img {
     background: white;
 }
 
+span.math.display {
+  display: block;
+  width: 100%;
+}
 
 .katex-display {
   overflow-x: auto;
@@ -193,5 +197,14 @@ img {
 }
 
 .katex-display::-webkit-scrollbar {
+  display: none;
+}
+
+.katex-inline {
+  overflow-x: auto;
+  -ms-overflow-style: none;
+}
+
+.katex-inline::-webkit-scrollbar {
   display: none;
 }
