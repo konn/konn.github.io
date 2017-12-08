@@ -311,7 +311,7 @@ inlineLaTeX src_ =
   in concatMap getInlines body
 
 rewriteEnv :: Pandoc -> Machine Pandoc
-rewriteEnv (Pandoc meta bs) = Pandoc meta <$> (bottomUpM rewriteInlineCmd =<< rewriteBeginEnv bs)
+rewriteEnv (Pandoc meta bs) = Pandoc meta <$> (bottomUpM rewriteInlineCmd . bottomUp amendAlignat =<< rewriteBeginEnv bs)
 
 rewriteBeginEnv :: [Block] -> Machine [Block]
 rewriteBeginEnv = concatMapM step
@@ -345,6 +345,13 @@ procEnumerate args body = do
   Pandoc _ [OrderedList _ blcs] <- rewriteEnv $ fromRight $ readLaTeX myReaderOpts $
                                       T.unpack $ render $ TeXEnv "enumerate" [] body
   return $ OrderedList (parseEnumOpts args) blcs
+
+amendAlignat :: Inline -> Inline
+amendAlignat (Math DisplayMath (lines -> beg : next : rest))
+  | Right (TeXComm "begin" (FixArg (TeXRaw env) : _)) <- parseLaTeX (T.pack beg)
+  , env `elem` ["alignat", "alignat*", "alignedat", "alignedat*"]
+  = Math DisplayMath $ unlines $ (beg ++ next) : rest
+amendAlignat i = i
 
 parseEnumOpts :: [TeXArg] -> ListAttributes
 parseEnumOpts args =
