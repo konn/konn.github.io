@@ -349,7 +349,9 @@ procEnumerate args body = do
 amendAlignat :: Inline -> Inline
 amendAlignat (Math DisplayMath (lines -> beg : next : rest))
   | Right (TeXComm "begin" (FixArg (TeXRaw env) : _)) <- parseLaTeX (T.pack beg)
-  , env `elem` ["alignat", "alignat*", "alignedat", "alignedat*"]
+  , env `elem` ["aligned", "aligned*"]
+  , Right (TeXBraces (TeXRaw nums)) <- parseLaTeX (T.pack next)
+  , [(_ :: Int, "")] <- reads $ T.unpack (T.strip nums)
   = Math DisplayMath $ unlines $ (beg ++ next) : rest
 amendAlignat i = i
 
