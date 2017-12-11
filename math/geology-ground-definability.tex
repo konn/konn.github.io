@@ -1,7 +1,9 @@
 ---
 title: 集合論の地質学1：概観と基礎モデルの定義可能性
 author: 石井大海
-description: 集合論の宇宙$V$は何らかの内部モデルの強制拡大になっているか？そもそもそういった基礎モデルは幾つあるのか？——こうした問題を考えるのが**集合論の地質学**（*Set-theoretic geology*）です．本稿では，その入門的な部分の解説を行います．
+description: |
+  集合論の宇宙$V$は何らかの内部モデルの強制拡大になっているか？そもそもそういった基礎モデルは幾つあるのか？——こうした問題を考えるのが**集合論の地質学**（*Set-theoretic geology*）です．本稿では，その入門的な部分の解説を行います．  
+  [次回はこちら](http://konn-san.com/math/geology-mantle-and-ddg.html)．
 latexmk: -lualatex
 tag: Boole値モデル,無矛盾性証明,強制法,公理的集合論,集合論,生成多元宇宙,集合論の地質学
 date: 2017/11/09 20:05:31 JST
@@ -39,7 +41,15 @@ date: 2017/11/09 20:05:31 JST
  \emph{強制法}は集合論において様々な命題の無矛盾性を示すのに用いられる強力なツールです．
  近年では強制法によってどんな宇宙を創り出せるのか？という\emph{集合論的多宇宙}（\emph{set-theoretic multiverse}）や，逆に与えられた宇宙が，何らかの内部モデルの強制拡大になっているかを調べる\emph{集合論の地質学}(\emph{set-theoretic geology})の研究が盛んになってきています．
 
- この発表では，後者の分野について基本定理を二つ紹介します．一つはLaver, Woodinらによって独立に証明され，Hamkinsら\cite{Fuchs:2014fj}が強化した\emph{基礎モデルの定義可能性定理}であり，もう一つはつい最近薄葉さん~\cite{Usuba:2017fp}によって証明された\emph{基礎モデルの下方有向性原理}です．
+ このシリーズでは，後者の分野について基本定理を二つ紹介します．一つはLaver, Woodinらによって独立に証明され，Hamkinsら\cite{Fuchs:2014fj}が強化した\emph{基礎モデルの定義可能性定理}であり，もう一つはつい最近薄葉さん~\cite{Usuba:2017fp}によって証明された\emph{基礎モデルの下方有向性原理}です．
+
+ シリーズ一覧はこちら：
+  \begin{enumerate}[label={\arabic*.}]
+  \item 概観と基礎モデルの定義可能性（今回）
+  \item \href{http://konn-san.com/math/geology-mantle-and-ddg.html}{マントルの構造と下方有向性原理}
+  \item \href{http://konn-san.com/math/geology-bukovsky-theorem.html}{Bukovsk\'{y}の定理──強制拡大の特徴付け}
+  \item \href{http://konn-san.com/math/geology-proof-of-ddg.html}{下方有向性原理の証明}
+ \end{enumerate} 
 \end{abstract}
 \section{概観・集合論の地質学}
 Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地質学}（\emph{set-theoretic geology}）は，与えられた集合論の宇宙$V$がどんな内部モデルの強制拡大として得られるかを研究する分野である．
@@ -291,28 +301,29 @@ Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地
 \end{proof}
 続いてこうした擬基礎モデルがきちんと定義出来ることを見よう．
 上で宣言した通り，擬基礎モデルは一つのパラメータで完全に決定することが出来る．
-そのための議論に十分な$\ZFC$の部分理論$\ZFC_\delta^*$を定義する．
-\begin{definition}[$\ZFC_\delta^*$]
+そのための議論に十分な$\ZFC$の部分理論$\ZFC_\delta^{\leq \kappa}$を定義する．
+\begin{definition}[$\ZFC_\delta^{\leq\kappa}$]
  $\ZFC_\delta^*$の言語は述語記号$\in$に加え定数記号$\delta, \lambda$を持ち，公理は以下で与えられる．
  \begin{enumerate}
   \item $\mathrm{ZC}-\mathrm{Power}$：内包，対，和集合，無限，基礎，整列定理，
   \item 「$\delta$は正則基数」，
   \item ${\leq}\delta$-置換公理：任意の$f: \delta \to V$と集合$A$に対し像$f[A]$が存在．
-  \item ${\leq}\delta$-冪集合公理：任意の集合$A$に対し濃度$\delta$以下の部分集合全体からなる集合$[A]^{\leq\delta}$が存在．
-  \item $\Pow(\power{<\delta}{2})$が存在する．
+  \item ${\leq}\kappa$-冪集合公理：任意の集合$A$に対し濃度$\delta$以下の部分集合全体からなる集合$[A]^{\leq\kappa}$が存在．
+  \item $\Pow(\power{<\kappa}{2})$が存在する．
   \item 順序数コード公理：任意の集合$A$は順序数$\alpha$とその上の二項関係$E$により$\braket{\trcl(\set{A}), {\in}} \simeq \braket{\alpha, E}$の形でコード出来る．
  \end{enumerate}
+ また，$\ZFC^{\leq\kappa} \deffml \quoted{\ZFC^{\leq\kappa}_\kappa + \text{無制限の置換公理}}$，$\ZFC_\delta \deffml \quoted{\ZFC_\delta^{\leq\delta} + \text{冪集合公理}}$と略記する．
 \end{definition}
 \begin{remark}
  \begin{enumerate}
-  \item $\ZFC_\delta^*$は有限公理化可能である．
-  \item $\chi$が$\chi > 2^{<\lambda}$を満たす強極限基数で$\theta \defeq \chi^+$なら$H_\theta \models \ZFC_\delta^* + \text{フルの置換公理}$.
+  \item 「推移的\emph{集合}$M$は$\ZFC^{\leq\kappa}_\delta$（または$\ZFC^{\leq\kappa}$や$\ZFC_\delta$）を満たす」は一つの論理式で記述可能．
+  \item $\chi$が$\chi > 2^{<\delta}$を満たす強極限基数で$\theta \defeq \chi^+$なら$H_\chi \models \ZFC_{\delta}$かつ$H_\theta \models \ZFC^{\leq\delta}$.
   \item 順序数コード公理が与える$(\alpha, E)$さえあれば，どの推移的モデルにおいても$X$は最大限として一意に復元される．
  \end{enumerate}
 \end{remark}
-$\ZFC$ではなくその部分体系$\ZFC_\delta^*$を考えるのは，次の一意性定理が$\ZFC$で証明出来るからである：
+$\ZFC$ではなくその部分体系$\ZFC_\delta^{\leq\kappa}$を考えるのは，次の一意性定理が$\ZFC$で証明出来るからである：
 \begin{theorem}\label{thm:2-d-determ-pg}
- $\kappa > \delta$, $W, W', V$を$\ZFC_\delta^*$の推移的モデルとし，$W, W' \subseteq V$とする．
+ $\kappa > \delta$, $W, W', V$を$\ZFC_\delta^{\leq\delta}$の推移的モデルとし，$W, W' \subseteq V$とする．
  $W \subseteq V$, $W' \subseteq V$がそれぞれ$\delta$-擬基礎モデルで$(\power{<\delta}{2})^W = (\power{<\delta}{2})^{W'}$が成り立つなら，$W = W'$.
  
  特に，$\ZFC_\delta^*$の$\delta$-擬基礎モデルは$(\power{<\delta}{2})$の値によって一意に決定される．
@@ -369,7 +380,7 @@ $\ZFC$ではなくその部分体系$\ZFC_\delta^*$を考えるのは，次の�
    &\begin{cases}
      \theta > 2^{\delta}: \text{正則非可算},
      (\power{<\delta}{2})^M = r, (\delta^+)^M = (\delta^+)^V,\\
-     x \in M \models \ZFC_\delta^*: \text{transitive},\\
+     x \in M \models \ZFC_\delta^{\leq\delta}: \text{transitive},\\
      M \subseteq H_\theta \mathrel{\text{has}} \delta\text{-AP} \text{ and } \delta\text{-CP}.
   \end{cases}
  \end{align*}
@@ -410,6 +421,10 @@ $\ZFC$のモデルになっているかは，これに加えて選択公理が�
 
  \ref{item:Wr-upwd-abs}は$W_r \subseteq V \subseteq V[G]$とした時に$V[G]$で$W_s^{V[G]} = W_r^V$となる$s \in W_r$を取れば，\ref{item:Wr-dwnwd-abs}から従う． \qed
 \end{proof}
+
+\section*{次回予告}
+\href{http://konn-san.com/math/geology-mantle-and-ddg.html}{次回}は$\sDDG$からの帰結について取り扱います．
+特に，$\sDDG$からマントル$\mathbb{M}$が$\ZFC$のモデルとなることや，生成多宇宙の構造が決まることを見ます．
 
 \nocite{Fuchs:2014fj,Usuba:2017fp,Reitz:2007af}
 \printbibliography[title=参考文献]

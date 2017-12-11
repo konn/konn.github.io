@@ -60,10 +60,12 @@ macros:
 \maketitle
 
 \begin{abstract}
- 本稿は集合論の地質学に関する記事の第三回目です．過去の記事：
+ 本稿は集合論の地質学に関する記事の第三回目です：
  \begin{enumerate}[label={\arabic*.}]
   \item \href{http://konn-san.com/math/geology-ground-definability.html}{概観と基礎モデルの定義可能性}
   \item \href{http://konn-san.com/math/geology-mantle-and-ddg.html}{マントルの構造と下方有向性原理}
+  \item Bukovsk\'{y}の定理──強制拡大の特徴付け（今回）
+  \item \href{http://konn-san.com/math/geology-proof-of-ddg.html}{下方有向性原理の証明}
  \end{enumerate} 
  \emph{集合論の地質学}は，与えられた集合論の宇宙$V$の内部モデルがいかなる生成拡大になっているかを考える集合論の分野です．
  薄葉~\cite{Usuba:2017fp}を種本にその基本定理である\emph{下方有向性原理}を示すのがこのシリーズの目標ですが，今回はその中で大きな役割を果す，\emph{Bukovsk\'{y}による強制拡大の特徴付け}を証明します．
@@ -419,20 +421,21 @@ $g$の選び方によってはどうあっても矛盾するので$\mathbb{P}_g 
 これまでの証明を注意深く分析すれば，$\ZFC$よりも弱い体系についてBukovsk\'{y}の定理が成り立つことがわかる．
 
 特に，第一回に定義した以下の体系$\ZFC_\delta^*$に置換公理を加えたモデルについてもBukovsk\'{y}の定理は成り立つ：
-\begin{definition}[$\ZFC_\delta^*$]
+\begin{definition}[$\ZFC_\delta^{\leq\kappa}$]
  $\ZFC_\delta^*$の言語は述語記号$\in$に加え定数記号$\delta, \lambda$を持ち，公理は以下で与えられる．
  \begin{enumerate}
   \item $\mathrm{ZC}-\mathrm{Power}$：内包，対，和集合，無限，基礎，整列定理，
   \item 「$\delta$は正則基数」，
   \item ${\leq}\delta$-置換公理：任意の$f: \delta \to V$と集合$A$に対し像$f[A]$が存在．
-  \item ${\leq}\delta$-冪集合公理：任意の集合$A$に対し濃度$\delta$以下の部分集合全体からなる集合$[A]^{\leq\delta}$が存在．
-  \item $\Pow(\power{<\delta}{2})$が存在する．
+  \item ${\leq}\kappa$-冪集合公理：任意の集合$A$に対し濃度$\delta$以下の部分集合全体からなる集合$[A]^{\leq\kappa}$が存在．
+  \item $\Pow(\power{<\kappa}{2})$が存在する．
   \item 順序数コード公理：任意の集合$A$は順序数$\alpha$とその上の二項関係$E$により$\braket{\trcl(\set{A}), {\in}} \simeq \braket{\alpha, E}$の形でコード出来る．
  \end{enumerate}
+ また，$\ZFC^{\leq\kappa} \deffml \quoted{\ZFC^{\leq\kappa}_\kappa + \text{無制限の置換公理}}$，$\ZFC_\delta \deffml \quoted{\ZFC_\delta^{\leq\delta} + \text{冪集合公理}}$と略記する．
 \end{definition}
 
 \begin{corollary}
- $W \subseteq V$を共に$\ZFC_{\delta}^* + \text{フルの置換公理}$の推移的モデルとする．
+ $W \subseteq V$を共に$\ZFC^{\leq\delta}$の推移的モデルとする．
  この時，$(W, V)$が$\delta$-大域被覆性性質を持つことと$V$が$W$の$\delta$-\cc{}拡大であることは同値．
 \end{corollary}
 \begin{proof}
@@ -441,7 +444,7 @@ $g$の選び方によってはどうあっても矛盾するので$\mathbb{P}_g 
 これから直ちに次が従う．
 \begin{lemma}[$\delta$-大域被覆性質を持つモデルの一意性]\label{lem:global-covering-unique}
  $\mu \defeq (2^{<\delta})^+$とおく．
- $W, W' \subseteq V$が十分に大きな$\kappa$について$\ZFC_{\mu}^* + \text{フルの置換公理}$の推移的モデルで$(W, V)$および$(W', V)$が共に$\delta$-大域被覆性質を持つとする．
+ $W, W' \subseteq V$が十分に大きな$\kappa$について$\ZFC^{\leq\mu}$の推移的モデルで$(W, V)$および$(W', V)$が共に$\delta$-大域被覆性質を持つとする．
  もし$\power{<\mu}{2} \cap W = \power{<\mu}{2} \cap W'$なら$W = W'$となる．
 \end{lemma}
 \begin{proof}
@@ -449,8 +452,11 @@ $g$の選び方によってはどうあっても矛盾するので$\mathbb{P}_g 
  すると補題~\ref{lem:nontriv-2<kappa}の証明から$(W, V)$および$(W', V)$は$\mu$-近似性質を持つ．
  また，明らかに大域被覆性質は上に遺伝するので，これらは$\mu$-大域被覆性質を持ち，$\mu$の正則性より特に$\mu$-被覆性質も持つ．
  また，$\mu$-大域被覆性質より$\mu^{+W} = \mu^{+W'} = \mu^{+V}$も成り立つ．
- したがって前回示した$\ZFC_\delta^*$のモデルの一意性から$W = W'$となる． \qed
+ したがって前回示した$\ZFC^{\leq\mu}$のモデルの一意性から$W = W'$となる． \qed
 \end{proof}
+
+\section*{次回予告}
+\href{http://konn-san.com/math/geology-proof-of-ddg.html}{次回}は，いよいよ目標であった$\sDDG$の証明を与えます．
 
 \nocite{Fuchs:2014fj,Usuba:2017fp}
 \nocite{Friedman:2016lr}

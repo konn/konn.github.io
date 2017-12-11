@@ -90,7 +90,7 @@ module.exports = {
     ParseError: _ParseError2.default
 };
 
-},{"./src/ParseError":84,"./src/Settings":87,"./src/buildTree":94,"./src/parseTree":117,"./src/utils":123}],2:[function(require,module,exports){
+},{"./src/ParseError":84,"./src/Settings":87,"./src/buildTree":94,"./src/parseTree":122,"./src/utils":128}],2:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
 },{"core-js/library/fn/array/from":12}],3:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
@@ -1695,7 +1695,7 @@ var MacroExpander = function () {
 
 exports.default = MacroExpander;
 
-},{"./Lexer":81,"./ParseError":84,"./Token":90,"./macros":115,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/toConsumableArray":11,"object-assign":80}],83:[function(require,module,exports){
+},{"./Lexer":81,"./ParseError":84,"./Token":90,"./macros":120,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/toConsumableArray":11,"object-assign":80}],83:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3309,7 +3309,7 @@ Parser.oldFontFuncs = {
 };
 exports.default = Parser;
 
-},{"./MacroExpander":82,"./ParseError":84,"./ParseNode":85,"./environments":99,"./functions":103,"./symbols":120,"./unicodeRegexes":121,"./units":122,"./utils":123,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],87:[function(require,module,exports){
+},{"./MacroExpander":82,"./ParseError":84,"./ParseNode":85,"./environments":99,"./functions":103,"./symbols":125,"./unicodeRegexes":126,"./units":127,"./utils":128,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3355,7 +3355,7 @@ var Settings = function Settings(options) {
 
 exports.default = Settings;
 
-},{"./utils":123,"babel-runtime/helpers/classCallCheck":8}],88:[function(require,module,exports){
+},{"./utils":128,"babel-runtime/helpers/classCallCheck":8}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3663,16 +3663,13 @@ var _utils = require("./utils");
 
 var _utils2 = _interopRequireDefault(_utils);
 
+var _stretchy = require("./stretchy");
+
+var _stretchy2 = _interopRequireDefault(_stretchy);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // The following have to be loaded from Main-Italic font, using class mainit
-
-/* eslint no-console:0 */
-/**
- * This module contains general functions that can be used for building
- * different kinds of domTree nodes in a consistent manner.
- */
-
 var mainitLetters = ["\\imath", // dotless i
 "\\jmath", // dotless j
 "\\pounds"];
@@ -3681,6 +3678,13 @@ var mainitLetters = ["\\imath", // dotless i
  * Looks up the given symbol in fontMetrics, after applying any symbol
  * replacements defined in symbol.js
  */
+
+/* eslint no-console:0 */
+/**
+ * This module contains general functions that can be used for building
+ * different kinds of domTree nodes in a consistent manner.
+ */
+
 var lookupSymbol = function lookupSymbol(value,
 // TODO(#963): Use a union type for this.
 fontFamily, mode) {
@@ -3903,6 +3907,16 @@ var makeSpan = function makeSpan(classes, children, options) {
     sizeElementFromChildren(span);
 
     return span;
+};
+
+var makeLineSpan = function makeLineSpan(className, options) {
+    // Fill the entire span instead of just a border. That way, the min-height
+    // value in katex.less will ensure that at least one screen pixel displays.
+    var line = _stretchy2.default.ruleSpan(className, options);
+    line.height = options.fontMetrics().defaultRuleThickness;
+    line.style.height = line.height + "em";
+    line.maxFontSize = 1.0;
+    return line;
 };
 
 /**
@@ -4256,6 +4270,7 @@ exports.default = {
     makeSymbol: makeSymbol,
     mathsym: mathsym,
     makeSpan: makeSpan,
+    makeLineSpan: makeLineSpan,
     makeAnchor: makeAnchor,
     makeFragment: makeFragment,
     makeVList: makeVList,
@@ -4266,13 +4281,13 @@ exports.default = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":98,"./fontMetrics":101,"./symbols":120,"./utils":123,"babel-runtime/core-js/get-iterator":3}],92:[function(require,module,exports){
+},{"./domTree":98,"./fontMetrics":101,"./stretchy":123,"./symbols":125,"./utils":128,"babel-runtime/core-js/get-iterator":3}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.buildGroup = exports.makeLineSpan = exports.groupTypes = exports.makeNullDelimiter = exports.getTypeOfDomTree = exports.buildExpression = exports.spliceSpaces = undefined;
+exports.buildGroup = exports.groupTypes = exports.makeNullDelimiter = exports.getTypeOfDomTree = exports.buildExpression = exports.spliceSpaces = undefined;
 
 var _stringify = require("babel-runtime/core-js/json/stringify");
 
@@ -4583,23 +4598,6 @@ groupTypes.ordgroup = function (group, options) {
     return makeSpan(["mord"], buildExpression(group.value, options, true), options);
 };
 
-groupTypes.text = function (group, options) {
-    var newOptions = options.withFont(group.value.font);
-    var inner = buildExpression(group.value.body, newOptions, true);
-    _buildCommon2.default.tryCombineChars(inner);
-    return makeSpan(["mord", "text"], inner, newOptions);
-};
-
-groupTypes.color = function (group, options) {
-    var elements = buildExpression(group.value.value, options.withColor(group.value.color), false);
-
-    // \color isn't supposed to affect the type of the elements it contains.
-    // To accomplish this, we wrap the results in a fragment, so the inner
-    // elements will be able to directly interact with their neighbors. For
-    // example, `\color{red}{2 +} 3` has the same spacing as `2 + 3`
-    return new _buildCommon2.default.makeFragment(elements);
-};
-
 groupTypes.supsub = function (group, options) {
     // Superscript and subscripts are handled in the TeXbook on page
     // 445-446, rules 18(a-f).
@@ -4729,52 +4727,6 @@ groupTypes.spacing = function (group, options) {
     }
 };
 
-var makeLineSpan = exports.makeLineSpan = function makeLineSpan(className, options, thickness) {
-    // Fill the entire span instead of just a border. That way, the min-height
-    // value in katex.less will ensure that at least one screen pixel displays.
-    var line = _stretchy2.default.ruleSpan(className, options);
-    line.height = thickness || options.fontMetrics().defaultRuleThickness;
-    line.style.height = line.height + "em";
-    line.maxFontSize = 1.0;
-    return line;
-};
-
-groupTypes.overline = function (group, options) {
-    // Overlines are handled in the TeXbook pg 443, Rule 9.
-
-    // Build the inner group in the cramped style.
-    var innerGroup = buildGroup(group.value.body, options.havingCrampedStyle());
-
-    // Create the line above the body
-    var line = makeLineSpan("overline-line", options);
-
-    // Generate the vlist, with the appropriate kerns
-    var vlist = _buildCommon2.default.makeVList({
-        positionType: "firstBaseline",
-        children: [{ type: "elem", elem: innerGroup }, { type: "kern", size: 3 * line.height }, { type: "elem", elem: line }, { type: "kern", size: line.height }]
-    }, options);
-
-    return makeSpan(["mord", "overline"], [vlist], options);
-};
-
-groupTypes.underline = function (group, options) {
-    // Underlines are handled in the TeXbook pg 443, Rule 10.
-    // Build the inner group.
-    var innerGroup = buildGroup(group.value.body, options);
-
-    // Create the line above the body
-    var line = makeLineSpan("underline-line", options);
-
-    // Generate the vlist, with the appropriate kerns
-    var vlist = _buildCommon2.default.makeVList({
-        positionType: "top",
-        positionData: innerGroup.height,
-        children: [{ type: "kern", size: line.height }, { type: "elem", elem: line }, { type: "kern", size: 3 * line.height }, { type: "elem", elem: innerGroup }]
-    }, options);
-
-    return makeSpan(["mord", "underline"], [vlist], options);
-};
-
 groupTypes.sqrt = function (group, options) {
     // Square roots are handled in the TeXbook pg. 443, Rule 11.
 
@@ -4807,13 +4759,10 @@ groupTypes.sqrt = function (group, options) {
     var minDelimiterHeight = (inner.height + inner.depth + lineClearance + theta) * options.sizeMultiplier;
 
     // Create a sqrt SVG of the required minimum size
-    var img = _delimiter2.default.customSizedDelim("\\surd", minDelimiterHeight, false, options, group.mode);
 
-    // Calculate the actual line width.
-    // This actually should depend on the chosen font -- e.g. \boldmath
-    // should use the thicker surd symbols from e.g. KaTeX_Main-Bold, and
-    // have thicker rules.
-    var ruleWidth = options.fontMetrics().sqrtRuleThickness * img.sizeMultiplier;
+    var _delimiter$sqrtImage = _delimiter2.default.sqrtImage(minDelimiterHeight, options),
+        img = _delimiter$sqrtImage.span,
+        ruleWidth = _delimiter$sqrtImage.ruleWidth;
 
     var delimDepth = img.height - ruleWidth;
 
@@ -4935,48 +4884,6 @@ groupTypes.verb = function (group, options) {
     }
     _buildCommon2.default.tryCombineChars(body);
     return makeSpan(["mord", "text"].concat(newOptions.sizingClasses(options)), body, newOptions);
-};
-
-groupTypes.rule = function (group, options) {
-    // Make an empty span for the rule
-    var rule = makeSpan(["mord", "rule"], [], options);
-
-    // Calculate the shift, width, and height of the rule, and account for units
-    var shift = 0;
-    if (group.value.shift) {
-        shift = (0, _units.calculateSize)(group.value.shift, options);
-    }
-
-    var width = (0, _units.calculateSize)(group.value.width, options);
-    var height = (0, _units.calculateSize)(group.value.height, options);
-
-    // Style the rule to the right size
-    rule.style.borderRightWidth = width + "em";
-    rule.style.borderTopWidth = height + "em";
-    rule.style.bottom = shift + "em";
-
-    // Record the height and width
-    rule.width = width;
-    rule.height = height + shift;
-    rule.depth = -shift;
-    // Font size is the number large enough that the browser will
-    // reserve at least `absHeight` space above the baseline.
-    // The 1.125 factor was empirically determined
-    rule.maxFontSize = height * 1.125 * options.sizeMultiplier;
-
-    return rule;
-};
-
-groupTypes.kern = function (group, options) {
-    // Make an empty span for the rule
-    var rule = makeSpan(["mord", "rule"], [], options);
-
-    if (group.value.dimension) {
-        var dimension = (0, _units.calculateSize)(group.value.dimension, options);
-        rule.style.marginLeft = dimension + "em";
-    }
-
-    return rule;
 };
 
 groupTypes.accent = function (group, options) {
@@ -5400,7 +5307,7 @@ function buildHTML(tree, options) {
     return htmlNode;
 }
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./delimiter":97,"./domTree":98,"./stretchy":118,"./units":122,"./utils":123,"babel-runtime/core-js/json/stringify":5}],93:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./delimiter":97,"./domTree":98,"./stretchy":123,"./units":127,"./utils":128,"babel-runtime/core-js/json/stringify":5}],93:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5586,45 +5493,6 @@ groupTypes.ordgroup = function (group, options) {
     return node;
 };
 
-groupTypes.text = function (group, options) {
-    var body = group.value.body;
-
-    // Convert each element of the body into MathML, and combine consecutive
-    // <mtext> outputs into a single <mtext> tag.  In this way, we don't
-    // nest non-text items (e.g., $nested-math$) within an <mtext>.
-    var inner = [];
-    var currentText = null;
-    for (var i = 0; i < body.length; i++) {
-        var _group = buildGroup(body[i], options);
-        if (_group.type === 'mtext' && currentText != null) {
-            Array.prototype.push.apply(currentText.children, _group.children);
-        } else {
-            inner.push(_group);
-            if (_group.type === 'mtext') {
-                currentText = _group;
-            }
-        }
-    }
-
-    // If there is a single tag in the end (presumably <mtext>),
-    // just return it.  Otherwise, wrap them in an <mrow>.
-    if (inner.length === 1) {
-        return inner[0];
-    } else {
-        return new _mathMLTree2.default.MathNode("mrow", inner);
-    }
-};
-
-groupTypes.color = function (group, options) {
-    var inner = buildExpression(group.value.value, options);
-
-    var node = new _mathMLTree2.default.MathNode("mstyle", inner);
-
-    node.setAttribute("mathcolor", group.value.color);
-
-    return node;
-};
-
 groupTypes.supsub = function (group, options) {
     // Is the inner group a relevant horizonal brace?
     var isBrace = false;
@@ -5773,26 +5641,6 @@ groupTypes.verb = function (group, options) {
     return node;
 };
 
-groupTypes.overline = function (group, options) {
-    var operator = new _mathMLTree2.default.MathNode("mo", [new _mathMLTree2.default.TextNode("\u203E")]);
-    operator.setAttribute("stretchy", "true");
-
-    var node = new _mathMLTree2.default.MathNode("mover", [buildGroup(group.value.body, options), operator]);
-    node.setAttribute("accent", "true");
-
-    return node;
-};
-
-groupTypes.underline = function (group, options) {
-    var operator = new _mathMLTree2.default.MathNode("mo", [new _mathMLTree2.default.TextNode("\u203E")]);
-    operator.setAttribute("stretchy", "true");
-
-    var node = new _mathMLTree2.default.MathNode("munder", [buildGroup(group.value.body, options), operator]);
-    node.setAttribute("accentunder", "true");
-
-    return node;
-};
-
 groupTypes.accentUnder = function (group, options) {
     var accentNode = _stretchy2.default.mathMLnode(group.value.label);
     var node = new _mathMLTree2.default.MathNode("munder", [buildGroup(group.value.body, options), accentNode]);
@@ -5854,21 +5702,6 @@ groupTypes.xArrow = function (group, options) {
     } else {
         node = new _mathMLTree2.default.MathNode("mover", [arrowNode]);
     }
-    return node;
-};
-
-groupTypes.rule = function (group) {
-    // TODO(emily): Figure out if there's an actual way to draw black boxes
-    // in MathML.
-    var node = new _mathMLTree2.default.MathNode("mrow");
-
-    return node;
-};
-
-groupTypes.kern = function (group) {
-    // TODO(kevin): Figure out if there's a way to add space in MathML
-    var node = new _mathMLTree2.default.MathNode("mrow");
-
     return node;
 };
 
@@ -5954,7 +5787,7 @@ function buildMathML(tree, texExpression, options) {
     return _buildCommon2.default.makeSpan(["katex-mathml"], [math]);
 }
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./fontMetrics":101,"./mathMLTree":116,"./stretchy":118,"./symbols":120,"./utils":123}],94:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./fontMetrics":101,"./mathMLTree":121,"./stretchy":123,"./symbols":125,"./utils":128}],94:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6539,7 +6372,12 @@ var sqrtSvg = function sqrtSvg(sqrtName, height, viewBoxHeight, options) {
     return _buildCommon2.default.makeSpan(["hide-tail"], [svg], options);
 };
 
-var sqrtSpan = function sqrtSpan(height, delim, options) {
+/**
+ * Make a sqrt image of the given height,
+ */
+var makeSqrtImage = function makeSqrtImage(height, options) {
+    var delim = traverseSequence("\\surd", height, stackLargeDelimiterSequence, options);
+
     // Create a span containing an SVG image of a sqrt symbol.
     var span = void 0;
     var sizeMultiplier = options.sizeMultiplier; // default
@@ -6574,9 +6412,15 @@ var sqrtSpan = function sqrtSpan(height, delim, options) {
 
     span.height = spanHeight;
     span.style.height = spanHeight + "em";
-    span.sizeMultiplier = sizeMultiplier;
 
-    return span;
+    return {
+        span: span,
+        // Calculate the actual line width.
+        // This actually should depend on the chosen font -- e.g. \boldmath
+        // should use the thicker surd symbols from e.g. KaTeX_Main-Bold, and
+        // have thicker rules.
+        ruleWidth: options.fontMetrics().sqrtRuleThickness * sizeMultiplier
+    };
 };
 
 // There are three kinds of delimiters, delimiters that stack when they become
@@ -6711,21 +6555,16 @@ var makeCustomSizedDelim = function makeCustomSizedDelim(delim, height, center, 
     // Look through the sequence
     var delimType = traverseSequence(delim, height, sequence, options);
 
-    if (delim === "\\surd") {
-        // Get an SVG image
-        return sqrtSpan(height, delimType, options);
-    } else {
-        // Get the delimiter from font glyphs.
-        // Depending on the sequence element we decided on, call the
-        // appropriate function.
-        if (delimType.type === "small") {
-            return makeSmallDelim(delim, delimType.style, center, options, mode, classes);
-        } else if (delimType.type === "large") {
-            return makeLargeDelim(delim, delimType.size, center, options, mode, classes);
-        } else if (delimType.type === "stack") {
+    // Get the delimiter from font glyphs.
+    // Depending on the sequence element we decided on, call the
+    // appropriate function.
+    if (delimType.type === "small") {
+        return makeSmallDelim(delim, delimType.style, center, options, mode, classes);
+    } else if (delimType.type === "large") {
+        return makeLargeDelim(delim, delimType.size, center, options, mode, classes);
+    } else /* if (delimType.type === "stack") */{
             return makeStackedDelim(delim, height, center, options, mode, classes);
         }
-    }
 };
 
 /**
@@ -6760,12 +6599,13 @@ var makeLeftRightDelim = function makeLeftRightDelim(delim, height, depth, optio
 };
 
 exports.default = {
+    sqrtImage: makeSqrtImage,
     sizedDelim: makeSizedDelim,
     customSizedDelim: makeCustomSizedDelim,
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./domTree":98,"./fontMetrics":101,"./symbols":120,"./utils":123}],98:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./domTree":98,"./fontMetrics":101,"./symbols":125,"./utils":128}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7486,7 +7326,7 @@ exports.default = {
     lineNode: lineNode
 };
 
-},{"./svgGeometry":119,"./unicodeRegexes":121,"./utils":123,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],99:[function(require,module,exports){
+},{"./svgGeometry":124,"./unicodeRegexes":126,"./utils":128,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],99:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8022,7 +7862,7 @@ var alignedHandler = function alignedHandler(context, args) {
     mathmlBuilder: mathmlBuilder
 });
 
-},{"../ParseError":84,"../ParseNode":85,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineEnvironment":95,"../mathMLTree":116,"../stretchy":118,"../units":122,"../utils":123}],101:[function(require,module,exports){
+},{"../ParseError":84,"../ParseNode":85,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineEnvironment":95,"../mathMLTree":121,"../stretchy":123,"../units":127,"../utils":128}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8321,7 +8161,7 @@ exports.default = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./fontMetricsData":102,"./unicodeRegexes":121}],102:[function(require,module,exports){
+},{"./fontMetricsData":102,"./unicodeRegexes":126}],102:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10108,7 +9948,17 @@ var _defineFunction2 = require("./defineFunction");
 
 var _defineFunction3 = _interopRequireDefault(_defineFunction2);
 
-require("./functions/katex");
+require("./functions/color");
+
+require("./functions/text");
+
+require("./functions/overline");
+
+require("./functions/underline");
+
+require("./functions/rule");
+
+require("./functions/kern");
 
 require("./functions/phantom");
 
@@ -10160,43 +10010,6 @@ defineFunction(["\\sqrt"], {
     };
 });
 
-// Non-mathy text, possibly in a font
-var textFunctionFonts = {
-    "\\text": undefined, "\\textrm": "mathrm", "\\textsf": "mathsf",
-    "\\texttt": "mathtt", "\\textnormal": "mathrm", "\\textbf": "mathbf",
-    "\\textit": "textit"
-};
-
-defineFunction(["\\text", "\\textrm", "\\textsf", "\\texttt", "\\textnormal", "\\textbf", "\\textit"], {
-    numArgs: 1,
-    argTypes: ["text"],
-    greediness: 2,
-    allowedInText: true
-}, function (context, args) {
-    var body = args[0];
-    return {
-        type: "text",
-        body: (0, _defineFunction2.ordargument)(body),
-        font: textFunctionFonts[context.funcName]
-    };
-});
-
-// A two-argument custom color
-defineFunction(["\\textcolor"], {
-    numArgs: 2,
-    allowedInText: true,
-    greediness: 3,
-    argTypes: ["color", "original"]
-}, function (context, args) {
-    var color = args[0];
-    var body = args[1];
-    return {
-        type: "color",
-        color: color.value,
-        value: (0, _defineFunction2.ordargument)(body)
-    };
-});
-
 // \color is handled in Parser.js's parseImplicitGroup
 defineFunction(["\\color"], {
     numArgs: 1,
@@ -10238,57 +10051,6 @@ defineFunction(["\\fcolorbox"], {
         backgroundColor: backgroundColor,
         borderColor: borderColor,
         body: body
-    };
-});
-
-// An overline
-defineFunction(["\\overline"], {
-    numArgs: 1
-}, function (context, args) {
-    var body = args[0];
-    return {
-        type: "overline",
-        body: body
-    };
-});
-
-// An underline
-defineFunction(["\\underline"], {
-    numArgs: 1
-}, function (context, args) {
-    var body = args[0];
-    return {
-        type: "underline",
-        body: body
-    };
-});
-
-// A box of the width and height
-defineFunction(["\\rule"], {
-    numArgs: 2,
-    numOptionalArgs: 1,
-    argTypes: ["size", "size", "size"]
-}, function (context, args, optArgs) {
-    var shift = optArgs[0];
-    var width = args[0];
-    var height = args[1];
-    return {
-        type: "rule",
-        shift: shift && shift.value,
-        width: width.value,
-        height: height.value
-    };
-});
-
-// TODO: In TeX, \mkern only accepts mu-units, and \kern does not accept
-// mu-units. In current KaTeX we relax this; both commands accept any unit.
-defineFunction(["\\kern", "\\mkern"], {
-    numArgs: 1,
-    argTypes: ["size"]
-}, function (context, args) {
-    return {
-        type: "kern",
-        dimension: args[0].value
     };
 });
 
@@ -10337,20 +10099,6 @@ var fontAliases = {
     "\\bold": "\\mathbf",
     "\\frak": "\\mathfrak"
 };
-
-// Single-argument color functions
-defineFunction(["\\blue", "\\orange", "\\pink", "\\red", "\\green", "\\gray", "\\purple", "\\blueA", "\\blueB", "\\blueC", "\\blueD", "\\blueE", "\\tealA", "\\tealB", "\\tealC", "\\tealD", "\\tealE", "\\greenA", "\\greenB", "\\greenC", "\\greenD", "\\greenE", "\\goldA", "\\goldB", "\\goldC", "\\goldD", "\\goldE", "\\redA", "\\redB", "\\redC", "\\redD", "\\redE", "\\maroonA", "\\maroonB", "\\maroonC", "\\maroonD", "\\maroonE", "\\purpleA", "\\purpleB", "\\purpleC", "\\purpleD", "\\purpleE", "\\mintA", "\\mintB", "\\mintC", "\\grayA", "\\grayB", "\\grayC", "\\grayD", "\\grayE", "\\grayF", "\\grayG", "\\grayH", "\\grayI", "\\kaBlue", "\\kaGreen"], {
-    numArgs: 1,
-    allowedInText: true,
-    greediness: 3
-}, function (context, args) {
-    var body = args[0];
-    return {
-        type: "color",
-        color: "katex-" + context.funcName.slice(1),
-        value: (0, _defineFunction2.ordargument)(body)
-    };
-});
 
 var singleCharIntegrals = {
     "\u222B": "\\int",
@@ -10499,7 +10247,7 @@ defineFunction(["\\underleftarrow", "\\underrightarrow", "\\underleftrightarrow"
 });
 
 // Stretchy arrows with an optional argument
-defineFunction(["\\xleftarrow", "\\xrightarrow", "\\xLeftarrow", "\\xRightarrow", "\\xleftrightarrow", "\\xLeftrightarrow", "\\xhookleftarrow", "\\xhookrightarrow", "\\xmapsto", "\\xrightharpoondown", "\\xrightharpoonup", "\\xleftharpoondown", "\\xleftharpoonup", "\\xrightleftharpoons", "\\xleftrightharpoons", "\\xLongequal", "\\xtwoheadrightarrow", "\\xtwoheadleftarrow", "\\xLongequal", "\\xtofrom"], {
+defineFunction(["\\xleftarrow", "\\xrightarrow", "\\xLeftarrow", "\\xRightarrow", "\\xleftrightarrow", "\\xLeftrightarrow", "\\xhookleftarrow", "\\xhookrightarrow", "\\xmapsto", "\\xrightharpoondown", "\\xrightharpoonup", "\\xleftharpoondown", "\\xleftharpoonup", "\\xrightleftharpoons", "\\xleftrightharpoons", "\\xlongequal", "\\xtwoheadrightarrow", "\\xtwoheadleftarrow", "\\xtofrom"], {
     numArgs: 1,
     numOptionalArgs: 1
 }, function (context, args, optArgs) {
@@ -10616,7 +10364,100 @@ defineFunction(["\\verb"], {
 
 // MathChoice
 
-},{"./ParseError":84,"./ParseNode":85,"./defineFunction":96,"./functions/delimsizing":104,"./functions/genfrac":105,"./functions/href":106,"./functions/katex":107,"./functions/lap":108,"./functions/mathchoice":109,"./functions/mod":110,"./functions/op":111,"./functions/operatorname":112,"./functions/phantom":113,"./functions/smash":114,"./utils":123}],104:[function(require,module,exports){
+},{"./ParseError":84,"./ParseNode":85,"./defineFunction":96,"./functions/color":104,"./functions/delimsizing":105,"./functions/genfrac":106,"./functions/href":107,"./functions/kern":108,"./functions/lap":109,"./functions/mathchoice":110,"./functions/mod":111,"./functions/op":112,"./functions/operatorname":113,"./functions/overline":114,"./functions/phantom":115,"./functions/rule":116,"./functions/smash":117,"./functions/text":118,"./functions/underline":119,"./utils":128}],104:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var htmlBuilder = function htmlBuilder(group, options) {
+    var elements = html.buildExpression(group.value.value, options.withColor(group.value.color), false);
+
+    // \color isn't supposed to affect the type of the elements it contains.
+    // To accomplish this, we wrap the results in a fragment, so the inner
+    // elements will be able to directly interact with their neighbors. For
+    // example, `\color{red}{2 +} 3` has the same spacing as `2 + 3`
+    return new _buildCommon2.default.makeFragment(elements);
+};
+
+
+var mathmlBuilder = function mathmlBuilder(group, options) {
+    var inner = mml.buildExpression(group.value.value, options);
+
+    var node = new _mathMLTree2.default.MathNode("mstyle", inner);
+
+    node.setAttribute("mathcolor", group.value.color);
+
+    return node;
+};
+
+(0, _defineFunction2.default)({
+    type: "color",
+    names: ["\\textcolor"],
+    props: {
+        numArgs: 2,
+        allowedInText: true,
+        greediness: 3,
+        argTypes: ["color", "original"]
+    },
+    handler: function handler(context, args) {
+        var color = args[0];
+        var body = args[1];
+        return {
+            type: "color",
+            color: color.value,
+            value: (0, _defineFunction.ordargument)(body)
+        };
+    },
+
+    htmlBuilder: htmlBuilder,
+    mathmlBuilder: mathmlBuilder
+});
+
+// TODO(kevinb): define these using macros
+(0, _defineFunction2.default)({
+    type: "color",
+    names: ["\\blue", "\\orange", "\\pink", "\\red", "\\green", "\\gray", "\\purple", "\\blueA", "\\blueB", "\\blueC", "\\blueD", "\\blueE", "\\tealA", "\\tealB", "\\tealC", "\\tealD", "\\tealE", "\\greenA", "\\greenB", "\\greenC", "\\greenD", "\\greenE", "\\goldA", "\\goldB", "\\goldC", "\\goldD", "\\goldE", "\\redA", "\\redB", "\\redC", "\\redD", "\\redE", "\\maroonA", "\\maroonB", "\\maroonC", "\\maroonD", "\\maroonE", "\\purpleA", "\\purpleB", "\\purpleC", "\\purpleD", "\\purpleE", "\\mintA", "\\mintB", "\\mintC", "\\grayA", "\\grayB", "\\grayC", "\\grayD", "\\grayE", "\\grayF", "\\grayG", "\\grayH", "\\grayI", "\\kaBlue", "\\kaGreen"],
+    props: {
+        numArgs: 1,
+        allowedInText: true,
+        greediness: 3
+    },
+    handler: function handler(context, args) {
+        var body = args[0];
+        return {
+            type: "color",
+            color: "katex-" + context.funcName.slice(1),
+            value: (0, _defineFunction.ordargument)(body)
+        };
+    },
+
+    htmlBuilder: htmlBuilder,
+    mathmlBuilder: mathmlBuilder
+});
+
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],105:[function(require,module,exports){
 "use strict";
 
 var _buildCommon = require("../buildCommon");
@@ -10876,7 +10717,7 @@ function checkDelimiter(delim, context) {
     }
 });
 
-},{"../ParseError":84,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":116,"../utils":123}],105:[function(require,module,exports){
+},{"../ParseError":84,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":121,"../utils":128}],106:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -10992,7 +10833,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
         var ruleWidth = void 0;
         var ruleSpacing = void 0;
         if (group.value.hasBarLine) {
-            rule = html.makeLineSpan("frac-line", options);
+            rule = _buildCommon2.default.makeLineSpan("frac-line", options);
             ruleWidth = rule.height;
             ruleSpacing = rule.height;
         } else {
@@ -11125,7 +10966,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":116}],106:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":121}],107:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11213,7 +11054,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],107:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],108:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11228,49 +11069,71 @@ var _mathMLTree = require("../mathMLTree");
 
 var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
 
+var _units = require("../units");
+
+var _ParseError = require("../ParseError");
+
+var _ParseError2 = _interopRequireDefault(_ParseError);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// TODO: \hskip and \mskip should support plus and minus in lengths
+
 (0, _defineFunction2.default)({
-    type: "katex",
-    names: ["\\KaTeX"],
+    type: "kern",
+    names: ["\\kern", "\\mkern", "\\hskip", "\\mskip"],
     props: {
-        numArgs: 0,
+        numArgs: 1,
+        argTypes: ["size"],
         allowedInText: true
     },
     handler: function handler(context, args) {
+        var mathFunction = context.funcName[1] === 'm'; // \mkern, \mskip
+        var muUnit = args[0].value.unit === 'mu';
+        if (mathFunction) {
+            if (!muUnit) {
+                typeof console !== "undefined" && console.warn("In LaTeX, " + context.funcName + " supports only mu units, " + ("not " + args[0].value.unit + " units"));
+            }
+            if (context.parser.mode !== "math") {
+                throw new _ParseError2.default("Can't use function '" + context.funcName + "' in text mode");
+            }
+        } else {
+            // !mathFunction
+            if (muUnit) {
+                typeof console !== "undefined" && console.warn("In LaTeX, " + context.funcName + " does not support mu units");
+            }
+        }
         return {
-            type: "katex"
+            type: "kern",
+            dimension: args[0].value
         };
     },
     htmlBuilder: function htmlBuilder(group, options) {
-        // The KaTeX logo. The offsets for the K and a were chosen to look
-        // good, but the offsets for the T, E, and X were taken from the
-        // definition of \TeX in TeX (see TeXbook pg. 356)
-        var k = _buildCommon2.default.makeSpan(["k"], [_buildCommon2.default.mathsym("K", group.mode)], options);
-        var a = _buildCommon2.default.makeSpan(["a"], [_buildCommon2.default.mathsym("A", group.mode)], options);
+        // Make an empty span for the rule
+        var rule = _buildCommon2.default.makeSpan(["mord", "rule"], [], options);
 
-        a.height = (a.height + 0.2) * 0.75;
-        a.depth = (a.height - 0.2) * 0.75;
+        if (group.value.dimension) {
+            var dimension = (0, _units.calculateSize)(group.value.dimension, options);
+            rule.style.marginLeft = dimension + "em";
+        }
 
-        var t = _buildCommon2.default.makeSpan(["t"], [_buildCommon2.default.mathsym("T", group.mode)], options);
-        var e = _buildCommon2.default.makeSpan(["e"], [_buildCommon2.default.mathsym("E", group.mode)], options);
-
-        e.height = e.height - 0.2155;
-        e.depth = e.depth + 0.2155;
-
-        var x = _buildCommon2.default.makeSpan(["x"], [_buildCommon2.default.mathsym("X", group.mode)], options);
-
-        return _buildCommon2.default.makeSpan(["mord", "katex-logo"], [k, a, t, e, x], options);
+        return rule;
     },
     mathmlBuilder: function mathmlBuilder(group, options) {
-        var node = new _mathMLTree2.default.MathNode("mtext", [new _mathMLTree2.default.TextNode("KaTeX")]);
+        var node = new _mathMLTree2.default.MathNode("mspace");
+
+        if (group.value.dimension) {
+            var dimension = (0, _units.calculateSize)(group.value.dimension, options);
+            node.setAttribute("width", dimension + "em");
+        }
 
         return node;
     }
 });
-// A KaTeX logo
+/* eslint no-console:0 */
+// Horizontal spacing commands
 
-},{"../buildCommon":91,"../defineFunction":96,"../mathMLTree":116}],108:[function(require,module,exports){
+},{"../ParseError":84,"../buildCommon":91,"../defineFunction":96,"../mathMLTree":121,"../units":127}],109:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11341,7 +11204,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 // Horizontal overlap functions
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],109:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],110:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11413,7 +11276,7 @@ var chooseMathStyle = function chooseMathStyle(group, options) {
     }
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],110:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],111:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11555,7 +11418,7 @@ var mmlModBuilder = function mmlModBuilder(group, options) {
     mathmlBuilder: mmlModBuilder
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],111:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],112:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11825,7 +11688,7 @@ var singleCharBigOps = {
     mathmlBuilder: mathmlBuilder
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":116,"../utils":123}],112:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":121,"../utils":128}],113:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11925,7 +11788,75 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":116}],113:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":121}],114:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _defineFunction2.default)({
+    type: "overline",
+    names: ["\\overline"],
+    props: {
+        numArgs: 1
+    },
+    handler: function handler(context, args) {
+        var body = args[0];
+        return {
+            type: "overline",
+            body: body
+        };
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        // Overlines are handled in the TeXbook pg 443, Rule 9.
+
+        // Build the inner group in the cramped style.
+        var innerGroup = html.buildGroup(group.value.body, options.havingCrampedStyle());
+
+        // Create the line above the body
+        var line = _buildCommon2.default.makeLineSpan("overline-line", options);
+
+        // Generate the vlist, with the appropriate kerns
+        var vlist = _buildCommon2.default.makeVList({
+            positionType: "firstBaseline",
+            children: [{ type: "elem", elem: innerGroup }, { type: "kern", size: 3 * line.height }, { type: "elem", elem: line }, { type: "kern", size: line.height }]
+        }, options);
+
+        return _buildCommon2.default.makeSpan(["mord", "overline"], [vlist], options);
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        var operator = new _mathMLTree2.default.MathNode("mo", [new _mathMLTree2.default.TextNode("\u203E")]);
+        operator.setAttribute("stretchy", "true");
+
+        var node = new _mathMLTree2.default.MathNode("mover", [mml.buildGroup(group.value.body, options), operator]);
+        node.setAttribute("accent", "true");
+
+        return node;
+    }
+});
+
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],115:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -12047,7 +11978,83 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],114:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],116:[function(require,module,exports){
+"use strict";
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _units = require("../units");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _defineFunction2.default)({
+    type: "rule",
+    names: ["\\rule"],
+    props: {
+        numArgs: 2,
+        numOptionalArgs: 1,
+        argTypes: ["size", "size", "size"]
+    },
+    handler: function handler(context, args, optArgs) {
+        var shift = optArgs[0];
+        var width = args[0];
+        var height = args[1];
+        return {
+            type: "rule",
+            shift: shift && shift.value,
+            width: width.value,
+            height: height.value
+        };
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        // Make an empty span for the rule
+        var rule = _buildCommon2.default.makeSpan(["mord", "rule"], [], options);
+
+        // Calculate the shift, width, and height of the rule, and account for units
+        var shift = 0;
+        if (group.value.shift) {
+            shift = (0, _units.calculateSize)(group.value.shift, options);
+        }
+
+        var width = (0, _units.calculateSize)(group.value.width, options);
+        var height = (0, _units.calculateSize)(group.value.height, options);
+
+        // Style the rule to the right size
+        rule.style.borderRightWidth = width + "em";
+        rule.style.borderTopWidth = height + "em";
+        rule.style.bottom = shift + "em";
+
+        // Record the height and width
+        rule.width = width;
+        rule.height = height + shift;
+        rule.depth = -shift;
+        // Font size is the number large enough that the browser will
+        // reserve at least `absHeight` space above the baseline.
+        // The 1.125 factor was empirically determined
+        rule.maxFontSize = height * 1.125 * options.sizeMultiplier;
+
+        return rule;
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        // TODO(emily): Figure out if there's an actual way to draw black boxes
+        // in MathML.
+        var node = new _mathMLTree2.default.MathNode("mrow");
+
+        return node;
+    }
+});
+
+},{"../buildCommon":91,"../defineFunction":96,"../mathMLTree":121,"../units":127}],117:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -12168,12 +12175,172 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 // smash, with optional [tb], as in AMS
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":116}],115:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],118:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Non-mathy text, possibly in a font
+var textFunctionFonts = {
+    "\\text": undefined, "\\textrm": "mathrm", "\\textsf": "mathsf",
+    "\\texttt": "mathtt", "\\textnormal": "mathrm", "\\textbf": "mathbf",
+    "\\textit": "textit"
+};
+
+
+(0, _defineFunction2.default)({
+    type: "text",
+    names: ["\\text", "\\textrm", "\\textsf", "\\texttt", "\\textnormal", "\\textbf", "\\textit"],
+    props: {
+        numArgs: 1,
+        argTypes: ["text"],
+        greediness: 2,
+        allowedInText: true
+    },
+    handler: function handler(context, args) {
+        var body = args[0];
+        return {
+            type: "text",
+            body: (0, _defineFunction.ordargument)(body),
+            font: textFunctionFonts[context.funcName]
+        };
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        var newOptions = options.withFont(group.value.font);
+        var inner = html.buildExpression(group.value.body, newOptions, true);
+        _buildCommon2.default.tryCombineChars(inner);
+        return _buildCommon2.default.makeSpan(["mord", "text"], inner, newOptions);
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        var body = group.value.body;
+
+        // Convert each element of the body into MathML, and combine consecutive
+        // <mtext> outputs into a single <mtext> tag.  In this way, we don't
+        // nest non-text items (e.g., $nested-math$) within an <mtext>.
+        var inner = [];
+        var currentText = null;
+        for (var i = 0; i < body.length; i++) {
+            var _group = mml.buildGroup(body[i], options);
+            if (_group.type === 'mtext' && currentText != null) {
+                Array.prototype.push.apply(currentText.children, _group.children);
+            } else {
+                inner.push(_group);
+                if (_group.type === 'mtext') {
+                    currentText = _group;
+                }
+            }
+        }
+
+        // If there is a single tag in the end (presumably <mtext>),
+        // just return it.  Otherwise, wrap them in an <mrow>.
+        if (inner.length === 1) {
+            return inner[0];
+        } else {
+            return new _mathMLTree2.default.MathNode("mrow", inner);
+        }
+    }
+});
+
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],119:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _defineFunction2.default)({
+    type: "underline",
+    names: ["\\underline"],
+    props: {
+        numArgs: 1
+    },
+    handler: function handler(context, args) {
+        var body = args[0];
+        return {
+            type: "underline",
+            body: body
+        };
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        // Underlines are handled in the TeXbook pg 443, Rule 10.
+        // Build the inner group.
+        var innerGroup = html.buildGroup(group.value.body, options);
+
+        // Create the line above the body
+        var line = _buildCommon2.default.makeLineSpan("underline-line", options);
+
+        // Generate the vlist, with the appropriate kerns
+        var vlist = _buildCommon2.default.makeVList({
+            positionType: "top",
+            positionData: innerGroup.height,
+            children: [{ type: "kern", size: line.height }, { type: "elem", elem: line }, { type: "kern", size: 3 * line.height }, { type: "elem", elem: innerGroup }]
+        }, options);
+
+        return _buildCommon2.default.makeSpan(["mord", "underline"], [vlist], options);
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        var operator = new _mathMLTree2.default.MathNode("mo", [new _mathMLTree2.default.TextNode("\u203E")]);
+        operator.setAttribute("stretchy", "true");
+
+        var node = new _mathMLTree2.default.MathNode("munder", [mml.buildGroup(group.value.body, options), operator]);
+        node.setAttribute("accentunder", "true");
+
+        return node;
+    }
+});
+
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],120:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _fontMetricsData = require("./fontMetricsData");
+
+var _fontMetricsData2 = _interopRequireDefault(_fontMetricsData);
 
 var _symbols = require("./symbols");
 
@@ -12194,12 +12361,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 /** Macro tokens (in reverse order). */
-var builtinMacros = {};
+
 /**
  * Predefined macros for KaTeX.
  * This can be used to define some commands in terms of others.
  */
 
+var builtinMacros = {};
 exports.default = builtinMacros;
 
 // This function might one day accept an additional argument and do more things.
@@ -12244,10 +12412,6 @@ defineMacro("\u2119", "\\mathbb{P}");
 defineMacro("\u211A", "\\mathbb{Q}");
 defineMacro("\u211D", "\\mathbb{R}");
 defineMacro("\u2124", "\\mathbb{Z}");
-
-// We don't distinguish between math and nonmath kerns.
-// (In TeX, the mu unit works only with \mkern.)
-defineMacro("\\mkern", "\\kern");
 
 // \llap and \rlap render their contents in text mode
 defineMacro("\\llap", "\\mathllap{\\textrm{#1}}");
@@ -12430,6 +12594,32 @@ defineMacro("\\thickspace", "\\;"); //   \let\thickspace\;
 //////////////////////////////////////////////////////////////////////
 // LaTeX source2e
 
+// \def\TeX{T\kern-.1667em\lower.5ex\hbox{E}\kern-.125emX\@}
+// TODO: Doesn't normally work in math mode because \@ fails.  KaTeX doesn't
+// support \@ yet, so that's omitted, and we add \text so that the result
+// doesn't look funny in math mode.
+defineMacro("\\TeX", "\\textrm{T\\kern-.1667em\\raisebox{-.5ex}{E}\\kern-.125emX}");
+
+// \DeclareRobustCommand{\LaTeX}{L\kern-.36em%
+//         {\sbox\z@ T%
+//          \vbox to\ht\z@{\hbox{\check@mathfonts
+//                               \fontsize\sf@size\z@
+//                               \math@fontsfalse\selectfont
+//                               A}%
+//                         \vss}%
+//         }%
+//         \kern-.15em%
+//         \TeX}
+// This code aligns the top of the A with the T (from the perspective of TeX's
+// boxes, though visually the A appears to extend above slightly).
+// We compute the corresponding \raisebox when A is rendered at \scriptsize,
+// which is size3, which has a scale factor of 0.7 (see Options.js).
+var latexRaiseA = _fontMetricsData2.default['Main-Regular']["T".charCodeAt(0)][1] - 0.7 * _fontMetricsData2.default['Main-Regular']["A".charCodeAt(0)][1] + "em";
+defineMacro("\\LaTeX", "\\textrm{L\\kern-.36em\\raisebox{" + latexRaiseA + "}{\\scriptsize A}" + "\\kern-.15em\\TeX}");
+
+// New KaTeX logo based on tweaking LaTeX logo
+defineMacro("\\KaTeX", "\\textrm{K\\kern-.17em\\raisebox{" + latexRaiseA + "}{\\scriptsize A}" + "\\kern-.15em\\TeX}");
+
 // \DeclareRobustCommand\hspace{\@ifstar\@hspacer\@hspace}
 // \def\@hspace#1{\hskip  #1\relax}
 // KaTeX doesn't do line breaks, so \hspace and \hspace* are the same as \kern
@@ -12501,7 +12691,7 @@ defineMacro("\\approxcoloncolon", "\\approx\\mathrel{\\mkern-1.2mu}\\dblcolon");
 //       MathML result will be much cleaner.
 defineMacro("\\notni", "\\not\\ni");
 
-},{"./Token":90,"./symbols":120,"./utils":123}],116:[function(require,module,exports){
+},{"./Token":90,"./fontMetricsData":102,"./symbols":125,"./utils":128}],121:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12683,7 +12873,7 @@ exports.default = {
     TextNode: TextNode
 };
 
-},{"./utils":123,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],117:[function(require,module,exports){
+},{"./utils":128,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],122:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12714,7 +12904,7 @@ var parseTree = function parseTree(toParse, settings) {
 
 exports.default = parseTree;
 
-},{"./Parser":86}],118:[function(require,module,exports){
+},{"./Parser":86}],123:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12781,7 +12971,7 @@ var stretchyCodePoint = {
     xleftrightharpoons: "\u21CB",
     xtwoheadleftarrow: "\u219E",
     xtwoheadrightarrow: "\u21A0",
-    xLongequal: "=",
+    xlongequal: "=",
     xtofrom: "\u21C4"
 };
 
@@ -12854,7 +13044,7 @@ var katexImagesData = {
     overrightharpoon: [["rightharpoon"], 0.888, 522, "xMaxYMin"],
     xrightharpoonup: [["rightharpoon"], 0.888, 522, "xMaxYMin"],
     xrightharpoondown: [["rightharpoondown"], 0.888, 522, "xMaxYMin"],
-    xLongequal: [["longequal"], 0.888, 334, "xMinYMin"],
+    xlongequal: [["longequal"], 0.888, 334, "xMinYMin"],
     xtwoheadleftarrow: [["twoheadleftarrow"], 0.888, 334, "xMinYMin"],
     xtwoheadrightarrow: [["twoheadrightarrow"], 0.888, 334, "xMaxYMin"],
 
@@ -13074,7 +13264,7 @@ exports.default = {
     svgSpan: svgSpan
 };
 
-},{"./buildCommon":91,"./domTree":98,"./mathMLTree":116,"./utils":123,"babel-runtime/helpers/slicedToArray":10}],119:[function(require,module,exports){
+},{"./buildCommon":91,"./domTree":98,"./mathMLTree":121,"./utils":128,"babel-runtime/helpers/slicedToArray":10}],124:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13196,7 +13386,7 @@ var path = {
 
 exports.default = { path: path };
 
-},{}],120:[function(require,module,exports){
+},{}],125:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13932,7 +14122,7 @@ defineSymbol(text, main, textord, "\u2019", "’");
 defineSymbol(text, main, textord, "\u201C", "“");
 defineSymbol(text, main, textord, "\u201D", "”");
 
-},{}],121:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13950,7 +14140,7 @@ var hangulRegex = exports.hangulRegex = /[\uAC00-\uD7AF]/;
 // Notably missing are halfwidth Katakana and Romanji glyphs.
 var cjkRegex = exports.cjkRegex = /[\u3000-\u30FF\u4E00-\u9FAF\uAC00-\uD7AF\uFF00-\uFF60]/;
 
-},{}],122:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14061,7 +14251,7 @@ var calculateSize = exports.calculateSize = function calculateSize(sizeValue, op
     return Math.min(sizeValue.number * scale, options.maxSize);
 };
 
-},{"./Options":83,"./ParseError":84}],123:[function(require,module,exports){
+},{"./Options":83,"./ParseError":84}],128:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
