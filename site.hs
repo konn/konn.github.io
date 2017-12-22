@@ -395,7 +395,7 @@ applyDefaultTemplate addCtx item = do
   descr <- fromMaybe "" <$> getMetadataField (itemIdentifier item) "description"
   let navbar = constField "navbar" nav
       bcrumb = constField "breadcrumb" bc
-      sdescr = either (const "") (T.unpack . T.replace "\n" "" . T.pack . writePlain def) $
+      sdescr = either (const "") (T.unpack . T.replace "\n" " " . T.pack . writePlain def) $
                readMarkdown def descr
       plainDescr = constField "short_description" sdescr
       unpublished = boolField "unpublished" $ \_ -> not pub
