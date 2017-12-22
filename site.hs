@@ -395,6 +395,10 @@ applyDefaultTemplate addCtx item = do
   pub <- isPublished item
   descr <- fromMaybe "" <$> getMetadataField (itemIdentifier item) "description"
   let navbar = constField "navbar" nav
+      imgs   = extractLocalImages $ TS.parseTags $ itemBody item
+      thumb  = constField "thumbnail" $
+               fromMaybe "http://konn-san.com/img/myface_mosaic.jpg" $
+               listToMaybe imgs
       bcrumb = constField "breadcrumb" bc
       sdescr = either (const "") (T.unpack . T.replace "\n" " " . T.pack . writePlain def . bottomUp unicodiseMath) $
                readMarkdown def descr
@@ -418,7 +422,8 @@ applyDefaultTemplate addCtx item = do
         return $ renderHtml $ do
           H5.meta ! H5.name "Keywords"    ! H5.content (H5.toValue tags)
           H5.meta ! H5.name "description" ! H5.content (H5.toValue desc)
-      cxt  = mconcat [ plainDescr, unpublished, addCtx, toc, navbar, bcrumb, hdr, meta, date, noTopStar, defaultContext]
+      cxt  = mconcat [ thumb, plainDescr, unpublished, addCtx, toc, navbar, bcrumb
+                     , hdr, meta, date, noTopStar, defaultContext]
   let item' = demoteHeaders . withTags addTableClass <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
   unsafeCompiler $ do
@@ -432,6 +437,16 @@ applyDefaultTemplate addCtx item = do
     >>= loadAndApplyTemplate "templates/default.html" cxt
     >>= relativizeUrls
     >>= procKaTeX
+
+extractLocalImages :: [Tag String] -> [String]
+extractLocalImages ts = [ src
+                        | TagOpen t atts <- ts
+                        , at <- maybeToList $ lookup t [("img", "src"), ("object", "data")]
+                        , (a, src) <- atts
+                        , a == at
+                        , not $ isExternal src
+                        , T.takeEnd 4 (T.pack src) /= ".svg"
+                        ]
 
 isLinkBroken :: String -> IO Bool
 isLinkBroken _url = return False
