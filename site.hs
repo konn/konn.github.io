@@ -439,7 +439,7 @@ applyDefaultTemplate addCtx item = do
           H5.meta ! H5.name "description" ! H5.content (H5.toValue desc)
       cxt  = mconcat [ thumb, plainDescr, unpublished, addCtx, toc, navbar, bcrumb
                      , hdr, meta, date, noTopStar, defaultContext]
-  let item' = demoteHeaders . withTags addTableClass <$> item
+  let item' = demoteHeaders . withTags addRequiredClasses <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
   unsafeCompiler $ do
     broken <- filterM isLinkBroken links
@@ -471,9 +471,10 @@ myGetTags :: (Functor m, MonadMetadata m) => Identifier -> m [String]
 myGetTags ident =
   maybe [] (map (T.unpack . T.strip) . T.splitOn "," . T.pack) <$> getMetadataField ident "tag"
 
-addTableClass :: Tag String -> Tag String
-addTableClass (TagOpen "table" attr) = TagOpen "table" (("class", "table"):attr)
-addTableClass t = t
+addRequiredClasses :: Tag String -> Tag String
+addRequiredClasses (TagOpen "table" attr) = TagOpen "table" (("class", "table"):attr)
+addRequiredClasses (TagOpen "blockquote" attr) = TagOpen "blockquote" (("class", "blockquote"):attr)
+addRequiredClasses t = t
 
 config :: Configuration
 config = defaultConfiguration
