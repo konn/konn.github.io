@@ -44,6 +44,7 @@ import           Prelude                         hiding (FilePath, div, mapM,
 import qualified Prelude                         as P
 import           Shelly                          hiding (tag)
 import           Skylighting                     hiding (Context (), Style)
+import qualified System.FilePath.Posix           as PFP
 import           System.IO                       (hPutStrLn, stderr)
 import           Text.Blaze.Html.Renderer.String
 import           Text.Blaze.Html5                ((!))
@@ -388,14 +389,28 @@ myPandocCompiler =
 readHtml' :: ReaderOptions -> String -> Pandoc
 readHtml' opt = fromRight . readHtml opt
 
+resolveRelatives :: PFP.FilePath -> PFP.FilePath -> PFP.FilePath
+resolveRelatives rt pth =
+  let revRoots = reverse $ PFP.splitPath rt
+  in go revRoots $ PFP.splitPath pth
+  where
+    go _        ("/" : rest)   = go [] rest
+    go (_ : rs) ("../" : rest) = go rs rest
+    go []       ("../" : rest) = go [".."] rest
+    go r        ("./" : rest)  = go r rest
+    go rs       (fp  : rest)   = go (fp : rs) rest
+    go fps      []             = PFP.joinPath $ reverse fps
+
 applyDefaultTemplate :: Context String -> Item String -> Compiler (Item String)
 applyDefaultTemplate addCtx item = do
   bc <- makeBreadcrumb item
   nav <- makeNavBar $ itemIdentifier item
   pub <- isPublished item
   descr <- fromMaybe "" <$> getMetadataField (itemIdentifier item) "description"
-  let navbar = constField "navbar" nav
-      imgs   = extractLocalImages $ TS.parseTags $ itemBody item
+  r <- fromMaybe "" <$> getRoute (itemIdentifier item)
+  let imgs = map (("http://konn-san.com/" <>) . resolveRelatives (PFP.takeDirectory r)) $
+             extractLocalImages $ TS.parseTags $ itemBody item
+      navbar = constField "navbar" nav
       thumb  = constField "thumbnail" $
                fromMaybe "http://konn-san.com/img/myface_mosaic.jpg" $
                listToMaybe imgs
@@ -439,14 +454,15 @@ applyDefaultTemplate addCtx item = do
     >>= procKaTeX
 
 extractLocalImages :: [Tag String] -> [String]
-extractLocalImages ts = [ src
-                        | TagOpen t atts <- ts
-                        , at <- maybeToList $ lookup t [("img", "src"), ("object", "data")]
-                        , (a, src) <- atts
-                        , a == at
-                        , not $ isExternal src
-                        , T.takeEnd 4 (T.pack src) /= ".svg"
-                        ]
+extractLocalImages ts =
+   [ src
+   | TagOpen t atts <- ts
+   , at <- maybeToList $ lookup t [("img", "src"), ("object", "data")]
+   , (a, src) <- atts
+   , a == at
+   , not $ isExternal src
+   , T.takeEnd 4 (T.pack src) /= ".svg"
+   ]
 
 isLinkBroken :: String -> IO Bool
 isLinkBroken _url = return False

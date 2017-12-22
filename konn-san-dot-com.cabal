@@ -39,6 +39,7 @@ executable site
                      , conduit
                      , containers
                      , data-default
+                     , filepath
                      , hakyll
                      , hakyll-shakespeare
                      , hashable
