@@ -176,3 +176,8 @@ h6,
 .pull-right, .pull-left {
     margin: 1em;
 }
+
+.blockquote {
+    padding: .5rem 1rem;
+    border-left: .25rem solid #eceeef;
+}
