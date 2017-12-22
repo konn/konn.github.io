@@ -11,8 +11,6 @@ var _Settings2 = _interopRequireDefault(_Settings);
 
 var _buildTree = require("./src/buildTree");
 
-var _buildTree2 = _interopRequireDefault(_buildTree);
-
 var _parseTree = require("./src/parseTree");
 
 var _parseTree2 = _interopRequireDefault(_parseTree);
@@ -29,12 +27,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var render = function render(expression, baseNode, options) {
     _utils2.default.clearNode(baseNode);
-
-    var settings = new _Settings2.default(options);
-
-    var tree = (0, _parseTree2.default)(expression, settings);
-    var node = (0, _buildTree2.default)(tree, expression, settings).toNode();
-
+    var node = renderToDomTree(expression, options).toNode();
     baseNode.appendChild(node);
 };
 
@@ -64,10 +57,8 @@ if (typeof document !== "undefined") {
  * Parse and build an expression, and return the markup for that.
  */
 var renderToString = function renderToString(expression, options) {
-    var settings = new _Settings2.default(options);
-
-    var tree = (0, _parseTree2.default)(expression, settings);
-    return (0, _buildTree2.default)(tree, expression, settings).toMarkup();
+    var markup = renderToDomTree(expression, options).toMarkup();
+    return markup;
 };
 
 /**
@@ -78,16 +69,68 @@ var generateParseTree = function generateParseTree(expression, options) {
     return (0, _parseTree2.default)(expression, settings);
 };
 
+/**
+ * Generates and returns the katex build tree. This is used for advanced
+ * use cases (like rendering to custom output).
+ */
+var renderToDomTree = function renderToDomTree(expression, options) {
+    var settings = new _Settings2.default(options);
+    var tree = (0, _parseTree2.default)(expression, settings);
+    return (0, _buildTree.buildTree)(tree, expression, settings);
+};
+
+/**
+ * Generates and returns the katex build tree, with just HTML (no MathML).
+ * This is used for advanced use cases (like rendering to custom output).
+ */
+var renderToHTMLTree = function renderToHTMLTree(expression, options) {
+    var settings = new _Settings2.default(options);
+    var tree = (0, _parseTree2.default)(expression, settings);
+    return (0, _buildTree.buildHTMLTree)(tree, expression, settings);
+};
+
 module.exports = {
+    /**
+     * Renders the given LaTeX into an HTML+MathML combination, and adds
+     * it as a child to the specified DOM node.
+     */
     render: render,
+    /**
+     * Renders the given LaTeX into an HTML+MathML combination string,
+     * for sending to the client.
+     */
     renderToString: renderToString,
     /**
+     * KaTeX error, usually during parsing.
+     */
+    ParseError: _ParseError2.default,
+    /**
+     * Parses the given LaTeX into KaTeX's internal parse tree structure,
+     * without rendering to HTML or MathML.
+     *
      * NOTE: This method is not currently recommended for public use.
      * The internal tree representation is unstable and is very likely
      * to change. Use at your own risk.
      */
     __parse: generateParseTree,
-    ParseError: _ParseError2.default
+    /**
+     * Renders the given LaTeX into an HTML+MathML internal DOM tree
+     * representation, without flattening that representation to a string.
+     *
+     * NOTE: This method is not currently recommended for public use.
+     * The internal tree representation is unstable and is very likely
+     * to change. Use at your own risk.
+     */
+    __renderToDomTree: renderToDomTree,
+    /**
+     * Renders the given LaTeX into an HTML internal DOM tree representation,
+     * without MathML and without flattening that representation to a string.
+     *
+     * NOTE: This method is not currently recommended for public use.
+     * The internal tree representation is unstable and is very likely
+     * to change. Use at your own risk.
+     */
+    __renderToHTMLTree: renderToHTMLTree
 };
 
 },{"./src/ParseError":84,"./src/Settings":87,"./src/buildTree":94,"./src/parseTree":122,"./src/utils":128}],2:[function(require,module,exports){
@@ -1762,7 +1805,9 @@ var Options = function () {
         this.size = data.size || Options.BASESIZE;
         this.textSize = data.textSize || this.size;
         this.phantom = !!data.phantom;
-        this.font = data.font;
+        this.fontFamily = data.fontFamily;
+        this.fontWeight = data.fontWeight || '';
+        this.fontShape = data.fontShape || '';
         this.sizeMultiplier = sizeMultipliers[this.size - 1];
         this.maxSize = data.maxSize;
         this._fontMetrics = undefined;
@@ -1788,7 +1833,9 @@ var Options = function () {
                 textSize: this.textSize,
                 color: this.color,
                 phantom: this.phantom,
-                font: this.font,
+                fontFamily: this.fontFamily,
+                fontWeight: this.fontWeight,
+                fontShape: this.fontShape,
                 maxSize: this.maxSize
             };
 
@@ -1898,10 +1945,34 @@ var Options = function () {
          */
 
     }, {
-        key: "withFont",
-        value: function withFont(font) {
+        key: "withFontFamily",
+        value: function withFontFamily(fontFamily) {
             return this.extend({
-                font: font || this.font
+                fontFamily: fontFamily || this.fontFamily
+            });
+        }
+
+        /**
+         * Creates a new options object with the given font weight
+         */
+
+    }, {
+        key: "withFontWeight",
+        value: function withFontWeight(fontWeight) {
+            return this.extend({
+                fontWeight: fontWeight
+            });
+        }
+
+        /**
+         * Creates a new options object with the given font weight
+         */
+
+    }, {
+        key: "withFontShape",
+        value: function withFontShape(fontShape) {
+            return this.extend({
+                fontShape: fontShape
             });
         }
 
@@ -3643,6 +3714,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _slicedToArray2 = require("babel-runtime/helpers/slicedToArray");
+
+var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
+
 var _getIterator2 = require("babel-runtime/core-js/get-iterator");
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
@@ -3754,8 +3829,11 @@ var mathsym = function mathsym(value, mode, options) {
     // Have a special case for when the value = \ because the \ is used as a
     // textord in unsupported command errors but cannot be parsed as a regular
     // text ordinal and is therefore not present as a symbol in the symbols
-    // table for text
-    if (value === "\\" || _symbols2.default[mode][value].font === "main") {
+    // table for text, as well as a special case for boldsymbol because it
+    // can be used for bold + and -
+    if (options && options.fontFamily && options.fontFamily === "boldsymbol" && lookupSymbol(value, "Main-Bold", mode).metrics) {
+        return makeSymbol(value, "Main-Bold", mode, options, classes.concat(["mathbf"]));
+    } else if (value === "\\" || _symbols2.default[mode][value].font === "main") {
         return makeSymbol(value, "Main-Regular", mode, options, classes);
     } else {
         return makeSymbol(value, "AMS-Regular", mode, options, classes.concat(["amsrm"]));
@@ -3772,10 +3850,12 @@ var mathDefault = function mathDefault(value, mode, options, classes, type) {
     } else if (type === "textord") {
         var font = _symbols2.default[mode][value] && _symbols2.default[mode][value].font;
         if (font === "ams") {
-            return makeSymbol(value, "AMS-Regular", mode, options, classes.concat(["amsrm"]));
+            var _fontName = retrieveTextFontName("amsrm", options.fontWeight, options.fontShape);
+            return makeSymbol(value, _fontName, mode, options, classes.concat("amsrm", options.fontWeight, options.fontShape));
         } else {
             // if (font === "main") {
-            return makeSymbol(value, "Main-Regular", mode, options, classes.concat(["mathrm"]));
+            var _fontName2 = retrieveTextFontName("textrm", options.fontWeight, options.fontShape);
+            return makeSymbol(value, _fontName2, mode, options, classes.concat(options.fontWeight, options.fontShape));
         }
     } else {
         throw new Error("unexpected type: " + type + " in mathDefault");
@@ -3806,6 +3886,28 @@ var mathit = function mathit(value, mode, options, classes) {
 };
 
 /**
+ * Determines which of the two font names (Main-Bold and Math-BoldItalic) and
+ * corresponding style tags (mathbf or boldsymbol) to use for font "boldsymbol",
+ * depending on the symbol.  Use this function instead of fontMap for font
+ * "boldsymbol".
+ */
+var boldsymbol = function boldsymbol(value, mode, options, classes) {
+    if (lookupSymbol(value, "Math-BoldItalic", mode).metrics) {
+        return {
+            fontName: "Math-BoldItalic",
+            fontClass: "boldsymbol"
+        };
+    } else {
+        // Some glyphs do not exist in Math-BoldItalic so we need to use
+        // Main-Bold instead.
+        return {
+            fontName: "Main-Bold",
+            fontClass: "mathbf"
+        };
+    }
+};
+
+/**
  * Makes either a mathord or textord in the correct font and color.
  */
 var makeOrd = function makeOrd(group, options, type) {
@@ -3814,16 +3916,28 @@ var makeOrd = function makeOrd(group, options, type) {
 
     var classes = ["mord"];
 
-    var font = options.font;
-    if (font) {
-        var fontLookup = void 0;
-        if (font === "mathit" || _utils2.default.contains(mainitLetters, value)) {
-            fontLookup = mathit(value, mode, options, classes);
+    var fontFamily = options.fontFamily;
+    if (fontFamily) {
+        var _fontName3 = void 0;
+        var fontClasses = void 0;
+        if (fontFamily === "boldsymbol") {
+            var fontData = boldsymbol(value, mode, options, classes);
+            _fontName3 = fontData.fontName;
+            fontClasses = [fontData.fontClass];
+        } else if (fontFamily === "mathit" || _utils2.default.contains(mainitLetters, value)) {
+            var _fontData = mathit(value, mode, options, classes);
+            _fontName3 = _fontData.fontName;
+            fontClasses = [_fontData.fontClass];
+        } else if (fontFamily.includes("math") || mode === "math") {
+            // To support old font functions (i.e. \rm \sf etc.) or math mode.
+            _fontName3 = fontMap[fontFamily].fontName;
+            fontClasses = [fontFamily];
         } else {
-            fontLookup = fontMap[font];
+            _fontName3 = retrieveTextFontName(fontFamily, options.fontWeight, options.fontShape);
+            fontClasses = [fontFamily, options.fontWeight, options.fontShape];
         }
-        if (lookupSymbol(value, fontLookup.fontName, mode).metrics) {
-            return makeSymbol(value, fontLookup.fontName, mode, options, classes.concat([fontLookup.fontClass || font]));
+        if (lookupSymbol(value, _fontName3, mode).metrics) {
+            return makeSymbol(value, _fontName3, mode, options, classes.concat(fontClasses));
         } else {
             return mathDefault(value, mode, options, classes, type);
         }
@@ -4180,6 +4294,45 @@ var makeVerb = function makeVerb(group, options) {
     return text;
 };
 
+// Takes an Options object, and returns the appropriate fontLookup
+var retrieveTextFontName = function retrieveTextFontName(fontFamily, fontWeight, fontShape) {
+    var baseFontName = retrieveBaseFontName(fontFamily);
+    var fontStylesName = retrieveFontStylesName(fontWeight, fontShape);
+    return baseFontName + "-" + fontStylesName;
+};
+
+var retrieveBaseFontName = function retrieveBaseFontName(font) {
+    var baseFontName = "";
+    switch (font) {
+        case "amsrm":
+            baseFontName = "AMS";
+            break;
+        case "textrm":
+            baseFontName = "Main";
+            break;
+        case "textsf":
+            baseFontName = "SansSerif";
+            break;
+        case "texttt":
+            baseFontName = "Typewriter";
+            break;
+        default:
+            throw new Error("Invalid font provided: " + font);
+    }
+    return baseFontName;
+};
+
+var retrieveFontStylesName = function retrieveFontStylesName(fontWeight, fontShape) {
+    var fontStylesName = '';
+    if (fontWeight === "textbf") {
+        fontStylesName += "Bold";
+    }
+    if (fontShape === "textit") {
+        fontStylesName += "Italic";
+    }
+    return fontStylesName || "Regular";
+};
+
 // A map of spacing functions to their attributes, like size and corresponding
 // CSS class
 var spacingFunctions = {
@@ -4234,9 +4387,10 @@ var fontMap = {
         fontName: "Main-Italic"
     },
 
-    // "mathit" is missing because it requires the use of two fonts: Main-Italic
-    // and Math-Italic.  This is handled by a special case in makeOrd which ends
-    // up calling mathit.
+    // "mathit" and "boldsymbol" are missing because they require the use of two
+    // fonts: Main-Italic and Math-Italic for "mathit", and Math-BoldItalic and
+    // Main-Bold for "boldsymbol".  This is handled by a special case in makeOrd
+    // which ends up calling mathit and boldsymbol.
 
     // families
     "mathbb": {
@@ -4265,6 +4419,32 @@ var fontMap = {
     }
 };
 
+var svgData = {
+    //   path, width, height
+    vec: ["vec", 0.471, 0.714] // values from the font glyph
+};
+
+var staticSvg = function staticSvg(value, options) {
+    // Create a span with inline SVG for the element.
+    var _svgData$value = (0, _slicedToArray3.default)(svgData[value], 3),
+        pathName = _svgData$value[0],
+        width = _svgData$value[1],
+        height = _svgData$value[2];
+
+    var path = new _domTree2.default.pathNode(pathName);
+    var svgNode = new _domTree2.default.svgNode([path], {
+        "width": width + "em",
+        "height": height + "em",
+        "viewBox": "0 0 " + 1000 * width + " " + 1000 * height,
+        "preserveAspectRatio": "xMinYMin"
+    });
+    var span = makeSpan(["overlay"], [svgNode], options);
+    span.height = height;
+    span.style.height = height + "em";
+    span.style.width = width + "em";
+    return span;
+};
+
 exports.default = {
     fontMap: fontMap,
     makeSymbol: makeSymbol,
@@ -4276,12 +4456,13 @@ exports.default = {
     makeVList: makeVList,
     makeOrd: makeOrd,
     makeVerb: makeVerb,
+    staticSvg: staticSvg,
     tryCombineChars: tryCombineChars,
     prependChildren: prependChildren,
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":98,"./fontMetrics":101,"./stretchy":123,"./symbols":125,"./utils":128,"babel-runtime/core-js/get-iterator":3}],92:[function(require,module,exports){
+},{"./domTree":98,"./fontMetrics":101,"./stretchy":123,"./symbols":125,"./utils":128,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/slicedToArray":10}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4860,7 +5041,7 @@ groupTypes.styling = function (group, options) {
 
 groupTypes.font = function (group, options) {
     var font = group.value.font;
-    return buildGroup(group.value.body, options.withFont(font));
+    return buildGroup(group.value.body, options.withFontFamily(font));
 };
 
 groupTypes.verb = function (group, options) {
@@ -4946,21 +5127,27 @@ groupTypes.accent = function (group, options) {
     // Build the accent
     var accentBody = void 0;
     if (!group.value.isStretchy) {
-        var accent = _buildCommon2.default.makeSymbol(group.value.label, "Main-Regular", group.mode, options);
+        var accent = void 0;
+        if (group.value.label === "\\vec") {
+            // Before version 0.9, \vec used the combining font glyph U+20D7.
+            // But browsers, especially Safari, are not consistent in how they
+            // render combining characters when not preceded by a character.
+            // So now we use an SVG.
+            // If Safari reforms, we should consider reverting to the glyph.
+            accent = _buildCommon2.default.staticSvg("vec", options);
+        } else {
+            accent = _buildCommon2.default.makeSymbol(group.value.label, "Main-Regular", group.mode, options);
+        }
         // Remove the italic correction of the accent, because it only serves to
         // shift the accent over to a place we don't want.
         accent.italic = 0;
 
-        // The \vec character that the fonts use is a combining character, and
+        // The \H character that the fonts use is a combining character, and
         // thus shows up much too far to the left. To account for this, we add a
         // specific class which shifts the accent over to where we want it.
         // TODO(emily): Fix this in a better way, like by changing the font
-        // Similarly, text accent \H is a combining character and
-        // requires a different adjustment.
         var accentClass = null;
-        if (group.value.label === "\\vec") {
-            accentClass = "accent-vec";
-        } else if (group.value.label === '\\H') {
+        if (group.value.label === '\\H') {
             accentClass = "accent-hungarian";
         }
 
@@ -5374,7 +5561,7 @@ var makeText = exports.makeText = function makeText(text, mode) {
  * Returns the math variant as a string or null if none is required.
  */
 var getVariant = function getVariant(group, options) {
-    var font = options.font;
+    var font = options.fontFamily;
     if (!font) {
         return null;
     }
@@ -5382,6 +5569,8 @@ var getVariant = function getVariant(group, options) {
     var mode = group.mode;
     if (font === "mathit") {
         return "italic";
+    } else if (font === "boldsymbol") {
+        return "bold-italic";
     }
 
     var value = group.value;
@@ -5395,7 +5584,7 @@ var getVariant = function getVariant(group, options) {
 
     var fontName = _buildCommon2.default.fontMap[font].fontName;
     if (_fontMetrics2.default.getCharacterMetrics(value, fontName)) {
-        return _buildCommon2.default.fontMap[options.font].variant;
+        return _buildCommon2.default.fontMap[font].variant;
     }
 
     return null;
@@ -5447,8 +5636,13 @@ groupTypes.textord = function (group, options) {
     return node;
 };
 
-groupTypes.bin = function (group) {
+groupTypes.bin = function (group, options) {
     var node = new _mathMLTree2.default.MathNode("mo", [makeText(group.value, group.mode)]);
+
+    var variant = getVariant(group, options);
+    if (variant === "bold-italic") {
+        node.setAttribute("mathvariant", variant);
+    }
 
     return node;
 };
@@ -5582,7 +5776,7 @@ groupTypes.spacing = function (group) {
 
 groupTypes.font = function (group, options) {
     var font = group.value.font;
-    return buildGroup(group.value.body, options.withFont(font));
+    return buildGroup(group.value.body, options.withFontFamily(font));
 };
 
 groupTypes.styling = function (group, options) {
@@ -5793,6 +5987,7 @@ function buildMathML(tree, texExpression, options) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.buildHTMLTree = exports.buildTree = undefined;
 
 var _buildHTML = require("./buildHTML");
 
@@ -5820,20 +6015,15 @@ var _Style2 = _interopRequireDefault(_Style);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var buildTree = function buildTree(tree, expression, settings) {
-    settings = settings || new _Settings2.default({});
-
-    var startStyle = _Style2.default.TEXT;
-    if (settings.displayMode) {
-        startStyle = _Style2.default.DISPLAY;
-    }
-
-    // Setup the default options
-    var options = new _Options2.default({
-        style: startStyle,
+var optionsFromSettings = function optionsFromSettings(settings) {
+    return new _Options2.default({
+        style: settings.displayMode ? _Style2.default.DISPLAY : _Style2.default.TEXT,
         maxSize: settings.maxSize
     });
+};
 
+var buildTree = exports.buildTree = function buildTree(tree, expression, settings) {
+    var options = optionsFromSettings(settings);
     // `buildHTML` sometimes messes with the parse tree (like turning bins ->
     // ords), so we build the MathML version first.
     var mathMLNode = (0, _buildMathML2.default)(tree, expression, options);
@@ -5841,6 +6031,17 @@ var buildTree = function buildTree(tree, expression, settings) {
 
     var katexNode = _buildCommon2.default.makeSpan(["katex"], [mathMLNode, htmlNode]);
 
+    if (settings.displayMode) {
+        return _buildCommon2.default.makeSpan(["katex-display"], [katexNode]);
+    } else {
+        return katexNode;
+    }
+};
+
+var buildHTMLTree = exports.buildHTMLTree = function buildHTMLTree(tree, expression, settings) {
+    var options = optionsFromSettings(settings);
+    var htmlNode = (0, _buildHTML2.default)(tree, options);
+    var katexNode = _buildCommon2.default.makeSpan(["katex"], [htmlNode]);
     if (settings.displayMode) {
         return _buildCommon2.default.makeSpan(["katex-display"], [katexNode]);
     } else {
@@ -8111,6 +8312,9 @@ var extraCharacterMap = {
  * built using `Make extended_metrics`.
  */
 var getCharacterMetrics = function getCharacterMetrics(character, font) {
+    if (!_fontMetricsData2.default[font]) {
+        throw new Error("Font metrics not found for font: " + font + ".");
+    }
     var ch = character.charCodeAt(0);
     if (character[0] in extraCharacterMap) {
         ch = extraCharacterMap[character[0]].charCodeAt(0);
@@ -8164,10 +8368,7 @@ exports.default = {
 },{"./fontMetricsData":102,"./unicodeRegexes":126}],102:[function(require,module,exports){
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var fontMetricsData = {
+module.exports = {
     "AMS-Regular": {
         "65": [0, 0.68889, 0, 0],
         "66": [0, 0.68889, 0, 0],
@@ -9499,6 +9700,244 @@ var fontMetricsData = {
         "1009": [0.19444, 0.43056, 0, 0.08334],
         "1013": [0, 0.43056, 0, 0.05556]
     },
+    "SansSerif-Bold": {
+        "33": [0, 0.69444, 0, 0],
+        "34": [0, 0.69444, 0, 0],
+        "35": [0.19444, 0.69444, 0, 0],
+        "36": [0.05556, 0.75, 0, 0],
+        "37": [0.05556, 0.75, 0, 0],
+        "38": [0, 0.69444, 0, 0],
+        "39": [0, 0.69444, 0, 0],
+        "40": [0.25, 0.75, 0, 0],
+        "41": [0.25, 0.75, 0, 0],
+        "42": [0, 0.75, 0, 0],
+        "43": [0.11667, 0.61667, 0, 0],
+        "44": [0.10556, 0.13056, 0, 0],
+        "45": [0, 0.45833, 0, 0],
+        "46": [0, 0.13056, 0, 0],
+        "47": [0.25, 0.75, 0, 0],
+        "48": [0, 0.69444, 0, 0],
+        "49": [0, 0.69444, 0, 0],
+        "50": [0, 0.69444, 0, 0],
+        "51": [0, 0.69444, 0, 0],
+        "52": [0, 0.69444, 0, 0],
+        "53": [0, 0.69444, 0, 0],
+        "54": [0, 0.69444, 0, 0],
+        "55": [0, 0.69444, 0, 0],
+        "56": [0, 0.69444, 0, 0],
+        "57": [0, 0.69444, 0, 0],
+        "58": [0, 0.45833, 0, 0],
+        "59": [0.10556, 0.45833, 0, 0],
+        "61": [-0.09375, 0.40625, 0, 0],
+        "63": [0, 0.69444, 0, 0],
+        "64": [0, 0.69444, 0, 0],
+        "65": [0, 0.69444, 0, 0],
+        "66": [0, 0.69444, 0, 0],
+        "67": [0, 0.69444, 0, 0],
+        "68": [0, 0.69444, 0, 0],
+        "69": [0, 0.69444, 0, 0],
+        "70": [0, 0.69444, 0, 0],
+        "71": [0, 0.69444, 0, 0],
+        "72": [0, 0.69444, 0, 0],
+        "73": [0, 0.69444, 0, 0],
+        "74": [0, 0.69444, 0, 0],
+        "75": [0, 0.69444, 0, 0],
+        "76": [0, 0.69444, 0, 0],
+        "77": [0, 0.69444, 0, 0],
+        "78": [0, 0.69444, 0, 0],
+        "79": [0, 0.69444, 0, 0],
+        "80": [0, 0.69444, 0, 0],
+        "81": [0.10556, 0.69444, 0, 0],
+        "82": [0, 0.69444, 0, 0],
+        "83": [0, 0.69444, 0, 0],
+        "84": [0, 0.69444, 0, 0],
+        "85": [0, 0.69444, 0, 0],
+        "86": [0, 0.69444, 0.01528, 0],
+        "87": [0, 0.69444, 0.01528, 0],
+        "88": [0, 0.69444, 0, 0],
+        "89": [0, 0.69444, 0.0275, 0],
+        "90": [0, 0.69444, 0, 0],
+        "91": [0.25, 0.75, 0, 0],
+        "93": [0.25, 0.75, 0, 0],
+        "94": [0, 0.69444, 0, 0],
+        "95": [0.35, 0.10833, 0.03056, 0],
+        "97": [0, 0.45833, 0, 0],
+        "98": [0, 0.69444, 0, 0],
+        "99": [0, 0.45833, 0, 0],
+        "100": [0, 0.69444, 0, 0],
+        "101": [0, 0.45833, 0, 0],
+        "102": [0, 0.69444, 0.07639, 0],
+        "103": [0.19444, 0.45833, 0.01528, 0],
+        "104": [0, 0.69444, 0, 0],
+        "105": [0, 0.69444, 0, 0],
+        "106": [0.19444, 0.69444, 0, 0],
+        "107": [0, 0.69444, 0, 0],
+        "108": [0, 0.69444, 0, 0],
+        "109": [0, 0.45833, 0, 0],
+        "110": [0, 0.45833, 0, 0],
+        "111": [0, 0.45833, 0, 0],
+        "112": [0.19444, 0.45833, 0, 0],
+        "113": [0.19444, 0.45833, 0, 0],
+        "114": [0, 0.45833, 0.01528, 0],
+        "115": [0, 0.45833, 0, 0],
+        "116": [0, 0.58929, 0, 0],
+        "117": [0, 0.45833, 0, 0],
+        "118": [0, 0.45833, 0.01528, 0],
+        "119": [0, 0.45833, 0.01528, 0],
+        "120": [0, 0.45833, 0, 0],
+        "121": [0.19444, 0.45833, 0.01528, 0],
+        "122": [0, 0.45833, 0, 0],
+        "126": [0.35, 0.34444, 0, 0],
+        "305": [0, 0.45833, 0, 0],
+        "567": [0.19444, 0.45833, 0, 0],
+        "768": [0, 0.69444, 0, 0],
+        "769": [0, 0.69444, 0, 0],
+        "770": [0, 0.69444, 0, 0],
+        "771": [0, 0.69444, 0, 0],
+        "772": [0, 0.63778, 0, 0],
+        "774": [0, 0.69444, 0, 0],
+        "775": [0, 0.69444, 0, 0],
+        "776": [0, 0.69444, 0, 0],
+        "778": [0, 0.69444, 0, 0],
+        "779": [0, 0.69444, 0, 0],
+        "780": [0, 0.63542, 0, 0],
+        "915": [0, 0.69444, 0, 0],
+        "916": [0, 0.69444, 0, 0],
+        "920": [0, 0.69444, 0, 0],
+        "923": [0, 0.69444, 0, 0],
+        "926": [0, 0.69444, 0, 0],
+        "928": [0, 0.69444, 0, 0],
+        "931": [0, 0.69444, 0, 0],
+        "933": [0, 0.69444, 0, 0],
+        "934": [0, 0.69444, 0, 0],
+        "936": [0, 0.69444, 0, 0],
+        "937": [0, 0.69444, 0, 0],
+        "8211": [0, 0.45833, 0.03056, 0],
+        "8212": [0, 0.45833, 0.03056, 0],
+        "8216": [0, 0.69444, 0, 0],
+        "8217": [0, 0.69444, 0, 0],
+        "8220": [0, 0.69444, 0, 0],
+        "8221": [0, 0.69444, 0, 0]
+    },
+    "SansSerif-Italic": {
+        "33": [0, 0.69444, 0.05733, 0],
+        "34": [0, 0.69444, 0.00316, 0],
+        "35": [0.19444, 0.69444, 0.05087, 0],
+        "36": [0.05556, 0.75, 0.11156, 0],
+        "37": [0.05556, 0.75, 0.03126, 0],
+        "38": [0, 0.69444, 0.03058, 0],
+        "39": [0, 0.69444, 0.07816, 0],
+        "40": [0.25, 0.75, 0.13164, 0],
+        "41": [0.25, 0.75, 0.02536, 0],
+        "42": [0, 0.75, 0.11775, 0],
+        "43": [0.08333, 0.58333, 0.02536, 0],
+        "44": [0.125, 0.08333, 0, 0],
+        "45": [0, 0.44444, 0.01946, 0],
+        "46": [0, 0.08333, 0, 0],
+        "47": [0.25, 0.75, 0.13164, 0],
+        "48": [0, 0.65556, 0.11156, 0],
+        "49": [0, 0.65556, 0.11156, 0],
+        "50": [0, 0.65556, 0.11156, 0],
+        "51": [0, 0.65556, 0.11156, 0],
+        "52": [0, 0.65556, 0.11156, 0],
+        "53": [0, 0.65556, 0.11156, 0],
+        "54": [0, 0.65556, 0.11156, 0],
+        "55": [0, 0.65556, 0.11156, 0],
+        "56": [0, 0.65556, 0.11156, 0],
+        "57": [0, 0.65556, 0.11156, 0],
+        "58": [0, 0.44444, 0.02502, 0],
+        "59": [0.125, 0.44444, 0.02502, 0],
+        "61": [-0.13, 0.37, 0.05087, 0],
+        "63": [0, 0.69444, 0.11809, 0],
+        "64": [0, 0.69444, 0.07555, 0],
+        "65": [0, 0.69444, 0, 0],
+        "66": [0, 0.69444, 0.08293, 0],
+        "67": [0, 0.69444, 0.11983, 0],
+        "68": [0, 0.69444, 0.07555, 0],
+        "69": [0, 0.69444, 0.11983, 0],
+        "70": [0, 0.69444, 0.13372, 0],
+        "71": [0, 0.69444, 0.11983, 0],
+        "72": [0, 0.69444, 0.08094, 0],
+        "73": [0, 0.69444, 0.13372, 0],
+        "74": [0, 0.69444, 0.08094, 0],
+        "75": [0, 0.69444, 0.11983, 0],
+        "76": [0, 0.69444, 0, 0],
+        "77": [0, 0.69444, 0.08094, 0],
+        "78": [0, 0.69444, 0.08094, 0],
+        "79": [0, 0.69444, 0.07555, 0],
+        "80": [0, 0.69444, 0.08293, 0],
+        "81": [0.125, 0.69444, 0.07555, 0],
+        "82": [0, 0.69444, 0.08293, 0],
+        "83": [0, 0.69444, 0.09205, 0],
+        "84": [0, 0.69444, 0.13372, 0],
+        "85": [0, 0.69444, 0.08094, 0],
+        "86": [0, 0.69444, 0.1615, 0],
+        "87": [0, 0.69444, 0.1615, 0],
+        "88": [0, 0.69444, 0.13372, 0],
+        "89": [0, 0.69444, 0.17261, 0],
+        "90": [0, 0.69444, 0.11983, 0],
+        "91": [0.25, 0.75, 0.15942, 0],
+        "93": [0.25, 0.75, 0.08719, 0],
+        "94": [0, 0.69444, 0.0799, 0],
+        "95": [0.35, 0.09444, 0.08616, 0],
+        "97": [0, 0.44444, 0.00981, 0],
+        "98": [0, 0.69444, 0.03057, 0],
+        "99": [0, 0.44444, 0.08336, 0],
+        "100": [0, 0.69444, 0.09483, 0],
+        "101": [0, 0.44444, 0.06778, 0],
+        "102": [0, 0.69444, 0.21705, 0],
+        "103": [0.19444, 0.44444, 0.10836, 0],
+        "104": [0, 0.69444, 0.01778, 0],
+        "105": [0, 0.67937, 0.09718, 0],
+        "106": [0.19444, 0.67937, 0.09162, 0],
+        "107": [0, 0.69444, 0.08336, 0],
+        "108": [0, 0.69444, 0.09483, 0],
+        "109": [0, 0.44444, 0.01778, 0],
+        "110": [0, 0.44444, 0.01778, 0],
+        "111": [0, 0.44444, 0.06613, 0],
+        "112": [0.19444, 0.44444, 0.0389, 0],
+        "113": [0.19444, 0.44444, 0.04169, 0],
+        "114": [0, 0.44444, 0.10836, 0],
+        "115": [0, 0.44444, 0.0778, 0],
+        "116": [0, 0.57143, 0.07225, 0],
+        "117": [0, 0.44444, 0.04169, 0],
+        "118": [0, 0.44444, 0.10836, 0],
+        "119": [0, 0.44444, 0.10836, 0],
+        "120": [0, 0.44444, 0.09169, 0],
+        "121": [0.19444, 0.44444, 0.10836, 0],
+        "122": [0, 0.44444, 0.08752, 0],
+        "126": [0.35, 0.32659, 0.08826, 0],
+        "305": [0, 0.44444, 0.04169, 0],
+        "567": [0.19444, 0.44444, 0.04169, 0],
+        "768": [0, 0.69444, 0, 0],
+        "769": [0, 0.69444, 0.09205, 0],
+        "770": [0, 0.69444, 0.0799, 0],
+        "771": [0, 0.67659, 0.08826, 0],
+        "772": [0, 0.60889, 0.08776, 0],
+        "774": [0, 0.69444, 0.09483, 0],
+        "775": [0, 0.67937, 0.07774, 0],
+        "776": [0, 0.67937, 0.06385, 0],
+        "778": [0, 0.69444, 0, 0],
+        "779": [0, 0.69444, 0.09205, 0],
+        "780": [0, 0.63194, 0.08432, 0],
+        "915": [0, 0.69444, 0.13372, 0],
+        "916": [0, 0.69444, 0, 0],
+        "920": [0, 0.69444, 0.07555, 0],
+        "923": [0, 0.69444, 0, 0],
+        "926": [0, 0.69444, 0.12816, 0],
+        "928": [0, 0.69444, 0.08094, 0],
+        "931": [0, 0.69444, 0.11983, 0],
+        "933": [0, 0.69444, 0.09031, 0],
+        "934": [0, 0.69444, 0.04603, 0],
+        "936": [0, 0.69444, 0.09031, 0],
+        "937": [0, 0.69444, 0.08293, 0],
+        "8211": [0, 0.44444, 0.08616, 0],
+        "8212": [0, 0.44444, 0.08616, 0],
+        "8216": [0, 0.69444, 0.07816, 0],
+        "8217": [0, 0.69444, 0.07816, 0],
+        "8220": [0, 0.69444, 0.14205, 0],
+        "8221": [0, 0.69444, 0.00316, 0]
+    },
     "SansSerif-Regular": {
         "33": [0, 0.69444, 0, 0],
         "34": [0, 0.69444, 0, 0],
@@ -9914,16 +10353,12 @@ var fontMetricsData = {
         "934": [0, 0.61111, 0, 0],
         "936": [0, 0.61111, 0, 0],
         "937": [0, 0.61111, 0, 0],
-        "2018": [0, 0.61111, 0, 0],
-        "2019": [0, 0.61111, 0, 0],
         "8216": [0, 0.61111, 0, 0],
         "8217": [0, 0.61111, 0, 0],
         "8242": [0, 0.61111, 0, 0],
         "9251": [0.11111, 0.21944, 0, 0]
     }
 };
-
-exports.default = fontMetricsData;
 
 },{}],103:[function(require,module,exports){
 "use strict";
@@ -10097,7 +10532,8 @@ defineFunction(["\\stackrel"], {
 var fontAliases = {
     "\\Bbb": "\\mathbb",
     "\\bold": "\\mathbf",
-    "\\frak": "\\mathfrak"
+    "\\frak": "\\mathfrak",
+    "\\bm": "\\boldsymbol"
 };
 
 var singleCharIntegrals = {
@@ -10163,13 +10599,13 @@ defineFunction(["\\rm", "\\sf", "\\tt", "\\bf", "\\it"], { numArgs: 0 }, null);
 
 defineFunction([
 // styles
-"\\mathrm", "\\mathit", "\\mathbf",
+"\\mathrm", "\\mathit", "\\mathbf", "\\boldsymbol",
 
 // families
 "\\mathbb", "\\mathcal", "\\mathfrak", "\\mathscr", "\\mathsf", "\\mathtt",
 
 // aliases
-"\\Bbb", "\\bold", "\\frak"], {
+"\\Bbb", "\\bold", "\\frak", "\\bm"], {
     numArgs: 1,
     greediness: 2
 }, function (context, args) {
@@ -12203,16 +12639,29 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Non-mathy text, possibly in a font
-var textFunctionFonts = {
-    "\\text": undefined, "\\textrm": "mathrm", "\\textsf": "mathsf",
-    "\\texttt": "mathtt", "\\textnormal": "mathrm", "\\textbf": "mathbf",
-    "\\textit": "textit"
+var textFontFamilies = {
+    "\\text": undefined, "\\textrm": "textrm", "\\textsf": "textsf",
+    "\\texttt": "texttt", "\\textnormal": "textrm"
 };
 
 
+var textFontWeights = {
+    "\\textbf": "textbf"
+};
+
+var textFontShapes = {
+    "\\textit": "textit"
+};
+
 (0, _defineFunction2.default)({
     type: "text",
-    names: ["\\text", "\\textrm", "\\textsf", "\\texttt", "\\textnormal", "\\textbf", "\\textit"],
+    names: [
+    // Font families
+    "\\text", "\\textrm", "\\textsf", "\\texttt", "\\textnormal",
+    // Font weights
+    "\\textbf",
+    // Font Shapes
+    "\\textit"],
     props: {
         numArgs: 1,
         argTypes: ["text"],
@@ -12224,11 +12673,20 @@ var textFunctionFonts = {
         return {
             type: "text",
             body: (0, _defineFunction.ordargument)(body),
-            font: textFunctionFonts[context.funcName]
+            font: context.funcName
         };
     },
     htmlBuilder: function htmlBuilder(group, options) {
-        var newOptions = options.withFont(group.value.font);
+        var font = group.value.font;
+        // Checks if the argument is a font family or a font style.
+        var newOptions = void 0;
+        if (textFontFamilies[font]) {
+            newOptions = options.withFontFamily(textFontFamilies[font]);
+        } else if (textFontWeights[font]) {
+            newOptions = options.withFontWeight(textFontWeights[font]);
+        } else {
+            newOptions = options.withFontShape(textFontShapes[font]);
+        }
         var inner = html.buildExpression(group.value.body, newOptions, true);
         _buildCommon2.default.tryCombineChars(inner);
         return _buildCommon2.default.makeSpan(["mord", "text"], inner, newOptions);
@@ -12412,6 +12870,11 @@ defineMacro("\u2119", "\\mathbb{P}");
 defineMacro("\u211A", "\\mathbb{Q}");
 defineMacro("\u211D", "\\mathbb{R}");
 defineMacro("\u2124", "\\mathbb{Z}");
+
+// Unicode middle dot
+// The KaTeX fonts do not contain U+00B7. Instead, \cdotp displays
+// the dot at U+22C5 and gives it punct spacing.
+defineMacro("\xB7", "\\cdotp");
 
 // \llap and \rlap render their contents in text mode
 defineMacro("\\llap", "\\mathllap{\\textrm{#1}}");
@@ -13373,6 +13836,9 @@ var path = {
 
     tilde4: 'M786 58C457 58 32 177.487 13 177.487c-6 0-10-3.345\n-11-10.035L.15 143c-1-7 3-12 10-13l22-6.7C381.2 35 637.15 0 807.15 0c337 0 409\n 177 744 177 328 0 754-127 773-127 5 0 10 3 11 9l1 14.794c1 7.805-3 13.38-9\n 14.495l-20.7 5.574c-366.85 99.79-607.3 139.372-776.3 139.372-338 0-409\n -175.236-744-175.236z',
 
+    // vec is from glyph U+20D7 in font KaTeX Main
+    vec: 'M377 20c0-5.333 1.833-10 5.5-14S391 0 397 0c4.667 0 8.667 1.667 12 5\n3.333 2.667 6.667 9 10 19 6.667 24.667 20.333 43.667 41 57 7.333 4.667 11\n10.667 11 18 0 6-1 10-3 12s-6.667 5-14 9c-28.667 14.667-53.667 35.667-75 63\n-1.333 1.333-3.167 3.5-5.5 6.5s-4 4.833-5 5.5c-1 .667-2.5 1.333-4.5 2s-4.333 1\n-7 1c-4.667 0-9.167-1.833-13.5-5.5S337 184 337 178c0-12.667 15.667-32.333 47-59\nH213l-171-1c-8.667-6-13-12.333-13-19 0-4.667 4.333-11.333 13-20h359\nc-16-25.333-24-45-24-59z',
+
     // widehat1 is a modified version of a glyph from the MnSymbol package
     widehat1: 'M529 0h5l519 115c5 1 9 5 9 10 0 1-1 2-1 3l-4 22\nc-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z',
 
@@ -13876,7 +14342,7 @@ defineSymbol(math, main, mathord, "\u03C6", "\\varphi", true);
 defineSymbol(math, main, bin, "\u2217", "*");
 defineSymbol(math, main, bin, "+", "+");
 defineSymbol(math, main, bin, "\u2212", "-");
-defineSymbol(math, main, bin, "\u22C5", "\\cdot");
+defineSymbol(math, main, bin, "\u22C5", "\\cdot", true);
 defineSymbol(math, main, bin, "\u2218", "\\circ");
 defineSymbol(math, main, bin, "\xF7", "\\div", true);
 defineSymbol(math, main, bin, "\xB1", "\\pm", true);

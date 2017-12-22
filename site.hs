@@ -187,6 +187,7 @@ main = hakyllWith config $ do
   match "math/**.tex" $ version "html" $ do
     route $ setExtension "html"
     compile' $ do
+      CopyFile{} <- loadBody "katex/katex.min.js"
       fp <- decodeString . fromJust <$> (getRoute =<< getUnderlying)
       mbib <- fmap itemBody <$> optional (load $ fromFilePath $ replaceExtension fp "bib")
       gbib <- unsafeCompiler $ readBiblioFile $ encodeString globalBib
@@ -391,8 +392,12 @@ applyDefaultTemplate addCtx item = do
   bc <- makeBreadcrumb item
   nav <- makeNavBar $ itemIdentifier item
   pub <- isPublished item
+  descr <- fromMaybe "" <$> getMetadataField (itemIdentifier item) "description"
   let navbar = constField "navbar" nav
       bcrumb = constField "breadcrumb" bc
+      sdescr = either (const "") (T.unpack . T.replace "\n" "" . T.pack . writePlain def) $
+               readMarkdown def descr
+      plainDescr = constField "short_description" sdescr
       unpublished = boolField "unpublished" $ \_ -> not pub
       date = field "date" itemDateStr
       toc = field "toc" $ return .renderHtml . buildTOC . readHtml' def . itemBody
@@ -412,7 +417,7 @@ applyDefaultTemplate addCtx item = do
         return $ renderHtml $ do
           H5.meta ! H5.name "Keywords"    ! H5.content (H5.toValue tags)
           H5.meta ! H5.name "description" ! H5.content (H5.toValue desc)
-      cxt  = mconcat [ unpublished, addCtx, toc, navbar, bcrumb, hdr, meta, date, noTopStar, defaultContext]
+      cxt  = mconcat [ plainDescr, unpublished, addCtx, toc, navbar, bcrumb, hdr, meta, date, noTopStar, defaultContext]
   let item' = demoteHeaders . withTags addTableClass <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
   unsafeCompiler $ do

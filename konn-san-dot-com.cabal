@@ -16,7 +16,6 @@ build-type:          Simple
 -- extra-source-files:  
 cabal-version:       >=1.10
 data-dir:            data
-extra-source-files:  data/katex.min.js
 
 executable site
   main-is:             site.hs
