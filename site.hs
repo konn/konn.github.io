@@ -32,7 +32,7 @@ import           Filesystem.Path.CurrentOS       hiding (concat, empty, null,
                                                   (<.>), (</>))
 import qualified Filesystem.Path.CurrentOS       as Path
 import           Hakyll                          hiding (fromFilePath,
-                                                  toFilePath)
+                                                  toFilePath, writePandoc)
 import qualified Hakyll
 import           Instances
 import           Language.Haskell.TH             (litE, runIO, stringL)
@@ -64,6 +64,7 @@ import           Text.Pandoc.Builder             hiding (fromList)
 import qualified Text.Pandoc.Builder             as Pan
 import           Text.Pandoc.Shared              (stringify)
 import           Text.Pandoc.Walk
+import           Text.TeXMath
 
 import           Control.Exception    (IOException, handle)
 import           Control.Lens         (imap)
@@ -395,7 +396,7 @@ applyDefaultTemplate addCtx item = do
   descr <- fromMaybe "" <$> getMetadataField (itemIdentifier item) "description"
   let navbar = constField "navbar" nav
       bcrumb = constField "breadcrumb" bc
-      sdescr = either (const "") (T.unpack . T.replace "\n" " " . T.pack . writePlain def) $
+      sdescr = either (const "") (T.unpack . T.replace "\n" " " . T.pack . writePlain def . bottomUp unicodiseMath) $
                readMarkdown def descr
       plainDescr = constField "short_description" sdescr
       unpublished = boolField "unpublished" $ \_ -> not pub
@@ -723,6 +724,14 @@ removeTeXGomiStr = packed %~ T.replace "\\qed" ""
 
 procCrossRef :: Pandoc -> Pandoc
 procCrossRef p = p
+
+unicodiseMath :: Inline -> Inline
+unicodiseMath m@(Math mode eqn) =
+  let mmode | InlineMath <- mode = DisplayInline
+            | otherwise = DisplayBlock
+      inls = either (const [m]) (fromMaybe [] . writePandoc mmode) $ readTeX eqn
+  in Span ("", ["math"], []) inls
+unicodiseMath i = i
 
 prerenderKaTeX :: String -> IO String
 prerenderKaTeX src = shelly $ silently $ handleany_sh (const $ return src) $ do
