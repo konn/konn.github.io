@@ -15,18 +15,26 @@ object svg {
     fill: white;
 }
 
-/* section[id], a[id^="fnref"], .footnotes li[id^="fn"], a[id] {
-     margin-top: -70px;
-     padding-top: 70px;
-} */
-
-.page-content *[id]:before {
+.page-content *[id]:not(li[id^="fn"]):before {
     content: '';
     width: 0px;
     padding-top: 80px;
     margin-top: -80px;
     display: inline-block; /* required for webkit browsers */
     visibility: hidden;
+}
+
+li[id^="fn"]:before {
+    content: '';
+    width: 0px;
+    padding-top: 80px;
+    margin-top: -80px;
+    display: inline-block; /* required for webkit browsers */
+    visibility: hidden;
+} 
+
+li[id^="fn"] p:first-of-type {
+    display: inline;
 }
 
 body {
@@ -181,3 +189,13 @@ h6,
     padding: .5rem 1rem;
     border-left: .25rem solid #eceeef;
 }
+
+pre.sourceCode {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-left: solid gray;
+}
+

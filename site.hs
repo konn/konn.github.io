@@ -309,14 +309,20 @@ headerTree (b:bs) =
     getLevel (Header n _ _) = n
     getLevel _ = error "You promissed this consists of only Headers!"
 
-buildTOC :: Pandoc -> Html
-buildTOC pan = build (headerTree $ extractHeaders pan)
+buildTOC :: Pandoc -> String
+buildTOC pan =
+  renderHtml $
+  H5.nav ! H5.class_ "navbar navbar-light bg-light flex-column" ! H5.id "side-toc" $ do
+    H5.a ! H5.class_ "navbar-brand" ! H5.href "#" $ "TOC"
+    build $ headerTree $ extractHeaders pan
   where
     build ts =
-     forM_ ts $ \(HTree (Header _ (ident, _, _) is) cs) ->
-     H5.li $ do
-       H5.a ! H5.href (H5.toValue $ '#' : ident) $ H5.toMarkup $ stringify is
-       unless (null cs) $ H5.ul $ build cs
+     H5.nav ! H5.class_ "nav nav-pills flex-column" $
+     forM_ ts $ \(HTree (Header _ (ident, _, _) is) cs) -> do
+       H5.a ! H5.class_ "nav-link ml-3 my-1"
+            ! H5.href (H5.toValue $ '#' : ident)
+            $ H5.toMarkup $ stringify is
+       unless (null cs) $ build cs
 
 extractHeaders :: Pandoc -> [Block]
 extractHeaders = query ext
@@ -420,7 +426,7 @@ applyDefaultTemplate addCtx item = do
       plainDescr = constField "short_description" sdescr
       unpublished = boolField "unpublished" $ \_ -> not pub
       date = field "date" itemDateStr
-      toc = field "toc" $ return .renderHtml . buildTOC . readHtml' def . itemBody
+      toc = field "toc" $ return . buildTOC . readHtml' def . itemBody
       noTopStar = field "no-top-star" $ \i ->
         getMetadataField (itemIdentifier i) "top-star" <&> \case
           Just t | Just False <- txtToBool t  -> return (error "NO Text Data")
@@ -698,6 +704,7 @@ generateTOC pan =
   let src = parseTags $ writeHtmlString
             writerConf { writerTableOfContents = True
                        , writerTemplate = Just "$toc$"
+                       , writerTOCDepth = 4
                        }
             pan
       topAtts = [("class", "col-md-4 hidden-xs-down bg-light sidebar")

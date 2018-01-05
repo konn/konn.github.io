@@ -45,7 +45,7 @@
   <meta property="og:image" content="$thumbnail$">
   <!-- /Twitter Card -->
 </head>
-<body data-spy="scroll" data-target="#side-toc">
+<body>
   <!--[if lt IE 7]>
     <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
   <![endif]-->
@@ -81,16 +81,16 @@
     <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on $date$</div>
     </div>
     <hr>
-    <div class="page-content text-justify">
-      $if(abstract)$
-      <section class="lead" id="abstract">
-        <h2>概要</h2>
-        $abstract$
-      </section>
-      $endif$
-      $body$
-    </div>
-  </div>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          $if(abstract)$
+          <section class="lead" id="abstract">
+            <h2>概要</h2>
+            $abstract$
+          </section>
+          $endif$
+          $body$
+        </div>
+      </div>
   <footer>
       <p>
         <a href="http://validator.w3.org/check?uri=referer">
