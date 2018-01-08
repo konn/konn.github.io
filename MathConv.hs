@@ -473,8 +473,17 @@ procTikz pan = bottomUpM step pan
 
 texToEnvNamePlainString :: TeXArg -> String
 texToEnvNamePlainString str =
-  either (const $ T.unpack $ render str) (stringify . bottomUp go) $
-  runPure $ readLaTeX myReaderOpts $ render str
+  let cated =
+        case str of
+          FixArg l     -> render l
+          OptArg l     -> render l
+          SymArg l     -> render l
+          ParArg l     -> render l
+          MOptArg lats -> T.intercalate "," $ map render lats
+          MSymArg lats -> T.intercalate "," $ map render lats
+          MParArg lats -> T.intercalate "," $ map render lats
+  in either (const $ T.unpack $ render str) (stringify . bottomUp go) $
+     runPure $ readLaTeX myReaderOpts $ cated
   where
     go :: Inline -> Inline
     go = bottomUp $ \a -> case a of
