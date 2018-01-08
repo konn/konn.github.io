@@ -148,11 +148,14 @@ $\mathrm{MA}(\kappa)$は「任意のc.c.c. poset $\mathbb{P}$に対し$\mathrm{M
  $\kappa < \mathfrak{m} \rightarrow \kappa < \mathfrak{p}$を示そう．即ち，$\MA(\kappa)$を仮定し，$\mathcal{E} \subseteq [\omega]^\omega$をSFIPを持つ濃度$\kappa$の族とした時，$\mathcal{E}$は擬共通部分$K$を持つことを示す．
 
  $\mathbb{P} \defeq \Set{ p = \braket{s_p, \mathcal{W}_p} : s_p \in [\omega]^{<\omega} \wedge \mathcal{W}_p \in [\mathcal{E}]^{<\omega}}$と置く．気持ちとしては各$s_p$が$K$の下からの有限近似であり，$\mathcal{W}_p$は$s_p$の差を除いて$K$を含むことが保証された$\mathcal{E}$の元の一覧になっている．その気持ちを念頭において，$\mathbb{P}$上に次のように順序を定める：
- \begin{numcases}{p \leq q \defs}
-  s_p \supseteq s_q                     & \text{($s_p$は$s_q$よりよい近似)}\\
-  \mathcal{W}_p \supseteq \mathcal{W}_q & \text{($\mathcal{W}_p$は$\mathcal{W}_q$より沢山保証)}\\
-  \forall Z \in \mathcal{W}_q\, [s_p \setminus s_q \subseteq Z] & \text{($p$は$q$の約束を破らない)}
- \end{numcases}
+ \begin{align*}
+  p \leq q \defs
+\begin{cases}
+   s_p \supseteq s_q                     & (s_p\text{ は }s_q\text{よりよい近似})\\
+  \mathcal{W}_p \supseteq \mathcal{W}_q & (\mathcal{W}_p\text{ は }\mathcal{W}_q\text{ より沢山保証})\\
+  \forall Z \in \mathcal{W}_q\, [s_p \setminus s_q \subseteq Z] & (p\text{ は }q\text{ の約束を破らない})
+\end{cases} 
+\end{align*}
  これにより，$\braket{\mathbb{P}, \leq, \braket{\emptyset, \emptyset}}$がforcing posetとなるのは明らか．$\MA(\kappa)$を使いたいので，$\mathbb{P}$がc.c.c.を満たすことを示さなくてはならない．ここで，
  \begin{align*}
   s_p = s_q \longrightarrow s_p \mathrel{\|} s_q \tag{*}\label{cond:cented}

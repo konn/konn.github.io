@@ -10,8 +10,6 @@ tags: Yesod,Haskell
 
 下のフッタを見て貰えれば判るとおり、まず第一にこれは [Yesod](http://yesodweb.com) アプリで、つまり [Haskell](http://www.haskell.org) で書かれている。サブドメインで動かすために、kazu-yamamoto さんの[Mighttpd2](http://mew.org/~kazu/proj/mighttpd/en/) のリバースプロクシ機能を使っています。デザインの才能がないので、その辺りは一括して[Twitter Bootstrap](http://twitter.github.com/bootstrap/)と[jQuery](http://jquery.com/)のお世話になっている。JavaScript むずい[^1]。 今のところ記事は私しか書けないようにしているけど、はてなみたいにタブを切り替えて編集しながら内容の確認も出来るようになっている。
 
-[^1]: iframe の中身を弄るのにかなり時間を割いた。あとtextareaの中身を取得するのに .text を使っていておっかしいなー、と思ったら .val() を使わなくてはいけないらしかった。知るか！
-
 記事の整形は[Pandoc](http://hackage.haskell.org/package/pandoc)を使った。基本的に markdown 決め打ち。シンタックス・カラーリングも [hightlighting-kate](http://hackage.haskell.org/package/highlighting-kate) と連携して綺麗にやってくれる。うれしい。こんな感じに。
 
 ```haskell
@@ -20,13 +18,6 @@ import qualified Data.Text as T
 import Control.Monad
 import Import
 
--- This is a handler function for the GET request method on the RootR
--- resource pattern. All of your resource patterns are defined in
--- config/routes
---
--- The majority of the code you will write in Yesod lives in these handler
--- functions. You can spread them across multiple files if you are so
--- inclined, or create a single monolithic file.
 getRootR :: Handler RepHtml
 getRootR = do
   articles <- runDB $$ do
@@ -61,4 +52,6 @@ $$
 * Twitter との連携？
 * UI の改善
 * タグのUIの改善
+
+[^1]: iframe の中身を弄るのにかなり時間を割いた。あとtextareaの中身を取得するのに .text を使っていておっかしいなー、と思ったら .val() を使わなくてはいけないらしかった。知るか！
 

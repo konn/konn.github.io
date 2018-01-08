@@ -53,7 +53,7 @@ instance FromJSON LaTeX where
 instance Binary MegaParsec.Pos where
   get = do
     i <- get
-    either (fail . show) return $ MegaParsec.mkPos (i :: Int)
+    return $ MegaParsec.mkPos (i :: Int)
   put = put . MegaParsec.unPos
 instance Binary Mus.Key
 instance Binary Mus.PName

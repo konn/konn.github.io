@@ -20,7 +20,6 @@ import           Data.List                       hiding (stripPrefix)
 import           Data.Maybe
 import           Data.Monoid
 import           Data.Ord
-import qualified Data.Set                        as S
 import           Data.String
 import qualified Data.Text                       as T
 import qualified Data.Text.Lazy                  as LT
@@ -60,7 +59,7 @@ import           Text.LaTeX.Base                 (render)
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
 import qualified Text.Mustache                   as Mus
-import           Text.Pandoc
+import           Text.Pandoc                     hiding (runIO)
 import           Text.Pandoc.Builder             hiding (fromList)
 import qualified Text.Pandoc.Builder             as Pan
 import           Text.Pandoc.Shared              (stringify)
@@ -99,7 +98,7 @@ mustacheCompiler = cached "mustacheCompiler" $ do
   item <- getResourceString
   file <- getResourceFilePath
   either (throwError . lines . show) (return . Item (itemIdentifier item)) $
-    Mus.compileMustacheText (fromString file) . LT.pack $ itemBody item
+    Mus.compileMustacheText (fromString file) . T.pack $ itemBody item
 
 main :: IO ()
 main = hakyllWith config $ do
@@ -139,17 +138,23 @@ main = hakyllWith config $ do
     route $ setExtension "html"
     compile' $ do
       (count, posts) <- postList (Just 5) subContentsWithoutIndex
+      let ctx = mconcat [ constField "child-count" (show count)
+                        , constField "updates" posts
+                        , defaultContext
+                        ]
       myPandocCompiler
-              >>= applyAsTemplate (constField "child-count" (show count) <> constField "updates" posts <> defaultContext)
-              >>= applyDefaultTemplate mempty {- tags -}
+              >>= applyDefaultTemplate ctx {- tags -}
 
   match "archive.md" $ do
     route $ setExtension "html"
     compile' $ do
       (count, posts) <- postList Nothing subContentsWithoutIndex
+      let ctx = mconcat [ constField "child-count" (show count)
+                        , constField "children" posts
+                        , defaultContext
+                        ]
       myPandocCompiler
-              >>= applyAsTemplate (constField "child-count" (show count) <> constField "children" posts <> defaultContext)
-              >>= applyDefaultTemplate mempty {- tags -}
+              >>= applyDefaultTemplate ctx {- tags -}
 
   create [".ignore"] $ do
     route idRoute
@@ -170,8 +175,11 @@ main = hakyllWith config $ do
     compile' $ do
       chs <- listChildren True
       (count, chl) <- postList Nothing (fromList $ map itemIdentifier chs)
-      myPandocCompiler >>= applyAsTemplate (constField "child-count" (show count) <> constField "children" chl <> defaultContext)
-                       >>= applyDefaultTemplate mempty >>= saveSnapshot "content"
+      let ctx = mconcat [ constField "child-count" (show count)
+                        , constField "children" chl
+                        , defaultContext
+                        ]
+      myPandocCompiler >>= applyDefaultTemplate ctx >>= saveSnapshot "content"
 
   match ("t/**" .||. ".well-known/**") $ route idRoute >> compile' copyFileCompiler
 
@@ -205,9 +213,10 @@ main = hakyllWith config $ do
                       addAmazonAssociateLink "konn06-22"
                       <=< procSchemes) ip'
       let item = writePandocWith
-                     def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
-                        , writerExtensions = S.delete Ext_raw_tex $ writerExtensions def
-                        } $ procCrossRef <$> conv'd
+                     -- def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
+                     --    , writerExtensions = disableExtension Ext_raw_tex $ myExts
+                     --    }
+                     writerConf $ procCrossRef <$> conv'd
       saveSnapshot "content" =<< applyDefaultTemplate (pandocContext $ itemBody conv'd) item
 
   match "math/**.tex" $ version "pdf" $ do
@@ -246,8 +255,9 @@ main = hakyllWith config $ do
 pandocContext :: Pandoc -> Context a
 pandocContext (Pandoc meta _)
   | Just abst <- lookupMeta "abstract" meta =
-        constField "abstract" $
-        writeHtmlString writerConf $ Pandoc meta (toBlocks abst)
+        constField "abstract" $ T.unpack $
+        fromPure $
+        writeHtml5String writerConf $ Pandoc meta (toBlocks abst)
   | otherwise = mempty
 
 toBlocks :: MetaValue -> [Block]
@@ -350,8 +360,8 @@ compileToPDF item = do
     return ()
   makeItem $ TmpFile $ encodeString (tmpDir </> pdfPath)
 
-renderMeta :: [Inline] -> String
-renderMeta ils = writeHtmlString def $ Pandoc nullMeta [Plain ils]
+renderMeta :: [Inline] -> T.Text
+renderMeta ils = fromPure $ writeHtml5String def $ Pandoc nullMeta [Plain ils]
 
 subContentsWithoutIndex :: Pattern
 subContentsWithoutIndex = ("**.md" .||. "articles/**.html" .||. ("math/**.tex" .&&. hasVersion "html"))
@@ -379,21 +389,23 @@ feedConf = FeedConfiguration { feedTitle = "konn-san.com 建設予定地"
 writerConf :: WriterOptions
 writerConf =
   def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
-     , writerHighlight = True
-     , writerHighlightStyle = pygments
+     , writerHighlightStyle = Just pygments
      , writerSectionDivs = True
-     , writerHtml5 = True
+     , writerExtensions = disableExtension Ext_tex_math_dollars myExts
      }
+
+readerConf :: ReaderOptions
+readerConf = def { readerExtensions = myExts }
 
 myPandocCompiler :: Compiler (Item String)
 myPandocCompiler =
   pandocCompilerWithTransformM
-  def
+  readerConf
   writerConf
   (procSchemes >=> return . addAmazonAssociateLink "konn06-22")
 
-readHtml' :: ReaderOptions -> String -> Pandoc
-readHtml' opt = fromRight . readHtml opt
+readHtml' :: ReaderOptions -> T.Text -> Pandoc
+readHtml' opt = fromRight . runPure . readHtml opt
 
 resolveRelatives :: PFP.FilePath -> PFP.FilePath -> PFP.FilePath
 resolveRelatives rt pth =
@@ -421,12 +433,12 @@ applyDefaultTemplate addCtx item = do
                fromMaybe "http://konn-san.com/img/myface_mosaic.jpg" $
                listToMaybe imgs
       bcrumb = constField "breadcrumb" bc
-      sdescr = either (const "") (T.unpack . T.replace "\n" " " . T.pack . writePlain def . bottomUp unicodiseMath) $
-               readMarkdown def descr
+      sdescr = either (const "") (T.unpack . T.replace "\n" " ") $ runPure $
+               writePlain def . bottomUp unicodiseMath =<< readMarkdown readerConf (T.pack descr)
       plainDescr = constField "short_description" sdescr
       unpublished = boolField "unpublished" $ \_ -> not pub
       date = field "date" itemDateStr
-      toc = field "toc" $ return . buildTOC . readHtml' def . itemBody
+      toc = field "toc" $ return . buildTOC . readHtml' readerConf . T.pack . itemBody
       noTopStar = field "no-top-star" $ \i ->
         getMetadataField (itemIdentifier i) "top-star" <&> \case
           Just t | Just False <- txtToBool t  -> return (error "NO Text Data")
@@ -438,12 +450,13 @@ applyDefaultTemplate addCtx item = do
       meta = field "meta" $ \i -> do
         [desc0, tags] <- forM ["description", "tag"] $ \key ->
           fromMaybe "" <$> getMetadataField (itemIdentifier i) key
-        let desc = writePlain writerConf { writerHTMLMathMethod = PlainMath
-                                         , writerWrapText = WrapNone } $ fromRight $ readMarkdown def desc0
+        let desc = fromPure $ writePlain writerConf { writerHTMLMathMethod = PlainMath
+                                         , writerWrapText = WrapNone }
+                              =<< readMarkdown readerConf (T.pack desc0)
         return $ renderHtml $ do
           H5.meta ! H5.name "Keywords"    ! H5.content (H5.toValue tags)
           H5.meta ! H5.name "description" ! H5.content (H5.toValue desc)
-      cxt  = mconcat [ thumb, plainDescr, unpublished, addCtx, toc, navbar, bcrumb
+      cxt  = mconcat [ thumb, plainDescr, unpublished, toc, addCtx, navbar, bcrumb
                      , hdr, meta, date, noTopStar, defaultContext]
   let item' = demoteHeaders . withTags addRequiredClasses <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
@@ -451,13 +464,17 @@ applyDefaultTemplate addCtx item = do
     broken <- filterM isLinkBroken links
     forM_ broken $ \l -> hPutStrLn stderr $ "*** Link Broken: " ++ l
 
-  isKat <- useKaTeX =<< getResourceBody
-  let procKaTeX | isKat = unsafeCompiler . mapM prerenderKaTeX
-                | otherwise = return
   applyAsTemplate cxt item'
     >>= loadAndApplyTemplate "templates/default.html" cxt
     >>= relativizeUrls
     >>= procKaTeX
+
+procKaTeX :: Traversable t => t String -> Compiler (t String)
+procKaTeX item = do
+  isKat <- useKaTeX =<< getResourceBody
+  if isKat
+     then unsafeCompiler $ mapM prerenderKaTeX item
+     else return item
 
 extractLocalImages :: [Tag String] -> [String]
 extractLocalImages ts =
@@ -614,10 +631,11 @@ postList mcount pat = do
   let myDateField = field "date" itemDateStr
       pdfField = field "pdf" itemPDFLink
       descField = field "description" $ \item -> do
-        descr <- getMetadataField' (itemIdentifier item) "description"
-        return $ writeHtmlString writerConf $ fromRight $ readMarkdown def descr
+        descr <- T.pack <$> getMetadataField' (itemIdentifier item) "description"
+        return $ T.unpack $ fromPure $ writeHtml5String writerConf =<< readMarkdown readerConf descr
 
-  src <- applyTemplateList postItemTpl (pdfField <> myDateField <> descField <> defaultContext) posts
+  src <- unsafeCompiler . prerenderKaTeX =<<
+         applyTemplateList postItemTpl (pdfField <> myDateField <> descField <> defaultContext) posts
   return (length posts, src)
 
 itemPDFLink :: Item a -> Compiler String
@@ -693,15 +711,15 @@ appendTOC d@(Pandoc meta bdy) =
   in Pandoc meta $
      [ Div ("", ["container-fluid"], [])
        [ Div ("", ["row"], [])
-       [ RawBlock "html" toc
+       [ RawBlock "html" $ T.unpack toc
        , Div ("", ["col-md-8"], [])
          bdy
        ] ]
      ]
 
-generateTOC :: Pandoc -> String
+generateTOC :: Pandoc -> T.Text
 generateTOC pan =
-  let src = parseTags $ writeHtmlString
+  let src = parseTags $ fromPure $ writeHtml5String
             writerConf { writerTableOfContents = True
                        , writerTemplate = Just "$toc$"
                        , writerTOCDepth = 4
@@ -777,3 +795,18 @@ prerenderKaTeX src = shelly $ silently $ handleany_sh (const $ return src) $ do
   cd "data"
   setStdin $ T.pack src
   T.unpack <$> cmd "node" "prerender.js"
+
+fromPure :: PandocPure T.Text -> T.Text
+fromPure = either (const "") id . runPure
+
+myExts :: Extensions
+myExts = extensionsFromList exts <> pandocExtensions
+  where
+    exts = [ Ext_backtick_code_blocks
+           , Ext_definition_lists
+           , Ext_fenced_code_attributes
+           , Ext_footnotes
+           , Ext_raw_html
+           , Ext_raw_tex
+           , Ext_tex_math_dollars
+           ]

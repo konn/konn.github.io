@@ -16,6 +16,7 @@ import           Control.Monad.Identity
 import           Control.Monad.State.Strict      (runStateT)
 import           Control.Monad.State.Strict      (StateT)
 import           Control.Monad.Trans             (MonadIO)
+import           Control.Monad.Writer.Strict     (runWriter, tell)
 import           Data.Char                       (isSpace)
 import           Data.Char                       (isAscii)
 import           Data.Char                       (isAlphaNum)
@@ -30,7 +31,6 @@ import           Data.Maybe                      (fromMaybe)
 import           Data.Maybe                      (listToMaybe)
 import           Data.Maybe                      (mapMaybe)
 import           Data.Sequence                   (Seq)
-import qualified Data.Set                        as S
 import qualified Data.Text                       as T
 import qualified Debug.Trace                     as DT
 import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
@@ -76,9 +76,16 @@ makeLenses ''MachineState
 type Machine = StateT MachineState IO
 
 myReaderOpts :: ReaderOptions
-myReaderOpts = def { readerExtensions = S.insert Ext_raw_tex pandocExtensions
-                   , readerParseRaw = True
+myReaderOpts = def { readerExtensions = extensionsFromList exts
+                                        <> pandocExtensions
                    }
+  where
+    exts = [ Ext_raw_html
+           , Ext_latex_macros
+           , Ext_raw_attribute
+           , Ext_raw_tex
+           , Ext_tex_math_dollars
+           ]
 
 parseTeX :: String -> Either String LaTeX
 parseTeX = left show . P.runParser latexParser defaultParserConf "" . T.pack
@@ -91,16 +98,28 @@ texToMarkdown macs fp src_ = do
   pth <- liftIO $ shelly $ canonic fp
   macros <- liftIO $ fst . parseMacroDefinitions <$>
             readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
-  let latexTree = procCrossRef myCrossRefConf $ view _Right $ parseTeX $ applyMacros macros src_
-      tlibs = queryWith (\ case
+  let ltree0 = procCrossRef myCrossRefConf $
+                  view _Right $ parseTeX $ applyMacros macros src_
+      tlibs0 = queryWith (\ case
                             c@(TeXComm "usetikzlibrary" _) -> [c]
                             c@(TeXComm "tikzset" _) -> [c]
                             c@(TeXComm "pgfplotsset" _) -> [c]
                             _ -> [])
-              latexTree
-      initial = applyMacros macros $ T.unpack $ render $ applyTeXMacro macs $ preprocessTeX $ latexTree
+               ltree0
+      (latexTree, locMacros) = runWriter $
+         transformM (\ case
+                         c@(TeXComm "newcommand" _) -> TeXEmpty    <$ tell [c]
+                         c@(TeXComm "renewcommand" _) -> TeXEmpty  <$ tell [c]
+                         c@(TeXComm "newcommand*" _) -> TeXEmpty   <$ tell [c]
+                         c@(TeXComm "renewcommand*" _) -> TeXEmpty <$ tell [c]
+                         c -> return c)
+               ltree0
+      tlibs = tlibs0 ++ locMacros
+      lms = fst $ parseMacroDefinitions $ T.unpack $ T.unlines $ map render locMacros
+      initial = T.pack $ applyMacros macros $ T.unpack $ render $
+                applyTeXMacro macs $ preprocessTeX $ latexTree
       st0 = MachineState { _tikzPictures = mempty
-                         , _macroDefs = macros
+                         , _macroDefs = macros ++ lms
                          , _imgPath = dropExtension fp
                          , _texMacros = macs
                          }
@@ -140,8 +159,13 @@ readMaybe str =
     [(a, "")] -> Just a
     _         -> Nothing
 
-texToMarkdownM :: String -> Machine Pandoc
-texToMarkdownM = procTikz <=< rewriteEnv . fromRight . readLaTeX myReaderOpts
+texToMarkdownM :: Text -> Machine Pandoc
+texToMarkdownM s = do
+  mcs <- use macroDefs
+  let lat = either (error . show) id $ runPure $
+            readLaTeX myReaderOpts $ T.pack $
+            applyMacros mcs $ T.unpack s
+  procTikz =<< rewriteEnv lat
 
 adjustJapaneseSpacing :: Pandoc -> Pandoc
 adjustJapaneseSpacing = bottomUp procMathBoundary . bottomUp procStr
@@ -277,7 +301,7 @@ procParpic' al lat = do
         AlignL -> "pull-left"
         AlignR -> "pull-right"
   pure . Span ("", ["media", pull], []) . concatMap getInlines . pandocBody <$>
-     texToMarkdownM (T.unpack $ render lat)
+     texToMarkdownM (render lat)
 
 getInlines :: Block -> [Inline]
 getInlines (Plain b) = b
@@ -306,8 +330,8 @@ fixArgs = toListOf (folded._FixArg)
 
 inlineLaTeX :: Text -> [Inline]
 inlineLaTeX src_ =
-  let Pandoc _ body = either (const $ Pandoc undefined []) id $
-                      readLaTeX myReaderOpts $ T.unpack src_
+  let Pandoc _ body = either (error . show) id $ runPure $
+                      readLaTeX myReaderOpts src_
   in concatMap getInlines body
 
 rewriteEnv :: Pandoc -> Machine Pandoc
@@ -322,19 +346,18 @@ rewriteBeginEnv = concatMapM step
       | Right (TeXEnv "enumerate!" args body) <- parseTeX src_
       = pure <$> procEnumerate args body
       | Right (TeXEnv env0 args body) <- parseTeX src_
-      , Just env <- lookupEnv env0 envs = do
+      , Just env <- lookupCustomEnv env0 envs = do
           let divStart
                   | null args = concat ["<div class=\"", env, "\">"]
                   | otherwise = concat ["<div class=\"", env, "\" name=\""
-                                       , procMathInline $
-                                         unwords $ map (init . tail . T.unpack . render) args, "\">"
+                                       , unwords $ map texToEnvNamePlainString args, "\">"
                                        ]
-          Pandoc _ myBody <- texToMarkdownM $  T.unpack $ render body
+          Pandoc _ myBody <- texToMarkdownM $ render body
           return $ RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
     step b = return [b]
 
-lookupEnv :: String -> [String] -> Maybe String
-lookupEnv e es =
+lookupCustomEnv :: String -> [String] -> Maybe String
+lookupCustomEnv e es =
       e <$ guard (e `elem` es)
   <|> e ++ "-plain" <$ guard (e ++ "*" `elem` es)
 
@@ -343,8 +366,8 @@ concatMapM f a = concat <$> mapM f a
 
 procEnumerate :: [TeXArg] -> LaTeX -> Machine Block
 procEnumerate args body = do
-  Pandoc _ [OrderedList _ blcs] <- rewriteEnv $ fromRight $ readLaTeX myReaderOpts $
-                                      T.unpack $ render $ TeXEnv "enumerate" [] body
+  Pandoc _ [OrderedList _ blcs] <- rewriteEnv $ either (error . show) id $ runPure $ readLaTeX myReaderOpts $
+                                   render $ TeXEnv "enumerate" [] body
   return $ OrderedList (parseEnumOpts args) blcs
 
 tr :: Show a => String -> a -> a
@@ -448,8 +471,10 @@ procTikz pan = bottomUpM step pan
                    ]
     step a = return a
 
-procMathInline :: String -> String
-procMathInline = stringify . bottomUp go . fromRight . readLaTeX def
+texToEnvNamePlainString :: TeXArg -> String
+texToEnvNamePlainString str =
+  either (const $ T.unpack $ render str) (stringify . bottomUp go) $
+  runPure $ readLaTeX myReaderOpts $ render str
   where
     go :: Inline -> Inline
     go = bottomUp $ \a -> case a of

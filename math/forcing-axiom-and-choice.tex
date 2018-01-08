@@ -7,6 +7,8 @@ description: |
 tag: 無矛盾性証明,強制法,公理的集合論,集合論,強制公理,強制法公理,選択公理
 latexmk: -pdflua
 date: 2017/11/14 00:49:10 JST
+macros:
+  - 'C': '\\mathbb{C}'
 ---
 \documentclass[a4j,leqno]{ltjsarticle}
 \usepackage[hiragino-pron]{luatexja-preset}
@@ -27,7 +29,6 @@ date: 2017/11/14 00:49:10 JST
 \newcommand{\Zorn}{\mathrm{Zorn}}
 \newcommand{\FA}{\mathrm{FA}}
 \renewcommand{\emph}[1]{\textbf{\textsf{#1}}}
-\renewcommand{\C}{\mathbb{C}}
 \newcommand{\MM}{\mathrm{MM}}
 
 \title{強い選択公理としての強制公理}
@@ -304,10 +305,10 @@ $\MA$が$2^{\aleph_0}$未満までしか主張していないのは，$2^{\aleph
  $\ZF \vdash \neg \FA_{2^{\aleph_0}}(\text{c.c.c.})$
 \end{lemma}
 \begin{proof}
- $\C \defeq \finseq{2} \defeq (0, 1\text{の無限列の全体})$とする．
+ $\CC \defeq \finseq{2} \defeq (0, 1\text{の無限列の全体})$とする．
  $\neg \mathrm{FA}_{2^{\aleph_0}}(\mathbb{C})$を示す．
  $|\mathbb{C}| = \aleph_0$なので，どんな順序を入れようが自明にc.c.c.を満たす．
- この時$\C$に逆向きの包含関係で順序を入れたものを考えると，次は$\C$で稠密となる：
+ この時$\CC$に逆向きの包含関係で順序を入れたものを考えると，次は$\CC$で稠密となる：
  \begin{gather*}
   D_n \defeq \Set{p \in \mathbb{C} | \dom(p) > n} \;(n \in \N),\\
   E_x \defeq \Set{p \in \mathbb{C} | x \restr \dom(p) \neq p}\; (x \in \R).
@@ -318,7 +319,7 @@ $\MA$が$2^{\aleph_0}$未満までしか主張していないのは，$2^{\aleph
  このとき$x_G \defeq \bigcup G$とおけば$x_G: \omega \to 2$である．
  よって生成性から$G \cap E_{x_G} \neq \emptyset$を得，$x_G \restr \dom(p) \neq p$となる$p \in G$が取れるが，定義より$p \subseteq x_G$なのでこれは$x_G \neq x_G$を意味し矛盾． \qed
 \end{proof}
-一言で言ってしまえば，上で挙げたような稠密集合と全部交わる$\C$のフィルターから得られる実数は$V$にある実数全てと異なるから，そんなものは$V$に存在し得ない，ということである．
+一言で言ってしまえば，上で挙げたような稠密集合と全部交わる$\CC$のフィルターから得られる実数は$V$にある実数全てと異なるから，そんなものは$V$に存在し得ない，ということである．
 
 一方，$\DC$を素直に一般化しようとするなら，$\FA_{\aleph_1}(\text{任意の擬順序})$では駄目なのか？という疑問が沸くかもしれない．
 しかし，$\omega_1$が可算集合になってしまうのでそんなことはできない：
