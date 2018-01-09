@@ -4,8 +4,8 @@ author: 石井 大海
 tag: 数学,数理論理学,集合論,モデル理論,超積,超冪,超準解析,自然数,強制法
 latexmk: -lualatex
 description: 第四回選択公理オフでの発表資料．選択公理と関連するモデル理論の初歩の話です．初学者向けに論理式やモデルの定義から入り，超積や超冪と選択公理，超準解析の関わりなどを論じています．実は Łoś+超フィルター定理と選択公理は同値だよとかそういう話もあり．
-macros: |
-  'card':  '\mathop{\mathrm{card}}'
+macros:
+  card: \mathop{\mathrm{card}}
 date: 2013/10/16 00:48:34 JST
 ----
 \RequirePackage{luatex85}
@@ -17,7 +17,6 @@ date: 2013/10/16 00:48:34 JST
 \usepackage{url}
 \usepackage{epstopdf}
 \usepackage{cases}
-\newcommand{\defsym}{\mathrel{.{\equiv}.}}
 \newcommand{\Los}{{\L}o\'{s}}
 \newcommand{\Diag}{\mathrm{Diag}}
 \newcommand{\Th}{\mathrm{Th}}
@@ -98,15 +97,15 @@ date: 2013/10/16 00:48:34 JST
 
 記号はあくまで記号であって，意味はないのだが，それでも一応意図された意味というものがあるのでそれを説明しよう．$\varphi \vee \psi$ は 「$\varphi$ または $\psi$」を，$\neg \varphi$ は 「$\varphi$ でない」を，$\exists x \varphi$ は 「$\phi$ を満たすような $x$ が存在する」という意味を意図している．「かつ」とか「ならば」とか「任意の」などが抜けているが，これらの論理結合子は，上の三つの組合せで「定義」できることが知られている\footnote{直観主義論理がどうのとかいう玄人はいいから黙っててください．}ので，それぞれに対応する「略記」を次のように導入しておく：
 \[
- \varphi \wedge \psi \defsym \neg (\neg \varphi \vee \neg \psi), \qquad \varphi \rightarrow \psi \defsym \neg \varphi \vee \psi, \qquad
- \forall x \varphi \defsym \neg \exists x \neg \varphi
+ \varphi \wedge \psi \mathrel{.{\equiv}.} \neg (\neg \varphi \vee \neg \psi), \qquad \varphi \rightarrow \psi \mathrel{.{\equiv}.} \neg \varphi \vee \psi, \qquad
+ \forall x \varphi \mathrel{.{\equiv}.} \neg \exists x \neg \varphi
 \]
 $\wedge, \rightarrow, \forall$ なども予め定義にいれておいたほうが分かり易いかもしれないが，記号が多いと後々の証明が大変になるので必要最低限に限ったのである．
 
 \begin{example}
  \begin{itemize}
   \item $\forall x \forall y (x \cdot y = y \cdot x)$ は，「演算が可換である」ことを表す $\mathcal{L}_G$-論理式である．これを全く略さず掛けば，$\neg \exists x \neg \neg \exists y \neg = \cdot(x, y) \cdot(y, x)$ となる．うげえ．$x \cdot y$ は項であって $\mathcal{L}_G$-論理式ではない．$\forall x \exists y (x \cdot y = e)$ は $\mathcal{L}_G'$ の論理式である．群の公理の下で，これと同値な $\mathcal{L}_G$-論理式は $\forall x (\forall y (x \cdot y = y \wedge y \cdot x = y) \rightarrow \forall y \exists z (y \cdot z = x))$ である．このように，言語は違っても，適当な公理系の下で全く同じ内容を説明することが出来ることが良くある．逆に，一意性や関数の存在を証明出来た際に，それを一々書き下すのが面倒なので，新たな記号と公理を追加して新しい言語・理論を考えることがある．これを，{\bfseries 定義による拡張}と云う．
-  \item 変数 $x, y$ について，$x \mathrel{\epsilon} y$ は $\mathcal{L}_\mathrm{ZF}$ の論理式である．$\exists x \forall y (y \not\mathrel{\epsilon} x)$ は，$x \not\mathrel{\epsilon} y \defsym \neg x \mathrel{\epsilon} y$ と略記することにすれば，空集合の存在を表す $\mathcal{L}_\mathrm{ZF}$ の論理式である．
+  \item 変数 $x, y$ について，$x \mathrel{\epsilon} y$ は $\mathcal{L}_\mathrm{ZF}$ の論理式である．$\exists x \forall y (y \not\mathrel{\epsilon} x)$ は，$x \not\mathrel{\epsilon} y \mathrel{.{\equiv}.} \neg x \mathrel{\epsilon} y$ と略記することにすれば，空集合の存在を表す $\mathcal{L}_\mathrm{ZF}$ の論理式である．
   \item $0 + 0 = 0$ や $\forall x (0 + x = 0)$ は $\mathcal{L}_\mathrm{OR}$-論理式である．しかし，$x < y$ や $y < z$ は $\mathcal{L}_\mathrm{OR}$-論理式だが，$\forall x \forall y \exists z (x < z < y)$ はそうではない．$\forall x \forall y \exists z (x < z \wedge z < y)$ と書けば，$\mathcal{L}_\mathrm{OR}$-論理式となる．
   \item 全ての変数が量化子で束縛されていなくてもよい．たとえば，$\forall x (x \neq y)$ は論理式である．このとき，変数$y$ は論理式 $\forall x (x \neq y)$ で{\bfseries 自由である}とか{\bfseries 束縛されていない}と云う．自由でない変数は束縛されていると云う．この辺りは厳密にやると面倒なので余り深追いはしない．$\mathcal{L}$-論理式を $\varphi(x_1, \dots, x_n)$ と書いた場合，$\varphi$ は $x_1, \dots, x_n$ 以外の自由変数を含まないものとし，各変数に項 $t_i$ を代入したものを $\varphi(t_1, \dots, t_n)$ と書く．自由変数を含まない式の事を{\bfseries 閉論理式}とか{\bfseries 文}と呼ぶ．
  \end{itemize}
@@ -388,8 +387,8 @@ $\mathcal{L}$-構造の族が与えられた時に，その「殆んど至ると
 \begin{theorem}[L\"{o}wenheim-Skolem]
  $\mathcal{L}$ を可算言語，$\mathfrak{B}$ を無限 $\mathcal{L}$-構造とする．
  \begin{enumerate}[label=(\alph{*})]
-  \item 無限基数 $\kappa \leq \card(\mathfrak{B})$ と $\card(S) \leq \kappa$ となる $S \subseteq |\mathfrak{B}|$ に対し，$S$ を含み濃度 $\kappa$ となるような初等部分構造 $\mathfrak{A} \prec \mathfrak{B}$ が存在する．
-  \item $\card(\mathfrak{B}) \leq \kappa$ ならば，濃度 $\kappa$ となるような初等拡大 $\mathfrak{A} \succ \mathfrak{B}$ が存在する．
+  \item 無限基数 $\kappa \leq \mathop{\mathrm{card}}(\mathfrak{B})$ と $\mathop{\mathrm{card}}(S) \leq \kappa$ となる $S \subseteq |\mathfrak{B}|$ に対し，$S$ を含み濃度 $\kappa$ となるような初等部分構造 $\mathfrak{A} \prec \mathfrak{B}$ が存在する．
+  \item $\mathop{\mathrm{card}}(\mathfrak{B}) \leq \kappa$ ならば，濃度 $\kappa$ となるような初等拡大 $\mathfrak{A} \succ \mathfrak{B}$ が存在する．
  \end{enumerate}
 \end{theorem}
 
@@ -415,8 +414,8 @@ $\mathcal{L}$-構造の族が与えられた時に，その「殆んど至ると
 を示せばよい．$\varphi$ の構成に関する帰納法で証明する．
  $\varphi$ が原子論理式であれば，$\mathfrak{A}$ が $\mathfrak{B}$ の部分構造であることから $(2)$ は成立する．また，$\varphi$ が Boole 結合の形になっているときも明らかである．$\varphi \equiv \exists x \psi(x)$ の時は，
  \begin{alignat*}{2}
-  \mathfrak{B} \models \exists x \psi(x) &\Leftrightarrow \text{ある} a \in A \text{があって} \mathfrak{B} \models \psi(a) & (\text{仮定})\\
-  & \Leftrightarrow \text{ある} a \in A \text{があって} \mathfrak{A} \models \psi(a) & (\text{帰納法の仮定}) \\
+  \mathfrak{B} \models \exists x \psi(x) &\Leftrightarrow \text{ある} a \in A \text{があって} \mathfrak{B} \models \psi(a) &\qquad& (\text{仮定})\\
+  & \Leftrightarrow \text{ある} a \in A \text{があって} \mathfrak{A} \models \psi(a) && (\text{帰納法の仮定}) \\
   & \Leftrightarrow \mathfrak{A} \models \exists x \psi(x)
  \end{alignat*}
 

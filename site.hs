@@ -213,9 +213,6 @@ main = hakyllWith config $ do
                       addAmazonAssociateLink "konn06-22"
                       <=< procSchemes) ip'
       let item = writePandocWith
-                     -- def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
-                     --    , writerExtensions = disableExtension Ext_raw_tex $ myExts
-                     --    }
                      writerConf $ procCrossRef <$> conv'd
       saveSnapshot "content" =<< applyDefaultTemplate (pandocContext $ itemBody conv'd) item
 
@@ -257,16 +254,8 @@ pandocContext (Pandoc meta _)
   | Just abst <- lookupMeta "abstract" meta =
         constField "abstract" $ T.unpack $
         fromPure $
-        writeHtml5String writerConf $ Pandoc meta (toBlocks abst)
+        writeHtml5String writerConf $ Pandoc meta (mvToBlocks abst)
   | otherwise = mempty
-
-toBlocks :: MetaValue -> [Block]
-toBlocks (MetaMap _)       = []
-toBlocks (MetaList v)      = concatMap toBlocks v
-toBlocks (MetaBool b)      = [ Plain  [ Str $ show b ] ]
-toBlocks (MetaString s)    = [ Plain [ Str s ] ]
-toBlocks (MetaInlines ins) = [Plain ins]
-toBlocks (MetaBlocks bs)   = bs
 
 listDrafts :: Compiler [(Identifier, P.FilePath)]
 listDrafts = do

@@ -20,6 +20,7 @@ makePrisms ''MonoidFun
 makeWrapped ''MonoidFun
 makePrisms ''Inline
 makePrisms ''Block
+makePrisms ''MetaValue
 makeFields ''Inline
 makeFields ''Block
 makePrisms ''LaTeX

@@ -5,6 +5,8 @@ author: 石井大海
 description: Eisenstein の既約判定法は Q[X] や Z[X] の既約多項式の判定法として広く知られていますが，実は係数環が一般の一意分解整域やその商体であっても使えることはそこまで知られていません．この事実を使うと，例えば多変数多項式環の既約元判定を簡単に行える場合があります．
 latexmk: -lualatex
 tag: 数学, 代数学, 代数幾何, Eisenstein 既約判定法, 多項式環, 多変数多項式環
+macros:
+  Z: '\mathbb{Z}'
 ---
 
 \documentclass[a4j]{ltjsarticle}
@@ -22,7 +24,7 @@ tag: 数学, 代数学, 代数幾何, Eisenstein 既約判定法, 多項式環, 
 \newcommand{\Los}{{\L}o\'{s}}
 \newcommand{\Diag}{\mathrm{Diag}}
 \newcommand{\Th}{\mathrm{Th}}
-\newcommand{\divs}{ \mid }
+\newcommand{\divs}{\mathrel{\mid}}
 \newcommand{\GL}{\mathrm{GL}}
 \usepackage{hyperref}
 
@@ -36,14 +38,13 @@ tag: 数学, 代数学, 代数幾何, Eisenstein 既約判定法, 多項式環, 
 $\Q[X]$ や $\Z[X]$ の既約元を判定する方法として，次の{\bfseries Eisenstein の既約判定法}は広く知られています：
 
 \begin{theorem}[Eisenstein の既約判定法《整数・有理係数版》]
- $\Z$-係数の一変数多項式 $f(X) = a_n X^n + \dots + a_1 X + a_0 \in \Z[X]$ について，次を満たす素数 $p$ が存在するとする：
+ $\Z$-係数の一変数多項式$f(X) = a_n X^n + \dots + a_1 X + a_0 \in \Z[X]$について，次を満たす素数 $p$ が存在するとする：
 
  \begin{enumerate}[label=(\arabic*)]
   \item $p \nmid a_n$
   \item $p \divs a_j \quad (j = 0, \dots, n-1)$
   \item $p^2 \nmid a_0$
  \end{enumerate}
-
  この時，$f(X)$ は $\Z$ および $\Q$ 上既約である．
 \end{theorem}
 

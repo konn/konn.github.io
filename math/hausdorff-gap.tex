@@ -13,7 +13,6 @@ katex: true
 \usepackage{bm}
 \usepackage{cases}
 
-\newcommand{\Fin}{\mathreg{Fin}}
 
 \title{Hausdorff Gap の証明}
 \author{石井大海}
@@ -22,22 +21,22 @@ katex: true
 \maketitle
 
 \begin{theorem}[Hausdorff]
- ブール代数 $\mathfrak{P}\omega / \Fin$ について，次を満たす $\{a_\alpha\}_{\alpha < \omega_1}, \{b_\alpha\}_{\alpha < \omega_1}$が存在する．
+ ブール代数 $\mathfrak{P}\omega / \mathrm{Fin}$ について，次を満たす $\{a_\alpha\}_{\alpha < \omega_1}, \{b_\alpha\}_{\alpha < \omega_1}$が存在する．
  \begin{enumerate}
   \item $a_\alpha < a_\beta < b_\beta < a_\alpha\; (\alpha < \beta < \omega_1)$
-  \item $a_\alpha \leq b \leq b_\alpha \; (\alpha < \omega_1)$ を満たすような $b \in \mathfrak{P}\omega / \Fin$ は存在しない．
+  \item $a_\alpha \leq b \leq b_\alpha \; (\alpha < \omega_1)$ を満たすような $b \in \mathfrak{P}\omega / \mathrm{Fin}$ は存在しない．
  \end{enumerate}
 \end{theorem}
 
-以後，$[\quad]: \mathfrak{P}\omega \to \mathfrak{P}\omega/\Fin$ を標準写像とする．この定理の証明の為に，幾つかの命題を証明しておく．
+以後，$[\quad]: \mathfrak{P}\omega \to \mathfrak{P}\omega/\mathrm{Fin}$ を標準写像とする．この定理の証明の為に，幾つかの命題を証明しておく．
 
 まず，次の事は簡単に確認出来る：
 
 \begin{fact}
  \begin{enumerate}[label=(\roman*)]
   \item $[A] = 1 \Leftrightarrow A \text{は補有限}$
-  \item $[A] \leq [B] \Leftrightarrow A \setminus B \in \Fin$
-  \item $[A] \neq [B] \Leftrightarrow A \vartriangle B \notin \Fin$
+  \item $[A] \leq [B] \Leftrightarrow A \setminus B \in \mathrm{Fin}$
+  \item $[A] \neq [B] \Leftrightarrow A \vartriangle B \notin \mathrm{Fin}$
  \end{enumerate}
 \end{fact}
 
@@ -51,13 +50,13 @@ katex: true
  \[
   j_{n+1} = \min \Set{j_n < j < \omega | A_n \cap [j, \omega) \subseteq A_{n+1}}
  \]
- により $j_{n+1}$ を定めよう．もし右辺の集合が空集合であれば，どんな $j > j_n$ に対しても $A_n \cap [j, \omega) \subsetneq A_{n+1}$ となるので，$|A_n \setminus A_{n+1}| = \aleph_0$ となる．しかし，仮定より $[A_n] \leq [A_{n+1}]$ であったので，$A_n \setminus A_{n+1} \in \Fin$ でなくてはならず，矛盾．よって $n < \omega$ に対し常に題意を満たす $j_n$ が取れる．
+ により $j_{n+1}$ を定めよう．もし右辺の集合が空集合であれば，どんな $j > j_n$ に対しても $A_n \cap [j, \omega) \subsetneq A_{n+1}$ となるので，$|A_n \setminus A_{n+1}| = \aleph_0$ となる．しかし，仮定より $[A_n] \leq [A_{n+1}]$ であったので，$A_n \setminus A_{n+1} \in \mathrm{Fin}$ でなくてはならず，矛盾．よって $n < \omega$ に対し常に題意を満たす $j_n$ が取れる．
 
  次に，$j_n \leq k_n, k_n < k_{n+1} \; (n < \omega)$ を満たすように $k_n \notin A_n$ を構成したい．今，仮定より $A_n$ は補有限ではないので，$\omega \setminus A_n$ は $\omega$ で非有界である．よって，このような $k_n$ は常に取れる．
 
  すると，$m > n$ なら $k_m \notin A_n$ が成立する．なぜなら，$m > n$ の時 $A_n \cap [j_m, \omega) \subseteq A_m$ であり，今 $j_m \leq k_m$ であったので $A_n \cap [k_m, \omega) \subseteq A_m$ である．ここで $k_m \in A_n$ とすると，$k_m \in A_n \cap [k_m, \omega) \subseteq A_m$ となるが，$k_m \in \omega \setminus A_m$ なので矛盾．
 
- そこで，$A = \omega \setminus \Set{k_n | n < \omega}$ とおけば，$b = [A]$ が求めるものである．まず，構成から $A$ は補有限でないので， $b = [A] < 1$ である．また，$A_n' = A_n \cap [k_n, \omega)$ とおけば，$A_n \setminus A_n' \subseteq [0, k_n) \in \Fin$ より $[A_n] \leq [A_n']$．また $A_n' \subset A_n$ より $[A_n] \leq [A_n']$．よって $[A_n] = [A_n'] = a_n$ である．$j \in A_n'$ とすると，$j > k_n$ かつ $j \neq k_m \; (m > n)$．よって，$A_n' \subseteq \omega \setminus \Set{ k_n | n < \omega }$となるので，$a_n = [A_n] \leq [A] = b$ である．
+ そこで，$A = \omega \setminus \Set{k_n | n < \omega}$ とおけば，$b = [A]$ が求めるものである．まず，構成から $A$ は補有限でないので， $b = [A] < 1$ である．また，$A_n' = A_n \cap [k_n, \omega)$ とおけば，$A_n \setminus A_n' \subseteq [0, k_n) \in \mathrm{Fin}$ より $[A_n] \leq [A_n']$．また $A_n' \subset A_n$ より $[A_n] \leq [A_n']$．よって $[A_n] = [A_n'] = a_n$ である．$j \in A_n'$ とすると，$j > k_n$ かつ $j \neq k_m \; (m > n)$．よって，$A_n' \subseteq \omega \setminus \Set{ k_n | n < \omega }$となるので，$a_n = [A_n] \leq [A] = b$ である．
  \mbox{}
 \end{proof}
 
@@ -67,7 +66,7 @@ katex: true
 \end{lemma}
 
 \begin{proof}
- $a_n = [A_n], b_n = [B_n]$ とする．$a_n \wedge b_n = 0$ より $A_n \cap B_n \in \Fin \; (n < \omega)$ である．
+ $a_n = [A_n], b_n = [B_n]$ とする．$a_n \wedge b_n = 0$ より $A_n \cap B_n \in \mathrm{Fin} \; (n < \omega)$ である．
 
  そこで，
 \begin{equation*}
@@ -76,12 +75,12 @@ katex: true
    A_n \cap B_i \subseteq [0, j_n)
   \end{aligned} \quad (i \leq n)\tag{*}
 \end{equation*} 
-を満たすように $j_n < j_{n+1}$ を取りたい．まず，$A_n \cap B_n \in \Fin$ より，$A_0 \cap B_0 \subseteq [0, j_0)$ となるような最小の $j_0$ が取れる．この時，$A_0 \cap [j_0, \omega) \subseteq A_0$ は自明に成立しているので，$n = 0$ の時は OK．
+を満たすように $j_n < j_{n+1}$ を取りたい．まず，$A_n \cap B_n \in \mathrm{Fin}$ より，$A_0 \cap B_0 \subseteq [0, j_0)$ となるような最小の $j_0$ が取れる．この時，$A_0 \cap [j_0, \omega) \subseteq A_0$ は自明に成立しているので，$n = 0$ の時は OK．
  そこで，$(*)$ を満たす $j_n$ が取れているとき，$j_{n+1}$ を次のように定める：
  \[
   j_{n+1} = \min \Set{j_n < j < \omega | A_{n+1} \cap B_i \subseteq [0,j) \; (i < n + 1), A_n \cap [j, \omega) \subseteq A_{n+1}}
  \]
- ここで，$A_{n+1} \cap B_i \subseteq [0,j)$ となるような $j$ が取れることは補題 $1$ の証明で既に示した．また，$A_{n+1} \cap B_i \in \Fin\;(i \leq n+1)$ だから，各 $i$ に対し $\subseteq [0, j)$ となるような $j$ が取れる．全順序性より二条件を満たすものは明らかに存在するので，$j_{n+1}$ は well-defined である．以上から，$j_n < j_{n+1}$ が取れる．
+ ここで，$A_{n+1} \cap B_i \subseteq [0,j)$ となるような $j$ が取れることは補題 $1$ の証明で既に示した．また，$A_{n+1} \cap B_i \in \mathrm{Fin}\;(i \leq n+1)$ だから，各 $i$ に対し $\subseteq [0, j)$ となるような $j$ が取れる．全順序性より二条件を満たすものは明らかに存在するので，$j_{n+1}$ は well-defined である．以上から，$j_n < j_{n+1}$ が取れる．
 
  ここで $A_n' = A_n \cap [j, \omega)$ とおくと，有限の差しかないので $[A_n'] = [A_n] = a_n$ である．そこで，
  \[
@@ -92,7 +91,7 @@ katex: true
   B_m \cap C &= \bigcup_{n < \omega} (A_n \cap B_m \cap [j_n, \omega))\\
   &= \bigcup_{n < m} \left(A_n \cap B_m \cap [j_n, \omega)\right) \cup \bigcup_{m \leq n < \omega} \left(A_n \cap B_m \cap [j_n, \omega)\right)\\
   &\subseteq \bigcup_{n < m} \left(A_n \cap B_m \cap [j_n, \omega)\right) \cup \bigcup_{m \leq n < \omega} \left([0, j_n) \cap [j_n, \omega)\right)\\
-  &\subseteq \bigcup_{n < m} \left(A_n \cap B_m\right) \in \Fin
+  &\subseteq \bigcup_{n < m} \left(A_n \cap B_m\right) \in \mathrm{Fin}
  \end{align*}
  よって，$b_m \wedge c = 0 \; (m < \omega)$ も成立．\mbox{}
 \end{proof}
@@ -101,13 +100,13 @@ katex: true
  $\lambda$ を無限順序数とする．$X \subseteq \omega, X_\alpha \subseteq \omega \; (\alpha < \lambda), [X] \leq [Y]$ とする．このとき，もし任意の $k < \omega$ について $\Set{\alpha < \lambda | X_\alpha \cap X \subseteq k}$ が有限なら，$Y$ も同様の性質を満たす．
 \end{lemma}
 \begin{proof}
- 対偶を示す．つまり，$[X] \leq [Y]$ として，ある $k < \omega$ に対し，$Y \cap X_{\alpha_j} \subseteq k \; (j < \omega)$ を満たすような $\alpha_j < \omega$ が取れたとする．今，$[X] \leq [Y]$ より $X \setminus Y \in \Fin$．そこで，$\ell = \sup^+(X \setminus Y) < \omega$ と置く．この時，
+ 対偶を示す．つまり，$[X] \leq [Y]$ として，ある $k < \omega$ に対し，$Y \cap X_{\alpha_j} \subseteq k \; (j < \omega)$ を満たすような $\alpha_j < \omega$ が取れたとする．今，$[X] \leq [Y]$ より $X \setminus Y \in \mathrm{Fin}$．そこで，$\ell = \sup^+(X \setminus Y) < \omega$ と置く．この時，
  \begin{align*}
   X \cap X_{\alpha_j} &= ((X \cap Y) \cup (X \setminus Y)) \cap X_{\alpha_j}\\
   &= (X \cap Y \cap X_{\alpha_j}) \cup (X \setminus Y) \cap X_{\alpha_j}\\
   &\subseteq k \cup \ell = \max(k, \ell) 
  \end{align*}
- よって $m = \max(k, \ell)$ とおけば $\Set{\alpha < \lambda | X \cap X_\alpha \subseteq m} \notin \Fin$ となる．よって示された．\mbox{}
+ よって $m = \max(k, \ell)$ とおけば $\Set{\alpha < \lambda | X \cap X_\alpha \subseteq m} \notin \mathrm{Fin}$ となる．よって示された．\mbox{}
 \end{proof}
 
 以上，三つの補題が，以下の証明において本質的な役割を果す．
@@ -133,7 +132,7 @@ katex: true
  \begin{align*}
   A_{\alpha + 1} \cap B_{\alpha+1} &= (A_\alpha \cup P) \cap (B_\alpha \cup Q)\\
   &= (A_\alpha \cap B_\alpha) \cup \underbrace{ (A_\alpha \cap Q)}_{=\emptyset} \cup \underbrace{(B_\alpha \cap P)}_{=\emptyset} \cup \underbrace{(P \cap Q)}_{=\emptyset}\\
-  &= A_\alpha \cap B_\alpha \in \Fin
+  &= A_\alpha \cap B_\alpha \in \mathrm{Fin}
  \end{align*}
  より $[A_{\alpha+1}] \wedge [B_{\alpha+1}] = 0$ となるのでOK．
 
@@ -163,7 +162,7 @@ katex: true
 
  $I_k$ が有限集合の時は，$S_{k + 1} = S_k$ とおく．$I_k$ が無限集合の時を考える．$\Set{ n < m | S \cap B_n \subseteq k}$ は有限集合であるので，$\braket{I_k, <}$ は各始切片が有限集合であるような無限整列集合である．このような性質を持つ順序数は $\omega$ のみであるので，同型 $e: \omega \rightarrow I_k$ が取れ，特に $e$ は狭義単調増加な全射である．更に，このとき $\sup \Set{e(n) | n < \omega} = \omega$ である．これを示すには，$e$ が全射であることから $\sup\Set{e(n) | n < \omega} = \sup I_k$ となるので，$\sup I_k = \omega$ を示せばよい．もし $\sup I_k = m < \omega$ とすれば，特に $I_k = \Set{ n < m + 1 | S \cap B_n \subseteq k}$ と書けることになる．今，$m + 1 < \omega$ であり， $(\ast)$ より $I_k$ は有限集合となり，仮定に反する．よって $\sup I_k = \omega$ となる．
 
- さて，$[B_\alpha]$ に関する帰納法の仮定 $(c)$ より $[B_n] < [B_{n+1}] \; (n < \omega)$ である．よって，数学的帰納法により $0 < [B_{e(n)} \setminus \bigcup_{i < n} B_{e(i)}] \leq [X]$ となることがわかる．従って $B_{e(n)} \setminus \bigcup_{i < n} B_{e(i)}$ が無限なので，$p_n \in (B_{e(n)} \setminus \bigcup_{i<n} B_{e(i)}) \cap X$ を満たすような $n \leq p_n$ が取れ，特に $p_n < p_{n+1}$ とできる．そこで，$S_{k+1} = \Set{p_k | k < \omega} \cup S_k$ と置く．この時，$B_{e(m)} \cap \Set{ p_n | n < \omega} \subseteq \Set{ p_n | n \leq m } \in \Fin$ より $[B_{e(m)}] \wedge [\Set{ p_n | n < \omega}] = 0$ であるので，帰納法の仮定と合わせて
+ さて，$[B_\alpha]$ に関する帰納法の仮定 $(c)$ より $[B_n] < [B_{n+1}] \; (n < \omega)$ である．よって，数学的帰納法により $0 < [B_{e(n)} \setminus \bigcup_{i < n} B_{e(i)}] \leq [X]$ となることがわかる．従って $B_{e(n)} \setminus \bigcup_{i < n} B_{e(i)}$ が無限なので，$p_n \in (B_{e(n)} \setminus \bigcup_{i<n} B_{e(i)}) \cap X$ を満たすような $n \leq p_n$ が取れ，特に $p_n < p_{n+1}$ とできる．そこで，$S_{k+1} = \Set{p_k | k < \omega} \cup S_k$ と置く．この時，$B_{e(m)} \cap \Set{ p_n | n < \omega} \subseteq \Set{ p_n | n \leq m } \in \mathrm{Fin}$ より $[B_{e(m)}] \wedge [\Set{ p_n | n < \omega}] = 0$ であるので，帰納法の仮定と合わせて
  \begin{align*}
   [S_{k+1}] \wedge [B_{e(m)}] &= ([\Set{p_k | k < \omega}] \wedge [B_{e(m)}]) \vee ([S_k] \wedge [B_{e(m)}])\\
   &= 0 \vee 0 = 0 
@@ -183,7 +182,7 @@ katex: true
  \begin{enumerate}[label=(\alph*)]
   \item $[A_\omega] \vee [B_\omega] = [X] < 1$ なので成立．
   \item $[A_\omega] \wedge [B_\omega] = [\emptyset] = 0$ より成立．
-  \item $n < \omega$ とすれば，帰納法の仮定により $[A_n] < [A_{n+1}] \leq [S_0] \leq [A_\omega]$ より $[A_n] < [A_\omega]$．また，$B_n \setminus B_\omega = B_n \cap A_n \in \Fin$ なので $[B_n] \leq [B_\omega]$．よって，先程と同様の議論により $[B_n] < [B_{n+1}] \leq B_\omega$ となる．よって OK．
+  \item $n < \omega$ とすれば，帰納法の仮定により $[A_n] < [A_{n+1}] \leq [S_0] \leq [A_\omega]$ より $[A_n] < [A_\omega]$．また，$B_n \setminus B_\omega = B_n \cap A_n \in \mathrm{Fin}$ なので $[B_n] \leq [B_\omega]$．よって，先程と同様の議論により $[B_n] < [B_{n+1}] \leq B_\omega$ となる．よって OK．
   \item 任意の $k < \omega$ に対し， $\Set{n < \omega | A_\omega \cap B_n \subseteq k}$ が有限であることを示す．もし $I_k = \Set{ n < \omega | S \cap B_n \subseteq k}$ が有限であれば，$[S] \leq [A_n]$ であることから補題 $3$ が適用出来，$\Set{ n < \omega | A_\omega \cap B_n \subseteq k }$ も有限となる．
 
 	そこで，$I_k$ が無限の場合を考える．この時，構成法から $\Set{n \in I_k | S_{k+1} \cap B_n \subseteq k}$ は有限である．よって，構成時に使った $e$ について，$\Set{n < \omega | S_{k+1} \cap B_{e(n)} \subseteq k}$ も有限．今，$[S_{k+1}] \leq [A_\omega]$ より，補題3から $\Set{n < \omega | A_\omega \cap B_{e(n)} \subseteq k}$ も有限となる．そこで，$n_0 = \sup^+ \Set{n < \omega | A_\omega \cap B_{e(n)} \subseteq k}$ とおけば $e(n_0) < \omega$ なので，$\Set{ n < e(n_0) | A_\omega \cap B_n \subseteq k}$ は有限となる．$n_0$ の取り方と $I_k$ の定義より，$\Set{n < \omega | A_\omega \cap B_n \subseteq k} = \Set{n < e(n_0) | A_\omega \cap B_n \subseteq k}$ となるので示された．

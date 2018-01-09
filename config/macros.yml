@@ -1,8 +1,8 @@
 defs: '\xLeftrightarrow{\mathrm{def}}'
 set: [1, '\left\{ #1 \right\}']
-Set: [2, '\left\{ #1 \ \middle|\ #2 \right\}']
+Set: [2, '\left\{\: #1 \;\middle|\; #2 \:\right\}']
 braket: [1, '\left\langle #1 \right\rangle']
-Braket: [2, '\left\langle #1 \ \middle|\ #2 \right\rangle']
+Braket: [2, '\left\langle\: #1 \; \middle|\; #2 \:\right\rangle']
 dash:   '-'
 op: '\mathrm{op}'
 mono: '\rightarrowtail'
@@ -68,14 +68,10 @@ power: [2, '{}^{#1} {#2}']
 boldface: [1, '\mathbf{#1}']
 quoted: [1, '\text{“}#1\text{”}']
 mathds: [1, '\mathbb{#1}']
-lh: '\mathop{\mathrm{lh}}'
+lh:     '\mathop{\mathrm{lh}}'
 proj: '\mathbf{\exists}'
-BST: '\mathrm{BST}'
-HF: '\mathrm{HF}'
+BST:  '\mathrm{BST}'
+HF:     '\mathrm{HF}'
 finseq: [1, '\power{<\omega}{#1}']
 NS: '\mathrm{NS}'
-dots: '\ldots'
-iff:  '\mathrel{\Longleftrightarrow}'
-implies: '\mathrel{\Longrightarrow}'
-xrightarrow: [2, '\mathrel{\mathop{\stackrel{#1}{\longrightarrow}}\limits_{#2}}', '']
 operatorname: [1, '\mathop{\mathrm{#1}}']

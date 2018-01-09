@@ -28,20 +28,20 @@ date: 2014/05/25 01:59:00 JST
 \begin{document}
 \maketitle
 \section{強制法の考え方（おはなし）}
-$ZFC + \neg CH$のモデル$N$を作りたい．直観的には既にある宇宙の外側から十分沢山$\omega$の部分集合を持ってきて付け加えたいのだが，そんな事は出来ないので，$ZFC$の可算推移的モデル (c.t.m.) $M$から始めて$ZFC+\neg CH$のモデル$N \supsetneq M$を作りたい．
+$\ZFC + \neg \CH$のモデル$N$を作りたい．直観的には既にある宇宙の外側から十分沢山$\omega$の部分集合を持ってきて付け加えたいのだが，そんな事は出来ないので，$\ZFC$の可算推移的モデル (c.t.m.) $M$から始めて$\ZFC+\neg \CH$のモデル$N \supsetneq M$を作りたい．
 具体的には，MAを使う時と同じように，poset $\mathbb{P} \in M$と十分多くの稠密集合と交わるようなフィルター$G$をとって，そこから望ましい性質を持ったオブジェクトを作る．$G$やその結果の構築物は$M$に属するとは限らないので，一定の性質を保ったまま$M$の元と$G$を共に含むように$M$を$M[G]$に拡張するということになる．
 
-$ZFC$の可算推移的モデルは，到達不能基数が存在すれば取ることが出来るが，ZFCからその存在を証明出来ない．なので，以下で示す$\Con(ZFC) \rightarrow \Con(ZFC+\neg CH)$はひとまず$ZFC+IC$の定理ということになる．実際には，公理系が無矛盾であるというのはその任意の有限部分集合が無矛盾であるという事だから，$ZFC$の公理からなる有限集合$\Lambda \Subset ZFC$を任意に取ってきて，$\Lambda + CH$がモデルを持つことが示せればよい．反映定理より$\Lambda$のc.t.m.はZFCの内部で取ることが出来るので，以下の議論で考えるc.t.m.を$\Lambda$に関するc.t.m.だと思えば，ZFCの内部で$ZFC+\neg CH$の相対無矛盾性を示せる．他にももう一つ議論を正当化する方法があるらしいが，それは第5節でやることになる．
+$\ZFC$の可算推移的モデルは，到達不能基数が存在すれば取ることが出来るが，$\ZFC$からその存在を証明出来ない．なので，以下で示す$\Con(\ZFC) \rightarrow \Con(\ZFC+\neg \CH)$はひとまず$\ZFC+IC$の定理ということになる．実際には，公理系が無矛盾であるというのはその任意の有限部分集合が無矛盾であるという事だから，$\ZFC$の公理からなる有限集合$\Lambda \Subset \ZFC$を任意に取ってきて，$\Lambda + \CH$がモデルを持つことが示せればよい．反映定理より$\Lambda$のc.t.m.は$\ZFC$の内部で取ることが出来るので，以下の議論で考えるc.t.m.を$\Lambda$に関するc.t.m.だと思えば，$\ZFC$の内部で$\ZFC+\neg \CH$の相対無矛盾性を示せる．他にももう一つ議論を正当化する方法があるらしいが，それは第5節でやることになる．
 
 \section{ジェネリック拡大}
 \begin{promise}
  \begin{itemize}
-  \item  以下，$M$は$ZFC$の十分大きな部分のc.t.m.だとする．
+  \item  以下，$M$は$\ZFC$の十分大きな部分のc.t.m.だとする．
   \item $(\mathbb{P}, \leq, \mathds{1})$をforcing posetとする．また，$\mathbb{P} \in M$は$(\mathbb{P}, \leq, \mathds{1}) \in M$の略記とする．
  \end{itemize}
 \end{promise}
 \begin{remark}
- 「$(\mathbb{P}, \leq , \mathds{1})$はforcing poset」「$D \subseteq \mathbb{P}$は稠密」は$ZF-P$の推移的モデルについて絶対．
+ 「$(\mathbb{P}, \leq , \mathds{1})$はforcing poset」「$D \subseteq \mathbb{P}$は稠密」は$\ZF-P$の推移的モデルについて絶対．
 \end{remark}
 \begin{proof}
  試しにforcing posetの公理を書き下してみる：
@@ -53,22 +53,22 @@ $ZFC$の可算推移的モデルは，到達不能基数が存在すれば取る
   \item $(\forall p, q, r \in \mathbb{P})\, p \leq q \wedge q \leq r \rightarrow p \leq r$
  \end{enumerate*}
 
- これらは明らかに$ZF-P$の下で$\Delta_0$-論理式で書ける．最初なので詳しく書けば，$x \leq y$は$ZF-P$の下で$\Delta_0$論理式$\exists p \in \mathord{\leq}\,[p = \braket{x, y}]$と同値である．上式に現れる量化子はすべて有界なので，これらも全て$\Delta_0$-論理式となり，従って$ZF-P$の推移的モデルに対し絶対である．稠密性についても同様．\mbox{}
+ これらは明らかに$\ZF-P$の下で$\Delta_0$-論理式で書ける．最初なので詳しく書けば，$x \leq y$は$\ZF-P$の下で$\Delta_0$論理式$\exists p \in \mathord{\leq}\,[p = \braket{x, y}]$と同値である．上式に現れる量化子はすべて有界なので，これらも全て$\Delta_0$-論理式となり，従って$\ZF-P$の推移的モデルに対し絶対である．稠密性についても同様．\mbox{}
 \end{proof}
 
 $\mathds{1} \in M$は$M$の推移性からすぐに出て来るが，$\leq$は入るとは限らないので$\mathord{\leq} \in M$を条件に入れておく．しかし，大抵の場合$\mathord{\leq} \in M$も絶対性から従う．
 \begin{example}
- $I, J \in M$とし，$\mathbb{P} = \mathrm{Fn}(I, J) = \Set{ p \in [I \times J]^{<\omega} : p \text{は関数}}$とおく．$x \mapsto [x]^{<\omega}$は$ZF-P$の推移的モデルについて絶対なので，$([I \times J]^{<\omega})^M = [I \times J]^{<\omega}$．また，「$p$は関数」も$ZF-P$の推移的モデルについて絶対的．よって$\mathbb{P}$も絶対的であり，従って$\mathbb{P} = \mathbb{P}^M \in M$となる．更に，$\mathrm{Fn}(I, J)$上の順序関係は$\mathord{\leq} = \mathord{\supseteq}$によって定義されており，$\subseteq$は$\Delta_0$なので，結局$\mathord{\leq} = \mathord{\leq}^M \in M$となる．
+ $I, J \in M$とし，$\mathbb{P} = \mathrm{Fn}(I, J) = \Set{ p \in [I \times J]^{<\omega} : p \text{は関数}}$とおく．$x \mapsto [x]^{<\omega}$は$\ZF-P$の推移的モデルについて絶対なので，$([I \times J]^{<\omega})^M = [I \times J]^{<\omega}$．また，「$p$は関数」も$\ZF-P$の推移的モデルについて絶対的．よって$\mathbb{P}$も絶対的であり，従って$\mathbb{P} = \mathbb{P}^M \in M$となる．更に，$\mathrm{Fn}(I, J)$上の順序関係は$\mathord{\leq} = \mathord{\supseteq}$によって定義されており，$\subseteq$は$\Delta_0$なので，結局$\mathord{\leq} = \mathord{\leq}^M \in M$となる．
 \end{example}
 
-強制法では適切なposet $\mathbb{P} \in M$のフィルター$G$を使って$\neg CH$を破ったりするような対象を作る．$MA$の時は適切な個数の稠密集合と交わるフィルターを考えたが，強制法の場合は次がその条件に対応する：
+強制法では適切なposet $\mathbb{P} \in M$のフィルター$G$を使って$\neg \CH$を破ったりするような対象を作る．$MA$の時は適切な個数の稠密集合と交わるフィルターを考えたが，強制法の場合は次がその条件に対応する：
 
 \begin{definition}
  $\mathbb{P}$をforcing posetとする．$G \subseteq \mathbb{P}$が$M$上$\mathbb{P}$-\textbf{ジェネリック}$\defs G$は$\mathbb{P}$上のフィルターで$\forall D \subseteq G\, [D \in M \wedge D : \mathbb{P} \text{で稠密} \longrightarrow D \cap G \neq \emptyset]$．
 \end{definition}
 $M$は可算なので，$M$に属する稠密集合を数えあげることが出来，補題III.3.14よりジェネリックフィルターは必ず存在する：
 \begin{lemma}[ジェネリックフィルターの存在定理]
- $M: ZF - P$のc.t.m.，$\mathbb{P} \in M$：forcing poset
+ $M: \ZF - P$のc.t.m.，$\mathbb{P} \in M$：forcing poset
 
  $\Longrightarrow \forall p \in \mathbb{P} \exists G \subseteq \mathbb{P}\; [p \in G \wedge G\text{は}M\text{上}\mathbb{P}\text{-ジェネリック}]$
 \end{lemma}
@@ -97,10 +97,10 @@ $\mathbb{P}$-nameの概念は整礎帰納法により定義されている．よ
 	     0 & (\text{otherwise})
 	    \end{cases}
 \]
-「$\tau$が関係であること」は$ZF-P$の推移的モデルについて絶対であり，帰納条件の部分も$\Delta_0$論理式なので絶対．よって「$x$が$\mathbb{P}$-nameである」も$ZF-P$の推移的モデルについて絶対的である．
+「$\tau$が関係であること」は$\ZF-P$の推移的モデルについて絶対であり，帰納条件の部分も$\Delta_0$論理式なので絶対．よって「$x$が$\mathbb{P}$-nameである」も$\ZF-P$の推移的モデルについて絶対的である．
 
 \begin{promise}
- 以下，$M$を$ZF-P$の推移的モデルとし，$\mathbb{P} \in M$，$G \subseteq \mathbb{P}: \mathbb{P}$上のフィルターとする．
+ 以下，$M$を$\ZF-P$の推移的モデルとし，$\mathbb{P} \in M$，$G \subseteq \mathbb{P}: \mathbb{P}$上のフィルターとする．
 \end{promise}
 \begin{definition}
  $\begin{aligned}
@@ -149,7 +149,7 @@ $\mathds{1}$はどんなフィルターにも含まれており，「無条件�
 \begin{proof}
  (ii) は (i) より直ちに従う．
 
- (i)に関して．$x \in M$とする．$\check{x} \in M^\mathbb{P}$となることは，「$\mathbb{P}$-name」や直積，対などが$ZF-P$の推移的モデルについて絶対であることから直ちにわかる．後半についても，帰納法により一瞬で示せる．\mbox{}
+ (i)に関して．$x \in M$とする．$\check{x} \in M^\mathbb{P}$となることは，「$\mathbb{P}$-name」や直積，対などが$\ZF-P$の推移的モデルについて絶対であることから直ちにわかる．後半についても，帰納法により一瞬で示せる．\mbox{}
 \end{proof}
 
 先程，大抵の場合$G \notin M$であることを述べたが，$G \in M[G]$であるためには，$G$を指す名前は$M$に含まれていなければならない．実際，次のようにして簡単に作ることが出来る：
@@ -162,7 +162,7 @@ $\mathds{1}$はどんなフィルターにも含まれており，「無条件�
 
 $\check{x}$も$\Gamma$も特定ののを指すように作られているのは同じだが，それぞれ写像$G \mapsto \tau_G$と見做すと，$\check{x}$は定数写像$G \mapsto x$に対応するのに対し，$\Gamma$は恒等写像$G \mapsto G$になっているのが異なる．
 
-こうして作った$M[G]$が$ZFC$の十分な範囲を満たすことを示したい．ここまでの準備で次を示せる：
+こうして作った$M[G]$が$\ZFC$の十分な範囲を満たすことを示したい．ここまでの準備で次を示せる：
 \begin{lemma}
  $M[G]$は推移的で，外延性，基礎，対，和の公理のモデルとなる．
 \end{lemma}
@@ -176,7 +176,7 @@ $\check{x}$も$\Gamma$も特定ののを指すように作られているのは�
  \[
   \pi \defeq \Set{ \braket{\theta, p} : \exists \braket{\sigma, q} \in \tau\, \exists r \in \mathbb{P}\, \left[\braket{\theta, r} \in \sigma \wedge p \leq r \wedge p \leq q \right]}, \quad b \defeq \pi_G
  \]
- とおく．絶対性より明らかに$\pi \in M^\mathbb{P}$なので，$b \in M[G]$である．$\bigcup$は$ZF-P$の推移的モデルに対して絶対なので，$b = \bigcup a$を示せばよい．まず$c \in a$を取り，$c \subseteq b$を示す．この時，ある$\sigma \in M^\mathbb{P}, q \in G$があって，$\braket{\sigma, q} \in \tau$かつ$\sigma_G = c$となる．ここで更に$d \in c$を取れば，$\braket{\theta, r} \in \sigma$で$\theta_G = d, r \in G$を満たすものが取れる．すると，$G$がフィルターであることから，$p \leq r \wedge p \leq q$を満たす$p \in G$を取ることが出来る．この時定義より$\braket{\theta, p} \in \pi$となるので，$d \in \pi_G = b$となる．よってこの方向はOK．
+ とおく．絶対性より明らかに$\pi \in M^\mathbb{P}$なので，$b \in M[G]$である．$\bigcup$は$\ZF-P$の推移的モデルに対して絶対なので，$b = \bigcup a$を示せばよい．まず$c \in a$を取り，$c \subseteq b$を示す．この時，ある$\sigma \in M^\mathbb{P}, q \in G$があって，$\braket{\sigma, q} \in \tau$かつ$\sigma_G = c$となる．ここで更に$d \in c$を取れば，$\braket{\theta, r} \in \sigma$で$\theta_G = d, r \in G$を満たすものが取れる．すると，$G$がフィルターであることから，$p \leq r \wedge p \leq q$を満たす$p \in G$を取ることが出来る．この時定義より$\braket{\theta, p} \in \pi$となるので，$d \in \pi_G = b$となる．よってこの方向はOK．
 
  逆を示す．$d \in b$を取れば，$\braket{\theta, p} \in \pi$で$\theta_G = d, p \in G$となるものが存在している．更に$\pi$の定義から，$\braket{\theta, r} \in \sigma$かつ$p \leq q, r$を満たすような$\braket{\sigma, q} \in \tau, p \in \mathbb{P}$が取れる．すると，$G$がフィルターであることと$p \in G$に注意すれば$q, r \in G$となる．そこで$c = \sigma_G$とおけば，$\braket{\sigma, q} \in \tau, q \in G$より$c = \sigma_G \in \tau_G = a$．同様にして$d = \theta_G \in \sigma_G = c$が云え，$d \in c \in a$となる．よって$b \subseteq \bigcup a$．よって示された．
  \mbox{}

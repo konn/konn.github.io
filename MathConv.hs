@@ -27,6 +27,7 @@ import           Data.Foldable                   (toList)
 import qualified Data.HashMap.Strict             as HM
 import qualified Data.HashSet                    as HS
 import qualified Data.List                       as L
+import qualified Data.Map                        as M
 import           Data.Maybe                      (fromMaybe)
 import           Data.Maybe                      (listToMaybe)
 import           Data.Maybe                      (mapMaybe)
@@ -94,7 +95,7 @@ message :: MonadIO m => String -> m ()
 message = liftIO . putStrLn
 
 texToMarkdown :: TeXMacros -> FilePath -> String -> IO Pandoc
-texToMarkdown macs fp src_ = do
+texToMarkdown macs0 fp src_ = do
   pth <- liftIO $ shelly $ canonic fp
   macros <- liftIO $ fst . parseMacroDefinitions <$>
             readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
@@ -114,16 +115,27 @@ texToMarkdown macs fp src_ = do
                          c@(TeXComm "renewcommand*" _) -> TeXEmpty <$ tell [c]
                          c -> return c)
                ltree0
+      macs  = macs0 <> parseTeXMacros locMacros
       tlibs = tlibs0 ++ locMacros
-      lms = fst $ parseMacroDefinitions $ T.unpack $ T.unlines $ map render locMacros
       initial = T.pack $ applyMacros macros $ T.unpack $ render $
                 applyTeXMacro macs $ preprocessTeX $ latexTree
       st0 = MachineState { _tikzPictures = mempty
-                         , _macroDefs = macros ++ lms
+                         , _macroDefs = macros -- ++ lms
                          , _imgPath = dropExtension fp
                          , _texMacros = macs
                          }
-  (pan, s) <- runStateT (texToMarkdownM initial) st0
+      mabs = either (const Nothing) ((^? _MetaBlocks) <=< M.lookup "abstract" . unMeta . getMeta) $
+             runPure $ readLaTeX myReaderOpts initial
+  (pan, s) <- do
+    (p0@(Pandoc meta0 bdy), s0) <- runStateT (texToMarkdownM initial) st0
+    case mabs of
+      Nothing -> return (p0, s0)
+      Just bs -> do
+        let ps0 = Pandoc meta0 bs
+            asrc = either (const "") id $ runPure $ writeLaTeX def ps0
+        (Pandoc _ abbs, s') <- runStateT (texToMarkdownM asrc) s0
+        return (Pandoc (Meta $ M.insert "abstract" (MetaBlocks abbs) $ unMeta meta0)  bdy, s')
+
   let tikzs = toList $ s ^. tikzPictures
   unless (null tikzs) $ shelly $ silently $ do
     master <- canonic $ dropExtension pth
@@ -149,6 +161,9 @@ texToMarkdown macs fp src_ = do
       svgs <- findWhen (return . hasExt "svg") "."
       mapM_ (flip cp master) (pngs ++ svgs)
   return $ adjustJapaneseSpacing pan
+
+getMeta :: Pandoc -> Meta
+getMeta (Pandoc m _) = m
 
 tshow :: Show a => a -> Text
 tshow = T.pack . show
@@ -275,14 +290,15 @@ rewriteInlineCmd = fmap concat . mapM step
                ++ rubyText
                ++
                [RawInline "html" $ "</rt><rp>）</rp><ruby>"]
-    rewrite c@(TeXComm cm [FixArg arg]) =
+    rewrite c@(TeXComm cm [FixArg arg0]) = do
+      arg <- rewrite arg0
       case lookup cm commandDic of
         Just (Right t) -> do
-          comBody <- concat <$> mapM step (inlineLaTeX (render arg))
+          --- comBody <- concat <$> mapM step (inlineLaTeX (render arg))
           return $ [ RawInline "html" $ "<" ++ t ++ ">" ]
-                   ++ comBody ++
+                   ++ arg ++
                    [ RawInline "html" $ "</" ++ t ++ ">" ]
-        Just (Left inl) -> pure . inl . concat <$> mapM step (inlineLaTeX $ render arg)
+        Just (Left inl) -> return [inl arg]
         _ -> return $ inlineLaTeX $ render c
     rewrite c = return $ inlineLaTeX $ render c
 
@@ -330,7 +346,7 @@ fixArgs = toListOf (folded._FixArg)
 
 inlineLaTeX :: Text -> [Inline]
 inlineLaTeX src_ =
-  let Pandoc _ body = either (error . show) id $ runPure $
+  let Pandoc _ body = either (const (Pandoc nullMeta [])) id $ runPure $
                       readLaTeX myReaderOpts src_
   in concatMap getInlines body
 
@@ -489,3 +505,11 @@ texToEnvNamePlainString str =
     go = bottomUp $ \a -> case a of
       Math _ math ->  Str $ stringify $ MyT.readTeXMath  math
       t           -> t
+
+mvToBlocks :: MetaValue -> [Block]
+mvToBlocks (MetaMap _)       = []
+mvToBlocks (MetaList v)      = concatMap mvToBlocks v
+mvToBlocks (MetaBool b)      = [ Plain  [ Str $ show b ] ]
+mvToBlocks (MetaString s)    = [ Plain [ Str s ] ]
+mvToBlocks (MetaInlines ins) = [Plain ins]
+mvToBlocks (MetaBlocks bs)   = bs

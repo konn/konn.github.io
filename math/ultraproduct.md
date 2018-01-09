@@ -215,7 +215,7 @@ $$\begin{aligned}
   (f(t_1, \dots, t_n)[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}])^{\mathfrak{C}}
   &\equiv (f(t_1[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}], \dots, t_n[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}]))^{\mathfrak{C}} & (\text{置換の定義})\\
   &\equiv f^{\mathfrak{C}}(t_1[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}]^{\mathfrak{C}}, \dots, t_n[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}]^{\mathfrak{C}}) & (\text{解釈の定義})\\
-  &\equiv f^{\mathfrak{C}}([\tau_1],\dots,[\tau_n]) & (\text 帰納法の仮定)\\
+  &\equiv f^{\mathfrak{C}}([\tau_1],\dots,[\tau_n]) & (\text{帰納法の仮定})\\
   &\equiv [i \mapsto f^{\mathfrak{A}_i}(\tau_1(i), \dots, \tau_n(i))] & (\text{超積の定義})\\
   &\equiv [i \mapsto f^{\mathfrak{A}_i}((t_{1}[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}])^{\mathfrak{A}_{i}}, \dots, (t_{1}[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}])^{\mathfrak{A}_{i}})] & (\tau_j \text{の定義})\\
   &\equiv [i \mapsto (f(t_1, \dots, t_n)[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}])^{\mathfrak{A}_i}]
@@ -244,27 +244,26 @@ $L(\mathfrak{C})$ での名前を同一視する．
 
 (ii) $A \equiv B \wedge C$ のとき．$B, C$ は命題を満たす論理式であるとする（帰納法の仮定）．
 
-    $$\begin{aligned}
-	\newcommand{\myreplace}{[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]}
-	\newcommand{\ultreplace}{[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}]}
-	 &\mathfrak{C} \models (B \wedge C)\ultreplace\\
-	 &\Leftrightarrow \mathfrak{C} \models B\ultreplace \wedge C\ultreplace\\
-	 &\Leftrightarrow \mathfrak{C} \models B\ultreplace \mathbin{{かつ}} \mathfrak{C} \models C\ultreplace &\quad(\models \text{の定義})\\
-	 &\Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B\myreplace\right\} \in \mathcal{U} \text{かつ} \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models C\myreplace\right\} \in \mathcal{U} &\quad (\text{帰納法の仮定})\\
-	 & \Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B\myreplace\right\} \cap \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models C\myreplace\right\} \in \mathcal{U} & (\text{フィルターの定義} (3))\\
-	 & \Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B\myreplace \text{かつ} \mathfrak{A}_i \models C\myreplace\right\} \in \mathcal{U}\\
-	 & \Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B\myreplace \wedge C\myreplace\right\} \in \mathcal{U} & (\models \text{の定義})\\
-	 & \Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models (B \wedge C)\myreplace\right\} \in \mathcal{U}        \end{aligned}$$
+     $$\begin{aligned}
+	 &\mathfrak{C} \models (B \wedge C)[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}]\\
+	 &\Leftrightarrow \mathfrak{C} \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}] \wedge C[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}]\\
+	 &\Leftrightarrow \mathfrak{C} \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}] \mathbin{{かつ}} \mathfrak{C} \models C[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}] &\quad(\models \text{の定義})\\
+	 &\Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U} \text{かつ} \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models C[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U} &\quad (\text{帰納法の仮定})\\
+	 & \Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \cap \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models C[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U} & (\text{フィルターの定義} (3))\\
+	 & \Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}] \text{かつ} \mathfrak{A}_i \models C[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U}\\
+	 & \Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}] \wedge C[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U} & (\models \text{の定義})\\
+	 & \Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models (B \wedge C)[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U}
+     \end{aligned}$$
 
 (iii) $A \equiv \neg B$ のとき．ここでウルトラフィルターであることが効いてくる．
 
-    $$\begin{aligned}
-         \mathfrak{C} \models (\neg B)[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}]&\Leftrightarrow  \mathfrak{C} \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}]\text{でない}\\
-         &\Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \notin \mathcal{U} &\quad (\text{帰納法の仮定})\\
-         &\Leftrightarrow I \setminus \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U} & \quad (\mathcal{U}:\text{ウルトラフィルター})\\
-         &\Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \not\models B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U}\\
-         &\Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models \neg B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U}
-        \end{aligned}$$
+      $$\begin{aligned}
+           \mathfrak{C} \models (\neg B)[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}]&\Leftrightarrow  \mathfrak{C} \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ {[u_1]} & \dots & [u_n] \end{smallmatrix}]\text{でない}\\
+           &\Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \notin \mathcal{U} &\quad (\text{帰納法の仮定})\\
+           &\Leftrightarrow I \setminus \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U} & \quad (\mathcal{U}:\text{ウルトラフィルター})\\
+           &\Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \not\models B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U}\\
+           &\Leftrightarrow \left\{ i \in I\ \ \middle|\ \ \mathfrak{A}_i \models \neg B[\begin{smallmatrix} a_1 & \dots & a_n \\ u_1(i) & \dots & u_n(i) \end{smallmatrix}]\right\} \in \mathcal{U}
+          \end{aligned}$$
 
 (iv) $A \equiv B \vee C, B \rightarrow C$ のとき．$B \vee C$ の時は，$\neg (\neg B \wedge \neg C)$
     を考えるか，ウルトラフィルターの性質から

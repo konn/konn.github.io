@@ -164,12 +164,7 @@ $$\exists g: B \to A \in {\bf C}
 
 <div class="axiom" name="選択公理">
 任意の非空集合の族 $(X_\lambda)_{\lambda \in \Lambda}$ について，その直積
-$$
-\def\Set#1{\left\{#1\right\}}
-\def\set#1{\left\{#1\right\}}
-\prod_{\lambda \in \Lambda} X_\lambda = \left\{f: \Lambda \to \bigcup_{\lambda
- \in \Lambda} X_\lambda\ \ \middle|\ \ f(\lambda) \in X_\lambda\right\}
- $$
+ $$\prod_{\lambda \in \Lambda} X_\lambda = \left\{ f: \Lambda \to \bigcup_{\lambda \in \Lambda} X_\lambda\ \ \middle|\ \ f(\lambda) \in X_\lambda\right\}$$
  は空ではない．
 </div>
 
@@ -224,7 +219,7 @@ $$
     が存在するとす る．今，非空集合の族
      $(A_\lambda)_{\lambda \in \Lambda}$ が与えら れたとき，集合 $A$ 
     を次で定める．
-     $$A = \set{\langle \lambda,  x \rangle | \lambda \in \Lambda, x \in A_\lambda}$$ 
+     $$A = \left\{\ \langle \lambda,  x \rangle\ \ \middle|\ \ \lambda \in \Lambda, x \in A_\lambda\ \right\}$$ 
     ここで，写像
 
 	$$

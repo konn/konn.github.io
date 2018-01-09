@@ -2,7 +2,7 @@
 title: Martinの公理，範疇定理，小さな基数
 author: 石井 大海
 tag: 数学,数理論理学,集合論,ゼミ資料,無限組合せ論,マーティンの公理,Martinの公理,マーチンの公理,Martin's axiom,PFA,範疇定理,Baireの範疇定理,カテゴリー定理,連続体問題,関数解析,函数解析
-latexmk: -lualatex
+latexmk: -pdflua
 description: 研究室の集合論ゼミで，集合論の種々の独立命題を示す方法である強制法の理論の最初の方について発表した時の資料．
 date: 2014/05/30 13:08:25 JST
 katex: true
@@ -25,7 +25,6 @@ katex: true
 \theoremseparator{.}
 \newframedtheorem{exercise}{演習問題}
 \newcommand{\val}{\mathrm{val}}
-
 
 \title{Martinの公理，範疇定理，小さな基数}
 \author{石井大海}
@@ -158,7 +157,7 @@ $\mathrm{MA}(\kappa)$は「任意のc.c.c. poset $\mathbb{P}$に対し$\mathrm{M
 \end{align*}
  これにより，$\braket{\mathbb{P}, \leq, \braket{\emptyset, \emptyset}}$がforcing posetとなるのは明らか．$\MA(\kappa)$を使いたいので，$\mathbb{P}$がc.c.c.を満たすことを示さなくてはならない．ここで，
  \begin{align*}
-  s_p = s_q \longrightarrow s_p \mathrel{\|} s_q \tag{*}\label{cond:cented}
+  s_p = s_q \longrightarrow s_p \mathrel{\|} s_q \qquad\qquad (*)
  \end{align*}
  が成立する．なぜならこの時，$r = \braket{s_p, \mathcal{W}_p \cup \mathcal{W}_q}$とおけば明らかに$r \leq p, q$となるからである．特に各$s \in [\omega]^{<\omega}$は可算個しかないから，もし$A \subseteq \mathbb{P}$が非可算集合であったとすると，必ず$s_p = s_q$となる$p, q \in A$があり$s_p \mathrel{\|} s_q$となるので，$A$は反鎖ではない．よって$\mathbb{P}$はc.c.c.を満たす．
 
@@ -178,7 +177,7 @@ $\mathrm{MA}(\kappa)$は「任意のc.c.c. poset $\mathbb{P}$に対し$\mathrm{M
  次に\ref{KG_almost_intersects}を成り立たせたい．各$Z \in \mathcal{E}$に対し$E_Z \defeq \Set{ q \in \mathbb{P} : Z \in \mathcal{W}_q}$の形の集合を考えると，これは$\mathbb{P}$の稠密集合である．これは，$p \in \mathbb{P}$に対し$r = \braket{s_p, \mathcal{W}_p \cup \set{Z}}$とおけば$r \leq p$かつ$r \in E_Z$となることから明らかである．このような$E_Z$は$|\mathcal{E}| = \kappa$個しかなく，今$\MA(\kappa)$を仮定しているので，フィルター$G$を各$E_Z$と交わるように取ることが出来る．この時\ref{KG_almost_intersects}が成立することは，次のようにしてわかる．適当な$Z \in \mathcal{E}$を取れば，$G \cap E_Z \neq \emptyset$より$Z \in \mathcal{W}_p$を満たすような$p \in G$が存在する．この時，任意の$q \in G$に対し$s_q \setminus s_p \subseteq Z$となることが示せれば十分である．何故ならこのとき$K_G \setminus s_p = \bigcup_q (s_q \setminus s_p) \subseteq Z$となるからである．$G$はフィルターなので，$r \leq p, q$となるような$r \in G$が存在する．特に順序の定義から$s_r \supseteq s_q$かつ$s_r \setminus s_p \subseteq Z \in \mathcal{W}_p$となっているので，$s_q \setminus s_p \subseteq Z$が云える．以上より$K_G$は$\mathcal{E}$の擬共通部分である．\mbox{}
 \end{proof}
 
-上の議論では $(*)$ の条件が本質的な役割を果している．$\MA$を用いた議論ではしばしばこれに類似の論法が使われるので，それをちょっと詳しく見てみよう：
+上の議論では $(\star)$ の条件が本質的な役割を果している．$\MA$を用いた議論ではしばしばこれに類似の論法が使われるので，それをちょっと詳しく見てみよう：
 
 \begin{definition}
  \begin{itemize}

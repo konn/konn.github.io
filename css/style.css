@@ -199,3 +199,6 @@ pre.sourceCode {
     border-left: solid gray;
 }
 
+div#refs > div[id^="ref-"] > p  {
+    margin: 0px;
+}
