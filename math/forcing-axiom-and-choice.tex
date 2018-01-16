@@ -8,7 +8,7 @@ tag: 無矛盾性証明,強制法,公理的集合論,集合論,強制公理,強�
 latexmk: -pdflua
 date: 2017/11/14 00:49:10 JST
 macros:
-  - 'C': '\\mathbb{C}'
+  - 'C':  '\\mathbb{C}'
 ---
 \documentclass[a4j,leqno]{ltjsarticle}
 \usepackage[hiragino-pron]{luatexja-preset}
@@ -24,11 +24,12 @@ macros:
 \usepackage[backend=biber, style=math-numeric]{biblatex}
 \addbibresource{myreference.bib}
 \newcommand{\defax}{\mathrel{{:\equiv}}}
-\DeclareMathOperator{\len}{length}
+\newcommand{\len}{\mathop{\mathrm{length}}}
 \newcommand{\WO}{\mathrm{WO}}
 \newcommand{\Zorn}{\mathrm{Zorn}}
 \newcommand{\FA}{\mathrm{FA}}
 \renewcommand{\emph}[1]{\textbf{\textsf{#1}}}
+\renewcommand{\CC}{\mathbb{C}}
 \newcommand{\MM}{\mathrm{MM}}
 
 \title{強い選択公理としての強制公理}

@@ -133,7 +133,7 @@ module.exports = {
     __renderToHTMLTree: renderToHTMLTree
 };
 
-},{"./src/ParseError":84,"./src/Settings":87,"./src/buildTree":94,"./src/parseTree":122,"./src/utils":128}],2:[function(require,module,exports){
+},{"./src/ParseError":84,"./src/Settings":87,"./src/buildTree":94,"./src/parseTree":125,"./src/utils":133}],2:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
 },{"core-js/library/fn/array/from":12}],3:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
@@ -261,91 +261,79 @@ exports.default = function (arr) {
 require('../../modules/es6.string.iterator');
 require('../../modules/es6.array.from');
 module.exports = require('../../modules/_core').Array.from;
-
 },{"../../modules/_core":24,"../../modules/es6.array.from":73,"../../modules/es6.string.iterator":77}],13:[function(require,module,exports){
 require('../modules/web.dom.iterable');
 require('../modules/es6.string.iterator');
 module.exports = require('../modules/core.get-iterator');
-
 },{"../modules/core.get-iterator":71,"../modules/es6.string.iterator":77,"../modules/web.dom.iterable":78}],14:[function(require,module,exports){
 require('../modules/web.dom.iterable');
 require('../modules/es6.string.iterator');
 module.exports = require('../modules/core.is-iterable');
-
 },{"../modules/core.is-iterable":72,"../modules/es6.string.iterator":77,"../modules/web.dom.iterable":78}],15:[function(require,module,exports){
-var core = require('../../modules/_core');
-var $JSON = core.JSON || (core.JSON = { stringify: JSON.stringify });
-module.exports = function stringify(it) { // eslint-disable-line no-unused-vars
+var core  = require('../../modules/_core')
+  , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
+module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
   return $JSON.stringify.apply($JSON, arguments);
 };
-
 },{"../../modules/_core":24}],16:[function(require,module,exports){
 require('../../modules/es6.object.define-property');
 var $Object = require('../../modules/_core').Object;
-module.exports = function defineProperty(it, key, desc) {
+module.exports = function defineProperty(it, key, desc){
   return $Object.defineProperty(it, key, desc);
 };
-
 },{"../../modules/_core":24,"../../modules/es6.object.define-property":75}],17:[function(require,module,exports){
 require('../../modules/es6.object.freeze');
 module.exports = require('../../modules/_core').Object.freeze;
-
 },{"../../modules/_core":24,"../../modules/es6.object.freeze":76}],18:[function(require,module,exports){
-module.exports = function (it) {
-  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
+module.exports = function(it){
+  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
   return it;
 };
-
 },{}],19:[function(require,module,exports){
-module.exports = function () { /* empty */ };
-
+module.exports = function(){ /* empty */ };
 },{}],20:[function(require,module,exports){
 var isObject = require('./_is-object');
-module.exports = function (it) {
-  if (!isObject(it)) throw TypeError(it + ' is not an object!');
+module.exports = function(it){
+  if(!isObject(it))throw TypeError(it + ' is not an object!');
   return it;
 };
-
 },{"./_is-object":40}],21:[function(require,module,exports){
 // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject = require('./_to-iobject');
-var toLength = require('./_to-length');
-var toAbsoluteIndex = require('./_to-absolute-index');
-module.exports = function (IS_INCLUDES) {
-  return function ($this, el, fromIndex) {
-    var O = toIObject($this);
-    var length = toLength(O.length);
-    var index = toAbsoluteIndex(fromIndex, length);
-    var value;
+var toIObject = require('./_to-iobject')
+  , toLength  = require('./_to-length')
+  , toIndex   = require('./_to-index');
+module.exports = function(IS_INCLUDES){
+  return function($this, el, fromIndex){
+    var O      = toIObject($this)
+      , length = toLength(O.length)
+      , index  = toIndex(fromIndex, length)
+      , value;
     // Array#includes uses SameValueZero equality algorithm
-    // eslint-disable-next-line no-self-compare
-    if (IS_INCLUDES && el != el) while (length > index) {
+    if(IS_INCLUDES && el != el)while(length > index){
       value = O[index++];
-      // eslint-disable-next-line no-self-compare
-      if (value != value) return true;
-    // Array#indexOf ignores holes, Array#includes - not
-    } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
-      if (O[index] === el) return IS_INCLUDES || index || 0;
+      if(value != value)return true;
+    // Array#toIndex ignores holes, Array#includes - not
+    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
+      if(O[index] === el)return IS_INCLUDES || index || 0;
     } return !IS_INCLUDES && -1;
   };
 };
-
-},{"./_to-absolute-index":62,"./_to-iobject":64,"./_to-length":65}],22:[function(require,module,exports){
+},{"./_to-index":62,"./_to-iobject":64,"./_to-length":65}],22:[function(require,module,exports){
 // getting tag from 19.1.3.6 Object.prototype.toString()
-var cof = require('./_cof');
-var TAG = require('./_wks')('toStringTag');
-// ES3 wrong here
-var ARG = cof(function () { return arguments; }()) == 'Arguments';
+var cof = require('./_cof')
+  , TAG = require('./_wks')('toStringTag')
+  // ES3 wrong here
+  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
 
 // fallback for IE11 Script Access Denied error
-var tryGet = function (it, key) {
+var tryGet = function(it, key){
   try {
     return it[key];
-  } catch (e) { /* empty */ }
+  } catch(e){ /* empty */ }
 };
 
-module.exports = function (it) {
+module.exports = function(it){
   var O, T, B;
   return it === undefined ? 'Undefined' : it === null ? 'Null'
     // @@toStringTag case
@@ -355,101 +343,92 @@ module.exports = function (it) {
     // ES3 arguments fallback
     : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
 };
-
 },{"./_cof":23,"./_wks":69}],23:[function(require,module,exports){
 var toString = {}.toString;
 
-module.exports = function (it) {
+module.exports = function(it){
   return toString.call(it).slice(8, -1);
 };
-
 },{}],24:[function(require,module,exports){
-var core = module.exports = { version: '2.5.1' };
-if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
-
+var core = module.exports = {version: '2.4.0'};
+if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 },{}],25:[function(require,module,exports){
 'use strict';
-var $defineProperty = require('./_object-dp');
-var createDesc = require('./_property-desc');
+var $defineProperty = require('./_object-dp')
+  , createDesc      = require('./_property-desc');
 
-module.exports = function (object, index, value) {
-  if (index in object) $defineProperty.f(object, index, createDesc(0, value));
+module.exports = function(object, index, value){
+  if(index in object)$defineProperty.f(object, index, createDesc(0, value));
   else object[index] = value;
 };
-
 },{"./_object-dp":50,"./_property-desc":56}],26:[function(require,module,exports){
 // optional / simple context binding
 var aFunction = require('./_a-function');
-module.exports = function (fn, that, length) {
+module.exports = function(fn, that, length){
   aFunction(fn);
-  if (that === undefined) return fn;
-  switch (length) {
-    case 1: return function (a) {
+  if(that === undefined)return fn;
+  switch(length){
+    case 1: return function(a){
       return fn.call(that, a);
     };
-    case 2: return function (a, b) {
+    case 2: return function(a, b){
       return fn.call(that, a, b);
     };
-    case 3: return function (a, b, c) {
+    case 3: return function(a, b, c){
       return fn.call(that, a, b, c);
     };
   }
-  return function (/* ...args */) {
+  return function(/* ...args */){
     return fn.apply(that, arguments);
   };
 };
-
 },{"./_a-function":18}],27:[function(require,module,exports){
 // 7.2.1 RequireObjectCoercible(argument)
-module.exports = function (it) {
-  if (it == undefined) throw TypeError("Can't call method on  " + it);
+module.exports = function(it){
+  if(it == undefined)throw TypeError("Can't call method on  " + it);
   return it;
 };
-
 },{}],28:[function(require,module,exports){
 // Thank's IE8 for his funny defineProperty
-module.exports = !require('./_fails')(function () {
-  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
+module.exports = !require('./_fails')(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
 });
-
 },{"./_fails":32}],29:[function(require,module,exports){
-var isObject = require('./_is-object');
-var document = require('./_global').document;
-// typeof document.createElement is 'object' in old IE
-var is = isObject(document) && isObject(document.createElement);
-module.exports = function (it) {
+var isObject = require('./_is-object')
+  , document = require('./_global').document
+  // in old IE typeof document.createElement is 'object'
+  , is = isObject(document) && isObject(document.createElement);
+module.exports = function(it){
   return is ? document.createElement(it) : {};
 };
-
 },{"./_global":33,"./_is-object":40}],30:[function(require,module,exports){
 // IE 8- don't enum bug keys
 module.exports = (
   'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 ).split(',');
-
 },{}],31:[function(require,module,exports){
-var global = require('./_global');
-var core = require('./_core');
-var ctx = require('./_ctx');
-var hide = require('./_hide');
-var PROTOTYPE = 'prototype';
+var global    = require('./_global')
+  , core      = require('./_core')
+  , ctx       = require('./_ctx')
+  , hide      = require('./_hide')
+  , PROTOTYPE = 'prototype';
 
-var $export = function (type, name, source) {
-  var IS_FORCED = type & $export.F;
-  var IS_GLOBAL = type & $export.G;
-  var IS_STATIC = type & $export.S;
-  var IS_PROTO = type & $export.P;
-  var IS_BIND = type & $export.B;
-  var IS_WRAP = type & $export.W;
-  var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
-  var expProto = exports[PROTOTYPE];
-  var target = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE];
-  var key, own, out;
-  if (IS_GLOBAL) source = name;
-  for (key in source) {
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , IS_WRAP   = type & $export.W
+    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+    , expProto  = exports[PROTOTYPE]
+    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+    , key, own, out;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
     // contains in native
     own = !IS_FORCED && target && target[key] !== undefined;
-    if (own && key in exports) continue;
+    if(own && key in exports)continue;
     // export native or passed
     out = own ? target[key] : source[key];
     // prevent global pollution for namespaces
@@ -457,11 +436,11 @@ var $export = function (type, name, source) {
     // bind timers to global for call from export context
     : IS_BIND && own ? ctx(out, global)
     // wrap global constructors for prevent change them in library
-    : IS_WRAP && target[key] == out ? (function (C) {
-      var F = function (a, b, c) {
-        if (this instanceof C) {
-          switch (arguments.length) {
-            case 0: return new C();
+    : IS_WRAP && target[key] == out ? (function(C){
+      var F = function(a, b, c){
+        if(this instanceof C){
+          switch(arguments.length){
+            case 0: return new C;
             case 1: return new C(a);
             case 2: return new C(a, b);
           } return new C(a, b, c);
@@ -472,10 +451,10 @@ var $export = function (type, name, source) {
     // make static versions for prototype methods
     })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
     // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
-    if (IS_PROTO) {
+    if(IS_PROTO){
       (exports.virtual || (exports.virtual = {}))[key] = out;
       // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-      if (type & $export.R && expProto && !expProto[key]) hide(expProto, key, out);
+      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
     }
   }
 };
@@ -487,282 +466,259 @@ $export.P = 8;   // proto
 $export.B = 16;  // bind
 $export.W = 32;  // wrap
 $export.U = 64;  // safe
-$export.R = 128; // real proto method for `library`
+$export.R = 128; // real proto method for `library` 
 module.exports = $export;
-
 },{"./_core":24,"./_ctx":26,"./_global":33,"./_hide":35}],32:[function(require,module,exports){
-module.exports = function (exec) {
+module.exports = function(exec){
   try {
     return !!exec();
-  } catch (e) {
+  } catch(e){
     return true;
   }
 };
-
 },{}],33:[function(require,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self
-  // eslint-disable-next-line no-new-func
-  : Function('return this')();
-if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
-
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
 },{}],34:[function(require,module,exports){
 var hasOwnProperty = {}.hasOwnProperty;
-module.exports = function (it, key) {
+module.exports = function(it, key){
   return hasOwnProperty.call(it, key);
 };
-
 },{}],35:[function(require,module,exports){
-var dP = require('./_object-dp');
-var createDesc = require('./_property-desc');
-module.exports = require('./_descriptors') ? function (object, key, value) {
+var dP         = require('./_object-dp')
+  , createDesc = require('./_property-desc');
+module.exports = require('./_descriptors') ? function(object, key, value){
   return dP.f(object, key, createDesc(1, value));
-} : function (object, key, value) {
+} : function(object, key, value){
   object[key] = value;
   return object;
 };
-
 },{"./_descriptors":28,"./_object-dp":50,"./_property-desc":56}],36:[function(require,module,exports){
-var document = require('./_global').document;
-module.exports = document && document.documentElement;
-
+module.exports = require('./_global').document && document.documentElement;
 },{"./_global":33}],37:[function(require,module,exports){
-module.exports = !require('./_descriptors') && !require('./_fails')(function () {
-  return Object.defineProperty(require('./_dom-create')('div'), 'a', { get: function () { return 7; } }).a != 7;
+module.exports = !require('./_descriptors') && !require('./_fails')(function(){
+  return Object.defineProperty(require('./_dom-create')('div'), 'a', {get: function(){ return 7; }}).a != 7;
 });
-
 },{"./_descriptors":28,"./_dom-create":29,"./_fails":32}],38:[function(require,module,exports){
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = require('./_cof');
-// eslint-disable-next-line no-prototype-builtins
-module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
-
 },{"./_cof":23}],39:[function(require,module,exports){
 // check on default Array iterator
-var Iterators = require('./_iterators');
-var ITERATOR = require('./_wks')('iterator');
-var ArrayProto = Array.prototype;
+var Iterators  = require('./_iterators')
+  , ITERATOR   = require('./_wks')('iterator')
+  , ArrayProto = Array.prototype;
 
-module.exports = function (it) {
+module.exports = function(it){
   return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
 };
-
 },{"./_iterators":46,"./_wks":69}],40:[function(require,module,exports){
-module.exports = function (it) {
+module.exports = function(it){
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
-
 },{}],41:[function(require,module,exports){
 // call something on iterator step with safe closing on error
 var anObject = require('./_an-object');
-module.exports = function (iterator, fn, value, entries) {
+module.exports = function(iterator, fn, value, entries){
   try {
     return entries ? fn(anObject(value)[0], value[1]) : fn(value);
   // 7.4.6 IteratorClose(iterator, completion)
-  } catch (e) {
+  } catch(e){
     var ret = iterator['return'];
-    if (ret !== undefined) anObject(ret.call(iterator));
+    if(ret !== undefined)anObject(ret.call(iterator));
     throw e;
   }
 };
-
 },{"./_an-object":20}],42:[function(require,module,exports){
 'use strict';
-var create = require('./_object-create');
-var descriptor = require('./_property-desc');
-var setToStringTag = require('./_set-to-string-tag');
-var IteratorPrototype = {};
+var create         = require('./_object-create')
+  , descriptor     = require('./_property-desc')
+  , setToStringTag = require('./_set-to-string-tag')
+  , IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-require('./_hide')(IteratorPrototype, require('./_wks')('iterator'), function () { return this; });
+require('./_hide')(IteratorPrototype, require('./_wks')('iterator'), function(){ return this; });
 
-module.exports = function (Constructor, NAME, next) {
-  Constructor.prototype = create(IteratorPrototype, { next: descriptor(1, next) });
+module.exports = function(Constructor, NAME, next){
+  Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
   setToStringTag(Constructor, NAME + ' Iterator');
 };
-
 },{"./_hide":35,"./_object-create":49,"./_property-desc":56,"./_set-to-string-tag":58,"./_wks":69}],43:[function(require,module,exports){
 'use strict';
-var LIBRARY = require('./_library');
-var $export = require('./_export');
-var redefine = require('./_redefine');
-var hide = require('./_hide');
-var has = require('./_has');
-var Iterators = require('./_iterators');
-var $iterCreate = require('./_iter-create');
-var setToStringTag = require('./_set-to-string-tag');
-var getPrototypeOf = require('./_object-gpo');
-var ITERATOR = require('./_wks')('iterator');
-var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
-var FF_ITERATOR = '@@iterator';
-var KEYS = 'keys';
-var VALUES = 'values';
+var LIBRARY        = require('./_library')
+  , $export        = require('./_export')
+  , redefine       = require('./_redefine')
+  , hide           = require('./_hide')
+  , has            = require('./_has')
+  , Iterators      = require('./_iterators')
+  , $iterCreate    = require('./_iter-create')
+  , setToStringTag = require('./_set-to-string-tag')
+  , getPrototypeOf = require('./_object-gpo')
+  , ITERATOR       = require('./_wks')('iterator')
+  , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
+  , FF_ITERATOR    = '@@iterator'
+  , KEYS           = 'keys'
+  , VALUES         = 'values';
 
-var returnThis = function () { return this; };
+var returnThis = function(){ return this; };
 
-module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
+module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED){
   $iterCreate(Constructor, NAME, next);
-  var getMethod = function (kind) {
-    if (!BUGGY && kind in proto) return proto[kind];
-    switch (kind) {
-      case KEYS: return function keys() { return new Constructor(this, kind); };
-      case VALUES: return function values() { return new Constructor(this, kind); };
-    } return function entries() { return new Constructor(this, kind); };
+  var getMethod = function(kind){
+    if(!BUGGY && kind in proto)return proto[kind];
+    switch(kind){
+      case KEYS: return function keys(){ return new Constructor(this, kind); };
+      case VALUES: return function values(){ return new Constructor(this, kind); };
+    } return function entries(){ return new Constructor(this, kind); };
   };
-  var TAG = NAME + ' Iterator';
-  var DEF_VALUES = DEFAULT == VALUES;
-  var VALUES_BUG = false;
-  var proto = Base.prototype;
-  var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-  var $default = $native || getMethod(DEFAULT);
-  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
-  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
-  var methods, key, IteratorPrototype;
+  var TAG        = NAME + ' Iterator'
+    , DEF_VALUES = DEFAULT == VALUES
+    , VALUES_BUG = false
+    , proto      = Base.prototype
+    , $native    = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
+    , $default   = $native || getMethod(DEFAULT)
+    , $entries   = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined
+    , $anyNative = NAME == 'Array' ? proto.entries || $native : $native
+    , methods, key, IteratorPrototype;
   // Fix native
-  if ($anyNative) {
-    IteratorPrototype = getPrototypeOf($anyNative.call(new Base()));
-    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
+  if($anyNative){
+    IteratorPrototype = getPrototypeOf($anyNative.call(new Base));
+    if(IteratorPrototype !== Object.prototype){
       // Set @@toStringTag to native iterators
       setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if (!LIBRARY && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
+      if(!LIBRARY && !has(IteratorPrototype, ITERATOR))hide(IteratorPrototype, ITERATOR, returnThis);
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
-  if (DEF_VALUES && $native && $native.name !== VALUES) {
+  if(DEF_VALUES && $native && $native.name !== VALUES){
     VALUES_BUG = true;
-    $default = function values() { return $native.call(this); };
+    $default = function values(){ return $native.call(this); };
   }
   // Define iterator
-  if ((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+  if((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
     hide(proto, ITERATOR, $default);
   }
   // Plug for library
   Iterators[NAME] = $default;
-  Iterators[TAG] = returnThis;
-  if (DEFAULT) {
+  Iterators[TAG]  = returnThis;
+  if(DEFAULT){
     methods = {
-      values: DEF_VALUES ? $default : getMethod(VALUES),
-      keys: IS_SET ? $default : getMethod(KEYS),
+      values:  DEF_VALUES ? $default : getMethod(VALUES),
+      keys:    IS_SET     ? $default : getMethod(KEYS),
       entries: $entries
     };
-    if (FORCED) for (key in methods) {
-      if (!(key in proto)) redefine(proto, key, methods[key]);
+    if(FORCED)for(key in methods){
+      if(!(key in proto))redefine(proto, key, methods[key]);
     } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
   }
   return methods;
 };
-
 },{"./_export":31,"./_has":34,"./_hide":35,"./_iter-create":42,"./_iterators":46,"./_library":47,"./_object-gpo":52,"./_redefine":57,"./_set-to-string-tag":58,"./_wks":69}],44:[function(require,module,exports){
-var ITERATOR = require('./_wks')('iterator');
-var SAFE_CLOSING = false;
+var ITERATOR     = require('./_wks')('iterator')
+  , SAFE_CLOSING = false;
 
 try {
   var riter = [7][ITERATOR]();
-  riter['return'] = function () { SAFE_CLOSING = true; };
-  // eslint-disable-next-line no-throw-literal
-  Array.from(riter, function () { throw 2; });
-} catch (e) { /* empty */ }
+  riter['return'] = function(){ SAFE_CLOSING = true; };
+  Array.from(riter, function(){ throw 2; });
+} catch(e){ /* empty */ }
 
-module.exports = function (exec, skipClosing) {
-  if (!skipClosing && !SAFE_CLOSING) return false;
+module.exports = function(exec, skipClosing){
+  if(!skipClosing && !SAFE_CLOSING)return false;
   var safe = false;
   try {
-    var arr = [7];
-    var iter = arr[ITERATOR]();
-    iter.next = function () { return { done: safe = true }; };
-    arr[ITERATOR] = function () { return iter; };
+    var arr  = [7]
+      , iter = arr[ITERATOR]();
+    iter.next = function(){ return {done: safe = true}; };
+    arr[ITERATOR] = function(){ return iter; };
     exec(arr);
-  } catch (e) { /* empty */ }
+  } catch(e){ /* empty */ }
   return safe;
 };
-
 },{"./_wks":69}],45:[function(require,module,exports){
-module.exports = function (done, value) {
-  return { value: value, done: !!done };
+module.exports = function(done, value){
+  return {value: value, done: !!done};
 };
-
 },{}],46:[function(require,module,exports){
 module.exports = {};
-
 },{}],47:[function(require,module,exports){
 module.exports = true;
-
 },{}],48:[function(require,module,exports){
-var META = require('./_uid')('meta');
-var isObject = require('./_is-object');
-var has = require('./_has');
-var setDesc = require('./_object-dp').f;
-var id = 0;
-var isExtensible = Object.isExtensible || function () {
+var META     = require('./_uid')('meta')
+  , isObject = require('./_is-object')
+  , has      = require('./_has')
+  , setDesc  = require('./_object-dp').f
+  , id       = 0;
+var isExtensible = Object.isExtensible || function(){
   return true;
 };
-var FREEZE = !require('./_fails')(function () {
+var FREEZE = !require('./_fails')(function(){
   return isExtensible(Object.preventExtensions({}));
 });
-var setMeta = function (it) {
-  setDesc(it, META, { value: {
+var setMeta = function(it){
+  setDesc(it, META, {value: {
     i: 'O' + ++id, // object ID
     w: {}          // weak collections IDs
-  } });
+  }});
 };
-var fastKey = function (it, create) {
+var fastKey = function(it, create){
   // return primitive with prefix
-  if (!isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
-  if (!has(it, META)) {
+  if(!isObject(it))return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+  if(!has(it, META)){
     // can't set metadata to uncaught frozen object
-    if (!isExtensible(it)) return 'F';
+    if(!isExtensible(it))return 'F';
     // not necessary to add metadata
-    if (!create) return 'E';
+    if(!create)return 'E';
     // add missing metadata
     setMeta(it);
   // return object ID
   } return it[META].i;
 };
-var getWeak = function (it, create) {
-  if (!has(it, META)) {
+var getWeak = function(it, create){
+  if(!has(it, META)){
     // can't set metadata to uncaught frozen object
-    if (!isExtensible(it)) return true;
+    if(!isExtensible(it))return true;
     // not necessary to add metadata
-    if (!create) return false;
+    if(!create)return false;
     // add missing metadata
     setMeta(it);
   // return hash weak collections IDs
   } return it[META].w;
 };
 // add metadata on freeze-family methods calling
-var onFreeze = function (it) {
-  if (FREEZE && meta.NEED && isExtensible(it) && !has(it, META)) setMeta(it);
+var onFreeze = function(it){
+  if(FREEZE && meta.NEED && isExtensible(it) && !has(it, META))setMeta(it);
   return it;
 };
 var meta = module.exports = {
-  KEY: META,
-  NEED: false,
-  fastKey: fastKey,
-  getWeak: getWeak,
+  KEY:      META,
+  NEED:     false,
+  fastKey:  fastKey,
+  getWeak:  getWeak,
   onFreeze: onFreeze
 };
-
 },{"./_fails":32,"./_has":34,"./_is-object":40,"./_object-dp":50,"./_uid":68}],49:[function(require,module,exports){
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject = require('./_an-object');
-var dPs = require('./_object-dps');
-var enumBugKeys = require('./_enum-bug-keys');
-var IE_PROTO = require('./_shared-key')('IE_PROTO');
-var Empty = function () { /* empty */ };
-var PROTOTYPE = 'prototype';
+var anObject    = require('./_an-object')
+  , dPs         = require('./_object-dps')
+  , enumBugKeys = require('./_enum-bug-keys')
+  , IE_PROTO    = require('./_shared-key')('IE_PROTO')
+  , Empty       = function(){ /* empty */ }
+  , PROTOTYPE   = 'prototype';
 
 // Create object with fake `null` prototype: use iframe Object with cleared prototype
-var createDict = function () {
+var createDict = function(){
   // Thrash, waste and sodomy: IE GC bug
-  var iframe = require('./_dom-create')('iframe');
-  var i = enumBugKeys.length;
-  var lt = '<';
-  var gt = '>';
-  var iframeDocument;
+  var iframe = require('./_dom-create')('iframe')
+    , i      = enumBugKeys.length
+    , lt     = '<'
+    , gt     = '>'
+    , iframeDocument;
   iframe.style.display = 'none';
   require('./_html').appendChild(iframe);
   iframe.src = 'javascript:'; // eslint-disable-line no-script-url
@@ -773,15 +729,15 @@ var createDict = function () {
   iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
   iframeDocument.close();
   createDict = iframeDocument.F;
-  while (i--) delete createDict[PROTOTYPE][enumBugKeys[i]];
+  while(i--)delete createDict[PROTOTYPE][enumBugKeys[i]];
   return createDict();
 };
 
-module.exports = Object.create || function create(O, Properties) {
+module.exports = Object.create || function create(O, Properties){
   var result;
-  if (O !== null) {
+  if(O !== null){
     Empty[PROTOTYPE] = anObject(O);
-    result = new Empty();
+    result = new Empty;
     Empty[PROTOTYPE] = null;
     // add "__proto__" for Object.getPrototypeOf polyfill
     result[IE_PROTO] = O;
@@ -790,285 +746,261 @@ module.exports = Object.create || function create(O, Properties) {
 };
 
 },{"./_an-object":20,"./_dom-create":29,"./_enum-bug-keys":30,"./_html":36,"./_object-dps":51,"./_shared-key":59}],50:[function(require,module,exports){
-var anObject = require('./_an-object');
-var IE8_DOM_DEFINE = require('./_ie8-dom-define');
-var toPrimitive = require('./_to-primitive');
-var dP = Object.defineProperty;
+var anObject       = require('./_an-object')
+  , IE8_DOM_DEFINE = require('./_ie8-dom-define')
+  , toPrimitive    = require('./_to-primitive')
+  , dP             = Object.defineProperty;
 
-exports.f = require('./_descriptors') ? Object.defineProperty : function defineProperty(O, P, Attributes) {
+exports.f = require('./_descriptors') ? Object.defineProperty : function defineProperty(O, P, Attributes){
   anObject(O);
   P = toPrimitive(P, true);
   anObject(Attributes);
-  if (IE8_DOM_DEFINE) try {
+  if(IE8_DOM_DEFINE)try {
     return dP(O, P, Attributes);
-  } catch (e) { /* empty */ }
-  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
-  if ('value' in Attributes) O[P] = Attributes.value;
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
   return O;
 };
-
 },{"./_an-object":20,"./_descriptors":28,"./_ie8-dom-define":37,"./_to-primitive":67}],51:[function(require,module,exports){
-var dP = require('./_object-dp');
-var anObject = require('./_an-object');
-var getKeys = require('./_object-keys');
+var dP       = require('./_object-dp')
+  , anObject = require('./_an-object')
+  , getKeys  = require('./_object-keys');
 
-module.exports = require('./_descriptors') ? Object.defineProperties : function defineProperties(O, Properties) {
+module.exports = require('./_descriptors') ? Object.defineProperties : function defineProperties(O, Properties){
   anObject(O);
-  var keys = getKeys(Properties);
-  var length = keys.length;
-  var i = 0;
-  var P;
-  while (length > i) dP.f(O, P = keys[i++], Properties[P]);
+  var keys   = getKeys(Properties)
+    , length = keys.length
+    , i = 0
+    , P;
+  while(length > i)dP.f(O, P = keys[i++], Properties[P]);
   return O;
 };
-
 },{"./_an-object":20,"./_descriptors":28,"./_object-dp":50,"./_object-keys":54}],52:[function(require,module,exports){
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has = require('./_has');
-var toObject = require('./_to-object');
-var IE_PROTO = require('./_shared-key')('IE_PROTO');
-var ObjectProto = Object.prototype;
+var has         = require('./_has')
+  , toObject    = require('./_to-object')
+  , IE_PROTO    = require('./_shared-key')('IE_PROTO')
+  , ObjectProto = Object.prototype;
 
-module.exports = Object.getPrototypeOf || function (O) {
+module.exports = Object.getPrototypeOf || function(O){
   O = toObject(O);
-  if (has(O, IE_PROTO)) return O[IE_PROTO];
-  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
+  if(has(O, IE_PROTO))return O[IE_PROTO];
+  if(typeof O.constructor == 'function' && O instanceof O.constructor){
     return O.constructor.prototype;
   } return O instanceof Object ? ObjectProto : null;
 };
-
 },{"./_has":34,"./_shared-key":59,"./_to-object":66}],53:[function(require,module,exports){
-var has = require('./_has');
-var toIObject = require('./_to-iobject');
-var arrayIndexOf = require('./_array-includes')(false);
-var IE_PROTO = require('./_shared-key')('IE_PROTO');
+var has          = require('./_has')
+  , toIObject    = require('./_to-iobject')
+  , arrayIndexOf = require('./_array-includes')(false)
+  , IE_PROTO     = require('./_shared-key')('IE_PROTO');
 
-module.exports = function (object, names) {
-  var O = toIObject(object);
-  var i = 0;
-  var result = [];
-  var key;
-  for (key in O) if (key != IE_PROTO) has(O, key) && result.push(key);
+module.exports = function(object, names){
+  var O      = toIObject(object)
+    , i      = 0
+    , result = []
+    , key;
+  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
   // Don't enum bug & hidden keys
-  while (names.length > i) if (has(O, key = names[i++])) {
+  while(names.length > i)if(has(O, key = names[i++])){
     ~arrayIndexOf(result, key) || result.push(key);
   }
   return result;
 };
-
 },{"./_array-includes":21,"./_has":34,"./_shared-key":59,"./_to-iobject":64}],54:[function(require,module,exports){
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys = require('./_object-keys-internal');
-var enumBugKeys = require('./_enum-bug-keys');
+var $keys       = require('./_object-keys-internal')
+  , enumBugKeys = require('./_enum-bug-keys');
 
-module.exports = Object.keys || function keys(O) {
+module.exports = Object.keys || function keys(O){
   return $keys(O, enumBugKeys);
 };
-
 },{"./_enum-bug-keys":30,"./_object-keys-internal":53}],55:[function(require,module,exports){
 // most Object methods by ES6 should accept primitives
-var $export = require('./_export');
-var core = require('./_core');
-var fails = require('./_fails');
-module.exports = function (KEY, exec) {
-  var fn = (core.Object || {})[KEY] || Object[KEY];
-  var exp = {};
+var $export = require('./_export')
+  , core    = require('./_core')
+  , fails   = require('./_fails');
+module.exports = function(KEY, exec){
+  var fn  = (core.Object || {})[KEY] || Object[KEY]
+    , exp = {};
   exp[KEY] = exec(fn);
-  $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
+  $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
 };
-
 },{"./_core":24,"./_export":31,"./_fails":32}],56:[function(require,module,exports){
-module.exports = function (bitmap, value) {
+module.exports = function(bitmap, value){
   return {
-    enumerable: !(bitmap & 1),
+    enumerable  : !(bitmap & 1),
     configurable: !(bitmap & 2),
-    writable: !(bitmap & 4),
-    value: value
+    writable    : !(bitmap & 4),
+    value       : value
   };
 };
-
 },{}],57:[function(require,module,exports){
 module.exports = require('./_hide');
-
 },{"./_hide":35}],58:[function(require,module,exports){
-var def = require('./_object-dp').f;
-var has = require('./_has');
-var TAG = require('./_wks')('toStringTag');
+var def = require('./_object-dp').f
+  , has = require('./_has')
+  , TAG = require('./_wks')('toStringTag');
 
-module.exports = function (it, tag, stat) {
-  if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
+module.exports = function(it, tag, stat){
+  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
 };
-
 },{"./_has":34,"./_object-dp":50,"./_wks":69}],59:[function(require,module,exports){
-var shared = require('./_shared')('keys');
-var uid = require('./_uid');
-module.exports = function (key) {
+var shared = require('./_shared')('keys')
+  , uid    = require('./_uid');
+module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
-
 },{"./_shared":60,"./_uid":68}],60:[function(require,module,exports){
-var global = require('./_global');
-var SHARED = '__core-js_shared__';
-var store = global[SHARED] || (global[SHARED] = {});
-module.exports = function (key) {
+var global = require('./_global')
+  , SHARED = '__core-js_shared__'
+  , store  = global[SHARED] || (global[SHARED] = {});
+module.exports = function(key){
   return store[key] || (store[key] = {});
 };
-
 },{"./_global":33}],61:[function(require,module,exports){
-var toInteger = require('./_to-integer');
-var defined = require('./_defined');
+var toInteger = require('./_to-integer')
+  , defined   = require('./_defined');
 // true  -> String#at
 // false -> String#codePointAt
-module.exports = function (TO_STRING) {
-  return function (that, pos) {
-    var s = String(defined(that));
-    var i = toInteger(pos);
-    var l = s.length;
-    var a, b;
-    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
+module.exports = function(TO_STRING){
+  return function(that, pos){
+    var s = String(defined(that))
+      , i = toInteger(pos)
+      , l = s.length
+      , a, b;
+    if(i < 0 || i >= l)return TO_STRING ? '' : undefined;
     a = s.charCodeAt(i);
     return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
       ? TO_STRING ? s.charAt(i) : a
       : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
   };
 };
-
 },{"./_defined":27,"./_to-integer":63}],62:[function(require,module,exports){
-var toInteger = require('./_to-integer');
-var max = Math.max;
-var min = Math.min;
-module.exports = function (index, length) {
+var toInteger = require('./_to-integer')
+  , max       = Math.max
+  , min       = Math.min;
+module.exports = function(index, length){
   index = toInteger(index);
   return index < 0 ? max(index + length, 0) : min(index, length);
 };
-
 },{"./_to-integer":63}],63:[function(require,module,exports){
 // 7.1.4 ToInteger
-var ceil = Math.ceil;
-var floor = Math.floor;
-module.exports = function (it) {
+var ceil  = Math.ceil
+  , floor = Math.floor;
+module.exports = function(it){
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
-
 },{}],64:[function(require,module,exports){
 // to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = require('./_iobject');
-var defined = require('./_defined');
-module.exports = function (it) {
+var IObject = require('./_iobject')
+  , defined = require('./_defined');
+module.exports = function(it){
   return IObject(defined(it));
 };
-
 },{"./_defined":27,"./_iobject":38}],65:[function(require,module,exports){
 // 7.1.15 ToLength
-var toInteger = require('./_to-integer');
-var min = Math.min;
-module.exports = function (it) {
+var toInteger = require('./_to-integer')
+  , min       = Math.min;
+module.exports = function(it){
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
-
 },{"./_to-integer":63}],66:[function(require,module,exports){
 // 7.1.13 ToObject(argument)
 var defined = require('./_defined');
-module.exports = function (it) {
+module.exports = function(it){
   return Object(defined(it));
 };
-
 },{"./_defined":27}],67:[function(require,module,exports){
 // 7.1.1 ToPrimitive(input [, PreferredType])
 var isObject = require('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
 // and the second argument - flag - preferred type is a string
-module.exports = function (it, S) {
-  if (!isObject(it)) return it;
+module.exports = function(it, S){
+  if(!isObject(it))return it;
   var fn, val;
-  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
   throw TypeError("Can't convert object to primitive value");
 };
-
 },{"./_is-object":40}],68:[function(require,module,exports){
-var id = 0;
-var px = Math.random();
-module.exports = function (key) {
+var id = 0
+  , px = Math.random();
+module.exports = function(key){
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
-
 },{}],69:[function(require,module,exports){
-var store = require('./_shared')('wks');
-var uid = require('./_uid');
-var Symbol = require('./_global').Symbol;
-var USE_SYMBOL = typeof Symbol == 'function';
+var store      = require('./_shared')('wks')
+  , uid        = require('./_uid')
+  , Symbol     = require('./_global').Symbol
+  , USE_SYMBOL = typeof Symbol == 'function';
 
-var $exports = module.exports = function (name) {
+var $exports = module.exports = function(name){
   return store[name] || (store[name] =
     USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
 };
 
 $exports.store = store;
-
 },{"./_global":33,"./_shared":60,"./_uid":68}],70:[function(require,module,exports){
-var classof = require('./_classof');
-var ITERATOR = require('./_wks')('iterator');
-var Iterators = require('./_iterators');
-module.exports = require('./_core').getIteratorMethod = function (it) {
-  if (it != undefined) return it[ITERATOR]
+var classof   = require('./_classof')
+  , ITERATOR  = require('./_wks')('iterator')
+  , Iterators = require('./_iterators');
+module.exports = require('./_core').getIteratorMethod = function(it){
+  if(it != undefined)return it[ITERATOR]
     || it['@@iterator']
     || Iterators[classof(it)];
 };
-
 },{"./_classof":22,"./_core":24,"./_iterators":46,"./_wks":69}],71:[function(require,module,exports){
-var anObject = require('./_an-object');
-var get = require('./core.get-iterator-method');
-module.exports = require('./_core').getIterator = function (it) {
+var anObject = require('./_an-object')
+  , get      = require('./core.get-iterator-method');
+module.exports = require('./_core').getIterator = function(it){
   var iterFn = get(it);
-  if (typeof iterFn != 'function') throw TypeError(it + ' is not iterable!');
+  if(typeof iterFn != 'function')throw TypeError(it + ' is not iterable!');
   return anObject(iterFn.call(it));
 };
-
 },{"./_an-object":20,"./_core":24,"./core.get-iterator-method":70}],72:[function(require,module,exports){
-var classof = require('./_classof');
-var ITERATOR = require('./_wks')('iterator');
-var Iterators = require('./_iterators');
-module.exports = require('./_core').isIterable = function (it) {
+var classof   = require('./_classof')
+  , ITERATOR  = require('./_wks')('iterator')
+  , Iterators = require('./_iterators');
+module.exports = require('./_core').isIterable = function(it){
   var O = Object(it);
   return O[ITERATOR] !== undefined
     || '@@iterator' in O
-    // eslint-disable-next-line no-prototype-builtins
     || Iterators.hasOwnProperty(classof(O));
 };
-
 },{"./_classof":22,"./_core":24,"./_iterators":46,"./_wks":69}],73:[function(require,module,exports){
 'use strict';
-var ctx = require('./_ctx');
-var $export = require('./_export');
-var toObject = require('./_to-object');
-var call = require('./_iter-call');
-var isArrayIter = require('./_is-array-iter');
-var toLength = require('./_to-length');
-var createProperty = require('./_create-property');
-var getIterFn = require('./core.get-iterator-method');
+var ctx            = require('./_ctx')
+  , $export        = require('./_export')
+  , toObject       = require('./_to-object')
+  , call           = require('./_iter-call')
+  , isArrayIter    = require('./_is-array-iter')
+  , toLength       = require('./_to-length')
+  , createProperty = require('./_create-property')
+  , getIterFn      = require('./core.get-iterator-method');
 
-$export($export.S + $export.F * !require('./_iter-detect')(function (iter) { Array.from(iter); }), 'Array', {
+$export($export.S + $export.F * !require('./_iter-detect')(function(iter){ Array.from(iter); }), 'Array', {
   // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
-  from: function from(arrayLike /* , mapfn = undefined, thisArg = undefined */) {
-    var O = toObject(arrayLike);
-    var C = typeof this == 'function' ? this : Array;
-    var aLen = arguments.length;
-    var mapfn = aLen > 1 ? arguments[1] : undefined;
-    var mapping = mapfn !== undefined;
-    var index = 0;
-    var iterFn = getIterFn(O);
-    var length, result, step, iterator;
-    if (mapping) mapfn = ctx(mapfn, aLen > 2 ? arguments[2] : undefined, 2);
+  from: function from(arrayLike/*, mapfn = undefined, thisArg = undefined*/){
+    var O       = toObject(arrayLike)
+      , C       = typeof this == 'function' ? this : Array
+      , aLen    = arguments.length
+      , mapfn   = aLen > 1 ? arguments[1] : undefined
+      , mapping = mapfn !== undefined
+      , index   = 0
+      , iterFn  = getIterFn(O)
+      , length, result, step, iterator;
+    if(mapping)mapfn = ctx(mapfn, aLen > 2 ? arguments[2] : undefined, 2);
     // if object isn't iterable or it's array with default iterator - use simple case
-    if (iterFn != undefined && !(C == Array && isArrayIter(iterFn))) {
-      for (iterator = iterFn.call(O), result = new C(); !(step = iterator.next()).done; index++) {
+    if(iterFn != undefined && !(C == Array && isArrayIter(iterFn))){
+      for(iterator = iterFn.call(O), result = new C; !(step = iterator.next()).done; index++){
         createProperty(result, index, mapping ? call(iterator, mapfn, [step.value, index], true) : step.value);
       }
     } else {
       length = toLength(O.length);
-      for (result = new C(length); length > index; index++) {
+      for(result = new C(length); length > index; index++){
         createProperty(result, index, mapping ? mapfn(O[index], index) : O[index]);
       }
     }
@@ -1079,30 +1011,30 @@ $export($export.S + $export.F * !require('./_iter-detect')(function (iter) { Arr
 
 },{"./_create-property":25,"./_ctx":26,"./_export":31,"./_is-array-iter":39,"./_iter-call":41,"./_iter-detect":44,"./_to-length":65,"./_to-object":66,"./core.get-iterator-method":70}],74:[function(require,module,exports){
 'use strict';
-var addToUnscopables = require('./_add-to-unscopables');
-var step = require('./_iter-step');
-var Iterators = require('./_iterators');
-var toIObject = require('./_to-iobject');
+var addToUnscopables = require('./_add-to-unscopables')
+  , step             = require('./_iter-step')
+  , Iterators        = require('./_iterators')
+  , toIObject        = require('./_to-iobject');
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
 // 22.1.3.30 Array.prototype[@@iterator]()
-module.exports = require('./_iter-define')(Array, 'Array', function (iterated, kind) {
+module.exports = require('./_iter-define')(Array, 'Array', function(iterated, kind){
   this._t = toIObject(iterated); // target
   this._i = 0;                   // next index
   this._k = kind;                // kind
 // 22.1.5.2.1 %ArrayIteratorPrototype%.next()
-}, function () {
-  var O = this._t;
-  var kind = this._k;
-  var index = this._i++;
-  if (!O || index >= O.length) {
+}, function(){
+  var O     = this._t
+    , kind  = this._k
+    , index = this._i++;
+  if(!O || index >= O.length){
     this._t = undefined;
     return step(1);
   }
-  if (kind == 'keys') return step(0, index);
-  if (kind == 'values') return step(0, O[index]);
+  if(kind == 'keys'  )return step(0, index);
+  if(kind == 'values')return step(0, O[index]);
   return step(0, [index, O[index]]);
 }, 'values');
 
@@ -1112,63 +1044,52 @@ Iterators.Arguments = Iterators.Array;
 addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
-
 },{"./_add-to-unscopables":19,"./_iter-define":43,"./_iter-step":45,"./_iterators":46,"./_to-iobject":64}],75:[function(require,module,exports){
 var $export = require('./_export');
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !require('./_descriptors'), 'Object', { defineProperty: require('./_object-dp').f });
-
+$export($export.S + $export.F * !require('./_descriptors'), 'Object', {defineProperty: require('./_object-dp').f});
 },{"./_descriptors":28,"./_export":31,"./_object-dp":50}],76:[function(require,module,exports){
 // 19.1.2.5 Object.freeze(O)
-var isObject = require('./_is-object');
-var meta = require('./_meta').onFreeze;
+var isObject = require('./_is-object')
+  , meta     = require('./_meta').onFreeze;
 
-require('./_object-sap')('freeze', function ($freeze) {
-  return function freeze(it) {
+require('./_object-sap')('freeze', function($freeze){
+  return function freeze(it){
     return $freeze && isObject(it) ? $freeze(meta(it)) : it;
   };
 });
-
 },{"./_is-object":40,"./_meta":48,"./_object-sap":55}],77:[function(require,module,exports){
 'use strict';
-var $at = require('./_string-at')(true);
+var $at  = require('./_string-at')(true);
 
 // 21.1.3.27 String.prototype[@@iterator]()
-require('./_iter-define')(String, 'String', function (iterated) {
+require('./_iter-define')(String, 'String', function(iterated){
   this._t = String(iterated); // target
   this._i = 0;                // next index
 // 21.1.5.2.1 %StringIteratorPrototype%.next()
-}, function () {
-  var O = this._t;
-  var index = this._i;
-  var point;
-  if (index >= O.length) return { value: undefined, done: true };
+}, function(){
+  var O     = this._t
+    , index = this._i
+    , point;
+  if(index >= O.length)return {value: undefined, done: true};
   point = $at(O, index);
   this._i += point.length;
-  return { value: point, done: false };
+  return {value: point, done: false};
 });
-
 },{"./_iter-define":43,"./_string-at":61}],78:[function(require,module,exports){
 require('./es6.array.iterator');
-var global = require('./_global');
-var hide = require('./_hide');
-var Iterators = require('./_iterators');
-var TO_STRING_TAG = require('./_wks')('toStringTag');
+var global        = require('./_global')
+  , hide          = require('./_hide')
+  , Iterators     = require('./_iterators')
+  , TO_STRING_TAG = require('./_wks')('toStringTag');
 
-var DOMIterables = ('CSSRuleList,CSSStyleDeclaration,CSSValueList,ClientRectList,DOMRectList,DOMStringList,' +
-  'DOMTokenList,DataTransferItemList,FileList,HTMLAllCollection,HTMLCollection,HTMLFormElement,HTMLSelectElement,' +
-  'MediaList,MimeTypeArray,NamedNodeMap,NodeList,PaintRequestList,Plugin,PluginArray,SVGLengthList,SVGNumberList,' +
-  'SVGPathSegList,SVGPointList,SVGStringList,SVGTransformList,SourceBufferList,StyleSheetList,TextTrackCueList,' +
-  'TextTrackList,TouchList').split(',');
-
-for (var i = 0; i < DOMIterables.length; i++) {
-  var NAME = DOMIterables[i];
-  var Collection = global[NAME];
-  var proto = Collection && Collection.prototype;
-  if (proto && !proto[TO_STRING_TAG]) hide(proto, TO_STRING_TAG, NAME);
+for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
+  var NAME       = collections[i]
+    , Collection = global[NAME]
+    , proto      = Collection && Collection.prototype;
+  if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
   Iterators[NAME] = Iterators.Array;
 }
-
 },{"./_global":33,"./_hide":35,"./_iterators":46,"./_wks":69,"./es6.array.iterator":74}],79:[function(require,module,exports){
 function getRelocatable(re) {
   // In the future, this could use a WeakMap instead of an expando.
@@ -1306,7 +1227,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.controlWordRegex = undefined;
+exports.controlWordRegex = exports.combiningDiacriticalMarksEndRegex = undefined;
 
 var _classCallCheck2 = require("babel-runtime/helpers/classCallCheck");
 
@@ -1365,10 +1286,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var commentRegexString = "%[^\n]*[\n]";
 var controlWordRegexString = "\\\\[a-zA-Z@]+";
 var controlSymbolRegexString = "\\\\[^\uD800-\uDFFF]";
+var combiningDiacriticalMarkString = "[\u0300-\u036F]";
+var combiningDiacriticalMarksEndRegex = exports.combiningDiacriticalMarksEndRegex = new RegExp(combiningDiacriticalMarkString + "+$");
 var tokenRegex = new RegExp("([ \r\n\t]+)|" + ( // whitespace
-"(" + commentRegexString + "|") + // comments
-"[!-\\[\\]-\u2027\u202A-\uD7FF\uF900-\uFFFF]" + // single codepoint
-"|[\uD800-\uDBFF][\uDC00-\uDFFF]" + // surrogate pair
+"(" + commentRegexString) + // comments
+"|[!-\\[\\]-\u2027\u202A-\uD7FF\uF900-\uFFFF]" + ( // single codepoint
+combiningDiacriticalMarkString + "*") + // ...plus accents
+"|[\uD800-\uDBFF][\uDC00-\uDFFF]" + ( // surrogate pair
+combiningDiacriticalMarkString + "*") + // ...plus accents
 "|\\\\verb\\*([^]).*?\\3" + // \verb*
 "|\\\\verb([^*a-zA-Z]).*?\\4" + ( // \verb unstarred
 "|" + controlWordRegexString) + ( // \macroName
@@ -1387,6 +1312,7 @@ var Lexer = function () {
     function Lexer(input) {
         (0, _classCallCheck3.default)(this, Lexer);
 
+        // Separate accents from characters
         this.input = input;
         this.pos = 0;
     }
@@ -1465,21 +1391,32 @@ var _objectAssign2 = _interopRequireDefault(_objectAssign);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var MacroExpander = function () {
-    function MacroExpander(input, macros) {
+    function MacroExpander(input, macros, mode) {
         (0, _classCallCheck3.default)(this, MacroExpander);
 
         this.lexer = new _Lexer2.default(input);
         this.macros = (0, _objectAssign2.default)({}, _macros2.default, macros);
+        this.mode = mode;
         this.stack = []; // contains tokens in REVERSE order
     }
 
     /**
-     * Returns the topmost token on the stack, without expanding it.
-     * Similar in behavior to TeX's `\futurelet`.
+     * Switches between "text" and "math" modes.
      */
 
 
     (0, _createClass3.default)(MacroExpander, [{
+        key: "switchMode",
+        value: function switchMode(newMode) {
+            this.mode = newMode;
+        }
+
+        /**
+         * Returns the topmost token on the stack, without expanding it.
+         * Similar in behavior to TeX's `\futurelet`.
+         */
+
+    }, {
         key: "future",
         value: function future() {
             if (this.stack.length === 0) {
@@ -1738,7 +1675,7 @@ var MacroExpander = function () {
 
 exports.default = MacroExpander;
 
-},{"./Lexer":81,"./ParseError":84,"./Token":90,"./macros":120,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/toConsumableArray":11,"object-assign":80}],83:[function(require,module,exports){
+},{"./Lexer":81,"./ParseError":84,"./Token":90,"./macros":123,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9,"babel-runtime/helpers/toConsumableArray":11,"object-assign":80}],83:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2208,8 +2145,6 @@ var _classCallCheck2 = require("babel-runtime/helpers/classCallCheck");
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _Token = require("./Token");
-
 var _SourceLocation = require("./SourceLocation");
 
 var _SourceLocation2 = _interopRequireDefault(_SourceLocation);
@@ -2227,21 +2162,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var ParseNode = function ParseNode(type, // type of node, like e.g. "ordgroup"
 value, // type-specific representation of the node
 mode, // parse mode in action for this node, "math" or "text"
-firstToken, // first token of the input for this node,
-lastToken) // last token of the input for this node,
-// will default to firstToken if unset
+first, // first token or node of the input for
+last) // last token or node of the input for this
+// node, will default to firstToken if unset
 {
     (0, _classCallCheck3.default)(this, ParseNode);
 
     this.type = type;
     this.value = value;
     this.mode = mode;
-    this.loc = _SourceLocation2.default.range(firstToken, lastToken);
+    this.loc = _SourceLocation2.default.range(first, last);
 };
 
 exports.default = ParseNode;
 
-},{"./SourceLocation":88,"./Token":90,"babel-runtime/helpers/classCallCheck":8}],86:[function(require,module,exports){
+},{"./SourceLocation":88,"babel-runtime/helpers/classCallCheck":8}],86:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2278,7 +2213,15 @@ var _utils2 = _interopRequireDefault(_utils);
 
 var _units = require("./units");
 
-var _unicodeRegexes = require("./unicodeRegexes");
+var _unicodeScripts = require("./unicodeScripts");
+
+var _unicodeAccents = require("./unicodeAccents");
+
+var _unicodeAccents2 = _interopRequireDefault(_unicodeAccents);
+
+var _unicodeSymbols = require("./unicodeSymbols");
+
+var _unicodeSymbols2 = _interopRequireDefault(_unicodeSymbols);
 
 var _ParseNode = require("./ParseNode");
 
@@ -2287,6 +2230,14 @@ var _ParseNode2 = _interopRequireDefault(_ParseNode);
 var _ParseError = require("./ParseError");
 
 var _ParseError2 = _interopRequireDefault(_ParseError);
+
+var _Lexer = require("./Lexer.js");
+
+var _Settings = require("./Settings");
+
+var _Settings2 = _interopRequireDefault(_Settings);
+
+var _Token = require("./Token");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2324,57 +2275,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * standalone object which can be used as an argument to another function.
  */
 
-/* TODO: Uncomment when porting to flow.
-type ParsedType = "fn" | "arg" | "$"
-type ParsedFunc = {|
-    type: "fn",
-    result: string, // Function name defined via defineFunction (e.g. "\\frac").
-    token: Token,
-|};
-type ParsedArg = {|
-    type: "arg",
-    result: ParseNode,
-    token: Token,
-|};
-type ParsedDollar = {|
-    // Math mode switch
-    type: "$",
-    result: "$",
-    token: Token,
-|};
-type ParsedFuncOrArgOrDollar = ParsedFunc | ParsedArg | ParsedDollar;
-*/
-
-/**
- * @param {ParseNode} result
- * @param {Token} token
- * @return {ParsedArg}
- */
+/* eslint no-constant-condition:0 */
+/* eslint no-console:0 */
 function newArgument(result, token) {
     return { type: "arg", result: result, token: token };
 }
 
-/**
- * @param {Token} token
- * @return {ParsedFunc}
- */
-/* eslint no-constant-condition:0 */
 function newFunction(token) {
     return { type: "fn", result: token.text, token: token };
 }
 
-/**
- * @param {Token} token
- * @return {ParsedDollar}
- */
 function newDollar(token) {
     return { type: "$", result: "$", token: token };
 }
 
-/**
- * @param {ParsedFuncOrArgOrDollar} parsed
- * @return {ParsedFuncOrArg}
- */
 function assertFuncOrArg(parsed) {
     if (parsed.type === "$") {
         throw new _ParseError2.default("Unexpected $", parsed.token);
@@ -2386,9 +2300,11 @@ var Parser = function () {
     function Parser(input, settings) {
         (0, _classCallCheck3.default)(this, Parser);
 
+        // Start in math mode
+        this.mode = "math";
         // Create a new macro expander (gullet) and (indirectly via that) also a
         // new lexer (mouth) for this parser (stomach, in the language of TeX)
-        this.gullet = new _MacroExpander2.default(input, settings.macros);
+        this.gullet = new _MacroExpander2.default(input, settings.macros, this.mode);
         // Use old \color behavior (same as LaTeX's \textcolor) if requested.
         // We do this after the macros object has been copied by MacroExpander.
         if (settings.colorIsTextColor) {
@@ -2403,19 +2319,18 @@ var Parser = function () {
     /**
      * Checks a result to make sure it has the right type, and throws an
      * appropriate error otherwise.
-     *
-     * @param {boolean=} consume whether to consume the expected token,
-     *                           defaults to true
      */
 
 
     (0, _createClass3.default)(Parser, [{
         key: "expect",
-        value: function expect(text, consume) {
+        value: function expect(text) {
+            var consume = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
             if (this.nextToken.text !== text) {
                 throw new _ParseError2.default("Expected '" + text + "', got '" + this.nextToken.text + "'", this.nextToken);
             }
-            if (consume !== false) {
+            if (consume) {
                 this.consume();
             }
         }
@@ -2439,19 +2354,17 @@ var Parser = function () {
         key: "switchMode",
         value: function switchMode(newMode) {
             this.mode = newMode;
+            this.gullet.switchMode(newMode);
         }
 
         /**
          * Main parsing function, which parses an entire input.
-         *
-         * @return {Array.<ParseNode>}
          */
 
     }, {
         key: "parse",
         value: function parse() {
             // Try to parse the input
-            this.mode = "math";
             this.consume();
             var parse = this.parseInput();
             return parse;
@@ -2477,15 +2390,13 @@ var Parser = function () {
         /**
          * Parses an "expression", which is a list of atoms.
          *
-         * @param {boolean} breakOnInfix  Should the parsing stop when we hit infix
-         *                  nodes? This happens when functions have higher precendence
-         *                  than infix nodes in implicit parses.
+         * `breakOnInfix`: Should the parsing stop when we hit infix nodes? This
+         *                 happens when functions have higher precendence han infix
+         *                 nodes in implicit parses.
          *
-         * @param {?string} breakOnTokenText  The text of the token that the expression
-         *                  should end with, or `null` if something else should end the
-         *                  expression.
-         *
-         * @return {Array<ParseNode>}
+         * `breakOnTokenText`: The text of the token that the expression should end
+         *                     with, or `null` if something else should end the
+         *                     expression.
          */
         value: function parseExpression(breakOnInfix, breakOnTokenText) {
             var body = [];
@@ -2527,9 +2438,6 @@ var Parser = function () {
          *
          * There can only be one infix operator per group.  If there's more than one
          * then the expression is ambiguous.  This can be resolved by adding {}.
-         *
-         * @param {Array<ParseNode>} body
-         * @return {Array<ParseNode>}
          */
 
     }, {
@@ -2549,7 +2457,7 @@ var Parser = function () {
                 }
             }
 
-            if (overIndex !== -1) {
+            if (overIndex !== -1 && funcName) {
                 var numerNode = void 0;
                 var denomNode = void 0;
 
@@ -2583,8 +2491,6 @@ var Parser = function () {
 
         /**
          * Handle a subscript or superscript with nice errors.
-         * @param {string} name For error reporting.
-         * @return {ParsedNode}
          */
         value: function handleSupSubscript(name) {
             var symbolToken = this.nextToken;
@@ -2605,14 +2511,14 @@ var Parser = function () {
             if (arg.type === "fn") {
                 // ^ and _ have a greediness, so handle interactions with functions'
                 // greediness
-                var funcGreediness = _functions2.default[group.result].greediness;
+                var funcGreediness = _functions2.default[arg.result].greediness;
                 if (funcGreediness > Parser.SUPSUB_GREEDINESS) {
                     return this.parseGivenFunction(group);
                 } else {
-                    throw new _ParseError2.default("Got function '" + group.result + "' with no arguments " + "as " + name, symbolToken);
+                    throw new _ParseError2.default("Got function '" + arg.result + "' with no arguments " + "as " + name, symbolToken);
                 }
             } else {
-                return group.result;
+                return arg.result;
             }
         }
 
@@ -2648,9 +2554,6 @@ var Parser = function () {
 
         /**
          * Parses a group with optional super/subscripts.
-         *
-         * @param {"]" | "}"} breakOnTokenText - character to stop parsing the group on.
-         * @return {?ParseNode}
          */
 
     }, {
@@ -2760,9 +2663,6 @@ var Parser = function () {
          * implicit grouping after it until the end of the group. E.g.
          *   small text {\Large large text} small text again
          * It is also used for \left and \right to get the correct grouping.
-         *
-         * @param {"]" | "}"} breakOnTokenText - character to stop parsing the group on.
-         * @return {?ParseNode}
          */
         value: function parseImplicitGroup(breakOnTokenText) {
             var start = this.parseSymbol();
@@ -2770,23 +2670,47 @@ var Parser = function () {
             if (start == null) {
                 // If we didn't get anything we handle, fall back to parseFunction
                 return this.parseFunction();
+            } else if (start.type === "arg") {
+                // Defer to parseGivenFunction if it's not a function we handle
+                return this.parseGivenFunction(start);
             }
 
             var func = start.result;
 
-            if (func === "\\left") {
+            if (func === "$") {
+                if (this.mode === "math") {
+                    throw new _ParseError2.default("$ within math mode");
+                }
+                var outerMode = this.mode;
+                this.switchMode("math");
+                // Expand next symbol now that we're in math mode.
+                this.consume();
+                var body = this.parseExpression(false, "$");
+                // We can't expand the next symbol after the $ until after
+                // switching modes back.  So don't consume within expect.
+                this.expect("$", false);
+                this.switchMode(outerMode);
+                this.consume();
+                return new _ParseNode2.default("styling", {
+                    style: "text",
+                    value: body
+                }, "math");
+            } else if (func === "\\left") {
                 // If we see a left:
                 // Parse the entire left function (including the delimiter)
                 var left = this.parseGivenFunction(start);
                 // Parse out the implicit body
                 ++this.leftrightDepth;
-                var body = this.parseExpression(false);
+                var _body = this.parseExpression(false);
                 --this.leftrightDepth;
                 // Check the next token
                 this.expect("\\right", false);
                 var right = this.parseFunction();
+                if (!right) {
+                    throw new _ParseError2.default('failed to parse function after \\right');
+                }
                 return new _ParseNode2.default("leftright", {
-                    body: body,
+                    body: _body,
                     left: left.value.value,
                     right: right.value.value
                 }, this.mode);
@@ -2794,12 +2718,12 @@ var Parser = function () {
                 // begin...end is similar to left...right
                 var begin = this.parseGivenFunction(start);
                 var envName = begin.value.name;
-                if (!_environments2.default.has(envName)) {
+                if (!_environments2.default.hasOwnProperty(envName)) {
                     throw new _ParseError2.default("No such environment: " + envName, begin.value.nameGroup);
                 }
                 // Build the environment object. Arguments and other information will
                 // be made available to the begin and end methods using properties.
-                var env = _environments2.default.get(envName);
+                var env = _environments2.default[envName];
 
                 var _parseArguments = this.parseArguments("\\begin{" + envName + "}", env),
                     args = _parseArguments.args,
@@ -2810,48 +2734,49 @@ var Parser = function () {
                     envName: envName,
                     parser: this
                 };
-                var result = env.handler(context, args, optArgs);
+                var _result = env.handler(context, args, optArgs);
                 this.expect("\\end", false);
                 var endNameToken = this.nextToken;
                 var end = this.parseFunction();
-                if (end.value.name !== envName) {
+                if (!end) {
+                    throw new _ParseError2.default("failed to parse function after \\end");
+                } else if (end.value.name !== envName) {
                     throw new _ParseError2.default("Mismatch: \\begin{" + envName + "} matched " + "by \\end{" + end.value.name + "}", endNameToken);
                 }
-                result.position = end.position;
-                return result;
+                return _result;
             } else if (_utils2.default.contains(Parser.sizeFuncs, func)) {
                 // If we see a sizing function, parse out the implicit body
                 this.consumeSpaces();
-                var _body = this.parseExpression(false, breakOnTokenText);
+                var _body2 = this.parseExpression(false, breakOnTokenText);
                 return new _ParseNode2.default("sizing", {
                     // Figure out what size to use based on the list of functions above
                     size: _utils2.default.indexOf(Parser.sizeFuncs, func) + 1,
-                    value: _body
+                    value: _body2
                 }, this.mode);
             } else if (_utils2.default.contains(Parser.styleFuncs, func)) {
                 // If we see a styling function, parse out the implicit body
                 this.consumeSpaces();
-                var _body2 = this.parseExpression(true, breakOnTokenText);
+                var _body3 = this.parseExpression(true, breakOnTokenText);
                 return new _ParseNode2.default("styling", {
                     // Figure out what style to use by pulling out the style from
                     // the function name
                     style: func.slice(1, func.length - 5),
-                    value: _body2
+                    value: _body3
                 }, this.mode);
             } else if (func in Parser.oldFontFuncs) {
                 var style = Parser.oldFontFuncs[func];
                 // If we see an old font function, parse out the implicit body
                 this.consumeSpaces();
-                var _body3 = this.parseExpression(true, breakOnTokenText);
+                var _body4 = this.parseExpression(true, breakOnTokenText);
                 if (style.slice(0, 4) === 'text') {
                     return new _ParseNode2.default("text", {
                         style: style,
-                        body: new _ParseNode2.default("ordgroup", _body3, this.mode)
+                        body: new _ParseNode2.default("ordgroup", _body4, this.mode)
                     }, this.mode);
                 } else {
                     return new _ParseNode2.default("font", {
                         font: style,
-                        body: new _ParseNode2.default("ordgroup", _body3, this.mode)
+                        body: new _ParseNode2.default("ordgroup", _body4, this.mode)
                     }, this.mode);
                 }
             } else if (func === "\\color") {
@@ -2860,26 +2785,12 @@ var Parser = function () {
                 if (!color) {
                     throw new _ParseError2.default("\\color not followed by color");
                 }
-                var _body4 = this.parseExpression(true, breakOnTokenText);
+                var _body5 = this.parseExpression(true, breakOnTokenText);
                 return new _ParseNode2.default("color", {
                     type: "color",
                     color: color.result.value,
-                    value: _body4
-                }, this.mode);
-            } else if (func === "$") {
-                if (this.mode === "math") {
-                    throw new _ParseError2.default("$ within math mode");
-                }
-                this.consume();
-                var outerMode = this.mode;
-                this.switchMode("math");
-                var _body5 = this.parseExpression(false, "$");
-                this.expect("$", true);
-                this.switchMode(outerMode);
-                return new _ParseNode2.default("styling", {
-                    style: "text",
                     value: _body5
-                }, "math");
+                }, this.mode);
             } else {
                 // Defer to parseGivenFunction if it's not a function we handle
                 return this.parseGivenFunction(start);
@@ -2889,8 +2800,6 @@ var Parser = function () {
         /**
          * Parses an entire function, including its base and all of its arguments.
          * It also handles the case where the parsed node is not a function.
-         *
-         * @return {?ParseNode}
          */
 
     }, {
@@ -2903,9 +2812,6 @@ var Parser = function () {
         /**
          * Same as parseFunction(), except that the base is provided, guaranteeing a
          * non-nullable result.
-         *
-         * @param {ParsedFuncOrArgOrDollar} baseGroup
-         * @return {ParseNode}
          */
 
     }, {
@@ -2925,9 +2831,9 @@ var Parser = function () {
                     args = _parseArguments2.args,
                     optArgs = _parseArguments2.optArgs;
 
-                var token = baseGroup.token;
-                var result = this.callFunction(func, args, optArgs, token);
-                return new _ParseNode2.default(result.type, result, this.mode);
+                var _token = baseGroup.token;
+                var _result2 = this.callFunction(func, args, optArgs, _token);
+                return new _ParseNode2.default(_result2.type, _result2, this.mode);
             } else {
                 return baseGroup.result;
             }
@@ -2935,10 +2841,6 @@ var Parser = function () {
 
         /**
          * Call a function handler with a suitable context and arguments.
-         * @param {string} name
-         * @param {Array<ParseNode>} args
-         * @param {Array<?ParseNode>} optArgs
-         * @param {Token=} token
          */
 
     }, {
@@ -2949,26 +2851,22 @@ var Parser = function () {
                 parser: this,
                 token: token
             };
-            return _functions2.default[name].handler(context, args, optArgs);
+            var func = _functions2.default[name];
+            if (func && func.handler) {
+                return func.handler(context, args, optArgs);
+            } else {
+                throw new _ParseError2.default("No function handler for " + name);
+            }
         }
 
         /**
          * Parses the arguments of a function or environment
-         *
-         * @param {string} func  "\name" or "\begin{name}"
-         * @param {{
-         *   numArgs: number,
-         *   numOptionalArgs: (number|undefined),
-         * }} funcData
-         * @return {{
-         *   args: Array<ParseNode>,
-         *   optArgs: Array<?ParseNode>,
-         * }}
          */
 
     }, {
         key: "parseArguments",
-        value: function parseArguments(func, funcData) {
+        value: function parseArguments(func, // Should look like "\name" or "\begin{name}".
+        funcData) {
             var totalArgs = funcData.numArgs + funcData.numOptionalArgs;
             if (totalArgs === 0) {
                 return { args: [], optArgs: [] };
@@ -3030,35 +2928,30 @@ var Parser = function () {
 
         /**
          * Parses a group when the mode is changing.
-         *
-         * @return {?ParsedFuncOrArgOrDollar}
          */
 
     }, {
         key: "parseGroupOfType",
-        value: function parseGroupOfType(innerMode, optional) {
-            var outerMode = this.mode;
+        value: function parseGroupOfType(type, // Used to describe the mode in error messages.
+        optional) {
             // Handle `original` argTypes
-            if (innerMode === "original") {
-                innerMode = outerMode;
+            if (type === "original") {
+                type = this.mode;
             }
 
-            if (innerMode === "color") {
+            if (type === "color") {
                 return this.parseColorGroup(optional);
             }
-            if (innerMode === "size") {
+            if (type === "size") {
                 return this.parseSizeGroup(optional);
             }
-            if (innerMode === "url") {
+            if (type === "url") {
                 return this.parseUrlGroup(optional);
             }
 
-            // By the time we get here, innerMode is one of "text" or "math".
-            // We switch the mode of the parser, recurse, then restore the old mode.
-            this.switchMode(innerMode);
-            var res = this.parseGroup(optional);
-            this.switchMode(outerMode);
-            return res;
+            // By the time we get here, type is one of "text" or "math".
+            // Specify this as mode to parseGroup.
+            return this.parseGroup(optional, type);
         }
     }, {
         key: "consumeSpaces",
@@ -3071,15 +2964,12 @@ var Parser = function () {
         /**
          * Parses a group, essentially returning the string formed by the
          * brace-enclosed tokens plus some position information.
-         *
-         * @param {string} modeName  Used to describe the mode in error messages
-         * @param {boolean=} optional  Whether the group is optional or required
-         * @return {?Token}
          */
 
     }, {
         key: "parseStringGroup",
-        value: function parseStringGroup(modeName, optional) {
+        value: function parseStringGroup(modeName, // Used to describe the mode in error messages.
+        optional) {
             if (optional && this.nextToken.text !== "[") {
                 return null;
             }
@@ -3106,15 +2996,12 @@ var Parser = function () {
          * Parses a group, essentially returning the string formed by the
          * brace-enclosed tokens plus some position information, possibly
          * with nested braces.
-         *
-         * @param {string} modeName  Used to describe the mode in error messages
-         * @param {boolean=} optional  Whether the group is optional or required
-         * @return {?Token}
          */
 
     }, {
         key: "parseStringGroupWithBalancedBraces",
-        value: function parseStringGroupWithBalancedBraces(modeName, optional) {
+        value: function parseStringGroupWithBalancedBraces(modeName, // Used to describe the mode in error messages.
+        optional) {
             if (optional && this.nextToken.text !== "[") {
                 return null;
             }
@@ -3151,10 +3038,6 @@ var Parser = function () {
          * Parses a regex-delimited group: the largest sequence of tokens
          * whose concatenated strings match `regex`. Returns the string
          * formed by the tokens plus some position information.
-         *
-         * @param {RegExp} regex
-         * @param {string} modeName  Used to describe the mode in error messages
-         * @return {Token}
          */
 
     }, {
@@ -3246,36 +3129,51 @@ var Parser = function () {
         }
 
         /**
-         * If the argument is false or absent, this parses an ordinary group,
+         * If `optional` is false or absent, this parses an ordinary group,
          * which is either a single nucleus (like "x") or an expression
          * in braces (like "{x+y}").
-         * If the argument is true, it parses either a bracket-delimited expression
+         * If `optional` is true, it parses either a bracket-delimited expression
          * (like "[x+y]") or returns null to indicate the absence of a
          * bracket-enclosed group.
-         *
-         * @param {boolean=} optional  Whether the group is optional or required
-         * @return {?ParsedFuncOrArgOrDollar}
+         * If `mode` is present, switches to that mode while parsing the group,
+         * and switches back after.
          */
 
     }, {
         key: "parseGroup",
-        value: function parseGroup(optional) {
+        value: function parseGroup(optional, mode) {
+            var outerMode = this.mode;
             var firstToken = this.nextToken;
             // Try to parse an open brace
             if (this.nextToken.text === (optional ? "[" : "{")) {
+                // Switch to specified mode before we expand symbol after brace
+                if (mode) {
+                    this.switchMode(mode);
+                }
                 // If we get a brace, parse an expression
                 this.consume();
                 var expression = this.parseExpression(false, optional ? "]" : "}");
                 var lastToken = this.nextToken;
+                // Switch mode back before consuming symbol after close brace
+                if (mode) {
+                    this.switchMode(outerMode);
+                }
                 // Make sure we get a close brace
                 this.expect(optional ? "]" : "}");
-                if (this.mode === "text") {
+                if (mode === "text") {
                     this.formLigatures(expression);
                 }
                 return newArgument(new _ParseNode2.default("ordgroup", expression, this.mode, firstToken, lastToken), firstToken.range(lastToken, firstToken.text));
             } else {
                 // Otherwise, just return a nucleus, or nothing for an optional group
-                return optional ? null : this.parseSymbol();
+                if (mode) {
+                    this.switchMode(mode);
+                }
+                var _result3 = optional ? null : this.parseSymbol();
+                if (mode) {
+                    this.switchMode(outerMode);
+                }
+                return _result3;
             }
         }
 
@@ -3285,9 +3183,7 @@ var Parser = function () {
          * The result will simply replace multiple textord nodes with a single
          * character in each value by a single textord node having multiple
          * characters in its value.  The representation is still ASCII source.
-         *
-         * @param {Array.<ParseNode>} group  the nodes of this group,
-         *                                   list will be moified in place
+         * The group will be modified in place.
          */
 
     }, {
@@ -3316,33 +3212,22 @@ var Parser = function () {
         /**
          * Parse a single symbol out of the string. Here, we handle both the functions
          * we have defined, as well as the single character symbols
-         *
-         * @return {?ParsedFuncOrArgOrDollar}
          */
 
     }, {
         key: "parseSymbol",
         value: function parseSymbol() {
             var nucleus = this.nextToken;
+            var text = nucleus.text;
 
-            if (_functions2.default[nucleus.text]) {
+            if (_functions2.default[text]) {
                 this.consume();
                 // If there exists a function with this name, we return the function and
                 // say that it is a function.
                 return newFunction(nucleus);
-            } else if (_symbols2.default[this.mode][nucleus.text]) {
+            } else if (/^\\verb[^a-zA-Z]/.test(text)) {
                 this.consume();
-                // Otherwise if this is a no-argument function, find the type it
-                // corresponds to in the symbols map
-                return newArgument(new _ParseNode2.default(_symbols2.default[this.mode][nucleus.text].group, nucleus.text, this.mode, nucleus), nucleus);
-            } else if (this.mode === "text" && _unicodeRegexes.cjkRegex.test(nucleus.text)) {
-                this.consume();
-                return newArgument(new _ParseNode2.default("textord", nucleus.text, this.mode, nucleus), nucleus);
-            } else if (nucleus.text === "$") {
-                return newDollar(nucleus);
-            } else if (/^\\verb[^a-zA-Z]/.test(nucleus.text)) {
-                this.consume();
-                var arg = nucleus.text.slice(5);
+                var arg = text.slice(5);
                 var star = arg.charAt(0) === "*";
                 if (star) {
                     arg = arg.slice(1);
@@ -3357,9 +3242,55 @@ var Parser = function () {
                     body: arg,
                     star: star
                 }, "text"), nucleus);
-            } else {
-                return null;
+            } else if (text === "$") {
+                return newDollar(nucleus);
             }
+            // At this point, we should have a symbol, possibly with accents.
+            // First expand any accented base symbol according to unicodeSymbols.
+            if (_unicodeSymbols2.default.hasOwnProperty(text[0]) && !_symbols2.default[this.mode][text[0]]) {
+                text = _unicodeSymbols2.default[text[0]] + text.substr(1);
+            }
+            // Strip off any combining characters
+            var match = _Lexer.combiningDiacriticalMarksEndRegex.exec(text);
+            if (match) {
+                text = text.substring(0, match.index);
+                if (text === 'i') {
+                    text = "\u0131"; // dotless i, in math and text mode
+                } else if (text === 'j') {
+                    text = "\u0237"; // dotless j, in math and text mode
+                }
+            }
+            // Recognize base symbol
+            var symbol = null;
+            if (_symbols2.default[this.mode][text]) {
+                symbol = new _ParseNode2.default(_symbols2.default[this.mode][text].group, text, this.mode, nucleus);
+            } else if (this.mode === "text" && (0, _unicodeScripts.supportedCodepoint)(text.charCodeAt(0))) {
+                symbol = new _ParseNode2.default("textord", text, this.mode, nucleus);
+            } else {
+                return null; // EOF, ^, _, {, }, etc.
+            }
+            this.consume();
+            // Transform combining characters into accents
+            if (match) {
+                for (var i = 0; i < match[0].length; i++) {
+                    var accent = match[0][i];
+                    if (!_unicodeAccents2.default[accent]) {
+                        throw new _ParseError2.default("Unknown accent ' " + accent + "'", nucleus);
+                    }
+                    var command = _unicodeAccents2.default[accent][this.mode];
+                    if (!command) {
+                        throw new _ParseError2.default("Accent " + accent + " unsupported in " + this.mode + " mode", nucleus);
+                    }
+                    symbol = new _ParseNode2.default("accent", {
+                        type: "accent",
+                        label: command,
+                        isStretchy: false,
+                        isShifty: true,
+                        base: symbol
+                    }, this.mode, nucleus);
+                }
+            }
+            return newArgument(symbol, nucleus);
         }
     }]);
     return Parser;
@@ -3380,7 +3311,7 @@ Parser.oldFontFuncs = {
 };
 exports.default = Parser;
 
-},{"./MacroExpander":82,"./ParseError":84,"./ParseNode":85,"./environments":99,"./functions":103,"./symbols":125,"./unicodeRegexes":126,"./units":127,"./utils":128,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],87:[function(require,module,exports){
+},{"./Lexer.js":81,"./MacroExpander":82,"./ParseError":84,"./ParseNode":85,"./Settings":87,"./Token":90,"./environments":99,"./functions":103,"./symbols":128,"./unicodeAccents":129,"./unicodeScripts":130,"./unicodeSymbols":131,"./units":132,"./utils":133,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3426,7 +3357,7 @@ var Settings = function Settings(options) {
 
 exports.default = Settings;
 
-},{"./utils":128,"babel-runtime/helpers/classCallCheck":8}],88:[function(require,module,exports){
+},{"./utils":133,"babel-runtime/helpers/classCallCheck":8}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3745,9 +3676,9 @@ var _stretchy2 = _interopRequireDefault(_stretchy);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // The following have to be loaded from Main-Italic font, using class mainit
-var mainitLetters = ["\\imath", // dotless i
-"\\jmath", // dotless j
-"\\pounds"];
+var mainitLetters = ["\\imath", "ı", // dotless i
+"\\jmath", "ȷ", // dotless j
+"\\pounds", "\\mathsterling", "\\textsterling", "£"];
 
 /**
  * Looks up the given symbol in fontMetrics, after applying any symbol
@@ -3794,11 +3725,11 @@ var makeSymbol = function makeSymbol(value, fontFamily, mode, options, classes) 
         if (mode === "text") {
             italic = 0;
         }
-        symbolNode = new _domTree2.default.symbolNode(value, metrics.height, metrics.depth, italic, metrics.skew, classes);
+        symbolNode = new _domTree2.default.symbolNode(value, metrics.height, metrics.depth, italic, metrics.skew, metrics.width, classes);
     } else {
         // TODO(emily): Figure out a good way to only print this in development
         typeof console !== "undefined" && console.warn("No character metrics for '" + value + "' in style '" + fontFamily + "'");
-        symbolNode = new _domTree2.default.symbolNode(value, 0, 0, 0, 0, classes);
+        symbolNode = new _domTree2.default.symbolNode(value, 0, 0, 0, 0, 0, classes);
     }
 
     if (options) {
@@ -4024,11 +3955,13 @@ var makeSpan = function makeSpan(classes, children, options) {
 };
 
 var makeLineSpan = function makeLineSpan(className, options) {
-    // Fill the entire span instead of just a border. That way, the min-height
-    // value in katex.less will ensure that at least one screen pixel displays.
-    var line = _stretchy2.default.ruleSpan(className, options);
-    line.height = options.fontMetrics().defaultRuleThickness;
-    line.style.height = line.height + "em";
+    // Return a span with an SVG image of a horizontal line. The SVG path
+    // fills the middle fifth of the span. We want an extra tall span
+    // because Chrome will sometimes not display a span that is 0.04em tall.
+    var lineHeight = options.fontMetrics().defaultRuleThickness;
+    var line = _stretchy2.default.ruleSpan(className, lineHeight, options);
+    line.height = lineHeight;
+    line.style.height = 5 * line.height + "em";
     line.maxFontSize = 1.0;
     return line;
 };
@@ -4218,8 +4151,9 @@ var makeVList = function makeVList(params, options) {
                 currPos += _child.size;
             } else {
                 var _elem2 = _child.elem;
+                var classes = _child.wrapperClasses || [];
 
-                var childWrap = makeSpan([], [pstrut, _elem2]);
+                var childWrap = makeSpan(classes, [pstrut, _elem2]);
                 childWrap.style.top = -pstrutSize - currPos - _elem2.depth + "em";
                 if (_child.marginLeft) {
                     childWrap.style.marginLeft = _child.marginLeft;
@@ -4435,6 +4369,8 @@ var staticSvg = function staticSvg(value, options) {
     var svgNode = new _domTree2.default.svgNode([path], {
         "width": width + "em",
         "height": height + "em",
+        // Override CSS rule `.katex svg { width: 100% }`
+        "style": "width:" + width + "em",
         "viewBox": "0 0 " + 1000 * width + " " + 1000 * height,
         "preserveAspectRatio": "xMinYMin"
     });
@@ -4462,7 +4398,7 @@ exports.default = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":98,"./fontMetrics":101,"./stretchy":123,"./symbols":125,"./utils":128,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/slicedToArray":10}],92:[function(require,module,exports){
+},{"./domTree":98,"./fontMetrics":101,"./stretchy":126,"./symbols":128,"./utils":133,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/slicedToArray":10}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4488,10 +4424,6 @@ var _buildCommon = require("./buildCommon");
 
 var _buildCommon2 = _interopRequireDefault(_buildCommon);
 
-var _delimiter = require("./delimiter");
-
-var _delimiter2 = _interopRequireDefault(_delimiter);
-
 var _domTree = require("./domTree");
 
 var _domTree2 = _interopRequireDefault(_domTree);
@@ -4508,16 +4440,14 @@ var _stretchy2 = _interopRequireDefault(_stretchy);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * WARNING: New methods on groupTypes should be added to src/functions.
- *
- * This file does the main work of building a domTree structure from a parse
- * tree. The entry point is the `buildHTML` function, which takes a parse tree.
- * Then, the buildExpression, buildGroup, and various groupTypes functions are
- * called, to produce a final HTML tree.
- */
-
-var makeSpan = _buildCommon2.default.makeSpan;
+var makeSpan = _buildCommon2.default.makeSpan; /**
+                                                * WARNING: New methods on groupTypes should be added to src/functions.
+                                                *
+                                                * This file does the main work of building a domTree structure from a parse
+                                                * tree. The entry point is the `buildHTML` function, which takes a parse tree.
+                                                * Then, the buildExpression, buildGroup, and various groupTypes functions are
+                                                * called, to produce a final HTML tree.
+                                                */
 
 var isSpace = function isSpace(node) {
     return node instanceof _domTree2.default.span && node.classes[0] === "mspace";
@@ -4683,7 +4613,7 @@ var shouldHandleSupSub = function shouldHandleSupSub(group, options) {
             // (e.g. `\displaystyle\sum_2^3`)
             return base.value.limits && (options.style.size === _Style2.default.DISPLAY.size || base.value.alwaysHandleSupSub);
         } else if (base.type === "accent") {
-            return isCharacterBox(base.value.base);
+            return _utils2.default.isCharacterBox(base.value.base);
         } else if (base.type === "horizBrace") {
             var isSup = group.value.sub ? false : true;
             return isSup === base.value.isOver;
@@ -4691,45 +4621,6 @@ var shouldHandleSupSub = function shouldHandleSupSub(group, options) {
             return null;
         }
     }
-};
-
-/**
- * Sometimes we want to pull out the innermost element of a group. In most
- * cases, this will just be the group itself, but when ordgroups and colors have
- * a single element, we want to pull that out.
- */
-var getBaseElem = function getBaseElem(group) {
-    if (!group) {
-        return false;
-    } else if (group.type === "ordgroup") {
-        if (group.value.length === 1) {
-            return getBaseElem(group.value[0]);
-        } else {
-            return group;
-        }
-    } else if (group.type === "color") {
-        if (group.value.value.length === 1) {
-            return getBaseElem(group.value.value[0]);
-        } else {
-            return group;
-        }
-    } else if (group.type === "font") {
-        return getBaseElem(group.value.body);
-    } else {
-        return group;
-    }
-};
-
-/**
- * TeXbook algorithms often reference "character boxes", which are simply groups
- * with a single character in them. To decide if something is a character box,
- * we find its innermost group, and see if it is a single character.
- */
-var isCharacterBox = function isCharacterBox(group) {
-    var baseElem = getBaseElem(group);
-
-    // These are all they types of groups which hold single characters
-    return baseElem.type === "mathord" || baseElem.type === "textord" || baseElem.type === "bin" || baseElem.type === "rel" || baseElem.type === "inner" || baseElem.type === "open" || baseElem.type === "close" || baseElem.type === "punct";
 };
 
 var makeNullDelimiter = exports.makeNullDelimiter = function makeNullDelimiter(options, classes) {
@@ -4803,7 +4694,7 @@ groupTypes.supsub = function (group, options) {
     if (group.value.sup) {
         newOptions = options.havingStyle(options.style.sup());
         supm = buildGroup(group.value.sup, newOptions, options);
-        if (!isCharacterBox(group.value.base)) {
+        if (!_utils2.default.isCharacterBox(group.value.base)) {
             supShift = base.height - newOptions.fontMetrics().supDrop * newOptions.sizeMultiplier / options.sizeMultiplier;
         }
     }
@@ -4811,7 +4702,7 @@ groupTypes.supsub = function (group, options) {
     if (group.value.sub) {
         newOptions = options.havingStyle(options.style.sub());
         subm = buildGroup(group.value.sub, newOptions, options);
-        if (!isCharacterBox(group.value.base)) {
+        if (!_utils2.default.isCharacterBox(group.value.base)) {
             subShift = base.depth + newOptions.fontMetrics().subDrop * newOptions.sizeMultiplier / options.sizeMultiplier;
         }
     }
@@ -4908,89 +4799,6 @@ groupTypes.spacing = function (group, options) {
     }
 };
 
-groupTypes.sqrt = function (group, options) {
-    // Square roots are handled in the TeXbook pg. 443, Rule 11.
-
-    // First, we do the same steps as in overline to build the inner group
-    // and line
-    var inner = buildGroup(group.value.body, options.havingCrampedStyle());
-    if (inner.height === 0) {
-        // Render a small surd.
-        inner.height = options.fontMetrics().xHeight;
-    }
-
-    // Some groups can return document fragments.  Handle those by wrapping
-    // them in a span.
-    if (inner instanceof _domTree2.default.documentFragment) {
-        inner = makeSpan([], [inner], options);
-    }
-
-    // Calculate the minimum size for the \surd delimiter
-    var metrics = options.fontMetrics();
-    var theta = metrics.defaultRuleThickness;
-
-    var phi = theta;
-    if (options.style.id < _Style2.default.TEXT.id) {
-        phi = options.fontMetrics().xHeight;
-    }
-
-    // Calculate the clearance between the body and line
-    var lineClearance = theta + phi / 4;
-
-    var minDelimiterHeight = (inner.height + inner.depth + lineClearance + theta) * options.sizeMultiplier;
-
-    // Create a sqrt SVG of the required minimum size
-
-    var _delimiter$sqrtImage = _delimiter2.default.sqrtImage(minDelimiterHeight, options),
-        img = _delimiter$sqrtImage.span,
-        ruleWidth = _delimiter$sqrtImage.ruleWidth;
-
-    var delimDepth = img.height - ruleWidth;
-
-    // Adjust the clearance based on the delimiter size
-    if (delimDepth > inner.height + inner.depth + lineClearance) {
-        lineClearance = (lineClearance + delimDepth - inner.height - inner.depth) / 2;
-    }
-
-    // Shift the sqrt image
-    var imgShift = img.height - inner.height - lineClearance - ruleWidth;
-
-    inner.style.paddingLeft = img.advanceWidth + "em";
-
-    // Overlay the image and the argument.
-    var body = _buildCommon2.default.makeVList({
-        positionType: "firstBaseline",
-        children: [{ type: "elem", elem: inner }, { type: "kern", size: -(inner.height + imgShift) }, { type: "elem", elem: img }, { type: "kern", size: ruleWidth }]
-    }, options);
-    body.children[0].children[0].classes.push("svg-align");
-
-    if (!group.value.index) {
-        return makeSpan(["mord", "sqrt"], [body], options);
-    } else {
-        // Handle the optional root index
-
-        // The index is always in scriptscript style
-        var newOptions = options.havingStyle(_Style2.default.SCRIPTSCRIPT);
-        var rootm = buildGroup(group.value.index, newOptions, options);
-
-        // The amount the index is shifted by. This is taken from the TeX
-        // source, in the definition of `\r@@t`.
-        var toShift = 0.6 * (body.height - body.depth);
-
-        // Build a VList with the superscript shifted up correctly
-        var rootVList = _buildCommon2.default.makeVList({
-            positionType: "shift",
-            positionData: -toShift,
-            children: [{ type: "elem", elem: rootm }]
-        }, options);
-        // Add a class surrounding it so we can add on the appropriate
-        // kerning
-        var rootVListWrap = makeSpan(["root"], [rootVList]);
-
-        return makeSpan(["mord", "sqrt"], [rootVListWrap, body], options);
-    }
-};
-
 function sizingGroup(value, options, baseOptions) {
     var inner = buildExpression(value, options, false);
     var multiplier = options.sizeMultiplier / baseOptions.sizeMultiplier;
@@ -5044,29 +4852,6 @@ groupTypes.font = function (group, options) {
     return buildGroup(group.value.body, options.withFontFamily(font));
 };
 
-groupTypes.verb = function (group, options) {
-    var text = _buildCommon2.default.makeVerb(group, options);
-    var body = [];
-    // \verb enters text mode and therefore is sized like \textstyle
-    var newOptions = options.havingStyle(options.style.text());
-    for (var i = 0; i < text.length; i++) {
-        if (text[i] === '\xA0') {
-            // spaces appear as nonbreaking space
-            // The space character isn't in the Typewriter-Regular font,
-            // so we implement it as a kern of the same size as a character.
-            // 0.525 is the width of a texttt character in LaTeX.
-            // It automatically gets scaled by the font size.
-            var rule = makeSpan(["mord", "rule"], [], newOptions);
-            rule.style.marginLeft = "0.525em";
-            body.push(rule);
-        } else {
-            body.push(_buildCommon2.default.makeSymbol(text[i], "Typewriter-Regular", group.mode, newOptions, ["mathtt"]));
-        }
-    }
-    _buildCommon2.default.tryCombineChars(body);
-    return makeSpan(["mord", "text"].concat(newOptions.sizingClasses(options)), body, newOptions);
-};
-
 groupTypes.accent = function (group, options) {
     // Accents are handled in the TeXbook pg. 443, rule 12.
     var base = group.value.base;
@@ -5099,7 +4884,7 @@ groupTypes.accent = function (group, options) {
     var body = buildGroup(base, options.havingCrampedStyle());
 
     // Does the accent need to shift for the skew of a character?
-    var mustShift = group.value.isShifty && isCharacterBox(base);
+    var mustShift = group.value.isShifty && _utils2.default.isCharacterBox(base);
 
     // Calculate the skew of the accent. This is based on the line "If the
     // nucleus is not a single character, let s = 0; otherwise set s to the
@@ -5110,7 +4895,7 @@ groupTypes.accent = function (group, options) {
     if (mustShift) {
         // If the base is a character box, then we want the skew of the
         // innermost character. To do that, we find the innermost character:
-        var baseChar = getBaseElem(base);
+        var baseChar = _utils2.default.getBaseElem(base);
         // Then, we render its group to get the symbol inside it
         var baseGroup = buildGroup(baseChar, options.havingCrampedStyle());
         // Finally, we pull the skew off of the symbol.
@@ -5135,6 +4920,7 @@ groupTypes.accent = function (group, options) {
             // So now we use an SVG.
             // If Safari reforms, we should consider reverting to the glyph.
             accent = _buildCommon2.default.staticSvg("vec", options);
+            accent.width = parseFloat(accent.style.width);
         } else {
             accent = _buildCommon2.default.makeSymbol(group.value.label, "Main-Regular", group.mode, options);
         }
@@ -5142,22 +4928,26 @@ groupTypes.accent = function (group, options) {
         // shift the accent over to a place we don't want.
         accent.italic = 0;
 
+        accentBody = makeSpan(["accent-body"], [accent]);
+
+        // CSS defines `.katex .accent .accent-body { width: 0 }`
+        // so that the accent doesn't contribute to the bounding box.
+        // We need to shift the character by its width (effectively half
+        // its width) to compensate.
+        var left = -accent.width / 2;
+
+        // Shift the accent over by the skew.
+        left += skew;
+
         // The \H character that the fonts use is a combining character, and
-        // thus shows up much too far to the left. To account for this, we add a
-        // specific class which shifts the accent over to where we want it.
+        // thus shows up much too far to the left. To account for this, we add
+        // a manual shift of the width of one space.
         // TODO(emily): Fix this in a better way, like by changing the font
-        var accentClass = null;
         if (group.value.label === '\\H') {
-            accentClass = "accent-hungarian";
+            left += 0.5; // twice width of space, or width of accent
         }
 
-        accentBody = makeSpan([], [accent]);
-        accentBody = makeSpan(["accent-body", accentClass], [accentBody]);
-
-        // Shift the accent over by the skew. Note we shift by twice the skew
-        // because we are centering the accent, so by adding 2*skew to the left,
-        // we shift it to the right by 1*skew.
-        accentBody.style.marginLeft = 2 * skew + "em";
+        accentBody.style.left = left + "em";
 
         accentBody = _buildCommon2.default.makeVList({
             positionType: "firstBaseline",
@@ -5289,73 +5079,6 @@ groupTypes.accentUnder = function (group, options) {
     vlist.children[0].children[0].children[0].classes.push("svg-align");
 
     return makeSpan(["mord", "accentunder"], [vlist], options);
-};
-
-groupTypes.enclose = function (group, options) {
-    // \cancel, \bcancel, \xcancel, \sout, \fbox, \colorbox, \fcolorbox
-    var inner = buildGroup(group.value.body, options);
-
-    var label = group.value.label.substr(1);
-    var scale = options.sizeMultiplier;
-    var img = void 0;
-    var imgShift = 0;
-    var isColorbox = /color/.test(label);
-
-    if (label === "sout") {
-        img = makeSpan(["stretchy", "sout"]);
-        img.height = options.fontMetrics().defaultRuleThickness / scale;
-        imgShift = -0.5 * options.fontMetrics().xHeight;
-    } else {
-        // Add horizontal padding
-        inner.classes.push(/cancel/.test(label) ? "cancel-pad" : "boxpad");
-
-        // Add vertical padding
-        var vertPad = 0;
-        // ref: LaTeX source2e: \fboxsep = 3pt;  \fboxrule = .4pt
-        // ref: cancel package: \advance\totalheight2\p@ % "+2"
-        if (/box/.test(label)) {
-            vertPad = label === "colorbox" ? 0.3 : 0.34;
-        } else {
-            vertPad = isCharacterBox(group.value.body) ? 0.2 : 0;
-        }
-
-        img = _stretchy2.default.encloseSpan(inner, label, vertPad, options);
-        imgShift = inner.depth + vertPad;
-
-        if (isColorbox) {
-            img.style.backgroundColor = group.value.backgroundColor.value;
-            if (label === "fcolorbox") {
-                img.style.borderColor = group.value.borderColor.value;
-            }
-        }
-    }
-
-    var vlist = void 0;
-    if (isColorbox) {
-        vlist = _buildCommon2.default.makeVList({
-            positionType: "individualShift",
-            children: [
-            // Put the color background behind inner;
-            { type: "elem", elem: img, shift: imgShift }, { type: "elem", elem: inner, shift: 0 }]
-        }, options);
-    } else {
-        vlist = _buildCommon2.default.makeVList({
-            positionType: "individualShift",
-            children: [
-            // Write the \cancel stroke on top of inner.
-            { type: "elem", elem: inner, shift: 0 }, { type: "elem", elem: img, shift: imgShift }]
-        }, options);
-    }
-
-    if (/cancel/.test(label)) {
-        vlist.children[0].children[0].children[1].classes.push("svg-align");
-
-        // cancel does not create horiz space for its line extension.
-        // That is, not when adjacent to a mord.
-        return makeSpan(["mord", "cancel-lap"], [vlist], options);
-    } else {
-        return makeSpan(["mord"], [vlist], options);
-    }
 };
 
 groupTypes.xArrow = function (group, options) {
@@ -5494,7 +5217,7 @@ function buildHTML(tree, options) {
     return htmlNode;
 }
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./delimiter":97,"./domTree":98,"./stretchy":123,"./units":127,"./utils":128,"babel-runtime/core-js/json/stringify":5}],93:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./domTree":98,"./stretchy":126,"./units":132,"./utils":133,"babel-runtime/core-js/json/stringify":5}],93:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5717,12 +5440,22 @@ groupTypes.supsub = function (group, options) {
     if (isBrace) {
         nodeType = isOver ? "mover" : "munder";
     } else if (!group.value.sub) {
-        nodeType = "msup";
-    } else if (!group.value.sup) {
-        nodeType = "msub";
-    } else {
         var base = group.value.base;
         if (base && base.value.limits && options.style === _Style2.default.DISPLAY) {
+            nodeType = "mover";
+        } else {
+            nodeType = "msup";
+        }
+    } else if (!group.value.sup) {
+        var _base = group.value.base;
+        if (_base && _base.value.limits && options.style === _Style2.default.DISPLAY) {
+            nodeType = "munder";
+        } else {
+            nodeType = "msub";
+        }
+    } else {
+        var _base2 = group.value.base;
+        if (_base2 && _base2.value.limits && options.style === _Style2.default.DISPLAY) {
             nodeType = "munderover";
         } else {
             nodeType = "msubsup";
@@ -5730,17 +5463,6 @@ groupTypes.supsub = function (group, options) {
     }
 
     var node = new _mathMLTree2.default.MathNode(nodeType, children);
-
-    return node;
-};
-
-groupTypes.sqrt = function (group, options) {
-    var node = void 0;
-    if (group.value.index) {
-        node = new _mathMLTree2.default.MathNode("mroot", [buildGroup(group.value.body, options), buildGroup(group.value.index, options)]);
-    } else {
-        node = new _mathMLTree2.default.MathNode("msqrt", [buildGroup(group.value.body, options)]);
-    }
 
     return node;
 };
@@ -5828,47 +5550,10 @@ groupTypes.sizing = function (group, options) {
     return node;
 };
 
-groupTypes.verb = function (group, options) {
-    var text = new _mathMLTree2.default.TextNode(_buildCommon2.default.makeVerb(group, options));
-    var node = new _mathMLTree2.default.MathNode("mtext", [text]);
-    node.setAttribute("mathvariant", _buildCommon2.default.fontMap["mathtt"].variant);
-    return node;
-};
-
 groupTypes.accentUnder = function (group, options) {
     var accentNode = _stretchy2.default.mathMLnode(group.value.label);
     var node = new _mathMLTree2.default.MathNode("munder", [buildGroup(group.value.body, options), accentNode]);
     node.setAttribute("accentunder", "true");
-    return node;
-};
-
-groupTypes.enclose = function (group, options) {
-    var node = new _mathMLTree2.default.MathNode("menclose", [buildGroup(group.value.body, options)]);
-    switch (group.value.label) {
-        case "\\cancel":
-            node.setAttribute("notation", "updiagonalstrike");
-            break;
-        case "\\bcancel":
-            node.setAttribute("notation", "downdiagonalstrike");
-            break;
-        case "\\sout":
-            node.setAttribute("notation", "horizontalstrike");
-            break;
-        case "\\fbox":
-            node.setAttribute("notation", "box");
-            break;
-        case "\\colorbox":
-            node.setAttribute("mathbackground", group.value.backgroundColor.value);
-            break;
-        case "\\fcolorbox":
-            node.setAttribute("mathbackground", group.value.backgroundColor.value);
-            // TODO(ron): I don't know any way to set the border color.
-            node.setAttribute("notation", "box");
-            break;
-        default:
-            // xcancel
-            node.setAttribute("notation", "updiagonalstrike downdiagonalstrike");
-    }
     return node;
 };
 
@@ -5981,7 +5666,7 @@ function buildMathML(tree, texExpression, options) {
     return _buildCommon2.default.makeSpan(["katex-mathml"], [math]);
 }
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./fontMetrics":101,"./mathMLTree":121,"./stretchy":123,"./symbols":125,"./utils":128}],94:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./fontMetrics":101,"./mathMLTree":124,"./stretchy":126,"./symbols":128,"./utils":133}],94:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6806,7 +6491,7 @@ exports.default = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./domTree":98,"./fontMetrics":101,"./symbols":125,"./utils":128}],98:[function(require,module,exports){
+},{"./ParseError":84,"./Style":89,"./buildCommon":91,"./domTree":98,"./fontMetrics":101,"./symbols":128,"./utils":133}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6825,7 +6510,7 @@ var _createClass2 = require("babel-runtime/helpers/createClass");
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _unicodeRegexes = require("./unicodeRegexes");
+var _unicodeScripts = require("./unicodeScripts");
 
 var _utils = require("./utils");
 
@@ -7236,7 +6921,7 @@ var iCombinations = {
  */
 
 var symbolNode = function () {
-    function symbolNode(value, height, depth, italic, skew, classes, style) {
+    function symbolNode(value, height, depth, italic, skew, width, classes, style) {
         (0, _classCallCheck3.default)(this, symbolNode);
 
         this.value = value;
@@ -7244,23 +6929,21 @@ var symbolNode = function () {
         this.depth = depth || 0;
         this.italic = italic || 0;
         this.skew = skew || 0;
+        this.width = width || 0;
         this.classes = classes || [];
         this.style = style || {};
         this.maxFontSize = 0;
 
-        // Mark CJK characters with specific classes so that we can specify which
-        // fonts to use.  This allows us to render these characters with a serif
-        // font in situations where the browser would either default to a sans serif
-        // or render a placeholder character.
-        if (_unicodeRegexes.cjkRegex.test(this.value)) {
-            // I couldn't find any fonts that contained Hangul as well as all of
-            // the other characters we wanted to test there for it gets its own
-            // CSS class.
-            if (_unicodeRegexes.hangulRegex.test(this.value)) {
-                this.classes.push('hangul_fallback');
-            } else {
-                this.classes.push('cjk_fallback');
-            }
+        // Mark text from non-Latin scripts with specific classes so that we
+        // can specify which fonts to use.  This allows us to render these
+        // characters with a serif font in situations where the browser would
+        // either default to a sans serif or render a placeholder character.
+        // We use CSS class names like cjk_fallback, hangul_fallback and
+        // brahmic_fallback. See ./unicodeScripts.js for the set of possible
+        // script names
+        var script = (0, _unicodeScripts.scriptFromCodepoint)(this.value.charCodeAt(0));
+        if (script) {
+            this.classes.push(script + "_fallback");
         }
 
         if (/[îïíì]/.test(this.value)) {
@@ -7527,25 +7210,18 @@ exports.default = {
     lineNode: lineNode
 };
 
-},{"./svgGeometry":124,"./unicodeRegexes":126,"./utils":128,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],99:[function(require,module,exports){
+},{"./svgGeometry":127,"./unicodeScripts":130,"./utils":133,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],99:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _defineEnvironment = require("./defineEnvironment");
 
 require("./environments/array.js");
 
-var environments = {
-    has: function has(envName) {
-        return _defineEnvironment._environments.hasOwnProperty(envName);
-    },
-    get: function get(envName) {
-        return _defineEnvironment._environments[envName];
-    }
-};
+var environments = _defineEnvironment._environments;
 exports.default = environments;
 
 // All environment definitions should be imported below
@@ -7610,7 +7286,7 @@ function parseArray(parser, result, style) {
     var rowGaps = [];
     while (true) {
         // eslint-disable-line no-constant-condition
-        var cell = parser.parseExpression(false, null);
+        var cell = parser.parseExpression(false, undefined);
         cell = new _ParseNode2.default("ordgroup", cell, parser.mode);
         if (style) {
             cell = new _ParseNode2.default("styling", {
@@ -7632,6 +7308,9 @@ function parseArray(parser, result, style) {
             break;
         } else if (next === "\\\\" || next === "\\cr") {
             var cr = parser.parseFunction();
+            if (!cr) {
+                throw new _ParseError2.default("Failed to parse function after " + next);
+            }
             rowGaps.push(cr.value.size);
             row = [];
             body.push(row);
@@ -7749,7 +7428,7 @@ var htmlBuilder = function htmlBuilder(group, options) {
             }
 
             if (colDescr.separator === "|") {
-                var _separator = _stretchy2.default.ruleSpan("vertical-separator", options);
+                var _separator = _stretchy2.default.ruleSpan("vertical-separator", 0.05, options);
                 _separator.style.height = totalHeight + "em";
                 _separator.style.verticalAlign = -(totalHeight - offset) + "em";
 
@@ -8063,14 +7742,14 @@ var alignedHandler = function alignedHandler(context, args) {
     mathmlBuilder: mathmlBuilder
 });
 
-},{"../ParseError":84,"../ParseNode":85,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineEnvironment":95,"../mathMLTree":121,"../stretchy":123,"../units":127,"../utils":128}],101:[function(require,module,exports){
+},{"../ParseError":84,"../ParseNode":85,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineEnvironment":95,"../mathMLTree":124,"../stretchy":126,"../units":132,"../utils":133}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _unicodeRegexes = require("./unicodeRegexes");
+var _unicodeScripts = require("./unicodeScripts");
 
 var _fontMetricsData = require("./fontMetricsData");
 
@@ -8174,68 +7853,14 @@ var sigmasAndXis = {
 // TODO(kevinb) allow union of multiple glyph metrics for better accuracy.
 var extraCharacterMap = {
     // Latin-1
-    'À': 'A',
-    'Á': 'A',
-    'Â': 'A',
-    'Ã': 'A',
-    'Ä': 'A',
     'Å': 'A',
-    'Æ': 'A',
     'Ç': 'C',
-    'È': 'E',
-    'É': 'E',
-    'Ê': 'E',
-    'Ë': 'E',
-    'Ì': 'I',
-    'Í': 'I',
-    'Î': 'I',
-    'Ï': 'I',
     'Ð': 'D',
-    'Ñ': 'N',
-    'Ò': 'O',
-    'Ó': 'O',
-    'Ô': 'O',
-    'Õ': 'O',
-    'Ö': 'O',
-    'Ø': 'O',
-    'Ù': 'U',
-    'Ú': 'U',
-    'Û': 'U',
-    'Ü': 'U',
-    'Ý': 'Y',
     'Þ': 'o',
-    'ß': 'B',
-    'à': 'a',
-    'á': 'a',
-    'â': 'a',
-    'ã': 'a',
-    'ä': 'a',
     'å': 'a',
-    'æ': 'a',
     'ç': 'c',
-    'è': 'e',
-    'é': 'e',
-    'ê': 'e',
-    'ë': 'e',
-    'ì': 'i',
-    'í': 'i',
-    'î': 'i',
-    'ï': 'i',
     'ð': 'd',
-    'ñ': 'n',
-    'ò': 'o',
-    'ó': 'o',
-    'ô': 'o',
-    'õ': 'o',
-    'ö': 'o',
-    'ø': 'o',
-    'ù': 'u',
-    'ú': 'u',
-    'û': 'u',
-    'ü': 'u',
-    'ý': 'y',
     'þ': 'o',
-    'ÿ': 'y',
 
     // Cyrillic
     'А': 'A',
@@ -8318,10 +7943,21 @@ var getCharacterMetrics = function getCharacterMetrics(character, font) {
     var ch = character.charCodeAt(0);
     if (character[0] in extraCharacterMap) {
         ch = extraCharacterMap[character[0]].charCodeAt(0);
-    } else if (_unicodeRegexes.cjkRegex.test(character[0])) {
-        ch = 'M'.charCodeAt(0);
     }
-    var metrics = _fontMetricsData2.default[font]['' + ch];
+    var metrics = _fontMetricsData2.default[font][ch];
+
+    if (!metrics) {
+        // We don't typically have font metrics for Asian scripts.
+        // So if the character is in a script we support but we
+        // dont have metrics for it, just use the metrics for
+        // the Latin capital letter M. This is close enough because
+        // we (currently) only care about the height of the glpyh
+        // not its width.
+        if ((0, _unicodeScripts.supportedCodepoint)(ch)) {
+            metrics = _fontMetricsData2.default[font][77]; // 77 is the charcode for 'M'
+        }
+    }
+
     if (metrics) {
         return {
             depth: metrics[0],
@@ -8365,1998 +8001,2005 @@ exports.default = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./fontMetricsData":102,"./unicodeRegexes":126}],102:[function(require,module,exports){
+},{"./fontMetricsData":102,"./unicodeScripts":130}],102:[function(require,module,exports){
 "use strict";
 
 module.exports = {
     "AMS-Regular": {
-        "65": [0, 0.68889, 0, 0],
-        "66": [0, 0.68889, 0, 0],
-        "67": [0, 0.68889, 0, 0],
-        "68": [0, 0.68889, 0, 0],
-        "69": [0, 0.68889, 0, 0],
-        "70": [0, 0.68889, 0, 0],
-        "71": [0, 0.68889, 0, 0],
-        "72": [0, 0.68889, 0, 0],
-        "73": [0, 0.68889, 0, 0],
-        "74": [0.16667, 0.68889, 0, 0],
-        "75": [0, 0.68889, 0, 0],
-        "76": [0, 0.68889, 0, 0],
-        "77": [0, 0.68889, 0, 0],
-        "78": [0, 0.68889, 0, 0],
-        "79": [0.16667, 0.68889, 0, 0],
-        "80": [0, 0.68889, 0, 0],
-        "81": [0.16667, 0.68889, 0, 0],
-        "82": [0, 0.68889, 0, 0],
-        "83": [0, 0.68889, 0, 0],
-        "84": [0, 0.68889, 0, 0],
-        "85": [0, 0.68889, 0, 0],
-        "86": [0, 0.68889, 0, 0],
-        "87": [0, 0.68889, 0, 0],
-        "88": [0, 0.68889, 0, 0],
-        "89": [0, 0.68889, 0, 0],
-        "90": [0, 0.68889, 0, 0],
-        "107": [0, 0.68889, 0, 0],
-        "165": [0, 0.675, 0.025, 0],
-        "174": [0.15559, 0.69224, 0, 0],
-        "240": [0, 0.68889, 0, 0],
-        "295": [0, 0.68889, 0, 0],
-        "710": [0, 0.825, 0, 0],
-        "732": [0, 0.9, 0, 0],
-        "770": [0, 0.825, 0, 0],
-        "771": [0, 0.9, 0, 0],
-        "989": [0.08167, 0.58167, 0, 0],
-        "1008": [0, 0.43056, 0.04028, 0],
-        "8245": [0, 0.54986, 0, 0],
-        "8463": [0, 0.68889, 0, 0],
-        "8487": [0, 0.68889, 0, 0],
-        "8498": [0, 0.68889, 0, 0],
-        "8502": [0, 0.68889, 0, 0],
-        "8503": [0, 0.68889, 0, 0],
-        "8504": [0, 0.68889, 0, 0],
-        "8513": [0, 0.68889, 0, 0],
-        "8592": [-0.03598, 0.46402, 0, 0],
-        "8594": [-0.03598, 0.46402, 0, 0],
-        "8602": [-0.13313, 0.36687, 0, 0],
-        "8603": [-0.13313, 0.36687, 0, 0],
-        "8606": [0.01354, 0.52239, 0, 0],
-        "8608": [0.01354, 0.52239, 0, 0],
-        "8610": [0.01354, 0.52239, 0, 0],
-        "8611": [0.01354, 0.52239, 0, 0],
-        "8619": [0, 0.54986, 0, 0],
-        "8620": [0, 0.54986, 0, 0],
-        "8621": [-0.13313, 0.37788, 0, 0],
-        "8622": [-0.13313, 0.36687, 0, 0],
-        "8624": [0, 0.69224, 0, 0],
-        "8625": [0, 0.69224, 0, 0],
-        "8630": [0, 0.43056, 0, 0],
-        "8631": [0, 0.43056, 0, 0],
-        "8634": [0.08198, 0.58198, 0, 0],
-        "8635": [0.08198, 0.58198, 0, 0],
-        "8638": [0.19444, 0.69224, 0, 0],
-        "8639": [0.19444, 0.69224, 0, 0],
-        "8642": [0.19444, 0.69224, 0, 0],
-        "8643": [0.19444, 0.69224, 0, 0],
-        "8644": [0.1808, 0.675, 0, 0],
-        "8646": [0.1808, 0.675, 0, 0],
-        "8647": [0.1808, 0.675, 0, 0],
-        "8648": [0.19444, 0.69224, 0, 0],
-        "8649": [0.1808, 0.675, 0, 0],
-        "8650": [0.19444, 0.69224, 0, 0],
-        "8651": [0.01354, 0.52239, 0, 0],
-        "8652": [0.01354, 0.52239, 0, 0],
-        "8653": [-0.13313, 0.36687, 0, 0],
-        "8654": [-0.13313, 0.36687, 0, 0],
-        "8655": [-0.13313, 0.36687, 0, 0],
-        "8666": [0.13667, 0.63667, 0, 0],
-        "8667": [0.13667, 0.63667, 0, 0],
-        "8669": [-0.13313, 0.37788, 0, 0],
-        "8672": [-0.064, 0.437, 0, 0],
-        "8674": [-0.064, 0.437, 0, 0],
-        "8705": [0, 0.825, 0, 0],
-        "8708": [0, 0.68889, 0, 0],
-        "8709": [0.08167, 0.58167, 0, 0],
-        "8717": [0, 0.43056, 0, 0],
-        "8722": [-0.03598, 0.46402, 0, 0],
-        "8724": [0.08198, 0.69224, 0, 0],
-        "8726": [0.08167, 0.58167, 0, 0],
-        "8733": [0, 0.69224, 0, 0],
-        "8736": [0, 0.69224, 0, 0],
-        "8737": [0, 0.69224, 0, 0],
-        "8738": [0.03517, 0.52239, 0, 0],
-        "8739": [0.08167, 0.58167, 0, 0],
-        "8740": [0.25142, 0.74111, 0, 0],
-        "8741": [0.08167, 0.58167, 0, 0],
-        "8742": [0.25142, 0.74111, 0, 0],
-        "8756": [0, 0.69224, 0, 0],
-        "8757": [0, 0.69224, 0, 0],
-        "8764": [-0.13313, 0.36687, 0, 0],
-        "8765": [-0.13313, 0.37788, 0, 0],
-        "8769": [-0.13313, 0.36687, 0, 0],
-        "8770": [-0.03625, 0.46375, 0, 0],
-        "8774": [0.30274, 0.79383, 0, 0],
-        "8776": [-0.01688, 0.48312, 0, 0],
-        "8778": [0.08167, 0.58167, 0, 0],
-        "8782": [0.06062, 0.54986, 0, 0],
-        "8783": [0.06062, 0.54986, 0, 0],
-        "8785": [0.08198, 0.58198, 0, 0],
-        "8786": [0.08198, 0.58198, 0, 0],
-        "8787": [0.08198, 0.58198, 0, 0],
-        "8790": [0, 0.69224, 0, 0],
-        "8791": [0.22958, 0.72958, 0, 0],
-        "8796": [0.08198, 0.91667, 0, 0],
-        "8806": [0.25583, 0.75583, 0, 0],
-        "8807": [0.25583, 0.75583, 0, 0],
-        "8808": [0.25142, 0.75726, 0, 0],
-        "8809": [0.25142, 0.75726, 0, 0],
-        "8812": [0.25583, 0.75583, 0, 0],
-        "8814": [0.20576, 0.70576, 0, 0],
-        "8815": [0.20576, 0.70576, 0, 0],
-        "8816": [0.30274, 0.79383, 0, 0],
-        "8817": [0.30274, 0.79383, 0, 0],
-        "8818": [0.22958, 0.72958, 0, 0],
-        "8819": [0.22958, 0.72958, 0, 0],
-        "8822": [0.1808, 0.675, 0, 0],
-        "8823": [0.1808, 0.675, 0, 0],
-        "8828": [0.13667, 0.63667, 0, 0],
-        "8829": [0.13667, 0.63667, 0, 0],
-        "8830": [0.22958, 0.72958, 0, 0],
-        "8831": [0.22958, 0.72958, 0, 0],
-        "8832": [0.20576, 0.70576, 0, 0],
-        "8833": [0.20576, 0.70576, 0, 0],
-        "8840": [0.30274, 0.79383, 0, 0],
-        "8841": [0.30274, 0.79383, 0, 0],
-        "8842": [0.13597, 0.63597, 0, 0],
-        "8843": [0.13597, 0.63597, 0, 0],
-        "8847": [0.03517, 0.54986, 0, 0],
-        "8848": [0.03517, 0.54986, 0, 0],
-        "8858": [0.08198, 0.58198, 0, 0],
-        "8859": [0.08198, 0.58198, 0, 0],
-        "8861": [0.08198, 0.58198, 0, 0],
-        "8862": [0, 0.675, 0, 0],
-        "8863": [0, 0.675, 0, 0],
-        "8864": [0, 0.675, 0, 0],
-        "8865": [0, 0.675, 0, 0],
-        "8872": [0, 0.69224, 0, 0],
-        "8873": [0, 0.69224, 0, 0],
-        "8874": [0, 0.69224, 0, 0],
-        "8876": [0, 0.68889, 0, 0],
-        "8877": [0, 0.68889, 0, 0],
-        "8878": [0, 0.68889, 0, 0],
-        "8879": [0, 0.68889, 0, 0],
-        "8882": [0.03517, 0.54986, 0, 0],
-        "8883": [0.03517, 0.54986, 0, 0],
-        "8884": [0.13667, 0.63667, 0, 0],
-        "8885": [0.13667, 0.63667, 0, 0],
-        "8888": [0, 0.54986, 0, 0],
-        "8890": [0.19444, 0.43056, 0, 0],
-        "8891": [0.19444, 0.69224, 0, 0],
-        "8892": [0.19444, 0.69224, 0, 0],
-        "8901": [0, 0.54986, 0, 0],
-        "8903": [0.08167, 0.58167, 0, 0],
-        "8905": [0.08167, 0.58167, 0, 0],
-        "8906": [0.08167, 0.58167, 0, 0],
-        "8907": [0, 0.69224, 0, 0],
-        "8908": [0, 0.69224, 0, 0],
-        "8909": [-0.03598, 0.46402, 0, 0],
-        "8910": [0, 0.54986, 0, 0],
-        "8911": [0, 0.54986, 0, 0],
-        "8912": [0.03517, 0.54986, 0, 0],
-        "8913": [0.03517, 0.54986, 0, 0],
-        "8914": [0, 0.54986, 0, 0],
-        "8915": [0, 0.54986, 0, 0],
-        "8916": [0, 0.69224, 0, 0],
-        "8918": [0.0391, 0.5391, 0, 0],
-        "8919": [0.0391, 0.5391, 0, 0],
-        "8920": [0.03517, 0.54986, 0, 0],
-        "8921": [0.03517, 0.54986, 0, 0],
-        "8922": [0.38569, 0.88569, 0, 0],
-        "8923": [0.38569, 0.88569, 0, 0],
-        "8926": [0.13667, 0.63667, 0, 0],
-        "8927": [0.13667, 0.63667, 0, 0],
-        "8928": [0.30274, 0.79383, 0, 0],
-        "8929": [0.30274, 0.79383, 0, 0],
-        "8934": [0.23222, 0.74111, 0, 0],
-        "8935": [0.23222, 0.74111, 0, 0],
-        "8936": [0.23222, 0.74111, 0, 0],
-        "8937": [0.23222, 0.74111, 0, 0],
-        "8938": [0.20576, 0.70576, 0, 0],
-        "8939": [0.20576, 0.70576, 0, 0],
-        "8940": [0.30274, 0.79383, 0, 0],
-        "8941": [0.30274, 0.79383, 0, 0],
-        "8994": [0.19444, 0.69224, 0, 0],
-        "8995": [0.19444, 0.69224, 0, 0],
-        "9416": [0.15559, 0.69224, 0, 0],
-        "9484": [0, 0.69224, 0, 0],
-        "9488": [0, 0.69224, 0, 0],
-        "9492": [0, 0.37788, 0, 0],
-        "9496": [0, 0.37788, 0, 0],
-        "9585": [0.19444, 0.68889, 0, 0],
-        "9586": [0.19444, 0.74111, 0, 0],
-        "9632": [0, 0.675, 0, 0],
-        "9633": [0, 0.675, 0, 0],
-        "9650": [0, 0.54986, 0, 0],
-        "9651": [0, 0.54986, 0, 0],
-        "9654": [0.03517, 0.54986, 0, 0],
-        "9660": [0, 0.54986, 0, 0],
-        "9661": [0, 0.54986, 0, 0],
-        "9664": [0.03517, 0.54986, 0, 0],
-        "9674": [0.11111, 0.69224, 0, 0],
-        "9733": [0.19444, 0.69224, 0, 0],
-        "10003": [0, 0.69224, 0, 0],
-        "10016": [0, 0.69224, 0, 0],
-        "10731": [0.11111, 0.69224, 0, 0],
-        "10846": [0.19444, 0.75583, 0, 0],
-        "10877": [0.13667, 0.63667, 0, 0],
-        "10878": [0.13667, 0.63667, 0, 0],
-        "10885": [0.25583, 0.75583, 0, 0],
-        "10886": [0.25583, 0.75583, 0, 0],
-        "10887": [0.13597, 0.63597, 0, 0],
-        "10888": [0.13597, 0.63597, 0, 0],
-        "10889": [0.26167, 0.75726, 0, 0],
-        "10890": [0.26167, 0.75726, 0, 0],
-        "10891": [0.48256, 0.98256, 0, 0],
-        "10892": [0.48256, 0.98256, 0, 0],
-        "10901": [0.13667, 0.63667, 0, 0],
-        "10902": [0.13667, 0.63667, 0, 0],
-        "10933": [0.25142, 0.75726, 0, 0],
-        "10934": [0.25142, 0.75726, 0, 0],
-        "10935": [0.26167, 0.75726, 0, 0],
-        "10936": [0.26167, 0.75726, 0, 0],
-        "10937": [0.26167, 0.75726, 0, 0],
-        "10938": [0.26167, 0.75726, 0, 0],
-        "10949": [0.25583, 0.75583, 0, 0],
-        "10950": [0.25583, 0.75583, 0, 0],
-        "10955": [0.28481, 0.79383, 0, 0],
-        "10956": [0.28481, 0.79383, 0, 0],
-        "57350": [0.08167, 0.58167, 0, 0],
-        "57351": [0.08167, 0.58167, 0, 0],
-        "57352": [0.08167, 0.58167, 0, 0],
-        "57353": [0, 0.43056, 0.04028, 0],
-        "57356": [0.25142, 0.75726, 0, 0],
-        "57357": [0.25142, 0.75726, 0, 0],
-        "57358": [0.41951, 0.91951, 0, 0],
-        "57359": [0.30274, 0.79383, 0, 0],
-        "57360": [0.30274, 0.79383, 0, 0],
-        "57361": [0.41951, 0.91951, 0, 0],
-        "57366": [0.25142, 0.75726, 0, 0],
-        "57367": [0.25142, 0.75726, 0, 0],
-        "57368": [0.25142, 0.75726, 0, 0],
-        "57369": [0.25142, 0.75726, 0, 0],
-        "57370": [0.13597, 0.63597, 0, 0],
-        "57371": [0.13597, 0.63597, 0, 0]
+        "65": [0, 0.68889, 0, 0, 0.72222],
+        "66": [0, 0.68889, 0, 0, 0.66667],
+        "67": [0, 0.68889, 0, 0, 0.72222],
+        "68": [0, 0.68889, 0, 0, 0.72222],
+        "69": [0, 0.68889, 0, 0, 0.66667],
+        "70": [0, 0.68889, 0, 0, 0.61111],
+        "71": [0, 0.68889, 0, 0, 0.77778],
+        "72": [0, 0.68889, 0, 0, 0.77778],
+        "73": [0, 0.68889, 0, 0, 0.38889],
+        "74": [0.16667, 0.68889, 0, 0, 0.5],
+        "75": [0, 0.68889, 0, 0, 0.77778],
+        "76": [0, 0.68889, 0, 0, 0.66667],
+        "77": [0, 0.68889, 0, 0, 0.94445],
+        "78": [0, 0.68889, 0, 0, 0.72222],
+        "79": [0.16667, 0.68889, 0, 0, 0.77778],
+        "80": [0, 0.68889, 0, 0, 0.61111],
+        "81": [0.16667, 0.68889, 0, 0, 0.77778],
+        "82": [0, 0.68889, 0, 0, 0.72222],
+        "83": [0, 0.68889, 0, 0, 0.55556],
+        "84": [0, 0.68889, 0, 0, 0.66667],
+        "85": [0, 0.68889, 0, 0, 0.72222],
+        "86": [0, 0.68889, 0, 0, 0.72222],
+        "87": [0, 0.68889, 0, 0, 1.0],
+        "88": [0, 0.68889, 0, 0, 0.72222],
+        "89": [0, 0.68889, 0, 0, 0.72222],
+        "90": [0, 0.68889, 0, 0, 0.66667],
+        "107": [0, 0.68889, 0, 0, 0.55556],
+        "165": [0, 0.675, 0.025, 0, 0.75],
+        "174": [0.15559, 0.69224, 0, 0, 0.94666],
+        "240": [0, 0.68889, 0, 0, 0.55556],
+        "295": [0, 0.68889, 0, 0, 0.54028],
+        "710": [0, 0.825, 0, 0, 2.33334],
+        "732": [0, 0.9, 0, 0, 2.33334],
+        "770": [0, 0.825, 0, 0, 2.33334],
+        "771": [0, 0.9, 0, 0, 2.33334],
+        "989": [0.08167, 0.58167, 0, 0, 0.77778],
+        "1008": [0, 0.43056, 0.04028, 0, 0.66667],
+        "8245": [0, 0.54986, 0, 0, 0.275],
+        "8463": [0, 0.68889, 0, 0, 0.54028],
+        "8487": [0, 0.68889, 0, 0, 0.72222],
+        "8498": [0, 0.68889, 0, 0, 0.55556],
+        "8502": [0, 0.68889, 0, 0, 0.66667],
+        "8503": [0, 0.68889, 0, 0, 0.44445],
+        "8504": [0, 0.68889, 0, 0, 0.66667],
+        "8513": [0, 0.68889, 0, 0, 0.63889],
+        "8592": [-0.03598, 0.46402, 0, 0, 0.5],
+        "8594": [-0.03598, 0.46402, 0, 0, 0.5],
+        "8602": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8603": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8606": [0.01354, 0.52239, 0, 0, 1.0],
+        "8608": [0.01354, 0.52239, 0, 0, 1.0],
+        "8610": [0.01354, 0.52239, 0, 0, 1.11111],
+        "8611": [0.01354, 0.52239, 0, 0, 1.11111],
+        "8619": [0, 0.54986, 0, 0, 1.0],
+        "8620": [0, 0.54986, 0, 0, 1.0],
+        "8621": [-0.13313, 0.37788, 0, 0, 1.38889],
+        "8622": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8624": [0, 0.69224, 0, 0, 0.5],
+        "8625": [0, 0.69224, 0, 0, 0.5],
+        "8630": [0, 0.43056, 0, 0, 1.0],
+        "8631": [0, 0.43056, 0, 0, 1.0],
+        "8634": [0.08198, 0.58198, 0, 0, 0.77778],
+        "8635": [0.08198, 0.58198, 0, 0, 0.77778],
+        "8638": [0.19444, 0.69224, 0, 0, 0.41667],
+        "8639": [0.19444, 0.69224, 0, 0, 0.41667],
+        "8642": [0.19444, 0.69224, 0, 0, 0.41667],
+        "8643": [0.19444, 0.69224, 0, 0, 0.41667],
+        "8644": [0.1808, 0.675, 0, 0, 1.0],
+        "8646": [0.1808, 0.675, 0, 0, 1.0],
+        "8647": [0.1808, 0.675, 0, 0, 1.0],
+        "8648": [0.19444, 0.69224, 0, 0, 0.83334],
+        "8649": [0.1808, 0.675, 0, 0, 1.0],
+        "8650": [0.19444, 0.69224, 0, 0, 0.83334],
+        "8651": [0.01354, 0.52239, 0, 0, 1.0],
+        "8652": [0.01354, 0.52239, 0, 0, 1.0],
+        "8653": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8654": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8655": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8666": [0.13667, 0.63667, 0, 0, 1.0],
+        "8667": [0.13667, 0.63667, 0, 0, 1.0],
+        "8669": [-0.13313, 0.37788, 0, 0, 1.0],
+        "8672": [-0.064, 0.437, 0, 0, 1187],
+        "8674": [-0.064, 0.437, 0, 0, 1167],
+        "8705": [0, 0.825, 0, 0, 0.5],
+        "8708": [0, 0.68889, 0, 0, 0.55556],
+        "8709": [0.08167, 0.58167, 0, 0, 0.77778],
+        "8717": [0, 0.43056, 0, 0, 0.42917],
+        "8722": [-0.03598, 0.46402, 0, 0, 0.5],
+        "8724": [0.08198, 0.69224, 0, 0, 0.77778],
+        "8726": [0.08167, 0.58167, 0, 0, 0.77778],
+        "8733": [0, 0.69224, 0, 0, 0.77778],
+        "8736": [0, 0.69224, 0, 0, 0.72222],
+        "8737": [0, 0.69224, 0, 0, 0.72222],
+        "8738": [0.03517, 0.52239, 0, 0, 0.72222],
+        "8739": [0.08167, 0.58167, 0, 0, 0.22222],
+        "8740": [0.25142, 0.74111, 0, 0, 0.27778],
+        "8741": [0.08167, 0.58167, 0, 0, 0.38889],
+        "8742": [0.25142, 0.74111, 0, 0, 0.5],
+        "8756": [0, 0.69224, 0, 0, 0.66667],
+        "8757": [0, 0.69224, 0, 0, 0.66667],
+        "8764": [-0.13313, 0.36687, 0, 0, 0.77778],
+        "8765": [-0.13313, 0.37788, 0, 0, 0.77778],
+        "8769": [-0.13313, 0.36687, 0, 0, 0.77778],
+        "8770": [-0.03625, 0.46375, 0, 0, 0.77778],
+        "8774": [0.30274, 0.79383, 0, 0, 0.77778],
+        "8776": [-0.01688, 0.48312, 0, 0, 0.77778],
+        "8778": [0.08167, 0.58167, 0, 0, 0.77778],
+        "8782": [0.06062, 0.54986, 0, 0, 0.77778],
+        "8783": [0.06062, 0.54986, 0, 0, 0.77778],
+        "8785": [0.08198, 0.58198, 0, 0, 0.77778],
+        "8786": [0.08198, 0.58198, 0, 0, 0.77778],
+        "8787": [0.08198, 0.58198, 0, 0, 0.77778],
+        "8790": [0, 0.69224, 0, 0, 0.77778],
+        "8791": [0.22958, 0.72958, 0, 0, 0.77778],
+        "8796": [0.08198, 0.91667, 0, 0, 0.77778],
+        "8806": [0.25583, 0.75583, 0, 0, 0.77778],
+        "8807": [0.25583, 0.75583, 0, 0, 0.77778],
+        "8808": [0.25142, 0.75726, 0, 0, 0.77778],
+        "8809": [0.25142, 0.75726, 0, 0, 0.77778],
+        "8812": [0.25583, 0.75583, 0, 0, 0.5],
+        "8814": [0.20576, 0.70576, 0, 0, 0.77778],
+        "8815": [0.20576, 0.70576, 0, 0, 0.77778],
+        "8816": [0.30274, 0.79383, 0, 0, 0.77778],
+        "8817": [0.30274, 0.79383, 0, 0, 0.77778],
+        "8818": [0.22958, 0.72958, 0, 0, 0.77778],
+        "8819": [0.22958, 0.72958, 0, 0, 0.77778],
+        "8822": [0.1808, 0.675, 0, 0, 0.77778],
+        "8823": [0.1808, 0.675, 0, 0, 0.77778],
+        "8828": [0.13667, 0.63667, 0, 0, 0.77778],
+        "8829": [0.13667, 0.63667, 0, 0, 0.77778],
+        "8830": [0.22958, 0.72958, 0, 0, 0.77778],
+        "8831": [0.22958, 0.72958, 0, 0, 0.77778],
+        "8832": [0.20576, 0.70576, 0, 0, 0.77778],
+        "8833": [0.20576, 0.70576, 0, 0, 0.77778],
+        "8840": [0.30274, 0.79383, 0, 0, 0.77778],
+        "8841": [0.30274, 0.79383, 0, 0, 0.77778],
+        "8842": [0.13597, 0.63597, 0, 0, 0.77778],
+        "8843": [0.13597, 0.63597, 0, 0, 0.77778],
+        "8847": [0.03517, 0.54986, 0, 0, 0.77778],
+        "8848": [0.03517, 0.54986, 0, 0, 0.77778],
+        "8858": [0.08198, 0.58198, 0, 0, 0.77778],
+        "8859": [0.08198, 0.58198, 0, 0, 0.77778],
+        "8861": [0.08198, 0.58198, 0, 0, 0.77778],
+        "8862": [0, 0.675, 0, 0, 0.77778],
+        "8863": [0, 0.675, 0, 0, 0.77778],
+        "8864": [0, 0.675, 0, 0, 0.77778],
+        "8865": [0, 0.675, 0, 0, 0.77778],
+        "8872": [0, 0.69224, 0, 0, 0.61111],
+        "8873": [0, 0.69224, 0, 0, 0.72222],
+        "8874": [0, 0.69224, 0, 0, 0.88889],
+        "8876": [0, 0.68889, 0, 0, 0.61111],
+        "8877": [0, 0.68889, 0, 0, 0.61111],
+        "8878": [0, 0.68889, 0, 0, 0.72222],
+        "8879": [0, 0.68889, 0, 0, 0.72222],
+        "8882": [0.03517, 0.54986, 0, 0, 0.77778],
+        "8883": [0.03517, 0.54986, 0, 0, 0.77778],
+        "8884": [0.13667, 0.63667, 0, 0, 0.77778],
+        "8885": [0.13667, 0.63667, 0, 0, 0.77778],
+        "8888": [0, 0.54986, 0, 0, 1.11111],
+        "8890": [0.19444, 0.43056, 0, 0, 0.55556],
+        "8891": [0.19444, 0.69224, 0, 0, 0.61111],
+        "8892": [0.19444, 0.69224, 0, 0, 0.61111],
+        "8901": [0, 0.54986, 0, 0, 0.27778],
+        "8903": [0.08167, 0.58167, 0, 0, 0.77778],
+        "8905": [0.08167, 0.58167, 0, 0, 0.77778],
+        "8906": [0.08167, 0.58167, 0, 0, 0.77778],
+        "8907": [0, 0.69224, 0, 0, 0.77778],
+        "8908": [0, 0.69224, 0, 0, 0.77778],
+        "8909": [-0.03598, 0.46402, 0, 0, 0.77778],
+        "8910": [0, 0.54986, 0, 0, 0.76042],
+        "8911": [0, 0.54986, 0, 0, 0.76042],
+        "8912": [0.03517, 0.54986, 0, 0, 0.77778],
+        "8913": [0.03517, 0.54986, 0, 0, 0.77778],
+        "8914": [0, 0.54986, 0, 0, 0.66667],
+        "8915": [0, 0.54986, 0, 0, 0.66667],
+        "8916": [0, 0.69224, 0, 0, 0.66667],
+        "8918": [0.0391, 0.5391, 0, 0, 0.77778],
+        "8919": [0.0391, 0.5391, 0, 0, 0.77778],
+        "8920": [0.03517, 0.54986, 0, 0, 1.33334],
+        "8921": [0.03517, 0.54986, 0, 0, 1.33334],
+        "8922": [0.38569, 0.88569, 0, 0, 0.77778],
+        "8923": [0.38569, 0.88569, 0, 0, 0.77778],
+        "8926": [0.13667, 0.63667, 0, 0, 0.77778],
+        "8927": [0.13667, 0.63667, 0, 0, 0.77778],
+        "8928": [0.30274, 0.79383, 0, 0, 0.77778],
+        "8929": [0.30274, 0.79383, 0, 0, 0.77778],
+        "8934": [0.23222, 0.74111, 0, 0, 0.77778],
+        "8935": [0.23222, 0.74111, 0, 0, 0.77778],
+        "8936": [0.23222, 0.74111, 0, 0, 0.77778],
+        "8937": [0.23222, 0.74111, 0, 0, 0.77778],
+        "8938": [0.20576, 0.70576, 0, 0, 0.77778],
+        "8939": [0.20576, 0.70576, 0, 0, 0.77778],
+        "8940": [0.30274, 0.79383, 0, 0, 0.77778],
+        "8941": [0.30274, 0.79383, 0, 0, 0.77778],
+        "8994": [0.19444, 0.69224, 0, 0, 0.77778],
+        "8995": [0.19444, 0.69224, 0, 0, 0.77778],
+        "9416": [0.15559, 0.69224, 0, 0, 0.90222],
+        "9484": [0, 0.69224, 0, 0, 0.5],
+        "9488": [0, 0.69224, 0, 0, 0.5],
+        "9492": [0, 0.37788, 0, 0, 0.5],
+        "9496": [0, 0.37788, 0, 0, 0.5],
+        "9585": [0.19444, 0.68889, 0, 0, 0.88889],
+        "9586": [0.19444, 0.74111, 0, 0, 0.88889],
+        "9632": [0, 0.675, 0, 0, 0.77778],
+        "9633": [0, 0.675, 0, 0, 0.77778],
+        "9650": [0, 0.54986, 0, 0, 0.72222],
+        "9651": [0, 0.54986, 0, 0, 0.72222],
+        "9654": [0.03517, 0.54986, 0, 0, 0.77778],
+        "9660": [0, 0.54986, 0, 0, 0.72222],
+        "9661": [0, 0.54986, 0, 0, 0.72222],
+        "9664": [0.03517, 0.54986, 0, 0, 0.77778],
+        "9674": [0.11111, 0.69224, 0, 0, 0.66667],
+        "9733": [0.19444, 0.69224, 0, 0, 0.94445],
+        "10003": [0, 0.69224, 0, 0, 0.83334],
+        "10016": [0, 0.69224, 0, 0, 0.83334],
+        "10731": [0.11111, 0.69224, 0, 0, 0.66667],
+        "10846": [0.19444, 0.75583, 0, 0, 0.61111],
+        "10877": [0.13667, 0.63667, 0, 0, 0.77778],
+        "10878": [0.13667, 0.63667, 0, 0, 0.77778],
+        "10885": [0.25583, 0.75583, 0, 0, 0.77778],
+        "10886": [0.25583, 0.75583, 0, 0, 0.77778],
+        "10887": [0.13597, 0.63597, 0, 0, 0.77778],
+        "10888": [0.13597, 0.63597, 0, 0, 0.77778],
+        "10889": [0.26167, 0.75726, 0, 0, 0.77778],
+        "10890": [0.26167, 0.75726, 0, 0, 0.77778],
+        "10891": [0.48256, 0.98256, 0, 0, 0.77778],
+        "10892": [0.48256, 0.98256, 0, 0, 0.77778],
+        "10901": [0.13667, 0.63667, 0, 0, 0.77778],
+        "10902": [0.13667, 0.63667, 0, 0, 0.77778],
+        "10933": [0.25142, 0.75726, 0, 0, 0.77778],
+        "10934": [0.25142, 0.75726, 0, 0, 0.77778],
+        "10935": [0.26167, 0.75726, 0, 0, 0.77778],
+        "10936": [0.26167, 0.75726, 0, 0, 0.77778],
+        "10937": [0.26167, 0.75726, 0, 0, 0.77778],
+        "10938": [0.26167, 0.75726, 0, 0, 0.77778],
+        "10949": [0.25583, 0.75583, 0, 0, 0.77778],
+        "10950": [0.25583, 0.75583, 0, 0, 0.77778],
+        "10955": [0.28481, 0.79383, 0, 0, 0.77778],
+        "10956": [0.28481, 0.79383, 0, 0, 0.77778],
+        "57350": [0.08167, 0.58167, 0, 0, 0.22222],
+        "57351": [0.08167, 0.58167, 0, 0, 0.38889],
+        "57352": [0.08167, 0.58167, 0, 0, 0.77778],
+        "57353": [0, 0.43056, 0.04028, 0, 0.66667],
+        "57356": [0.25142, 0.75726, 0, 0, 0.77778],
+        "57357": [0.25142, 0.75726, 0, 0, 0.77778],
+        "57358": [0.41951, 0.91951, 0, 0, 0.77778],
+        "57359": [0.30274, 0.79383, 0, 0, 0.77778],
+        "57360": [0.30274, 0.79383, 0, 0, 0.77778],
+        "57361": [0.41951, 0.91951, 0, 0, 0.77778],
+        "57366": [0.25142, 0.75726, 0, 0, 0.77778],
+        "57367": [0.25142, 0.75726, 0, 0, 0.77778],
+        "57368": [0.25142, 0.75726, 0, 0, 0.77778],
+        "57369": [0.25142, 0.75726, 0, 0, 0.77778],
+        "57370": [0.13597, 0.63597, 0, 0, 0.77778],
+        "57371": [0.13597, 0.63597, 0, 0, 0.77778]
     },
     "Caligraphic-Regular": {
-        "48": [0, 0.43056, 0, 0],
-        "49": [0, 0.43056, 0, 0],
-        "50": [0, 0.43056, 0, 0],
-        "51": [0.19444, 0.43056, 0, 0],
-        "52": [0.19444, 0.43056, 0, 0],
-        "53": [0.19444, 0.43056, 0, 0],
-        "54": [0, 0.64444, 0, 0],
-        "55": [0.19444, 0.43056, 0, 0],
-        "56": [0, 0.64444, 0, 0],
-        "57": [0.19444, 0.43056, 0, 0],
-        "65": [0, 0.68333, 0, 0.19445],
-        "66": [0, 0.68333, 0.03041, 0.13889],
-        "67": [0, 0.68333, 0.05834, 0.13889],
-        "68": [0, 0.68333, 0.02778, 0.08334],
-        "69": [0, 0.68333, 0.08944, 0.11111],
-        "70": [0, 0.68333, 0.09931, 0.11111],
-        "71": [0.09722, 0.68333, 0.0593, 0.11111],
-        "72": [0, 0.68333, 0.00965, 0.11111],
-        "73": [0, 0.68333, 0.07382, 0],
-        "74": [0.09722, 0.68333, 0.18472, 0.16667],
-        "75": [0, 0.68333, 0.01445, 0.05556],
-        "76": [0, 0.68333, 0, 0.13889],
-        "77": [0, 0.68333, 0, 0.13889],
-        "78": [0, 0.68333, 0.14736, 0.08334],
-        "79": [0, 0.68333, 0.02778, 0.11111],
-        "80": [0, 0.68333, 0.08222, 0.08334],
-        "81": [0.09722, 0.68333, 0, 0.11111],
-        "82": [0, 0.68333, 0, 0.08334],
-        "83": [0, 0.68333, 0.075, 0.13889],
-        "84": [0, 0.68333, 0.25417, 0],
-        "85": [0, 0.68333, 0.09931, 0.08334],
-        "86": [0, 0.68333, 0.08222, 0],
-        "87": [0, 0.68333, 0.08222, 0.08334],
-        "88": [0, 0.68333, 0.14643, 0.13889],
-        "89": [0.09722, 0.68333, 0.08222, 0.08334],
-        "90": [0, 0.68333, 0.07944, 0.13889]
+        "48": [0, 0.43056, 0, 0, 0.5],
+        "49": [0, 0.43056, 0, 0, 0.5],
+        "50": [0, 0.43056, 0, 0, 0.5],
+        "51": [0.19444, 0.43056, 0, 0, 0.5],
+        "52": [0.19444, 0.43056, 0, 0, 0.5],
+        "53": [0.19444, 0.43056, 0, 0, 0.5],
+        "54": [0, 0.64444, 0, 0, 0.5],
+        "55": [0.19444, 0.43056, 0, 0, 0.5],
+        "56": [0, 0.64444, 0, 0, 0.5],
+        "57": [0.19444, 0.43056, 0, 0, 0.5],
+        "65": [0, 0.68333, 0, 0.19445, 0.79847],
+        "66": [0, 0.68333, 0.03041, 0.13889, 0.65681],
+        "67": [0, 0.68333, 0.05834, 0.13889, 0.52653],
+        "68": [0, 0.68333, 0.02778, 0.08334, 0.77139],
+        "69": [0, 0.68333, 0.08944, 0.11111, 0.52778],
+        "70": [0, 0.68333, 0.09931, 0.11111, 0.71875],
+        "71": [0.09722, 0.68333, 0.0593, 0.11111, 0.59487],
+        "72": [0, 0.68333, 0.00965, 0.11111, 0.84452],
+        "73": [0, 0.68333, 0.07382, 0, 0.54452],
+        "74": [0.09722, 0.68333, 0.18472, 0.16667, 0.67778],
+        "75": [0, 0.68333, 0.01445, 0.05556, 0.76195],
+        "76": [0, 0.68333, 0, 0.13889, 0.68972],
+        "77": [0, 0.68333, 0, 0.13889, 1.2009],
+        "78": [0, 0.68333, 0.14736, 0.08334, 0.82049],
+        "79": [0, 0.68333, 0.02778, 0.11111, 0.79611],
+        "80": [0, 0.68333, 0.08222, 0.08334, 0.69556],
+        "81": [0.09722, 0.68333, 0, 0.11111, 0.81667],
+        "82": [0, 0.68333, 0, 0.08334, 0.8475],
+        "83": [0, 0.68333, 0.075, 0.13889, 0.60556],
+        "84": [0, 0.68333, 0.25417, 0, 0.54464],
+        "85": [0, 0.68333, 0.09931, 0.08334, 0.62583],
+        "86": [0, 0.68333, 0.08222, 0, 0.61278],
+        "87": [0, 0.68333, 0.08222, 0.08334, 0.98778],
+        "88": [0, 0.68333, 0.14643, 0.13889, 0.7133],
+        "89": [0.09722, 0.68333, 0.08222, 0.08334, 0.66834],
+        "90": [0, 0.68333, 0.07944, 0.13889, 0.72473]
     },
     "Fraktur-Regular": {
-        "33": [0, 0.69141, 0, 0],
-        "34": [0, 0.69141, 0, 0],
-        "38": [0, 0.69141, 0, 0],
-        "39": [0, 0.69141, 0, 0],
-        "40": [0.24982, 0.74947, 0, 0],
-        "41": [0.24982, 0.74947, 0, 0],
-        "42": [0, 0.62119, 0, 0],
-        "43": [0.08319, 0.58283, 0, 0],
-        "44": [0, 0.10803, 0, 0],
-        "45": [0.08319, 0.58283, 0, 0],
-        "46": [0, 0.10803, 0, 0],
-        "47": [0.24982, 0.74947, 0, 0],
-        "48": [0, 0.47534, 0, 0],
-        "49": [0, 0.47534, 0, 0],
-        "50": [0, 0.47534, 0, 0],
-        "51": [0.18906, 0.47534, 0, 0],
-        "52": [0.18906, 0.47534, 0, 0],
-        "53": [0.18906, 0.47534, 0, 0],
-        "54": [0, 0.69141, 0, 0],
-        "55": [0.18906, 0.47534, 0, 0],
-        "56": [0, 0.69141, 0, 0],
-        "57": [0.18906, 0.47534, 0, 0],
-        "58": [0, 0.47534, 0, 0],
-        "59": [0.12604, 0.47534, 0, 0],
-        "61": [-0.13099, 0.36866, 0, 0],
-        "63": [0, 0.69141, 0, 0],
-        "65": [0, 0.69141, 0, 0],
-        "66": [0, 0.69141, 0, 0],
-        "67": [0, 0.69141, 0, 0],
-        "68": [0, 0.69141, 0, 0],
-        "69": [0, 0.69141, 0, 0],
-        "70": [0.12604, 0.69141, 0, 0],
-        "71": [0, 0.69141, 0, 0],
-        "72": [0.06302, 0.69141, 0, 0],
-        "73": [0, 0.69141, 0, 0],
-        "74": [0.12604, 0.69141, 0, 0],
-        "75": [0, 0.69141, 0, 0],
-        "76": [0, 0.69141, 0, 0],
-        "77": [0, 0.69141, 0, 0],
-        "78": [0, 0.69141, 0, 0],
-        "79": [0, 0.69141, 0, 0],
-        "80": [0.18906, 0.69141, 0, 0],
-        "81": [0.03781, 0.69141, 0, 0],
-        "82": [0, 0.69141, 0, 0],
-        "83": [0, 0.69141, 0, 0],
-        "84": [0, 0.69141, 0, 0],
-        "85": [0, 0.69141, 0, 0],
-        "86": [0, 0.69141, 0, 0],
-        "87": [0, 0.69141, 0, 0],
-        "88": [0, 0.69141, 0, 0],
-        "89": [0.18906, 0.69141, 0, 0],
-        "90": [0.12604, 0.69141, 0, 0],
-        "91": [0.24982, 0.74947, 0, 0],
-        "93": [0.24982, 0.74947, 0, 0],
-        "94": [0, 0.69141, 0, 0],
-        "97": [0, 0.47534, 0, 0],
-        "98": [0, 0.69141, 0, 0],
-        "99": [0, 0.47534, 0, 0],
-        "100": [0, 0.62119, 0, 0],
-        "101": [0, 0.47534, 0, 0],
-        "102": [0.18906, 0.69141, 0, 0],
-        "103": [0.18906, 0.47534, 0, 0],
-        "104": [0.18906, 0.69141, 0, 0],
-        "105": [0, 0.69141, 0, 0],
-        "106": [0, 0.69141, 0, 0],
-        "107": [0, 0.69141, 0, 0],
-        "108": [0, 0.69141, 0, 0],
-        "109": [0, 0.47534, 0, 0],
-        "110": [0, 0.47534, 0, 0],
-        "111": [0, 0.47534, 0, 0],
-        "112": [0.18906, 0.52396, 0, 0],
-        "113": [0.18906, 0.47534, 0, 0],
-        "114": [0, 0.47534, 0, 0],
-        "115": [0, 0.47534, 0, 0],
-        "116": [0, 0.62119, 0, 0],
-        "117": [0, 0.47534, 0, 0],
-        "118": [0, 0.52396, 0, 0],
-        "119": [0, 0.52396, 0, 0],
-        "120": [0.18906, 0.47534, 0, 0],
-        "121": [0.18906, 0.47534, 0, 0],
-        "122": [0.18906, 0.47534, 0, 0],
-        "8216": [0, 0.69141, 0, 0],
-        "8217": [0, 0.69141, 0, 0],
-        "58112": [0, 0.62119, 0, 0],
-        "58113": [0, 0.62119, 0, 0],
-        "58114": [0.18906, 0.69141, 0, 0],
-        "58115": [0.18906, 0.69141, 0, 0],
-        "58116": [0.18906, 0.47534, 0, 0],
-        "58117": [0, 0.69141, 0, 0],
-        "58118": [0, 0.62119, 0, 0],
-        "58119": [0, 0.47534, 0, 0]
+        "33": [0, 0.69141, 0, 0, 0.29574],
+        "34": [0, 0.69141, 0, 0, 0.21471],
+        "38": [0, 0.69141, 0, 0, 0.73786],
+        "39": [0, 0.69141, 0, 0, 0.21201],
+        "40": [0.24982, 0.74947, 0, 0, 0.38865],
+        "41": [0.24982, 0.74947, 0, 0, 0.38865],
+        "42": [0, 0.62119, 0, 0, 0.27764],
+        "43": [0.08319, 0.58283, 0, 0, 0.75623],
+        "44": [0, 0.10803, 0, 0, 0.27764],
+        "45": [0.08319, 0.58283, 0, 0, 0.75623],
+        "46": [0, 0.10803, 0, 0, 0.27764],
+        "47": [0.24982, 0.74947, 0, 0, 0.50181],
+        "48": [0, 0.47534, 0, 0, 0.50181],
+        "49": [0, 0.47534, 0, 0, 0.50181],
+        "50": [0, 0.47534, 0, 0, 0.50181],
+        "51": [0.18906, 0.47534, 0, 0, 0.50181],
+        "52": [0.18906, 0.47534, 0, 0, 0.50181],
+        "53": [0.18906, 0.47534, 0, 0, 0.50181],
+        "54": [0, 0.69141, 0, 0, 0.50181],
+        "55": [0.18906, 0.47534, 0, 0, 0.50181],
+        "56": [0, 0.69141, 0, 0, 0.50181],
+        "57": [0.18906, 0.47534, 0, 0, 0.50181],
+        "58": [0, 0.47534, 0, 0, 0.21606],
+        "59": [0.12604, 0.47534, 0, 0, 0.21606],
+        "61": [-0.13099, 0.36866, 0, 0, 0.75623],
+        "63": [0, 0.69141, 0, 0, 0.36245],
+        "65": [0, 0.69141, 0, 0, 0.7176],
+        "66": [0, 0.69141, 0, 0, 0.88397],
+        "67": [0, 0.69141, 0, 0, 0.61254],
+        "68": [0, 0.69141, 0, 0, 0.83158],
+        "69": [0, 0.69141, 0, 0, 0.66278],
+        "70": [0.12604, 0.69141, 0, 0, 0.61119],
+        "71": [0, 0.69141, 0, 0, 0.78539],
+        "72": [0.06302, 0.69141, 0, 0, 0.7203],
+        "73": [0, 0.69141, 0, 0, 0.55448],
+        "74": [0.12604, 0.69141, 0, 0, 0.55231],
+        "75": [0, 0.69141, 0, 0, 0.66845],
+        "76": [0, 0.69141, 0, 0, 0.66602],
+        "77": [0, 0.69141, 0, 0, 1.04953],
+        "78": [0, 0.69141, 0, 0, 0.83212],
+        "79": [0, 0.69141, 0, 0, 0.82699],
+        "80": [0.18906, 0.69141, 0, 0, 0.82753],
+        "81": [0.03781, 0.69141, 0, 0, 0.82699],
+        "82": [0, 0.69141, 0, 0, 0.82807],
+        "83": [0, 0.69141, 0, 0, 0.82861],
+        "84": [0, 0.69141, 0, 0, 0.66899],
+        "85": [0, 0.69141, 0, 0, 0.64576],
+        "86": [0, 0.69141, 0, 0, 0.83131],
+        "87": [0, 0.69141, 0, 0, 1.04602],
+        "88": [0, 0.69141, 0, 0, 0.71922],
+        "89": [0.18906, 0.69141, 0, 0, 0.83293],
+        "90": [0.12604, 0.69141, 0, 0, 0.60201],
+        "91": [0.24982, 0.74947, 0, 0, 0.27764],
+        "93": [0.24982, 0.74947, 0, 0, 0.27764],
+        "94": [0, 0.69141, 0, 0, 0.49965],
+        "97": [0, 0.47534, 0, 0, 0.50046],
+        "98": [0, 0.69141, 0, 0, 0.51315],
+        "99": [0, 0.47534, 0, 0, 0.38946],
+        "100": [0, 0.62119, 0, 0, 0.49857],
+        "101": [0, 0.47534, 0, 0, 0.40053],
+        "102": [0.18906, 0.69141, 0, 0, 0.32626],
+        "103": [0.18906, 0.47534, 0, 0, 0.5037],
+        "104": [0.18906, 0.69141, 0, 0, 0.52126],
+        "105": [0, 0.69141, 0, 0, 0.27899],
+        "106": [0, 0.69141, 0, 0, 0.28088],
+        "107": [0, 0.69141, 0, 0, 0.38946],
+        "108": [0, 0.69141, 0, 0, 0.27953],
+        "109": [0, 0.47534, 0, 0, 0.76676],
+        "110": [0, 0.47534, 0, 0, 0.52666],
+        "111": [0, 0.47534, 0, 0, 0.48885],
+        "112": [0.18906, 0.52396, 0, 0, 0.50046],
+        "113": [0.18906, 0.47534, 0, 0, 0.48912],
+        "114": [0, 0.47534, 0, 0, 0.38919],
+        "115": [0, 0.47534, 0, 0, 0.44266],
+        "116": [0, 0.62119, 0, 0, 0.33301],
+        "117": [0, 0.47534, 0, 0, 0.5172],
+        "118": [0, 0.52396, 0, 0, 0.5118],
+        "119": [0, 0.52396, 0, 0, 0.77351],
+        "120": [0.18906, 0.47534, 0, 0, 0.38865],
+        "121": [0.18906, 0.47534, 0, 0, 0.49884],
+        "122": [0.18906, 0.47534, 0, 0, 0.39054],
+        "8216": [0, 0.69141, 0, 0, 0.21471],
+        "8217": [0, 0.69141, 0, 0, 0.21471],
+        "58112": [0, 0.62119, 0, 0, 0.49749],
+        "58113": [0, 0.62119, 0, 0, 0.4983],
+        "58114": [0.18906, 0.69141, 0, 0, 0.33328],
+        "58115": [0.18906, 0.69141, 0, 0, 0.32923],
+        "58116": [0.18906, 0.47534, 0, 0, 0.50343],
+        "58117": [0, 0.69141, 0, 0, 0.33301],
+        "58118": [0, 0.62119, 0, 0, 0.33409],
+        "58119": [0, 0.47534, 0, 0, 0.50073]
     },
     "Main-Bold": {
-        "33": [0, 0.69444, 0, 0],
-        "34": [0, 0.69444, 0, 0],
-        "35": [0.19444, 0.69444, 0, 0],
-        "36": [0.05556, 0.75, 0, 0],
-        "37": [0.05556, 0.75, 0, 0],
-        "38": [0, 0.69444, 0, 0],
-        "39": [0, 0.69444, 0, 0],
-        "40": [0.25, 0.75, 0, 0],
-        "41": [0.25, 0.75, 0, 0],
-        "42": [0, 0.75, 0, 0],
-        "43": [0.13333, 0.63333, 0, 0],
-        "44": [0.19444, 0.15556, 0, 0],
-        "45": [0, 0.44444, 0, 0],
-        "46": [0, 0.15556, 0, 0],
-        "47": [0.25, 0.75, 0, 0],
-        "48": [0, 0.64444, 0, 0],
-        "49": [0, 0.64444, 0, 0],
-        "50": [0, 0.64444, 0, 0],
-        "51": [0, 0.64444, 0, 0],
-        "52": [0, 0.64444, 0, 0],
-        "53": [0, 0.64444, 0, 0],
-        "54": [0, 0.64444, 0, 0],
-        "55": [0, 0.64444, 0, 0],
-        "56": [0, 0.64444, 0, 0],
-        "57": [0, 0.64444, 0, 0],
-        "58": [0, 0.44444, 0, 0],
-        "59": [0.19444, 0.44444, 0, 0],
-        "60": [0.08556, 0.58556, 0, 0],
-        "61": [-0.10889, 0.39111, 0, 0],
-        "62": [0.08556, 0.58556, 0, 0],
-        "63": [0, 0.69444, 0, 0],
-        "64": [0, 0.69444, 0, 0],
-        "65": [0, 0.68611, 0, 0],
-        "66": [0, 0.68611, 0, 0],
-        "67": [0, 0.68611, 0, 0],
-        "68": [0, 0.68611, 0, 0],
-        "69": [0, 0.68611, 0, 0],
-        "70": [0, 0.68611, 0, 0],
-        "71": [0, 0.68611, 0, 0],
-        "72": [0, 0.68611, 0, 0],
-        "73": [0, 0.68611, 0, 0],
-        "74": [0, 0.68611, 0, 0],
-        "75": [0, 0.68611, 0, 0],
-        "76": [0, 0.68611, 0, 0],
-        "77": [0, 0.68611, 0, 0],
-        "78": [0, 0.68611, 0, 0],
-        "79": [0, 0.68611, 0, 0],
-        "80": [0, 0.68611, 0, 0],
-        "81": [0.19444, 0.68611, 0, 0],
-        "82": [0, 0.68611, 0, 0],
-        "83": [0, 0.68611, 0, 0],
-        "84": [0, 0.68611, 0, 0],
-        "85": [0, 0.68611, 0, 0],
-        "86": [0, 0.68611, 0.01597, 0],
-        "87": [0, 0.68611, 0.01597, 0],
-        "88": [0, 0.68611, 0, 0],
-        "89": [0, 0.68611, 0.02875, 0],
-        "90": [0, 0.68611, 0, 0],
-        "91": [0.25, 0.75, 0, 0],
-        "92": [0.25, 0.75, 0, 0],
-        "93": [0.25, 0.75, 0, 0],
-        "94": [0, 0.69444, 0, 0],
-        "95": [0.31, 0.13444, 0.03194, 0],
-        "96": [0, 0.69444, 0, 0],
-        "97": [0, 0.44444, 0, 0],
-        "98": [0, 0.69444, 0, 0],
-        "99": [0, 0.44444, 0, 0],
-        "100": [0, 0.69444, 0, 0],
-        "101": [0, 0.44444, 0, 0],
-        "102": [0, 0.69444, 0.10903, 0],
-        "103": [0.19444, 0.44444, 0.01597, 0],
-        "104": [0, 0.69444, 0, 0],
-        "105": [0, 0.69444, 0, 0],
-        "106": [0.19444, 0.69444, 0, 0],
-        "107": [0, 0.69444, 0, 0],
-        "108": [0, 0.69444, 0, 0],
-        "109": [0, 0.44444, 0, 0],
-        "110": [0, 0.44444, 0, 0],
-        "111": [0, 0.44444, 0, 0],
-        "112": [0.19444, 0.44444, 0, 0],
-        "113": [0.19444, 0.44444, 0, 0],
-        "114": [0, 0.44444, 0, 0],
-        "115": [0, 0.44444, 0, 0],
-        "116": [0, 0.63492, 0, 0],
-        "117": [0, 0.44444, 0, 0],
-        "118": [0, 0.44444, 0.01597, 0],
-        "119": [0, 0.44444, 0.01597, 0],
-        "120": [0, 0.44444, 0, 0],
-        "121": [0.19444, 0.44444, 0.01597, 0],
-        "122": [0, 0.44444, 0, 0],
-        "123": [0.25, 0.75, 0, 0],
-        "124": [0.25, 0.75, 0, 0],
-        "125": [0.25, 0.75, 0, 0],
-        "126": [0.35, 0.34444, 0, 0],
-        "168": [0, 0.69444, 0, 0],
-        "172": [0, 0.44444, 0, 0],
-        "175": [0, 0.59611, 0, 0],
-        "176": [0, 0.69444, 0, 0],
-        "177": [0.13333, 0.63333, 0, 0],
-        "180": [0, 0.69444, 0, 0],
-        "215": [0.13333, 0.63333, 0, 0],
-        "247": [0.13333, 0.63333, 0, 0],
-        "305": [0, 0.44444, 0, 0],
-        "567": [0.19444, 0.44444, 0, 0],
-        "710": [0, 0.69444, 0, 0],
-        "711": [0, 0.63194, 0, 0],
-        "713": [0, 0.59611, 0, 0],
-        "714": [0, 0.69444, 0, 0],
-        "715": [0, 0.69444, 0, 0],
-        "728": [0, 0.69444, 0, 0],
-        "729": [0, 0.69444, 0, 0],
-        "730": [0, 0.69444, 0, 0],
-        "732": [0, 0.69444, 0, 0],
-        "768": [0, 0.69444, 0, 0],
-        "769": [0, 0.69444, 0, 0],
-        "770": [0, 0.69444, 0, 0],
-        "771": [0, 0.69444, 0, 0],
-        "772": [0, 0.59611, 0, 0],
-        "774": [0, 0.69444, 0, 0],
-        "775": [0, 0.69444, 0, 0],
-        "776": [0, 0.69444, 0, 0],
-        "778": [0, 0.69444, 0, 0],
-        "779": [0, 0.69444, 0, 0],
-        "780": [0, 0.63194, 0, 0],
-        "824": [0.19444, 0.69444, 0, 0],
-        "915": [0, 0.68611, 0, 0],
-        "916": [0, 0.68611, 0, 0],
-        "920": [0, 0.68611, 0, 0],
-        "923": [0, 0.68611, 0, 0],
-        "926": [0, 0.68611, 0, 0],
-        "928": [0, 0.68611, 0, 0],
-        "931": [0, 0.68611, 0, 0],
-        "933": [0, 0.68611, 0, 0],
-        "934": [0, 0.68611, 0, 0],
-        "936": [0, 0.68611, 0, 0],
-        "937": [0, 0.68611, 0, 0],
-        "8211": [0, 0.44444, 0.03194, 0],
-        "8212": [0, 0.44444, 0.03194, 0],
-        "8216": [0, 0.69444, 0, 0],
-        "8217": [0, 0.69444, 0, 0],
-        "8220": [0, 0.69444, 0, 0],
-        "8221": [0, 0.69444, 0, 0],
-        "8224": [0.19444, 0.69444, 0, 0],
-        "8225": [0.19444, 0.69444, 0, 0],
-        "8242": [0, 0.55556, 0, 0],
-        "8407": [0, 0.72444, 0.15486, 0],
-        "8463": [0, 0.69444, 0, 0],
-        "8465": [0, 0.69444, 0, 0],
-        "8467": [0, 0.69444, 0, 0],
-        "8472": [0.19444, 0.44444, 0, 0],
-        "8476": [0, 0.69444, 0, 0],
-        "8501": [0, 0.69444, 0, 0],
-        "8592": [-0.10889, 0.39111, 0, 0],
-        "8593": [0.19444, 0.69444, 0, 0],
-        "8594": [-0.10889, 0.39111, 0, 0],
-        "8595": [0.19444, 0.69444, 0, 0],
-        "8596": [-0.10889, 0.39111, 0, 0],
-        "8597": [0.25, 0.75, 0, 0],
-        "8598": [0.19444, 0.69444, 0, 0],
-        "8599": [0.19444, 0.69444, 0, 0],
-        "8600": [0.19444, 0.69444, 0, 0],
-        "8601": [0.19444, 0.69444, 0, 0],
-        "8636": [-0.10889, 0.39111, 0, 0],
-        "8637": [-0.10889, 0.39111, 0, 0],
-        "8640": [-0.10889, 0.39111, 0, 0],
-        "8641": [-0.10889, 0.39111, 0, 0],
-        "8656": [-0.10889, 0.39111, 0, 0],
-        "8657": [0.19444, 0.69444, 0, 0],
-        "8658": [-0.10889, 0.39111, 0, 0],
-        "8659": [0.19444, 0.69444, 0, 0],
-        "8660": [-0.10889, 0.39111, 0, 0],
-        "8661": [0.25, 0.75, 0, 0],
-        "8704": [0, 0.69444, 0, 0],
-        "8706": [0, 0.69444, 0.06389, 0],
-        "8707": [0, 0.69444, 0, 0],
-        "8709": [0.05556, 0.75, 0, 0],
-        "8711": [0, 0.68611, 0, 0],
-        "8712": [0.08556, 0.58556, 0, 0],
-        "8715": [0.08556, 0.58556, 0, 0],
-        "8722": [0.13333, 0.63333, 0, 0],
-        "8723": [0.13333, 0.63333, 0, 0],
-        "8725": [0.25, 0.75, 0, 0],
-        "8726": [0.25, 0.75, 0, 0],
-        "8727": [-0.02778, 0.47222, 0, 0],
-        "8728": [-0.02639, 0.47361, 0, 0],
-        "8729": [-0.02639, 0.47361, 0, 0],
-        "8730": [0.18, 0.82, 0, 0],
-        "8733": [0, 0.44444, 0, 0],
-        "8734": [0, 0.44444, 0, 0],
-        "8736": [0, 0.69224, 0, 0],
-        "8739": [0.25, 0.75, 0, 0],
-        "8741": [0.25, 0.75, 0, 0],
-        "8743": [0, 0.55556, 0, 0],
-        "8744": [0, 0.55556, 0, 0],
-        "8745": [0, 0.55556, 0, 0],
-        "8746": [0, 0.55556, 0, 0],
-        "8747": [0.19444, 0.69444, 0.12778, 0],
-        "8764": [-0.10889, 0.39111, 0, 0],
-        "8768": [0.19444, 0.69444, 0, 0],
-        "8771": [0.00222, 0.50222, 0, 0],
-        "8776": [0.02444, 0.52444, 0, 0],
-        "8781": [0.00222, 0.50222, 0, 0],
-        "8801": [0.00222, 0.50222, 0, 0],
-        "8804": [0.19667, 0.69667, 0, 0],
-        "8805": [0.19667, 0.69667, 0, 0],
-        "8810": [0.08556, 0.58556, 0, 0],
-        "8811": [0.08556, 0.58556, 0, 0],
-        "8826": [0.08556, 0.58556, 0, 0],
-        "8827": [0.08556, 0.58556, 0, 0],
-        "8834": [0.08556, 0.58556, 0, 0],
-        "8835": [0.08556, 0.58556, 0, 0],
-        "8838": [0.19667, 0.69667, 0, 0],
-        "8839": [0.19667, 0.69667, 0, 0],
-        "8846": [0, 0.55556, 0, 0],
-        "8849": [0.19667, 0.69667, 0, 0],
-        "8850": [0.19667, 0.69667, 0, 0],
-        "8851": [0, 0.55556, 0, 0],
-        "8852": [0, 0.55556, 0, 0],
-        "8853": [0.13333, 0.63333, 0, 0],
-        "8854": [0.13333, 0.63333, 0, 0],
-        "8855": [0.13333, 0.63333, 0, 0],
-        "8856": [0.13333, 0.63333, 0, 0],
-        "8857": [0.13333, 0.63333, 0, 0],
-        "8866": [0, 0.69444, 0, 0],
-        "8867": [0, 0.69444, 0, 0],
-        "8868": [0, 0.69444, 0, 0],
-        "8869": [0, 0.69444, 0, 0],
-        "8900": [-0.02639, 0.47361, 0, 0],
-        "8901": [-0.02639, 0.47361, 0, 0],
-        "8902": [-0.02778, 0.47222, 0, 0],
-        "8968": [0.25, 0.75, 0, 0],
-        "8969": [0.25, 0.75, 0, 0],
-        "8970": [0.25, 0.75, 0, 0],
-        "8971": [0.25, 0.75, 0, 0],
-        "8994": [-0.13889, 0.36111, 0, 0],
-        "8995": [-0.13889, 0.36111, 0, 0],
-        "9651": [0.19444, 0.69444, 0, 0],
-        "9657": [-0.02778, 0.47222, 0, 0],
-        "9661": [0.19444, 0.69444, 0, 0],
-        "9667": [-0.02778, 0.47222, 0, 0],
-        "9711": [0.19444, 0.69444, 0, 0],
-        "9824": [0.12963, 0.69444, 0, 0],
-        "9825": [0.12963, 0.69444, 0, 0],
-        "9826": [0.12963, 0.69444, 0, 0],
-        "9827": [0.12963, 0.69444, 0, 0],
-        "9837": [0, 0.75, 0, 0],
-        "9838": [0.19444, 0.69444, 0, 0],
-        "9839": [0.19444, 0.69444, 0, 0],
-        "10216": [0.25, 0.75, 0, 0],
-        "10217": [0.25, 0.75, 0, 0],
-        "10815": [0, 0.68611, 0, 0],
-        "10927": [0.19667, 0.69667, 0, 0],
-        "10928": [0.19667, 0.69667, 0, 0]
+        "33": [0, 0.69444, 0, 0, 0.35],
+        "34": [0, 0.69444, 0, 0, 0.60278],
+        "35": [0.19444, 0.69444, 0, 0, 0.95833],
+        "36": [0.05556, 0.75, 0, 0, 0.575],
+        "37": [0.05556, 0.75, 0, 0, 0.95833],
+        "38": [0, 0.69444, 0, 0, 0.89444],
+        "39": [0, 0.69444, 0, 0, 0.31944],
+        "40": [0.25, 0.75, 0, 0, 0.44722],
+        "41": [0.25, 0.75, 0, 0, 0.44722],
+        "42": [0, 0.75, 0, 0, 0.575],
+        "43": [0.13333, 0.63333, 0, 0, 0.89444],
+        "44": [0.19444, 0.15556, 0, 0, 0.31944],
+        "45": [0, 0.44444, 0, 0, 0.38333],
+        "46": [0, 0.15556, 0, 0, 0.31944],
+        "47": [0.25, 0.75, 0, 0, 0.575],
+        "48": [0, 0.64444, 0, 0, 0.575],
+        "49": [0, 0.64444, 0, 0, 0.575],
+        "50": [0, 0.64444, 0, 0, 0.575],
+        "51": [0, 0.64444, 0, 0, 0.575],
+        "52": [0, 0.64444, 0, 0, 0.575],
+        "53": [0, 0.64444, 0, 0, 0.575],
+        "54": [0, 0.64444, 0, 0, 0.575],
+        "55": [0, 0.64444, 0, 0, 0.575],
+        "56": [0, 0.64444, 0, 0, 0.575],
+        "57": [0, 0.64444, 0, 0, 0.575],
+        "58": [0, 0.44444, 0, 0, 0.31944],
+        "59": [0.19444, 0.44444, 0, 0, 0.31944],
+        "60": [0.08556, 0.58556, 0, 0, 0.89444],
+        "61": [-0.10889, 0.39111, 0, 0, 0.89444],
+        "62": [0.08556, 0.58556, 0, 0, 0.89444],
+        "63": [0, 0.69444, 0, 0, 0.54305],
+        "64": [0, 0.69444, 0, 0, 0.89444],
+        "65": [0, 0.68611, 0, 0, 0.86944],
+        "66": [0, 0.68611, 0, 0, 0.81805],
+        "67": [0, 0.68611, 0, 0, 0.83055],
+        "68": [0, 0.68611, 0, 0, 0.88194],
+        "69": [0, 0.68611, 0, 0, 0.75555],
+        "70": [0, 0.68611, 0, 0, 0.72361],
+        "71": [0, 0.68611, 0, 0, 0.90416],
+        "72": [0, 0.68611, 0, 0, 0.9],
+        "73": [0, 0.68611, 0, 0, 0.43611],
+        "74": [0, 0.68611, 0, 0, 0.59444],
+        "75": [0, 0.68611, 0, 0, 0.90138],
+        "76": [0, 0.68611, 0, 0, 0.69166],
+        "77": [0, 0.68611, 0, 0, 1.09166],
+        "78": [0, 0.68611, 0, 0, 0.9],
+        "79": [0, 0.68611, 0, 0, 0.86388],
+        "80": [0, 0.68611, 0, 0, 0.78611],
+        "81": [0.19444, 0.68611, 0, 0, 0.86388],
+        "82": [0, 0.68611, 0, 0, 0.8625],
+        "83": [0, 0.68611, 0, 0, 0.63889],
+        "84": [0, 0.68611, 0, 0, 0.8],
+        "85": [0, 0.68611, 0, 0, 0.88472],
+        "86": [0, 0.68611, 0.01597, 0, 0.86944],
+        "87": [0, 0.68611, 0.01597, 0, 1.18888],
+        "88": [0, 0.68611, 0, 0, 0.86944],
+        "89": [0, 0.68611, 0.02875, 0, 0.86944],
+        "90": [0, 0.68611, 0, 0, 0.70277],
+        "91": [0.25, 0.75, 0, 0, 0.31944],
+        "92": [0.25, 0.75, 0, 0, 0.575],
+        "93": [0.25, 0.75, 0, 0, 0.31944],
+        "94": [0, 0.69444, 0, 0, 0.575],
+        "95": [0.31, 0.13444, 0.03194, 0, 0.575],
+        "96": [0, 0.69444, 0, 0, 0.575],
+        "97": [0, 0.44444, 0, 0, 0.55902],
+        "98": [0, 0.69444, 0, 0, 0.63889],
+        "99": [0, 0.44444, 0, 0, 0.51111],
+        "100": [0, 0.69444, 0, 0, 0.63889],
+        "101": [0, 0.44444, 0, 0, 0.52708],
+        "102": [0, 0.69444, 0.10903, 0, 0.35139],
+        "103": [0.19444, 0.44444, 0.01597, 0, 0.575],
+        "104": [0, 0.69444, 0, 0, 0.63889],
+        "105": [0, 0.69444, 0, 0, 0.31944],
+        "106": [0.19444, 0.69444, 0, 0, 0.35139],
+        "107": [0, 0.69444, 0, 0, 0.60694],
+        "108": [0, 0.69444, 0, 0, 0.31944],
+        "109": [0, 0.44444, 0, 0, 0.95833],
+        "110": [0, 0.44444, 0, 0, 0.63889],
+        "111": [0, 0.44444, 0, 0, 0.575],
+        "112": [0.19444, 0.44444, 0, 0, 0.63889],
+        "113": [0.19444, 0.44444, 0, 0, 0.60694],
+        "114": [0, 0.44444, 0, 0, 0.47361],
+        "115": [0, 0.44444, 0, 0, 0.45361],
+        "116": [0, 0.63492, 0, 0, 0.44722],
+        "117": [0, 0.44444, 0, 0, 0.63889],
+        "118": [0, 0.44444, 0.01597, 0, 0.60694],
+        "119": [0, 0.44444, 0.01597, 0, 0.83055],
+        "120": [0, 0.44444, 0, 0, 0.60694],
+        "121": [0.19444, 0.44444, 0.01597, 0, 0.60694],
+        "122": [0, 0.44444, 0, 0, 0.51111],
+        "123": [0.25, 0.75, 0, 0, 0.575],
+        "124": [0.25, 0.75, 0, 0, 0.31944],
+        "125": [0.25, 0.75, 0, 0, 0.575],
+        "126": [0.35, 0.34444, 0, 0, 0.575],
+        "168": [0, 0.69444, 0, 0, 0.575],
+        "172": [0, 0.44444, 0, 0, 0.76666],
+        "175": [0, 0.59611, 0, 0, 0.575],
+        "176": [0, 0.69444, 0, 0, 0.86944],
+        "177": [0.13333, 0.63333, 0, 0, 0.89444],
+        "180": [0, 0.69444, 0, 0, 0.575],
+        "215": [0.13333, 0.63333, 0, 0, 0.89444],
+        "247": [0.13333, 0.63333, 0, 0, 0.89444],
+        "305": [0, 0.44444, 0, 0, 0.31944],
+        "567": [0.19444, 0.44444, 0, 0, 0.35139],
+        "710": [0, 0.69444, 0, 0, 0.575],
+        "711": [0, 0.63194, 0, 0, 0.575],
+        "713": [0, 0.59611, 0, 0, 0.575],
+        "714": [0, 0.69444, 0, 0, 0.575],
+        "715": [0, 0.69444, 0, 0, 0.575],
+        "728": [0, 0.69444, 0, 0, 0.575],
+        "729": [0, 0.69444, 0, 0, 0.31944],
+        "730": [0, 0.69444, 0, 0, 0.86944],
+        "732": [0, 0.69444, 0, 0, 0.575],
+        "768": [0, 0.69444, 0, 0, 0.575],
+        "769": [0, 0.69444, 0, 0, 0.575],
+        "770": [0, 0.69444, 0, 0, 0.575],
+        "771": [0, 0.69444, 0, 0, 0.575],
+        "772": [0, 0.59611, 0, 0, 0.575],
+        "774": [0, 0.69444, 0, 0, 0.575],
+        "775": [0, 0.69444, 0, 0, 0.31944],
+        "776": [0, 0.69444, 0, 0, 0.575],
+        "778": [0, 0.69444, 0, 0, 0.86944],
+        "779": [0, 0.69444, 0, 0, 0.575],
+        "780": [0, 0.63194, 0, 0, 0.575],
+        "824": [0.19444, 0.69444, 0, 0, 0],
+        "915": [0, 0.68611, 0, 0, 0.69166],
+        "916": [0, 0.68611, 0, 0, 0.95833],
+        "920": [0, 0.68611, 0, 0, 0.89444],
+        "923": [0, 0.68611, 0, 0, 0.80555],
+        "926": [0, 0.68611, 0, 0, 0.76666],
+        "928": [0, 0.68611, 0, 0, 0.9],
+        "931": [0, 0.68611, 0, 0, 0.83055],
+        "933": [0, 0.68611, 0, 0, 0.89444],
+        "934": [0, 0.68611, 0, 0, 0.83055],
+        "936": [0, 0.68611, 0, 0, 0.89444],
+        "937": [0, 0.68611, 0, 0, 0.83055],
+        "8211": [0, 0.44444, 0.03194, 0, 0.575],
+        "8212": [0, 0.44444, 0.03194, 0, 1.14999],
+        "8216": [0, 0.69444, 0, 0, 0.31944],
+        "8217": [0, 0.69444, 0, 0, 0.31944],
+        "8220": [0, 0.69444, 0, 0, 0.60278],
+        "8221": [0, 0.69444, 0, 0, 0.60278],
+        "8224": [0.19444, 0.69444, 0, 0, 0.51111],
+        "8225": [0.19444, 0.69444, 0, 0, 0.51111],
+        "8242": [0, 0.55556, 0, 0, 0.34444],
+        "8407": [0, 0.72444, 0.15486, 0, 0.575],
+        "8463": [0, 0.69444, 0, 0, 0.66759],
+        "8465": [0, 0.69444, 0, 0, 0.83055],
+        "8467": [0, 0.69444, 0, 0, 0.47361],
+        "8472": [0.19444, 0.44444, 0, 0, 0.74027],
+        "8476": [0, 0.69444, 0, 0, 0.83055],
+        "8501": [0, 0.69444, 0, 0, 0.70277],
+        "8592": [-0.10889, 0.39111, 0, 0, 1.14999],
+        "8593": [0.19444, 0.69444, 0, 0, 0.575],
+        "8594": [-0.10889, 0.39111, 0, 0, 1.14999],
+        "8595": [0.19444, 0.69444, 0, 0, 0.575],
+        "8596": [-0.10889, 0.39111, 0, 0, 1.14999],
+        "8597": [0.25, 0.75, 0, 0, 0.575],
+        "8598": [0.19444, 0.69444, 0, 0, 1.14999],
+        "8599": [0.19444, 0.69444, 0, 0, 1.14999],
+        "8600": [0.19444, 0.69444, 0, 0, 1.14999],
+        "8601": [0.19444, 0.69444, 0, 0, 1.14999],
+        "8636": [-0.10889, 0.39111, 0, 0, 1.14999],
+        "8637": [-0.10889, 0.39111, 0, 0, 1.14999],
+        "8640": [-0.10889, 0.39111, 0, 0, 1.14999],
+        "8641": [-0.10889, 0.39111, 0, 0, 1.14999],
+        "8656": [-0.10889, 0.39111, 0, 0, 1.14999],
+        "8657": [0.19444, 0.69444, 0, 0, 0.70277],
+        "8658": [-0.10889, 0.39111, 0, 0, 1.14999],
+        "8659": [0.19444, 0.69444, 0, 0, 0.70277],
+        "8660": [-0.10889, 0.39111, 0, 0, 1.14999],
+        "8661": [0.25, 0.75, 0, 0, 0.70277],
+        "8704": [0, 0.69444, 0, 0, 0.63889],
+        "8706": [0, 0.69444, 0.06389, 0, 0.62847],
+        "8707": [0, 0.69444, 0, 0, 0.63889],
+        "8709": [0.05556, 0.75, 0, 0, 0.575],
+        "8711": [0, 0.68611, 0, 0, 0.95833],
+        "8712": [0.08556, 0.58556, 0, 0, 0.76666],
+        "8715": [0.08556, 0.58556, 0, 0, 0.76666],
+        "8722": [0.13333, 0.63333, 0, 0, 0.89444],
+        "8723": [0.13333, 0.63333, 0, 0, 0.89444],
+        "8725": [0.25, 0.75, 0, 0, 0.575],
+        "8726": [0.25, 0.75, 0, 0, 0.575],
+        "8727": [-0.02778, 0.47222, 0, 0, 0.575],
+        "8728": [-0.02639, 0.47361, 0, 0, 0.575],
+        "8729": [-0.02639, 0.47361, 0, 0, 0.575],
+        "8730": [0.18, 0.82, 0, 0, 0.95833],
+        "8733": [0, 0.44444, 0, 0, 0.89444],
+        "8734": [0, 0.44444, 0, 0, 1.14999],
+        "8736": [0, 0.69224, 0, 0, 0.72222],
+        "8739": [0.25, 0.75, 0, 0, 0.31944],
+        "8741": [0.25, 0.75, 0, 0, 0.575],
+        "8743": [0, 0.55556, 0, 0, 0.76666],
+        "8744": [0, 0.55556, 0, 0, 0.76666],
+        "8745": [0, 0.55556, 0, 0, 0.76666],
+        "8746": [0, 0.55556, 0, 0, 0.76666],
+        "8747": [0.19444, 0.69444, 0.12778, 0, 0.56875],
+        "8764": [-0.10889, 0.39111, 0, 0, 0.89444],
+        "8768": [0.19444, 0.69444, 0, 0, 0.31944],
+        "8771": [0.00222, 0.50222, 0, 0, 0.89444],
+        "8776": [0.02444, 0.52444, 0, 0, 0.89444],
+        "8781": [0.00222, 0.50222, 0, 0, 0.89444],
+        "8801": [0.00222, 0.50222, 0, 0, 0.89444],
+        "8804": [0.19667, 0.69667, 0, 0, 0.89444],
+        "8805": [0.19667, 0.69667, 0, 0, 0.89444],
+        "8810": [0.08556, 0.58556, 0, 0, 1.14999],
+        "8811": [0.08556, 0.58556, 0, 0, 1.14999],
+        "8826": [0.08556, 0.58556, 0, 0, 0.89444],
+        "8827": [0.08556, 0.58556, 0, 0, 0.89444],
+        "8834": [0.08556, 0.58556, 0, 0, 0.89444],
+        "8835": [0.08556, 0.58556, 0, 0, 0.89444],
+        "8838": [0.19667, 0.69667, 0, 0, 0.89444],
+        "8839": [0.19667, 0.69667, 0, 0, 0.89444],
+        "8846": [0, 0.55556, 0, 0, 0.76666],
+        "8849": [0.19667, 0.69667, 0, 0, 0.89444],
+        "8850": [0.19667, 0.69667, 0, 0, 0.89444],
+        "8851": [0, 0.55556, 0, 0, 0.76666],
+        "8852": [0, 0.55556, 0, 0, 0.76666],
+        "8853": [0.13333, 0.63333, 0, 0, 0.89444],
+        "8854": [0.13333, 0.63333, 0, 0, 0.89444],
+        "8855": [0.13333, 0.63333, 0, 0, 0.89444],
+        "8856": [0.13333, 0.63333, 0, 0, 0.89444],
+        "8857": [0.13333, 0.63333, 0, 0, 0.89444],
+        "8866": [0, 0.69444, 0, 0, 0.70277],
+        "8867": [0, 0.69444, 0, 0, 0.70277],
+        "8868": [0, 0.69444, 0, 0, 0.89444],
+        "8869": [0, 0.69444, 0, 0, 0.89444],
+        "8900": [-0.02639, 0.47361, 0, 0, 0.575],
+        "8901": [-0.02639, 0.47361, 0, 0, 0.31944],
+        "8902": [-0.02778, 0.47222, 0, 0, 0.575],
+        "8968": [0.25, 0.75, 0, 0, 0.51111],
+        "8969": [0.25, 0.75, 0, 0, 0.51111],
+        "8970": [0.25, 0.75, 0, 0, 0.51111],
+        "8971": [0.25, 0.75, 0, 0, 0.51111],
+        "8994": [-0.13889, 0.36111, 0, 0, 1.14999],
+        "8995": [-0.13889, 0.36111, 0, 0, 1.14999],
+        "9651": [0.19444, 0.69444, 0, 0, 1.02222],
+        "9657": [-0.02778, 0.47222, 0, 0, 0.575],
+        "9661": [0.19444, 0.69444, 0, 0, 1.02222],
+        "9667": [-0.02778, 0.47222, 0, 0, 0.575],
+        "9711": [0.19444, 0.69444, 0, 0, 1.14999],
+        "9824": [0.12963, 0.69444, 0, 0, 0.89444],
+        "9825": [0.12963, 0.69444, 0, 0, 0.89444],
+        "9826": [0.12963, 0.69444, 0, 0, 0.89444],
+        "9827": [0.12963, 0.69444, 0, 0, 0.89444],
+        "9837": [0, 0.75, 0, 0, 0.44722],
+        "9838": [0.19444, 0.69444, 0, 0, 0.44722],
+        "9839": [0.19444, 0.69444, 0, 0, 0.44722],
+        "10216": [0.25, 0.75, 0, 0, 0.44722],
+        "10217": [0.25, 0.75, 0, 0, 0.44722],
+        "10815": [0, 0.68611, 0, 0, 0.9],
+        "10927": [0.19667, 0.69667, 0, 0, 0.89444],
+        "10928": [0.19667, 0.69667, 0, 0, 0.89444]
     },
     "Main-Italic": {
-        "33": [0, 0.69444, 0.12417, 0],
-        "34": [0, 0.69444, 0.06961, 0],
-        "35": [0.19444, 0.69444, 0.06616, 0],
-        "37": [0.05556, 0.75, 0.13639, 0],
-        "38": [0, 0.69444, 0.09694, 0],
-        "39": [0, 0.69444, 0.12417, 0],
-        "40": [0.25, 0.75, 0.16194, 0],
-        "41": [0.25, 0.75, 0.03694, 0],
-        "42": [0, 0.75, 0.14917, 0],
-        "43": [0.05667, 0.56167, 0.03694, 0],
-        "44": [0.19444, 0.10556, 0, 0],
-        "45": [0, 0.43056, 0.02826, 0],
-        "46": [0, 0.10556, 0, 0],
-        "47": [0.25, 0.75, 0.16194, 0],
-        "48": [0, 0.64444, 0.13556, 0],
-        "49": [0, 0.64444, 0.13556, 0],
-        "50": [0, 0.64444, 0.13556, 0],
-        "51": [0, 0.64444, 0.13556, 0],
-        "52": [0.19444, 0.64444, 0.13556, 0],
-        "53": [0, 0.64444, 0.13556, 0],
-        "54": [0, 0.64444, 0.13556, 0],
-        "55": [0.19444, 0.64444, 0.13556, 0],
-        "56": [0, 0.64444, 0.13556, 0],
-        "57": [0, 0.64444, 0.13556, 0],
-        "58": [0, 0.43056, 0.0582, 0],
-        "59": [0.19444, 0.43056, 0.0582, 0],
-        "61": [-0.13313, 0.36687, 0.06616, 0],
-        "63": [0, 0.69444, 0.1225, 0],
-        "64": [0, 0.69444, 0.09597, 0],
-        "65": [0, 0.68333, 0, 0],
-        "66": [0, 0.68333, 0.10257, 0],
-        "67": [0, 0.68333, 0.14528, 0],
-        "68": [0, 0.68333, 0.09403, 0],
-        "69": [0, 0.68333, 0.12028, 0],
-        "70": [0, 0.68333, 0.13305, 0],
-        "71": [0, 0.68333, 0.08722, 0],
-        "72": [0, 0.68333, 0.16389, 0],
-        "73": [0, 0.68333, 0.15806, 0],
-        "74": [0, 0.68333, 0.14028, 0],
-        "75": [0, 0.68333, 0.14528, 0],
-        "76": [0, 0.68333, 0, 0],
-        "77": [0, 0.68333, 0.16389, 0],
-        "78": [0, 0.68333, 0.16389, 0],
-        "79": [0, 0.68333, 0.09403, 0],
-        "80": [0, 0.68333, 0.10257, 0],
-        "81": [0.19444, 0.68333, 0.09403, 0],
-        "82": [0, 0.68333, 0.03868, 0],
-        "83": [0, 0.68333, 0.11972, 0],
-        "84": [0, 0.68333, 0.13305, 0],
-        "85": [0, 0.68333, 0.16389, 0],
-        "86": [0, 0.68333, 0.18361, 0],
-        "87": [0, 0.68333, 0.18361, 0],
-        "88": [0, 0.68333, 0.15806, 0],
-        "89": [0, 0.68333, 0.19383, 0],
-        "90": [0, 0.68333, 0.14528, 0],
-        "91": [0.25, 0.75, 0.1875, 0],
-        "93": [0.25, 0.75, 0.10528, 0],
-        "94": [0, 0.69444, 0.06646, 0],
-        "95": [0.31, 0.12056, 0.09208, 0],
-        "97": [0, 0.43056, 0.07671, 0],
-        "98": [0, 0.69444, 0.06312, 0],
-        "99": [0, 0.43056, 0.05653, 0],
-        "100": [0, 0.69444, 0.10333, 0],
-        "101": [0, 0.43056, 0.07514, 0],
-        "102": [0.19444, 0.69444, 0.21194, 0],
-        "103": [0.19444, 0.43056, 0.08847, 0],
-        "104": [0, 0.69444, 0.07671, 0],
-        "105": [0, 0.65536, 0.1019, 0],
-        "106": [0.19444, 0.65536, 0.14467, 0],
-        "107": [0, 0.69444, 0.10764, 0],
-        "108": [0, 0.69444, 0.10333, 0],
-        "109": [0, 0.43056, 0.07671, 0],
-        "110": [0, 0.43056, 0.07671, 0],
-        "111": [0, 0.43056, 0.06312, 0],
-        "112": [0.19444, 0.43056, 0.06312, 0],
-        "113": [0.19444, 0.43056, 0.08847, 0],
-        "114": [0, 0.43056, 0.10764, 0],
-        "115": [0, 0.43056, 0.08208, 0],
-        "116": [0, 0.61508, 0.09486, 0],
-        "117": [0, 0.43056, 0.07671, 0],
-        "118": [0, 0.43056, 0.10764, 0],
-        "119": [0, 0.43056, 0.10764, 0],
-        "120": [0, 0.43056, 0.12042, 0],
-        "121": [0.19444, 0.43056, 0.08847, 0],
-        "122": [0, 0.43056, 0.12292, 0],
-        "126": [0.35, 0.31786, 0.11585, 0],
-        "163": [0, 0.69444, 0, 0],
-        "305": [0, 0.43056, 0, 0.02778],
-        "567": [0.19444, 0.43056, 0, 0.08334],
-        "768": [0, 0.69444, 0, 0],
-        "769": [0, 0.69444, 0.09694, 0],
-        "770": [0, 0.69444, 0.06646, 0],
-        "771": [0, 0.66786, 0.11585, 0],
-        "772": [0, 0.56167, 0.10333, 0],
-        "774": [0, 0.69444, 0.10806, 0],
-        "775": [0, 0.66786, 0.11752, 0],
-        "776": [0, 0.66786, 0.10474, 0],
-        "778": [0, 0.69444, 0, 0],
-        "779": [0, 0.69444, 0.1225, 0],
-        "780": [0, 0.62847, 0.08295, 0],
-        "915": [0, 0.68333, 0.13305, 0],
-        "916": [0, 0.68333, 0, 0],
-        "920": [0, 0.68333, 0.09403, 0],
-        "923": [0, 0.68333, 0, 0],
-        "926": [0, 0.68333, 0.15294, 0],
-        "928": [0, 0.68333, 0.16389, 0],
-        "931": [0, 0.68333, 0.12028, 0],
-        "933": [0, 0.68333, 0.11111, 0],
-        "934": [0, 0.68333, 0.05986, 0],
-        "936": [0, 0.68333, 0.11111, 0],
-        "937": [0, 0.68333, 0.10257, 0],
-        "8211": [0, 0.43056, 0.09208, 0],
-        "8212": [0, 0.43056, 0.09208, 0],
-        "8216": [0, 0.69444, 0.12417, 0],
-        "8217": [0, 0.69444, 0.12417, 0],
-        "8220": [0, 0.69444, 0.1685, 0],
-        "8221": [0, 0.69444, 0.06961, 0],
-        "8463": [0, 0.68889, 0, 0]
+        "33": [0, 0.69444, 0.12417, 0, 0.30667],
+        "34": [0, 0.69444, 0.06961, 0, 0.51444],
+        "35": [0.19444, 0.69444, 0.06616, 0, 0.81777],
+        "37": [0.05556, 0.75, 0.13639, 0, 0.81777],
+        "38": [0, 0.69444, 0.09694, 0, 0.76666],
+        "39": [0, 0.69444, 0.12417, 0, 0.30667],
+        "40": [0.25, 0.75, 0.16194, 0, 0.40889],
+        "41": [0.25, 0.75, 0.03694, 0, 0.40889],
+        "42": [0, 0.75, 0.14917, 0, 0.51111],
+        "43": [0.05667, 0.56167, 0.03694, 0, 0.76666],
+        "44": [0.19444, 0.10556, 0, 0, 0.30667],
+        "45": [0, 0.43056, 0.02826, 0, 0.35778],
+        "46": [0, 0.10556, 0, 0, 0.30667],
+        "47": [0.25, 0.75, 0.16194, 0, 0.51111],
+        "48": [0, 0.64444, 0.13556, 0, 0.51111],
+        "49": [0, 0.64444, 0.13556, 0, 0.51111],
+        "50": [0, 0.64444, 0.13556, 0, 0.51111],
+        "51": [0, 0.64444, 0.13556, 0, 0.51111],
+        "52": [0.19444, 0.64444, 0.13556, 0, 0.51111],
+        "53": [0, 0.64444, 0.13556, 0, 0.51111],
+        "54": [0, 0.64444, 0.13556, 0, 0.51111],
+        "55": [0.19444, 0.64444, 0.13556, 0, 0.51111],
+        "56": [0, 0.64444, 0.13556, 0, 0.51111],
+        "57": [0, 0.64444, 0.13556, 0, 0.51111],
+        "58": [0, 0.43056, 0.0582, 0, 0.30667],
+        "59": [0.19444, 0.43056, 0.0582, 0, 0.30667],
+        "61": [-0.13313, 0.36687, 0.06616, 0, 0.76666],
+        "63": [0, 0.69444, 0.1225, 0, 0.51111],
+        "64": [0, 0.69444, 0.09597, 0, 0.76666],
+        "65": [0, 0.68333, 0, 0, 0.74333],
+        "66": [0, 0.68333, 0.10257, 0, 0.70389],
+        "67": [0, 0.68333, 0.14528, 0, 0.71555],
+        "68": [0, 0.68333, 0.09403, 0, 0.755],
+        "69": [0, 0.68333, 0.12028, 0, 0.67833],
+        "70": [0, 0.68333, 0.13305, 0, 0.65277],
+        "71": [0, 0.68333, 0.08722, 0, 0.77361],
+        "72": [0, 0.68333, 0.16389, 0, 0.74333],
+        "73": [0, 0.68333, 0.15806, 0, 0.38555],
+        "74": [0, 0.68333, 0.14028, 0, 0.525],
+        "75": [0, 0.68333, 0.14528, 0, 0.76888],
+        "76": [0, 0.68333, 0, 0, 0.62722],
+        "77": [0, 0.68333, 0.16389, 0, 0.89666],
+        "78": [0, 0.68333, 0.16389, 0, 0.74333],
+        "79": [0, 0.68333, 0.09403, 0, 0.76666],
+        "80": [0, 0.68333, 0.10257, 0, 0.67833],
+        "81": [0.19444, 0.68333, 0.09403, 0, 0.76666],
+        "82": [0, 0.68333, 0.03868, 0, 0.72944],
+        "83": [0, 0.68333, 0.11972, 0, 0.56222],
+        "84": [0, 0.68333, 0.13305, 0, 0.71555],
+        "85": [0, 0.68333, 0.16389, 0, 0.74333],
+        "86": [0, 0.68333, 0.18361, 0, 0.74333],
+        "87": [0, 0.68333, 0.18361, 0, 0.99888],
+        "88": [0, 0.68333, 0.15806, 0, 0.74333],
+        "89": [0, 0.68333, 0.19383, 0, 0.74333],
+        "90": [0, 0.68333, 0.14528, 0, 0.61333],
+        "91": [0.25, 0.75, 0.1875, 0, 0.30667],
+        "93": [0.25, 0.75, 0.10528, 0, 0.30667],
+        "94": [0, 0.69444, 0.06646, 0, 0.51111],
+        "95": [0.31, 0.12056, 0.09208, 0, 0.51111],
+        "97": [0, 0.43056, 0.07671, 0, 0.51111],
+        "98": [0, 0.69444, 0.06312, 0, 0.46],
+        "99": [0, 0.43056, 0.05653, 0, 0.46],
+        "100": [0, 0.69444, 0.10333, 0, 0.51111],
+        "101": [0, 0.43056, 0.07514, 0, 0.46],
+        "102": [0.19444, 0.69444, 0.21194, 0, 0.30667],
+        "103": [0.19444, 0.43056, 0.08847, 0, 0.46],
+        "104": [0, 0.69444, 0.07671, 0, 0.51111],
+        "105": [0, 0.65536, 0.1019, 0, 0.30667],
+        "106": [0.19444, 0.65536, 0.14467, 0, 0.30667],
+        "107": [0, 0.69444, 0.10764, 0, 0.46],
+        "108": [0, 0.69444, 0.10333, 0, 0.25555],
+        "109": [0, 0.43056, 0.07671, 0, 0.81777],
+        "110": [0, 0.43056, 0.07671, 0, 0.56222],
+        "111": [0, 0.43056, 0.06312, 0, 0.51111],
+        "112": [0.19444, 0.43056, 0.06312, 0, 0.51111],
+        "113": [0.19444, 0.43056, 0.08847, 0, 0.46],
+        "114": [0, 0.43056, 0.10764, 0, 0.42166],
+        "115": [0, 0.43056, 0.08208, 0, 0.40889],
+        "116": [0, 0.61508, 0.09486, 0, 0.33222],
+        "117": [0, 0.43056, 0.07671, 0, 0.53666],
+        "118": [0, 0.43056, 0.10764, 0, 0.46],
+        "119": [0, 0.43056, 0.10764, 0, 0.66444],
+        "120": [0, 0.43056, 0.12042, 0, 0.46389],
+        "121": [0.19444, 0.43056, 0.08847, 0, 0.48555],
+        "122": [0, 0.43056, 0.12292, 0, 0.40889],
+        "126": [0.35, 0.31786, 0.11585, 0, 0.51111],
+        "163": [0, 0.69444, 0, 0, 0.76909],
+        "305": [0, 0.43056, 0, 0.02778, 0.32246],
+        "567": [0.19444, 0.43056, 0, 0.08334, 0.38403],
+        "768": [0, 0.69444, 0, 0, 0.51111],
+        "769": [0, 0.69444, 0.09694, 0, 0.51111],
+        "770": [0, 0.69444, 0.06646, 0, 0.51111],
+        "771": [0, 0.66786, 0.11585, 0, 0.51111],
+        "772": [0, 0.56167, 0.10333, 0, 0.51111],
+        "774": [0, 0.69444, 0.10806, 0, 0.51111],
+        "775": [0, 0.66786, 0.11752, 0, 0.30667],
+        "776": [0, 0.66786, 0.10474, 0, 0.51111],
+        "778": [0, 0.69444, 0, 0, 0.83129],
+        "779": [0, 0.69444, 0.1225, 0, 0.51111],
+        "780": [0, 0.62847, 0.08295, 0, 0.51111],
+        "915": [0, 0.68333, 0.13305, 0, 0.62722],
+        "916": [0, 0.68333, 0, 0, 0.81777],
+        "920": [0, 0.68333, 0.09403, 0, 0.76666],
+        "923": [0, 0.68333, 0, 0, 0.69222],
+        "926": [0, 0.68333, 0.15294, 0, 0.66444],
+        "928": [0, 0.68333, 0.16389, 0, 0.74333],
+        "931": [0, 0.68333, 0.12028, 0, 0.71555],
+        "933": [0, 0.68333, 0.11111, 0, 0.76666],
+        "934": [0, 0.68333, 0.05986, 0, 0.71555],
+        "936": [0, 0.68333, 0.11111, 0, 0.76666],
+        "937": [0, 0.68333, 0.10257, 0, 0.71555],
+        "8211": [0, 0.43056, 0.09208, 0, 0.51111],
+        "8212": [0, 0.43056, 0.09208, 0, 1.02222],
+        "8216": [0, 0.69444, 0.12417, 0, 0.30667],
+        "8217": [0, 0.69444, 0.12417, 0, 0.30667],
+        "8220": [0, 0.69444, 0.1685, 0, 0.51444],
+        "8221": [0, 0.69444, 0.06961, 0, 0.51444],
+        "8463": [0, 0.68889, 0, 0, 0.54028]
     },
     "Main-Regular": {
-        "32": [0, 0, 0, 0],
-        "33": [0, 0.69444, 0, 0],
-        "34": [0, 0.69444, 0, 0],
-        "35": [0.19444, 0.69444, 0, 0],
-        "36": [0.05556, 0.75, 0, 0],
-        "37": [0.05556, 0.75, 0, 0],
-        "38": [0, 0.69444, 0, 0],
-        "39": [0, 0.69444, 0, 0],
-        "40": [0.25, 0.75, 0, 0],
-        "41": [0.25, 0.75, 0, 0],
-        "42": [0, 0.75, 0, 0],
-        "43": [0.08333, 0.58333, 0, 0],
-        "44": [0.19444, 0.10556, 0, 0],
-        "45": [0, 0.43056, 0, 0],
-        "46": [0, 0.10556, 0, 0],
-        "47": [0.25, 0.75, 0, 0],
-        "48": [0, 0.64444, 0, 0],
-        "49": [0, 0.64444, 0, 0],
-        "50": [0, 0.64444, 0, 0],
-        "51": [0, 0.64444, 0, 0],
-        "52": [0, 0.64444, 0, 0],
-        "53": [0, 0.64444, 0, 0],
-        "54": [0, 0.64444, 0, 0],
-        "55": [0, 0.64444, 0, 0],
-        "56": [0, 0.64444, 0, 0],
-        "57": [0, 0.64444, 0, 0],
-        "58": [0, 0.43056, 0, 0],
-        "59": [0.19444, 0.43056, 0, 0],
-        "60": [0.0391, 0.5391, 0, 0],
-        "61": [-0.13313, 0.36687, 0, 0],
-        "62": [0.0391, 0.5391, 0, 0],
-        "63": [0, 0.69444, 0, 0],
-        "64": [0, 0.69444, 0, 0],
-        "65": [0, 0.68333, 0, 0],
-        "66": [0, 0.68333, 0, 0],
-        "67": [0, 0.68333, 0, 0],
-        "68": [0, 0.68333, 0, 0],
-        "69": [0, 0.68333, 0, 0],
-        "70": [0, 0.68333, 0, 0],
-        "71": [0, 0.68333, 0, 0],
-        "72": [0, 0.68333, 0, 0],
-        "73": [0, 0.68333, 0, 0],
-        "74": [0, 0.68333, 0, 0],
-        "75": [0, 0.68333, 0, 0],
-        "76": [0, 0.68333, 0, 0],
-        "77": [0, 0.68333, 0, 0],
-        "78": [0, 0.68333, 0, 0],
-        "79": [0, 0.68333, 0, 0],
-        "80": [0, 0.68333, 0, 0],
-        "81": [0.19444, 0.68333, 0, 0],
-        "82": [0, 0.68333, 0, 0],
-        "83": [0, 0.68333, 0, 0],
-        "84": [0, 0.68333, 0, 0],
-        "85": [0, 0.68333, 0, 0],
-        "86": [0, 0.68333, 0.01389, 0],
-        "87": [0, 0.68333, 0.01389, 0],
-        "88": [0, 0.68333, 0, 0],
-        "89": [0, 0.68333, 0.025, 0],
-        "90": [0, 0.68333, 0, 0],
-        "91": [0.25, 0.75, 0, 0],
-        "92": [0.25, 0.75, 0, 0],
-        "93": [0.25, 0.75, 0, 0],
-        "94": [0, 0.69444, 0, 0],
-        "95": [0.31, 0.12056, 0.02778, 0],
-        "96": [0, 0.69444, 0, 0],
-        "97": [0, 0.43056, 0, 0],
-        "98": [0, 0.69444, 0, 0],
-        "99": [0, 0.43056, 0, 0],
-        "100": [0, 0.69444, 0, 0],
-        "101": [0, 0.43056, 0, 0],
-        "102": [0, 0.69444, 0.07778, 0],
-        "103": [0.19444, 0.43056, 0.01389, 0],
-        "104": [0, 0.69444, 0, 0],
-        "105": [0, 0.66786, 0, 0],
-        "106": [0.19444, 0.66786, 0, 0],
-        "107": [0, 0.69444, 0, 0],
-        "108": [0, 0.69444, 0, 0],
-        "109": [0, 0.43056, 0, 0],
-        "110": [0, 0.43056, 0, 0],
-        "111": [0, 0.43056, 0, 0],
-        "112": [0.19444, 0.43056, 0, 0],
-        "113": [0.19444, 0.43056, 0, 0],
-        "114": [0, 0.43056, 0, 0],
-        "115": [0, 0.43056, 0, 0],
-        "116": [0, 0.61508, 0, 0],
-        "117": [0, 0.43056, 0, 0],
-        "118": [0, 0.43056, 0.01389, 0],
-        "119": [0, 0.43056, 0.01389, 0],
-        "120": [0, 0.43056, 0, 0],
-        "121": [0.19444, 0.43056, 0.01389, 0],
-        "122": [0, 0.43056, 0, 0],
-        "123": [0.25, 0.75, 0, 0],
-        "124": [0.25, 0.75, 0, 0],
-        "125": [0.25, 0.75, 0, 0],
-        "126": [0.35, 0.31786, 0, 0],
-        "160": [0, 0, 0, 0],
-        "168": [0, 0.66786, 0, 0],
-        "172": [0, 0.43056, 0, 0],
-        "175": [0, 0.56778, 0, 0],
-        "176": [0, 0.69444, 0, 0],
-        "177": [0.08333, 0.58333, 0, 0],
-        "180": [0, 0.69444, 0, 0],
-        "215": [0.08333, 0.58333, 0, 0],
-        "247": [0.08333, 0.58333, 0, 0],
-        "305": [0, 0.43056, 0, 0],
-        "567": [0.19444, 0.43056, 0, 0],
-        "710": [0, 0.69444, 0, 0],
-        "711": [0, 0.62847, 0, 0],
-        "713": [0, 0.56778, 0, 0],
-        "714": [0, 0.69444, 0, 0],
-        "715": [0, 0.69444, 0, 0],
-        "728": [0, 0.69444, 0, 0],
-        "729": [0, 0.66786, 0, 0],
-        "730": [0, 0.69444, 0, 0],
-        "732": [0, 0.66786, 0, 0],
-        "768": [0, 0.69444, 0, 0],
-        "769": [0, 0.69444, 0, 0],
-        "770": [0, 0.69444, 0, 0],
-        "771": [0, 0.66786, 0, 0],
-        "772": [0, 0.56778, 0, 0],
-        "774": [0, 0.69444, 0, 0],
-        "775": [0, 0.66786, 0, 0],
-        "776": [0, 0.66786, 0, 0],
-        "778": [0, 0.69444, 0, 0],
-        "779": [0, 0.69444, 0, 0],
-        "780": [0, 0.62847, 0, 0],
-        "824": [0.19444, 0.69444, 0, 0],
-        "915": [0, 0.68333, 0, 0],
-        "916": [0, 0.68333, 0, 0],
-        "920": [0, 0.68333, 0, 0],
-        "923": [0, 0.68333, 0, 0],
-        "926": [0, 0.68333, 0, 0],
-        "928": [0, 0.68333, 0, 0],
-        "931": [0, 0.68333, 0, 0],
-        "933": [0, 0.68333, 0, 0],
-        "934": [0, 0.68333, 0, 0],
-        "936": [0, 0.68333, 0, 0],
-        "937": [0, 0.68333, 0, 0],
-        "8211": [0, 0.43056, 0.02778, 0],
-        "8212": [0, 0.43056, 0.02778, 0],
-        "8216": [0, 0.69444, 0, 0],
-        "8217": [0, 0.69444, 0, 0],
-        "8220": [0, 0.69444, 0, 0],
-        "8221": [0, 0.69444, 0, 0],
-        "8224": [0.19444, 0.69444, 0, 0],
-        "8225": [0.19444, 0.69444, 0, 0],
-        "8230": [0, 0.12, 0, 0],
-        "8242": [0, 0.55556, 0, 0],
-        "8407": [0, 0.71444, 0.15382, 0],
-        "8463": [0, 0.68889, 0, 0],
-        "8465": [0, 0.69444, 0, 0],
-        "8467": [0, 0.69444, 0, 0.11111],
-        "8472": [0.19444, 0.43056, 0, 0.11111],
-        "8476": [0, 0.69444, 0, 0],
-        "8501": [0, 0.69444, 0, 0],
-        "8592": [-0.13313, 0.36687, 0, 0],
-        "8593": [0.19444, 0.69444, 0, 0],
-        "8594": [-0.13313, 0.36687, 0, 0],
-        "8595": [0.19444, 0.69444, 0, 0],
-        "8596": [-0.13313, 0.36687, 0, 0],
-        "8597": [0.25, 0.75, 0, 0],
-        "8598": [0.19444, 0.69444, 0, 0],
-        "8599": [0.19444, 0.69444, 0, 0],
-        "8600": [0.19444, 0.69444, 0, 0],
-        "8601": [0.19444, 0.69444, 0, 0],
-        "8614": [0.011, 0.511, 0, 0],
-        "8617": [0.011, 0.511, 0, 0],
-        "8618": [0.011, 0.511, 0, 0],
-        "8636": [-0.13313, 0.36687, 0, 0],
-        "8637": [-0.13313, 0.36687, 0, 0],
-        "8640": [-0.13313, 0.36687, 0, 0],
-        "8641": [-0.13313, 0.36687, 0, 0],
-        "8652": [0.011, 0.671, 0, 0],
-        "8656": [-0.13313, 0.36687, 0, 0],
-        "8657": [0.19444, 0.69444, 0, 0],
-        "8658": [-0.13313, 0.36687, 0, 0],
-        "8659": [0.19444, 0.69444, 0, 0],
-        "8660": [-0.13313, 0.36687, 0, 0],
-        "8661": [0.25, 0.75, 0, 0],
-        "8704": [0, 0.69444, 0, 0],
-        "8706": [0, 0.69444, 0.05556, 0.08334],
-        "8707": [0, 0.69444, 0, 0],
-        "8709": [0.05556, 0.75, 0, 0],
-        "8711": [0, 0.68333, 0, 0],
-        "8712": [0.0391, 0.5391, 0, 0],
-        "8715": [0.0391, 0.5391, 0, 0],
-        "8722": [0.08333, 0.58333, 0, 0],
-        "8723": [0.08333, 0.58333, 0, 0],
-        "8725": [0.25, 0.75, 0, 0],
-        "8726": [0.25, 0.75, 0, 0],
-        "8727": [-0.03472, 0.46528, 0, 0],
-        "8728": [-0.05555, 0.44445, 0, 0],
-        "8729": [-0.05555, 0.44445, 0, 0],
-        "8730": [0.2, 0.8, 0, 0],
-        "8733": [0, 0.43056, 0, 0],
-        "8734": [0, 0.43056, 0, 0],
-        "8736": [0, 0.69224, 0, 0],
-        "8739": [0.25, 0.75, 0, 0],
-        "8741": [0.25, 0.75, 0, 0],
-        "8743": [0, 0.55556, 0, 0],
-        "8744": [0, 0.55556, 0, 0],
-        "8745": [0, 0.55556, 0, 0],
-        "8746": [0, 0.55556, 0, 0],
-        "8747": [0.19444, 0.69444, 0.11111, 0],
-        "8764": [-0.13313, 0.36687, 0, 0],
-        "8768": [0.19444, 0.69444, 0, 0],
-        "8771": [-0.03625, 0.46375, 0, 0],
-        "8773": [-0.022, 0.589, 0, 0],
-        "8776": [-0.01688, 0.48312, 0, 0],
-        "8781": [-0.03625, 0.46375, 0, 0],
-        "8784": [-0.133, 0.67, 0, 0],
-        "8800": [0.215, 0.716, 0, 0],
-        "8801": [-0.03625, 0.46375, 0, 0],
-        "8804": [0.13597, 0.63597, 0, 0],
-        "8805": [0.13597, 0.63597, 0, 0],
-        "8810": [0.0391, 0.5391, 0, 0],
-        "8811": [0.0391, 0.5391, 0, 0],
-        "8826": [0.0391, 0.5391, 0, 0],
-        "8827": [0.0391, 0.5391, 0, 0],
-        "8834": [0.0391, 0.5391, 0, 0],
-        "8835": [0.0391, 0.5391, 0, 0],
-        "8838": [0.13597, 0.63597, 0, 0],
-        "8839": [0.13597, 0.63597, 0, 0],
-        "8846": [0, 0.55556, 0, 0],
-        "8849": [0.13597, 0.63597, 0, 0],
-        "8850": [0.13597, 0.63597, 0, 0],
-        "8851": [0, 0.55556, 0, 0],
-        "8852": [0, 0.55556, 0, 0],
-        "8853": [0.08333, 0.58333, 0, 0],
-        "8854": [0.08333, 0.58333, 0, 0],
-        "8855": [0.08333, 0.58333, 0, 0],
-        "8856": [0.08333, 0.58333, 0, 0],
-        "8857": [0.08333, 0.58333, 0, 0],
-        "8866": [0, 0.69444, 0, 0],
-        "8867": [0, 0.69444, 0, 0],
-        "8868": [0, 0.69444, 0, 0],
-        "8869": [0, 0.69444, 0, 0],
-        "8872": [0.249, 0.75, 0, 0],
-        "8900": [-0.05555, 0.44445, 0, 0],
-        "8901": [-0.05555, 0.44445, 0, 0],
-        "8902": [-0.03472, 0.46528, 0, 0],
-        "8904": [0.005, 0.505, 0, 0],
-        "8942": [0.03, 0.9, 0, 0],
-        "8943": [-0.19, 0.31, 0, 0],
-        "8945": [-0.1, 0.82, 0, 0],
-        "8968": [0.25, 0.75, 0, 0],
-        "8969": [0.25, 0.75, 0, 0],
-        "8970": [0.25, 0.75, 0, 0],
-        "8971": [0.25, 0.75, 0, 0],
-        "8994": [-0.14236, 0.35764, 0, 0],
-        "8995": [-0.14236, 0.35764, 0, 0],
-        "9136": [0.244, 0.744, 0, 0],
-        "9137": [0.244, 0.744, 0, 0],
-        "9651": [0.19444, 0.69444, 0, 0],
-        "9657": [-0.03472, 0.46528, 0, 0],
-        "9661": [0.19444, 0.69444, 0, 0],
-        "9667": [-0.03472, 0.46528, 0, 0],
-        "9711": [0.19444, 0.69444, 0, 0],
-        "9824": [0.12963, 0.69444, 0, 0],
-        "9825": [0.12963, 0.69444, 0, 0],
-        "9826": [0.12963, 0.69444, 0, 0],
-        "9827": [0.12963, 0.69444, 0, 0],
-        "9837": [0, 0.75, 0, 0],
-        "9838": [0.19444, 0.69444, 0, 0],
-        "9839": [0.19444, 0.69444, 0, 0],
-        "10216": [0.25, 0.75, 0, 0],
-        "10217": [0.25, 0.75, 0, 0],
-        "10222": [0.244, 0.744, 0, 0],
-        "10223": [0.244, 0.744, 0, 0],
-        "10229": [0.011, 0.511, 0, 0],
-        "10230": [0.011, 0.511, 0, 0],
-        "10231": [0.011, 0.511, 0, 0],
-        "10232": [0.024, 0.525, 0, 0],
-        "10233": [0.024, 0.525, 0, 0],
-        "10234": [0.024, 0.525, 0, 0],
-        "10236": [0.011, 0.511, 0, 0],
-        "10815": [0, 0.68333, 0, 0],
-        "10927": [0.13597, 0.63597, 0, 0],
-        "10928": [0.13597, 0.63597, 0, 0]
+        "32": [0, 0, 0, 0, 0],
+        "33": [0, 0.69444, 0, 0, 0.27778],
+        "34": [0, 0.69444, 0, 0, 0.5],
+        "35": [0.19444, 0.69444, 0, 0, 0.83334],
+        "36": [0.05556, 0.75, 0, 0, 0.5],
+        "37": [0.05556, 0.75, 0, 0, 0.83334],
+        "38": [0, 0.69444, 0, 0, 0.77778],
+        "39": [0, 0.69444, 0, 0, 0.27778],
+        "40": [0.25, 0.75, 0, 0, 0.38889],
+        "41": [0.25, 0.75, 0, 0, 0.38889],
+        "42": [0, 0.75, 0, 0, 0.5],
+        "43": [0.08333, 0.58333, 0, 0, 0.77778],
+        "44": [0.19444, 0.10556, 0, 0, 0.27778],
+        "45": [0, 0.43056, 0, 0, 0.33333],
+        "46": [0, 0.10556, 0, 0, 0.27778],
+        "47": [0.25, 0.75, 0, 0, 0.5],
+        "48": [0, 0.64444, 0, 0, 0.5],
+        "49": [0, 0.64444, 0, 0, 0.5],
+        "50": [0, 0.64444, 0, 0, 0.5],
+        "51": [0, 0.64444, 0, 0, 0.5],
+        "52": [0, 0.64444, 0, 0, 0.5],
+        "53": [0, 0.64444, 0, 0, 0.5],
+        "54": [0, 0.64444, 0, 0, 0.5],
+        "55": [0, 0.64444, 0, 0, 0.5],
+        "56": [0, 0.64444, 0, 0, 0.5],
+        "57": [0, 0.64444, 0, 0, 0.5],
+        "58": [0, 0.43056, 0, 0, 0.27778],
+        "59": [0.19444, 0.43056, 0, 0, 0.27778],
+        "60": [0.0391, 0.5391, 0, 0, 0.77778],
+        "61": [-0.13313, 0.36687, 0, 0, 0.77778],
+        "62": [0.0391, 0.5391, 0, 0, 0.77778],
+        "63": [0, 0.69444, 0, 0, 0.47222],
+        "64": [0, 0.69444, 0, 0, 0.77778],
+        "65": [0, 0.68333, 0, 0, 0.75],
+        "66": [0, 0.68333, 0, 0, 0.70834],
+        "67": [0, 0.68333, 0, 0, 0.72222],
+        "68": [0, 0.68333, 0, 0, 0.76389],
+        "69": [0, 0.68333, 0, 0, 0.68056],
+        "70": [0, 0.68333, 0, 0, 0.65278],
+        "71": [0, 0.68333, 0, 0, 0.78472],
+        "72": [0, 0.68333, 0, 0, 0.75],
+        "73": [0, 0.68333, 0, 0, 0.36111],
+        "74": [0, 0.68333, 0, 0, 0.51389],
+        "75": [0, 0.68333, 0, 0, 0.77778],
+        "76": [0, 0.68333, 0, 0, 0.625],
+        "77": [0, 0.68333, 0, 0, 0.91667],
+        "78": [0, 0.68333, 0, 0, 0.75],
+        "79": [0, 0.68333, 0, 0, 0.77778],
+        "80": [0, 0.68333, 0, 0, 0.68056],
+        "81": [0.19444, 0.68333, 0, 0, 0.77778],
+        "82": [0, 0.68333, 0, 0, 0.73611],
+        "83": [0, 0.68333, 0, 0, 0.55556],
+        "84": [0, 0.68333, 0, 0, 0.72222],
+        "85": [0, 0.68333, 0, 0, 0.75],
+        "86": [0, 0.68333, 0.01389, 0, 0.75],
+        "87": [0, 0.68333, 0.01389, 0, 1.02778],
+        "88": [0, 0.68333, 0, 0, 0.75],
+        "89": [0, 0.68333, 0.025, 0, 0.75],
+        "90": [0, 0.68333, 0, 0, 0.61111],
+        "91": [0.25, 0.75, 0, 0, 0.27778],
+        "92": [0.25, 0.75, 0, 0, 0.5],
+        "93": [0.25, 0.75, 0, 0, 0.27778],
+        "94": [0, 0.69444, 0, 0, 0.5],
+        "95": [0.31, 0.12056, 0.02778, 0, 0.5],
+        "96": [0, 0.69444, 0, 0, 0.5],
+        "97": [0, 0.43056, 0, 0, 0.5],
+        "98": [0, 0.69444, 0, 0, 0.55556],
+        "99": [0, 0.43056, 0, 0, 0.44445],
+        "100": [0, 0.69444, 0, 0, 0.55556],
+        "101": [0, 0.43056, 0, 0, 0.44445],
+        "102": [0, 0.69444, 0.07778, 0, 0.30556],
+        "103": [0.19444, 0.43056, 0.01389, 0, 0.5],
+        "104": [0, 0.69444, 0, 0, 0.55556],
+        "105": [0, 0.66786, 0, 0, 0.27778],
+        "106": [0.19444, 0.66786, 0, 0, 0.30556],
+        "107": [0, 0.69444, 0, 0, 0.52778],
+        "108": [0, 0.69444, 0, 0, 0.27778],
+        "109": [0, 0.43056, 0, 0, 0.83334],
+        "110": [0, 0.43056, 0, 0, 0.55556],
+        "111": [0, 0.43056, 0, 0, 0.5],
+        "112": [0.19444, 0.43056, 0, 0, 0.55556],
+        "113": [0.19444, 0.43056, 0, 0, 0.52778],
+        "114": [0, 0.43056, 0, 0, 0.39167],
+        "115": [0, 0.43056, 0, 0, 0.39445],
+        "116": [0, 0.61508, 0, 0, 0.38889],
+        "117": [0, 0.43056, 0, 0, 0.55556],
+        "118": [0, 0.43056, 0.01389, 0, 0.52778],
+        "119": [0, 0.43056, 0.01389, 0, 0.72222],
+        "120": [0, 0.43056, 0, 0, 0.52778],
+        "121": [0.19444, 0.43056, 0.01389, 0, 0.52778],
+        "122": [0, 0.43056, 0, 0, 0.44445],
+        "123": [0.25, 0.75, 0, 0, 0.5],
+        "124": [0.25, 0.75, 0, 0, 0.27778],
+        "125": [0.25, 0.75, 0, 0, 0.5],
+        "126": [0.35, 0.31786, 0, 0, 0.5],
+        "160": [0, 0, 0, 0, 0],
+        "168": [0, 0.66786, 0, 0, 0.5],
+        "172": [0, 0.43056, 0, 0, 0.66667],
+        "175": [0, 0.56778, 0, 0, 0.5],
+        "176": [0, 0.69444, 0, 0, 0.75],
+        "177": [0.08333, 0.58333, 0, 0, 0.77778],
+        "180": [0, 0.69444, 0, 0, 0.5],
+        "198": [0, 0.68333, 0, 0, 0.90278],
+        "215": [0.08333, 0.58333, 0, 0, 0.77778],
+        "216": [0.04861, 0.73194, 0, 0, 0.77778],
+        "223": [0, 0.69444, 0, 0, 0.5],
+        "230": [0, 0.43056, 0, 0, 0.72222],
+        "247": [0.08333, 0.58333, 0, 0, 0.77778],
+        "248": [0.09722, 0.52778, 0, 0, 0.5],
+        "305": [0, 0.43056, 0, 0, 0.27778],
+        "338": [0, 0.68333, 0, 0, 1.01389],
+        "339": [0, 0.43056, 0, 0, 0.77778],
+        "567": [0.19444, 0.43056, 0, 0, 0.30556],
+        "710": [0, 0.69444, 0, 0, 0.5],
+        "711": [0, 0.62847, 0, 0, 0.5],
+        "713": [0, 0.56778, 0, 0, 0.5],
+        "714": [0, 0.69444, 0, 0, 0.5],
+        "715": [0, 0.69444, 0, 0, 0.5],
+        "728": [0, 0.69444, 0, 0, 0.5],
+        "729": [0, 0.66786, 0, 0, 0.27778],
+        "730": [0, 0.69444, 0, 0, 0.75],
+        "732": [0, 0.66786, 0, 0, 0.5],
+        "768": [0, 0.69444, 0, 0, 0.5],
+        "769": [0, 0.69444, 0, 0, 0.5],
+        "770": [0, 0.69444, 0, 0, 0.5],
+        "771": [0, 0.66786, 0, 0, 0.5],
+        "772": [0, 0.56778, 0, 0, 0.5],
+        "774": [0, 0.69444, 0, 0, 0.5],
+        "775": [0, 0.66786, 0, 0, 0.27778],
+        "776": [0, 0.66786, 0, 0, 0.5],
+        "778": [0, 0.69444, 0, 0, 0.75],
+        "779": [0, 0.69444, 0, 0, 0.5],
+        "780": [0, 0.62847, 0, 0, 0.5],
+        "824": [0.19444, 0.69444, 0, 0, 0],
+        "915": [0, 0.68333, 0, 0, 0.625],
+        "916": [0, 0.68333, 0, 0, 0.83334],
+        "920": [0, 0.68333, 0, 0, 0.77778],
+        "923": [0, 0.68333, 0, 0, 0.69445],
+        "926": [0, 0.68333, 0, 0, 0.66667],
+        "928": [0, 0.68333, 0, 0, 0.75],
+        "931": [0, 0.68333, 0, 0, 0.72222],
+        "933": [0, 0.68333, 0, 0, 0.77778],
+        "934": [0, 0.68333, 0, 0, 0.72222],
+        "936": [0, 0.68333, 0, 0, 0.77778],
+        "937": [0, 0.68333, 0, 0, 0.72222],
+        "8211": [0, 0.43056, 0.02778, 0, 0.5],
+        "8212": [0, 0.43056, 0.02778, 0, 1.0],
+        "8216": [0, 0.69444, 0, 0, 0.27778],
+        "8217": [0, 0.69444, 0, 0, 0.27778],
+        "8220": [0, 0.69444, 0, 0, 0.5],
+        "8221": [0, 0.69444, 0, 0, 0.5],
+        "8224": [0.19444, 0.69444, 0, 0, 0.44445],
+        "8225": [0.19444, 0.69444, 0, 0, 0.44445],
+        "8230": [0, 0.12, 0, 0, 1015],
+        "8242": [0, 0.55556, 0, 0, 0.275],
+        "8407": [0, 0.71444, 0.15382, 0, 0.5],
+        "8463": [0, 0.68889, 0, 0, 0.54028],
+        "8465": [0, 0.69444, 0, 0, 0.72222],
+        "8467": [0, 0.69444, 0, 0.11111, 0.41667],
+        "8472": [0.19444, 0.43056, 0, 0.11111, 0.63646],
+        "8476": [0, 0.69444, 0, 0, 0.72222],
+        "8501": [0, 0.69444, 0, 0, 0.61111],
+        "8592": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8593": [0.19444, 0.69444, 0, 0, 0.5],
+        "8594": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8595": [0.19444, 0.69444, 0, 0, 0.5],
+        "8596": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8597": [0.25, 0.75, 0, 0, 0.5],
+        "8598": [0.19444, 0.69444, 0, 0, 1.0],
+        "8599": [0.19444, 0.69444, 0, 0, 1.0],
+        "8600": [0.19444, 0.69444, 0, 0, 1.0],
+        "8601": [0.19444, 0.69444, 0, 0, 1.0],
+        "8614": [0.011, 0.511, 0, 0, 889],
+        "8617": [0.011, 0.511, 0, 0, 1015],
+        "8618": [0.011, 0.511, 0, 0, 1015],
+        "8636": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8637": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8640": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8641": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8652": [0.011, 0.671, 0, 0, 889],
+        "8656": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8657": [0.19444, 0.69444, 0, 0, 0.61111],
+        "8658": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8659": [0.19444, 0.69444, 0, 0, 0.61111],
+        "8660": [-0.13313, 0.36687, 0, 0, 1.0],
+        "8661": [0.25, 0.75, 0, 0, 0.61111],
+        "8704": [0, 0.69444, 0, 0, 0.55556],
+        "8706": [0, 0.69444, 0.05556, 0.08334, 0.5309],
+        "8707": [0, 0.69444, 0, 0, 0.55556],
+        "8709": [0.05556, 0.75, 0, 0, 0.5],
+        "8711": [0, 0.68333, 0, 0, 0.83334],
+        "8712": [0.0391, 0.5391, 0, 0, 0.66667],
+        "8715": [0.0391, 0.5391, 0, 0, 0.66667],
+        "8722": [0.08333, 0.58333, 0, 0, 0.77778],
+        "8723": [0.08333, 0.58333, 0, 0, 0.77778],
+        "8725": [0.25, 0.75, 0, 0, 0.5],
+        "8726": [0.25, 0.75, 0, 0, 0.5],
+        "8727": [-0.03472, 0.46528, 0, 0, 0.5],
+        "8728": [-0.05555, 0.44445, 0, 0, 0.5],
+        "8729": [-0.05555, 0.44445, 0, 0, 0.5],
+        "8730": [0.2, 0.8, 0, 0, 0.83334],
+        "8733": [0, 0.43056, 0, 0, 0.77778],
+        "8734": [0, 0.43056, 0, 0, 1.0],
+        "8736": [0, 0.69224, 0, 0, 0.72222],
+        "8739": [0.25, 0.75, 0, 0, 0.27778],
+        "8741": [0.25, 0.75, 0, 0, 0.5],
+        "8743": [0, 0.55556, 0, 0, 0.66667],
+        "8744": [0, 0.55556, 0, 0, 0.66667],
+        "8745": [0, 0.55556, 0, 0, 0.66667],
+        "8746": [0, 0.55556, 0, 0, 0.66667],
+        "8747": [0.19444, 0.69444, 0.11111, 0, 0.41667],
+        "8764": [-0.13313, 0.36687, 0, 0, 0.77778],
+        "8768": [0.19444, 0.69444, 0, 0, 0.27778],
+        "8771": [-0.03625, 0.46375, 0, 0, 0.77778],
+        "8773": [-0.022, 0.589, 0, 0, 667],
+        "8776": [-0.01688, 0.48312, 0, 0, 0.77778],
+        "8781": [-0.03625, 0.46375, 0, 0, 0.77778],
+        "8784": [-0.133, 0.67, 0, 0, 666],
+        "8800": [0.215, 0.716, 0, 0, 666],
+        "8801": [-0.03625, 0.46375, 0, 0, 0.77778],
+        "8804": [0.13597, 0.63597, 0, 0, 0.77778],
+        "8805": [0.13597, 0.63597, 0, 0, 0.77778],
+        "8810": [0.0391, 0.5391, 0, 0, 1.0],
+        "8811": [0.0391, 0.5391, 0, 0, 1.0],
+        "8826": [0.0391, 0.5391, 0, 0, 0.77778],
+        "8827": [0.0391, 0.5391, 0, 0, 0.77778],
+        "8834": [0.0391, 0.5391, 0, 0, 0.77778],
+        "8835": [0.0391, 0.5391, 0, 0, 0.77778],
+        "8838": [0.13597, 0.63597, 0, 0, 0.77778],
+        "8839": [0.13597, 0.63597, 0, 0, 0.77778],
+        "8846": [0, 0.55556, 0, 0, 0.66667],
+        "8849": [0.13597, 0.63597, 0, 0, 0.77778],
+        "8850": [0.13597, 0.63597, 0, 0, 0.77778],
+        "8851": [0, 0.55556, 0, 0, 0.66667],
+        "8852": [0, 0.55556, 0, 0, 0.66667],
+        "8853": [0.08333, 0.58333, 0, 0, 0.77778],
+        "8854": [0.08333, 0.58333, 0, 0, 0.77778],
+        "8855": [0.08333, 0.58333, 0, 0, 0.77778],
+        "8856": [0.08333, 0.58333, 0, 0, 0.77778],
+        "8857": [0.08333, 0.58333, 0, 0, 0.77778],
+        "8866": [0, 0.69444, 0, 0, 0.61111],
+        "8867": [0, 0.69444, 0, 0, 0.61111],
+        "8868": [0, 0.69444, 0, 0, 0.77778],
+        "8869": [0, 0.69444, 0, 0, 0.77778],
+        "8872": [0.249, 0.75, 0, 0, 692],
+        "8900": [-0.05555, 0.44445, 0, 0, 0.5],
+        "8901": [-0.05555, 0.44445, 0, 0, 0.27778],
+        "8902": [-0.03472, 0.46528, 0, 0, 0.5],
+        "8904": [0.005, 0.505, 0, 0, 847],
+        "8942": [0.03, 0.9, 0, 0, 121],
+        "8943": [-0.19, 0.31, 0, 0, 1015],
+        "8945": [-0.1, 0.82, 0, 0, 1015],
+        "8968": [0.25, 0.75, 0, 0, 0.44445],
+        "8969": [0.25, 0.75, 0, 0, 0.44445],
+        "8970": [0.25, 0.75, 0, 0, 0.44445],
+        "8971": [0.25, 0.75, 0, 0, 0.44445],
+        "8994": [-0.14236, 0.35764, 0, 0, 1.0],
+        "8995": [-0.14236, 0.35764, 0, 0, 1.0],
+        "9136": [0.244, 0.744, 0, 0, 301],
+        "9137": [0.244, 0.744, 0, 0, 301],
+        "9651": [0.19444, 0.69444, 0, 0, 0.88889],
+        "9657": [-0.03472, 0.46528, 0, 0, 0.5],
+        "9661": [0.19444, 0.69444, 0, 0, 0.88889],
+        "9667": [-0.03472, 0.46528, 0, 0, 0.5],
+        "9711": [0.19444, 0.69444, 0, 0, 1.0],
+        "9824": [0.12963, 0.69444, 0, 0, 0.77778],
+        "9825": [0.12963, 0.69444, 0, 0, 0.77778],
+        "9826": [0.12963, 0.69444, 0, 0, 0.77778],
+        "9827": [0.12963, 0.69444, 0, 0, 0.77778],
+        "9837": [0, 0.75, 0, 0, 0.38889],
+        "9838": [0.19444, 0.69444, 0, 0, 0.38889],
+        "9839": [0.19444, 0.69444, 0, 0, 0.38889],
+        "10216": [0.25, 0.75, 0, 0, 0.38889],
+        "10217": [0.25, 0.75, 0, 0, 0.38889],
+        "10222": [0.244, 0.744, 0, 0, 184],
+        "10223": [0.244, 0.744, 0, 0, 184],
+        "10229": [0.011, 0.511, 0, 0, 1470],
+        "10230": [0.011, 0.511, 0, 0, 1469],
+        "10231": [0.011, 0.511, 0, 0, 1748],
+        "10232": [0.024, 0.525, 0, 0, 1497],
+        "10233": [0.024, 0.525, 0, 0, 1526],
+        "10234": [0.024, 0.525, 0, 0, 1746],
+        "10236": [0.011, 0.511, 0, 0, 1498],
+        "10815": [0, 0.68333, 0, 0, 0.75],
+        "10927": [0.13597, 0.63597, 0, 0, 0.77778],
+        "10928": [0.13597, 0.63597, 0, 0, 0.77778]
     },
     "Math-BoldItalic": {
-        "47": [0.19444, 0.69444, 0, 0],
-        "65": [0, 0.68611, 0, 0],
-        "66": [0, 0.68611, 0.04835, 0],
-        "67": [0, 0.68611, 0.06979, 0],
-        "68": [0, 0.68611, 0.03194, 0],
-        "69": [0, 0.68611, 0.05451, 0],
-        "70": [0, 0.68611, 0.15972, 0],
-        "71": [0, 0.68611, 0, 0],
-        "72": [0, 0.68611, 0.08229, 0],
-        "73": [0, 0.68611, 0.07778, 0],
-        "74": [0, 0.68611, 0.10069, 0],
-        "75": [0, 0.68611, 0.06979, 0],
-        "76": [0, 0.68611, 0, 0],
-        "77": [0, 0.68611, 0.11424, 0],
-        "78": [0, 0.68611, 0.11424, 0],
-        "79": [0, 0.68611, 0.03194, 0],
-        "80": [0, 0.68611, 0.15972, 0],
-        "81": [0.19444, 0.68611, 0, 0],
-        "82": [0, 0.68611, 0.00421, 0],
-        "83": [0, 0.68611, 0.05382, 0],
-        "84": [0, 0.68611, 0.15972, 0],
-        "85": [0, 0.68611, 0.11424, 0],
-        "86": [0, 0.68611, 0.25555, 0],
-        "87": [0, 0.68611, 0.15972, 0],
-        "88": [0, 0.68611, 0.07778, 0],
-        "89": [0, 0.68611, 0.25555, 0],
-        "90": [0, 0.68611, 0.06979, 0],
-        "97": [0, 0.44444, 0, 0],
-        "98": [0, 0.69444, 0, 0],
-        "99": [0, 0.44444, 0, 0],
-        "100": [0, 0.69444, 0, 0],
-        "101": [0, 0.44444, 0, 0],
-        "102": [0.19444, 0.69444, 0.11042, 0],
-        "103": [0.19444, 0.44444, 0.03704, 0],
-        "104": [0, 0.69444, 0, 0],
-        "105": [0, 0.69326, 0, 0],
-        "106": [0.19444, 0.69326, 0.0622, 0],
-        "107": [0, 0.69444, 0.01852, 0],
-        "108": [0, 0.69444, 0.0088, 0],
-        "109": [0, 0.44444, 0, 0],
-        "110": [0, 0.44444, 0, 0],
-        "111": [0, 0.44444, 0, 0],
-        "112": [0.19444, 0.44444, 0, 0],
-        "113": [0.19444, 0.44444, 0.03704, 0],
-        "114": [0, 0.44444, 0.03194, 0],
-        "115": [0, 0.44444, 0, 0],
-        "116": [0, 0.63492, 0, 0],
-        "117": [0, 0.44444, 0, 0],
-        "118": [0, 0.44444, 0.03704, 0],
-        "119": [0, 0.44444, 0.02778, 0],
-        "120": [0, 0.44444, 0, 0],
-        "121": [0.19444, 0.44444, 0.03704, 0],
-        "122": [0, 0.44444, 0.04213, 0],
-        "915": [0, 0.68611, 0.15972, 0],
-        "916": [0, 0.68611, 0, 0],
-        "920": [0, 0.68611, 0.03194, 0],
-        "923": [0, 0.68611, 0, 0],
-        "926": [0, 0.68611, 0.07458, 0],
-        "928": [0, 0.68611, 0.08229, 0],
-        "931": [0, 0.68611, 0.05451, 0],
-        "933": [0, 0.68611, 0.15972, 0],
-        "934": [0, 0.68611, 0, 0],
-        "936": [0, 0.68611, 0.11653, 0],
-        "937": [0, 0.68611, 0.04835, 0],
-        "945": [0, 0.44444, 0, 0],
-        "946": [0.19444, 0.69444, 0.03403, 0],
-        "947": [0.19444, 0.44444, 0.06389, 0],
-        "948": [0, 0.69444, 0.03819, 0],
-        "949": [0, 0.44444, 0, 0],
-        "950": [0.19444, 0.69444, 0.06215, 0],
-        "951": [0.19444, 0.44444, 0.03704, 0],
-        "952": [0, 0.69444, 0.03194, 0],
-        "953": [0, 0.44444, 0, 0],
-        "954": [0, 0.44444, 0, 0],
-        "955": [0, 0.69444, 0, 0],
-        "956": [0.19444, 0.44444, 0, 0],
-        "957": [0, 0.44444, 0.06898, 0],
-        "958": [0.19444, 0.69444, 0.03021, 0],
-        "959": [0, 0.44444, 0, 0],
-        "960": [0, 0.44444, 0.03704, 0],
-        "961": [0.19444, 0.44444, 0, 0],
-        "962": [0.09722, 0.44444, 0.07917, 0],
-        "963": [0, 0.44444, 0.03704, 0],
-        "964": [0, 0.44444, 0.13472, 0],
-        "965": [0, 0.44444, 0.03704, 0],
-        "966": [0.19444, 0.44444, 0, 0],
-        "967": [0.19444, 0.44444, 0, 0],
-        "968": [0.19444, 0.69444, 0.03704, 0],
-        "969": [0, 0.44444, 0.03704, 0],
-        "977": [0, 0.69444, 0, 0],
-        "981": [0.19444, 0.69444, 0, 0],
-        "982": [0, 0.44444, 0.03194, 0],
-        "1009": [0.19444, 0.44444, 0, 0],
-        "1013": [0, 0.44444, 0, 0]
+        "47": [0.19444, 0.69444, 0, 0, 0],
+        "65": [0, 0.68611, 0, 0, 0.86944],
+        "66": [0, 0.68611, 0.04835, 0, 0.8664],
+        "67": [0, 0.68611, 0.06979, 0, 0.81694],
+        "68": [0, 0.68611, 0.03194, 0, 0.93812],
+        "69": [0, 0.68611, 0.05451, 0, 0.81007],
+        "70": [0, 0.68611, 0.15972, 0, 0.68889],
+        "71": [0, 0.68611, 0, 0, 0.88673],
+        "72": [0, 0.68611, 0.08229, 0, 0.98229],
+        "73": [0, 0.68611, 0.07778, 0, 0.51111],
+        "74": [0, 0.68611, 0.10069, 0, 0.63125],
+        "75": [0, 0.68611, 0.06979, 0, 0.97118],
+        "76": [0, 0.68611, 0, 0, 0.75555],
+        "77": [0, 0.68611, 0.11424, 0, 1.14201],
+        "78": [0, 0.68611, 0.11424, 0, 0.95034],
+        "79": [0, 0.68611, 0.03194, 0, 0.83666],
+        "80": [0, 0.68611, 0.15972, 0, 0.72309],
+        "81": [0.19444, 0.68611, 0, 0, 0.86861],
+        "82": [0, 0.68611, 0.00421, 0, 0.87235],
+        "83": [0, 0.68611, 0.05382, 0, 0.69271],
+        "84": [0, 0.68611, 0.15972, 0, 0.63663],
+        "85": [0, 0.68611, 0.11424, 0, 0.80027],
+        "86": [0, 0.68611, 0.25555, 0, 0.67778],
+        "87": [0, 0.68611, 0.15972, 0, 1.09305],
+        "88": [0, 0.68611, 0.07778, 0, 0.94722],
+        "89": [0, 0.68611, 0.25555, 0, 0.67458],
+        "90": [0, 0.68611, 0.06979, 0, 0.77257],
+        "97": [0, 0.44444, 0, 0, 0.63287],
+        "98": [0, 0.69444, 0, 0, 0.52083],
+        "99": [0, 0.44444, 0, 0, 0.51342],
+        "100": [0, 0.69444, 0, 0, 0.60972],
+        "101": [0, 0.44444, 0, 0, 0.55361],
+        "102": [0.19444, 0.69444, 0.11042, 0, 0.56806],
+        "103": [0.19444, 0.44444, 0.03704, 0, 0.5449],
+        "104": [0, 0.69444, 0, 0, 0.66759],
+        "105": [0, 0.69326, 0, 0, 0.4048],
+        "106": [0.19444, 0.69326, 0.0622, 0, 0.47083],
+        "107": [0, 0.69444, 0.01852, 0, 0.6037],
+        "108": [0, 0.69444, 0.0088, 0, 0.34815],
+        "109": [0, 0.44444, 0, 0, 1.0324],
+        "110": [0, 0.44444, 0, 0, 0.71296],
+        "111": [0, 0.44444, 0, 0, 0.58472],
+        "112": [0.19444, 0.44444, 0, 0, 0.60092],
+        "113": [0.19444, 0.44444, 0.03704, 0, 0.54213],
+        "114": [0, 0.44444, 0.03194, 0, 0.5287],
+        "115": [0, 0.44444, 0, 0, 0.53125],
+        "116": [0, 0.63492, 0, 0, 0.41528],
+        "117": [0, 0.44444, 0, 0, 0.68102],
+        "118": [0, 0.44444, 0.03704, 0, 0.56666],
+        "119": [0, 0.44444, 0.02778, 0, 0.83148],
+        "120": [0, 0.44444, 0, 0, 0.65903],
+        "121": [0.19444, 0.44444, 0.03704, 0, 0.59028],
+        "122": [0, 0.44444, 0.04213, 0, 0.55509],
+        "915": [0, 0.68611, 0.15972, 0, 0.65694],
+        "916": [0, 0.68611, 0, 0, 0.95833],
+        "920": [0, 0.68611, 0.03194, 0, 0.86722],
+        "923": [0, 0.68611, 0, 0, 0.80555],
+        "926": [0, 0.68611, 0.07458, 0, 0.84125],
+        "928": [0, 0.68611, 0.08229, 0, 0.98229],
+        "931": [0, 0.68611, 0.05451, 0, 0.88507],
+        "933": [0, 0.68611, 0.15972, 0, 0.67083],
+        "934": [0, 0.68611, 0, 0, 0.76666],
+        "936": [0, 0.68611, 0.11653, 0, 0.71402],
+        "937": [0, 0.68611, 0.04835, 0, 0.8789],
+        "945": [0, 0.44444, 0, 0, 0.76064],
+        "946": [0.19444, 0.69444, 0.03403, 0, 0.65972],
+        "947": [0.19444, 0.44444, 0.06389, 0, 0.59003],
+        "948": [0, 0.69444, 0.03819, 0, 0.52222],
+        "949": [0, 0.44444, 0, 0, 0.52882],
+        "950": [0.19444, 0.69444, 0.06215, 0, 0.50833],
+        "951": [0.19444, 0.44444, 0.03704, 0, 0.6],
+        "952": [0, 0.69444, 0.03194, 0, 0.5618],
+        "953": [0, 0.44444, 0, 0, 0.41204],
+        "954": [0, 0.44444, 0, 0, 0.66759],
+        "955": [0, 0.69444, 0, 0, 0.67083],
+        "956": [0.19444, 0.44444, 0, 0, 0.70787],
+        "957": [0, 0.44444, 0.06898, 0, 0.57685],
+        "958": [0.19444, 0.69444, 0.03021, 0, 0.50833],
+        "959": [0, 0.44444, 0, 0, 0.58472],
+        "960": [0, 0.44444, 0.03704, 0, 0.68241],
+        "961": [0.19444, 0.44444, 0, 0, 0.6118],
+        "962": [0.09722, 0.44444, 0.07917, 0, 0.42361],
+        "963": [0, 0.44444, 0.03704, 0, 0.68588],
+        "964": [0, 0.44444, 0.13472, 0, 0.52083],
+        "965": [0, 0.44444, 0.03704, 0, 0.63055],
+        "966": [0.19444, 0.44444, 0, 0, 0.74722],
+        "967": [0.19444, 0.44444, 0, 0, 0.71805],
+        "968": [0.19444, 0.69444, 0.03704, 0, 0.75833],
+        "969": [0, 0.44444, 0.03704, 0, 0.71782],
+        "977": [0, 0.69444, 0, 0, 0.69155],
+        "981": [0.19444, 0.69444, 0, 0, 0.7125],
+        "982": [0, 0.44444, 0.03194, 0, 0.975],
+        "1009": [0.19444, 0.44444, 0, 0, 0.6118],
+        "1013": [0, 0.44444, 0, 0, 0.48333]
     },
     "Math-Italic": {
-        "47": [0.19444, 0.69444, 0, 0],
-        "65": [0, 0.68333, 0, 0.13889],
-        "66": [0, 0.68333, 0.05017, 0.08334],
-        "67": [0, 0.68333, 0.07153, 0.08334],
-        "68": [0, 0.68333, 0.02778, 0.05556],
-        "69": [0, 0.68333, 0.05764, 0.08334],
-        "70": [0, 0.68333, 0.13889, 0.08334],
-        "71": [0, 0.68333, 0, 0.08334],
-        "72": [0, 0.68333, 0.08125, 0.05556],
-        "73": [0, 0.68333, 0.07847, 0.11111],
-        "74": [0, 0.68333, 0.09618, 0.16667],
-        "75": [0, 0.68333, 0.07153, 0.05556],
-        "76": [0, 0.68333, 0, 0.02778],
-        "77": [0, 0.68333, 0.10903, 0.08334],
-        "78": [0, 0.68333, 0.10903, 0.08334],
-        "79": [0, 0.68333, 0.02778, 0.08334],
-        "80": [0, 0.68333, 0.13889, 0.08334],
-        "81": [0.19444, 0.68333, 0, 0.08334],
-        "82": [0, 0.68333, 0.00773, 0.08334],
-        "83": [0, 0.68333, 0.05764, 0.08334],
-        "84": [0, 0.68333, 0.13889, 0.08334],
-        "85": [0, 0.68333, 0.10903, 0.02778],
-        "86": [0, 0.68333, 0.22222, 0],
-        "87": [0, 0.68333, 0.13889, 0],
-        "88": [0, 0.68333, 0.07847, 0.08334],
-        "89": [0, 0.68333, 0.22222, 0],
-        "90": [0, 0.68333, 0.07153, 0.08334],
-        "97": [0, 0.43056, 0, 0],
-        "98": [0, 0.69444, 0, 0],
-        "99": [0, 0.43056, 0, 0.05556],
-        "100": [0, 0.69444, 0, 0.16667],
-        "101": [0, 0.43056, 0, 0.05556],
-        "102": [0.19444, 0.69444, 0.10764, 0.16667],
-        "103": [0.19444, 0.43056, 0.03588, 0.02778],
-        "104": [0, 0.69444, 0, 0],
-        "105": [0, 0.65952, 0, 0],
-        "106": [0.19444, 0.65952, 0.05724, 0],
-        "107": [0, 0.69444, 0.03148, 0],
-        "108": [0, 0.69444, 0.01968, 0.08334],
-        "109": [0, 0.43056, 0, 0],
-        "110": [0, 0.43056, 0, 0],
-        "111": [0, 0.43056, 0, 0.05556],
-        "112": [0.19444, 0.43056, 0, 0.08334],
-        "113": [0.19444, 0.43056, 0.03588, 0.08334],
-        "114": [0, 0.43056, 0.02778, 0.05556],
-        "115": [0, 0.43056, 0, 0.05556],
-        "116": [0, 0.61508, 0, 0.08334],
-        "117": [0, 0.43056, 0, 0.02778],
-        "118": [0, 0.43056, 0.03588, 0.02778],
-        "119": [0, 0.43056, 0.02691, 0.08334],
-        "120": [0, 0.43056, 0, 0.02778],
-        "121": [0.19444, 0.43056, 0.03588, 0.05556],
-        "122": [0, 0.43056, 0.04398, 0.05556],
-        "915": [0, 0.68333, 0.13889, 0.08334],
-        "916": [0, 0.68333, 0, 0.16667],
-        "920": [0, 0.68333, 0.02778, 0.08334],
-        "923": [0, 0.68333, 0, 0.16667],
-        "926": [0, 0.68333, 0.07569, 0.08334],
-        "928": [0, 0.68333, 0.08125, 0.05556],
-        "931": [0, 0.68333, 0.05764, 0.08334],
-        "933": [0, 0.68333, 0.13889, 0.05556],
-        "934": [0, 0.68333, 0, 0.08334],
-        "936": [0, 0.68333, 0.11, 0.05556],
-        "937": [0, 0.68333, 0.05017, 0.08334],
-        "945": [0, 0.43056, 0.0037, 0.02778],
-        "946": [0.19444, 0.69444, 0.05278, 0.08334],
-        "947": [0.19444, 0.43056, 0.05556, 0],
-        "948": [0, 0.69444, 0.03785, 0.05556],
-        "949": [0, 0.43056, 0, 0.08334],
-        "950": [0.19444, 0.69444, 0.07378, 0.08334],
-        "951": [0.19444, 0.43056, 0.03588, 0.05556],
-        "952": [0, 0.69444, 0.02778, 0.08334],
-        "953": [0, 0.43056, 0, 0.05556],
-        "954": [0, 0.43056, 0, 0],
-        "955": [0, 0.69444, 0, 0],
-        "956": [0.19444, 0.43056, 0, 0.02778],
-        "957": [0, 0.43056, 0.06366, 0.02778],
-        "958": [0.19444, 0.69444, 0.04601, 0.11111],
-        "959": [0, 0.43056, 0, 0.05556],
-        "960": [0, 0.43056, 0.03588, 0],
-        "961": [0.19444, 0.43056, 0, 0.08334],
-        "962": [0.09722, 0.43056, 0.07986, 0.08334],
-        "963": [0, 0.43056, 0.03588, 0],
-        "964": [0, 0.43056, 0.1132, 0.02778],
-        "965": [0, 0.43056, 0.03588, 0.02778],
-        "966": [0.19444, 0.43056, 0, 0.08334],
-        "967": [0.19444, 0.43056, 0, 0.05556],
-        "968": [0.19444, 0.69444, 0.03588, 0.11111],
-        "969": [0, 0.43056, 0.03588, 0],
-        "977": [0, 0.69444, 0, 0.08334],
-        "981": [0.19444, 0.69444, 0, 0.08334],
-        "982": [0, 0.43056, 0.02778, 0],
-        "1009": [0.19444, 0.43056, 0, 0.08334],
-        "1013": [0, 0.43056, 0, 0.05556]
+        "47": [0.19444, 0.69444, 0, 0, 0],
+        "65": [0, 0.68333, 0, 0.13889, 0.75],
+        "66": [0, 0.68333, 0.05017, 0.08334, 0.75851],
+        "67": [0, 0.68333, 0.07153, 0.08334, 0.71472],
+        "68": [0, 0.68333, 0.02778, 0.05556, 0.82792],
+        "69": [0, 0.68333, 0.05764, 0.08334, 0.7382],
+        "70": [0, 0.68333, 0.13889, 0.08334, 0.64306],
+        "71": [0, 0.68333, 0, 0.08334, 0.78625],
+        "72": [0, 0.68333, 0.08125, 0.05556, 0.83125],
+        "73": [0, 0.68333, 0.07847, 0.11111, 0.43958],
+        "74": [0, 0.68333, 0.09618, 0.16667, 0.55451],
+        "75": [0, 0.68333, 0.07153, 0.05556, 0.84931],
+        "76": [0, 0.68333, 0, 0.02778, 0.68056],
+        "77": [0, 0.68333, 0.10903, 0.08334, 0.97014],
+        "78": [0, 0.68333, 0.10903, 0.08334, 0.80347],
+        "79": [0, 0.68333, 0.02778, 0.08334, 0.76278],
+        "80": [0, 0.68333, 0.13889, 0.08334, 0.64201],
+        "81": [0.19444, 0.68333, 0, 0.08334, 0.79056],
+        "82": [0, 0.68333, 0.00773, 0.08334, 0.75929],
+        "83": [0, 0.68333, 0.05764, 0.08334, 0.6132],
+        "84": [0, 0.68333, 0.13889, 0.08334, 0.58438],
+        "85": [0, 0.68333, 0.10903, 0.02778, 0.68278],
+        "86": [0, 0.68333, 0.22222, 0, 0.58333],
+        "87": [0, 0.68333, 0.13889, 0, 0.94445],
+        "88": [0, 0.68333, 0.07847, 0.08334, 0.82847],
+        "89": [0, 0.68333, 0.22222, 0, 0.58056],
+        "90": [0, 0.68333, 0.07153, 0.08334, 0.68264],
+        "97": [0, 0.43056, 0, 0, 0.52859],
+        "98": [0, 0.69444, 0, 0, 0.42917],
+        "99": [0, 0.43056, 0, 0.05556, 0.43276],
+        "100": [0, 0.69444, 0, 0.16667, 0.52049],
+        "101": [0, 0.43056, 0, 0.05556, 0.46563],
+        "102": [0.19444, 0.69444, 0.10764, 0.16667, 0.48959],
+        "103": [0.19444, 0.43056, 0.03588, 0.02778, 0.47697],
+        "104": [0, 0.69444, 0, 0, 0.57616],
+        "105": [0, 0.65952, 0, 0, 0.34451],
+        "106": [0.19444, 0.65952, 0.05724, 0, 0.41181],
+        "107": [0, 0.69444, 0.03148, 0, 0.5206],
+        "108": [0, 0.69444, 0.01968, 0.08334, 0.29838],
+        "109": [0, 0.43056, 0, 0, 0.87801],
+        "110": [0, 0.43056, 0, 0, 0.60023],
+        "111": [0, 0.43056, 0, 0.05556, 0.48472],
+        "112": [0.19444, 0.43056, 0, 0.08334, 0.50313],
+        "113": [0.19444, 0.43056, 0.03588, 0.08334, 0.44641],
+        "114": [0, 0.43056, 0.02778, 0.05556, 0.45116],
+        "115": [0, 0.43056, 0, 0.05556, 0.46875],
+        "116": [0, 0.61508, 0, 0.08334, 0.36111],
+        "117": [0, 0.43056, 0, 0.02778, 0.57246],
+        "118": [0, 0.43056, 0.03588, 0.02778, 0.48472],
+        "119": [0, 0.43056, 0.02691, 0.08334, 0.71592],
+        "120": [0, 0.43056, 0, 0.02778, 0.57153],
+        "121": [0.19444, 0.43056, 0.03588, 0.05556, 0.49028],
+        "122": [0, 0.43056, 0.04398, 0.05556, 0.46505],
+        "915": [0, 0.68333, 0.13889, 0.08334, 0.61528],
+        "916": [0, 0.68333, 0, 0.16667, 0.83334],
+        "920": [0, 0.68333, 0.02778, 0.08334, 0.76278],
+        "923": [0, 0.68333, 0, 0.16667, 0.69445],
+        "926": [0, 0.68333, 0.07569, 0.08334, 0.74236],
+        "928": [0, 0.68333, 0.08125, 0.05556, 0.83125],
+        "931": [0, 0.68333, 0.05764, 0.08334, 0.77986],
+        "933": [0, 0.68333, 0.13889, 0.05556, 0.58333],
+        "934": [0, 0.68333, 0, 0.08334, 0.66667],
+        "936": [0, 0.68333, 0.11, 0.05556, 0.61222],
+        "937": [0, 0.68333, 0.05017, 0.08334, 0.7724],
+        "945": [0, 0.43056, 0.0037, 0.02778, 0.6397],
+        "946": [0.19444, 0.69444, 0.05278, 0.08334, 0.56563],
+        "947": [0.19444, 0.43056, 0.05556, 0, 0.51773],
+        "948": [0, 0.69444, 0.03785, 0.05556, 0.44444],
+        "949": [0, 0.43056, 0, 0.08334, 0.46632],
+        "950": [0.19444, 0.69444, 0.07378, 0.08334, 0.4375],
+        "951": [0.19444, 0.43056, 0.03588, 0.05556, 0.49653],
+        "952": [0, 0.69444, 0.02778, 0.08334, 0.46944],
+        "953": [0, 0.43056, 0, 0.05556, 0.35394],
+        "954": [0, 0.43056, 0, 0, 0.57616],
+        "955": [0, 0.69444, 0, 0, 0.58334],
+        "956": [0.19444, 0.43056, 0, 0.02778, 0.60255],
+        "957": [0, 0.43056, 0.06366, 0.02778, 0.49398],
+        "958": [0.19444, 0.69444, 0.04601, 0.11111, 0.4375],
+        "959": [0, 0.43056, 0, 0.05556, 0.48472],
+        "960": [0, 0.43056, 0.03588, 0, 0.57003],
+        "961": [0.19444, 0.43056, 0, 0.08334, 0.51702],
+        "962": [0.09722, 0.43056, 0.07986, 0.08334, 0.36285],
+        "963": [0, 0.43056, 0.03588, 0, 0.57141],
+        "964": [0, 0.43056, 0.1132, 0.02778, 0.43715],
+        "965": [0, 0.43056, 0.03588, 0.02778, 0.54028],
+        "966": [0.19444, 0.43056, 0, 0.08334, 0.65417],
+        "967": [0.19444, 0.43056, 0, 0.05556, 0.62569],
+        "968": [0.19444, 0.69444, 0.03588, 0.11111, 0.65139],
+        "969": [0, 0.43056, 0.03588, 0, 0.62245],
+        "977": [0, 0.69444, 0, 0.08334, 0.59144],
+        "981": [0.19444, 0.69444, 0, 0.08334, 0.59583],
+        "982": [0, 0.43056, 0.02778, 0, 0.82813],
+        "1009": [0.19444, 0.43056, 0, 0.08334, 0.51702],
+        "1013": [0, 0.43056, 0, 0.05556, 0.4059]
     },
     "Math-Regular": {
-        "65": [0, 0.68333, 0, 0.13889],
-        "66": [0, 0.68333, 0.05017, 0.08334],
-        "67": [0, 0.68333, 0.07153, 0.08334],
-        "68": [0, 0.68333, 0.02778, 0.05556],
-        "69": [0, 0.68333, 0.05764, 0.08334],
-        "70": [0, 0.68333, 0.13889, 0.08334],
-        "71": [0, 0.68333, 0, 0.08334],
-        "72": [0, 0.68333, 0.08125, 0.05556],
-        "73": [0, 0.68333, 0.07847, 0.11111],
-        "74": [0, 0.68333, 0.09618, 0.16667],
-        "75": [0, 0.68333, 0.07153, 0.05556],
-        "76": [0, 0.68333, 0, 0.02778],
-        "77": [0, 0.68333, 0.10903, 0.08334],
-        "78": [0, 0.68333, 0.10903, 0.08334],
-        "79": [0, 0.68333, 0.02778, 0.08334],
-        "80": [0, 0.68333, 0.13889, 0.08334],
-        "81": [0.19444, 0.68333, 0, 0.08334],
-        "82": [0, 0.68333, 0.00773, 0.08334],
-        "83": [0, 0.68333, 0.05764, 0.08334],
-        "84": [0, 0.68333, 0.13889, 0.08334],
-        "85": [0, 0.68333, 0.10903, 0.02778],
-        "86": [0, 0.68333, 0.22222, 0],
-        "87": [0, 0.68333, 0.13889, 0],
-        "88": [0, 0.68333, 0.07847, 0.08334],
-        "89": [0, 0.68333, 0.22222, 0],
-        "90": [0, 0.68333, 0.07153, 0.08334],
-        "97": [0, 0.43056, 0, 0],
-        "98": [0, 0.69444, 0, 0],
-        "99": [0, 0.43056, 0, 0.05556],
-        "100": [0, 0.69444, 0, 0.16667],
-        "101": [0, 0.43056, 0, 0.05556],
-        "102": [0.19444, 0.69444, 0.10764, 0.16667],
-        "103": [0.19444, 0.43056, 0.03588, 0.02778],
-        "104": [0, 0.69444, 0, 0],
-        "105": [0, 0.65952, 0, 0],
-        "106": [0.19444, 0.65952, 0.05724, 0],
-        "107": [0, 0.69444, 0.03148, 0],
-        "108": [0, 0.69444, 0.01968, 0.08334],
-        "109": [0, 0.43056, 0, 0],
-        "110": [0, 0.43056, 0, 0],
-        "111": [0, 0.43056, 0, 0.05556],
-        "112": [0.19444, 0.43056, 0, 0.08334],
-        "113": [0.19444, 0.43056, 0.03588, 0.08334],
-        "114": [0, 0.43056, 0.02778, 0.05556],
-        "115": [0, 0.43056, 0, 0.05556],
-        "116": [0, 0.61508, 0, 0.08334],
-        "117": [0, 0.43056, 0, 0.02778],
-        "118": [0, 0.43056, 0.03588, 0.02778],
-        "119": [0, 0.43056, 0.02691, 0.08334],
-        "120": [0, 0.43056, 0, 0.02778],
-        "121": [0.19444, 0.43056, 0.03588, 0.05556],
-        "122": [0, 0.43056, 0.04398, 0.05556],
-        "915": [0, 0.68333, 0.13889, 0.08334],
-        "916": [0, 0.68333, 0, 0.16667],
-        "920": [0, 0.68333, 0.02778, 0.08334],
-        "923": [0, 0.68333, 0, 0.16667],
-        "926": [0, 0.68333, 0.07569, 0.08334],
-        "928": [0, 0.68333, 0.08125, 0.05556],
-        "931": [0, 0.68333, 0.05764, 0.08334],
-        "933": [0, 0.68333, 0.13889, 0.05556],
-        "934": [0, 0.68333, 0, 0.08334],
-        "936": [0, 0.68333, 0.11, 0.05556],
-        "937": [0, 0.68333, 0.05017, 0.08334],
-        "945": [0, 0.43056, 0.0037, 0.02778],
-        "946": [0.19444, 0.69444, 0.05278, 0.08334],
-        "947": [0.19444, 0.43056, 0.05556, 0],
-        "948": [0, 0.69444, 0.03785, 0.05556],
-        "949": [0, 0.43056, 0, 0.08334],
-        "950": [0.19444, 0.69444, 0.07378, 0.08334],
-        "951": [0.19444, 0.43056, 0.03588, 0.05556],
-        "952": [0, 0.69444, 0.02778, 0.08334],
-        "953": [0, 0.43056, 0, 0.05556],
-        "954": [0, 0.43056, 0, 0],
-        "955": [0, 0.69444, 0, 0],
-        "956": [0.19444, 0.43056, 0, 0.02778],
-        "957": [0, 0.43056, 0.06366, 0.02778],
-        "958": [0.19444, 0.69444, 0.04601, 0.11111],
-        "959": [0, 0.43056, 0, 0.05556],
-        "960": [0, 0.43056, 0.03588, 0],
-        "961": [0.19444, 0.43056, 0, 0.08334],
-        "962": [0.09722, 0.43056, 0.07986, 0.08334],
-        "963": [0, 0.43056, 0.03588, 0],
-        "964": [0, 0.43056, 0.1132, 0.02778],
-        "965": [0, 0.43056, 0.03588, 0.02778],
-        "966": [0.19444, 0.43056, 0, 0.08334],
-        "967": [0.19444, 0.43056, 0, 0.05556],
-        "968": [0.19444, 0.69444, 0.03588, 0.11111],
-        "969": [0, 0.43056, 0.03588, 0],
-        "977": [0, 0.69444, 0, 0.08334],
-        "981": [0.19444, 0.69444, 0, 0.08334],
-        "982": [0, 0.43056, 0.02778, 0],
-        "1009": [0.19444, 0.43056, 0, 0.08334],
-        "1013": [0, 0.43056, 0, 0.05556]
+        "65": [0, 0.68333, 0, 0.13889, 0.75],
+        "66": [0, 0.68333, 0.05017, 0.08334, 0.75851],
+        "67": [0, 0.68333, 0.07153, 0.08334, 0.71472],
+        "68": [0, 0.68333, 0.02778, 0.05556, 0.82792],
+        "69": [0, 0.68333, 0.05764, 0.08334, 0.7382],
+        "70": [0, 0.68333, 0.13889, 0.08334, 0.64306],
+        "71": [0, 0.68333, 0, 0.08334, 0.78625],
+        "72": [0, 0.68333, 0.08125, 0.05556, 0.83125],
+        "73": [0, 0.68333, 0.07847, 0.11111, 0.43958],
+        "74": [0, 0.68333, 0.09618, 0.16667, 0.55451],
+        "75": [0, 0.68333, 0.07153, 0.05556, 0.84931],
+        "76": [0, 0.68333, 0, 0.02778, 0.68056],
+        "77": [0, 0.68333, 0.10903, 0.08334, 0.97014],
+        "78": [0, 0.68333, 0.10903, 0.08334, 0.80347],
+        "79": [0, 0.68333, 0.02778, 0.08334, 0.76278],
+        "80": [0, 0.68333, 0.13889, 0.08334, 0.64201],
+        "81": [0.19444, 0.68333, 0, 0.08334, 0.79056],
+        "82": [0, 0.68333, 0.00773, 0.08334, 0.75929],
+        "83": [0, 0.68333, 0.05764, 0.08334, 0.6132],
+        "84": [0, 0.68333, 0.13889, 0.08334, 0.58438],
+        "85": [0, 0.68333, 0.10903, 0.02778, 0.68278],
+        "86": [0, 0.68333, 0.22222, 0, 0.58333],
+        "87": [0, 0.68333, 0.13889, 0, 0.94445],
+        "88": [0, 0.68333, 0.07847, 0.08334, 0.82847],
+        "89": [0, 0.68333, 0.22222, 0, 0.58056],
+        "90": [0, 0.68333, 0.07153, 0.08334, 0.68264],
+        "97": [0, 0.43056, 0, 0, 0.52859],
+        "98": [0, 0.69444, 0, 0, 0.42917],
+        "99": [0, 0.43056, 0, 0.05556, 0.43276],
+        "100": [0, 0.69444, 0, 0.16667, 0.52049],
+        "101": [0, 0.43056, 0, 0.05556, 0.46563],
+        "102": [0.19444, 0.69444, 0.10764, 0.16667, 0.48959],
+        "103": [0.19444, 0.43056, 0.03588, 0.02778, 0.47697],
+        "104": [0, 0.69444, 0, 0, 0.57616],
+        "105": [0, 0.65952, 0, 0, 0.34451],
+        "106": [0.19444, 0.65952, 0.05724, 0, 0.41181],
+        "107": [0, 0.69444, 0.03148, 0, 0.5206],
+        "108": [0, 0.69444, 0.01968, 0.08334, 0.29838],
+        "109": [0, 0.43056, 0, 0, 0.87801],
+        "110": [0, 0.43056, 0, 0, 0.60023],
+        "111": [0, 0.43056, 0, 0.05556, 0.48472],
+        "112": [0.19444, 0.43056, 0, 0.08334, 0.50313],
+        "113": [0.19444, 0.43056, 0.03588, 0.08334, 0.44641],
+        "114": [0, 0.43056, 0.02778, 0.05556, 0.45116],
+        "115": [0, 0.43056, 0, 0.05556, 0.46875],
+        "116": [0, 0.61508, 0, 0.08334, 0.36111],
+        "117": [0, 0.43056, 0, 0.02778, 0.57246],
+        "118": [0, 0.43056, 0.03588, 0.02778, 0.48472],
+        "119": [0, 0.43056, 0.02691, 0.08334, 0.71592],
+        "120": [0, 0.43056, 0, 0.02778, 0.57153],
+        "121": [0.19444, 0.43056, 0.03588, 0.05556, 0.49028],
+        "122": [0, 0.43056, 0.04398, 0.05556, 0.46505],
+        "915": [0, 0.68333, 0.13889, 0.08334, 0.61528],
+        "916": [0, 0.68333, 0, 0.16667, 0.83334],
+        "920": [0, 0.68333, 0.02778, 0.08334, 0.76278],
+        "923": [0, 0.68333, 0, 0.16667, 0.69445],
+        "926": [0, 0.68333, 0.07569, 0.08334, 0.74236],
+        "928": [0, 0.68333, 0.08125, 0.05556, 0.83125],
+        "931": [0, 0.68333, 0.05764, 0.08334, 0.77986],
+        "933": [0, 0.68333, 0.13889, 0.05556, 0.58333],
+        "934": [0, 0.68333, 0, 0.08334, 0.66667],
+        "936": [0, 0.68333, 0.11, 0.05556, 0.61222],
+        "937": [0, 0.68333, 0.05017, 0.08334, 0.7724],
+        "945": [0, 0.43056, 0.0037, 0.02778, 0.6397],
+        "946": [0.19444, 0.69444, 0.05278, 0.08334, 0.56563],
+        "947": [0.19444, 0.43056, 0.05556, 0, 0.51773],
+        "948": [0, 0.69444, 0.03785, 0.05556, 0.44444],
+        "949": [0, 0.43056, 0, 0.08334, 0.46632],
+        "950": [0.19444, 0.69444, 0.07378, 0.08334, 0.4375],
+        "951": [0.19444, 0.43056, 0.03588, 0.05556, 0.49653],
+        "952": [0, 0.69444, 0.02778, 0.08334, 0.46944],
+        "953": [0, 0.43056, 0, 0.05556, 0.35394],
+        "954": [0, 0.43056, 0, 0, 0.57616],
+        "955": [0, 0.69444, 0, 0, 0.58334],
+        "956": [0.19444, 0.43056, 0, 0.02778, 0.60255],
+        "957": [0, 0.43056, 0.06366, 0.02778, 0.49398],
+        "958": [0.19444, 0.69444, 0.04601, 0.11111, 0.4375],
+        "959": [0, 0.43056, 0, 0.05556, 0.48472],
+        "960": [0, 0.43056, 0.03588, 0, 0.57003],
+        "961": [0.19444, 0.43056, 0, 0.08334, 0.51702],
+        "962": [0.09722, 0.43056, 0.07986, 0.08334, 0.36285],
+        "963": [0, 0.43056, 0.03588, 0, 0.57141],
+        "964": [0, 0.43056, 0.1132, 0.02778, 0.43715],
+        "965": [0, 0.43056, 0.03588, 0.02778, 0.54028],
+        "966": [0.19444, 0.43056, 0, 0.08334, 0.65417],
+        "967": [0.19444, 0.43056, 0, 0.05556, 0.62569],
+        "968": [0.19444, 0.69444, 0.03588, 0.11111, 0.65139],
+        "969": [0, 0.43056, 0.03588, 0, 0.62245],
+        "977": [0, 0.69444, 0, 0.08334, 0.59144],
+        "981": [0.19444, 0.69444, 0, 0.08334, 0.59583],
+        "982": [0, 0.43056, 0.02778, 0, 0.82813],
+        "1009": [0.19444, 0.43056, 0, 0.08334, 0.51702],
+        "1013": [0, 0.43056, 0, 0.05556, 0.4059]
     },
     "SansSerif-Bold": {
-        "33": [0, 0.69444, 0, 0],
-        "34": [0, 0.69444, 0, 0],
-        "35": [0.19444, 0.69444, 0, 0],
-        "36": [0.05556, 0.75, 0, 0],
-        "37": [0.05556, 0.75, 0, 0],
-        "38": [0, 0.69444, 0, 0],
-        "39": [0, 0.69444, 0, 0],
-        "40": [0.25, 0.75, 0, 0],
-        "41": [0.25, 0.75, 0, 0],
-        "42": [0, 0.75, 0, 0],
-        "43": [0.11667, 0.61667, 0, 0],
-        "44": [0.10556, 0.13056, 0, 0],
-        "45": [0, 0.45833, 0, 0],
-        "46": [0, 0.13056, 0, 0],
-        "47": [0.25, 0.75, 0, 0],
-        "48": [0, 0.69444, 0, 0],
-        "49": [0, 0.69444, 0, 0],
-        "50": [0, 0.69444, 0, 0],
-        "51": [0, 0.69444, 0, 0],
-        "52": [0, 0.69444, 0, 0],
-        "53": [0, 0.69444, 0, 0],
-        "54": [0, 0.69444, 0, 0],
-        "55": [0, 0.69444, 0, 0],
-        "56": [0, 0.69444, 0, 0],
-        "57": [0, 0.69444, 0, 0],
-        "58": [0, 0.45833, 0, 0],
-        "59": [0.10556, 0.45833, 0, 0],
-        "61": [-0.09375, 0.40625, 0, 0],
-        "63": [0, 0.69444, 0, 0],
-        "64": [0, 0.69444, 0, 0],
-        "65": [0, 0.69444, 0, 0],
-        "66": [0, 0.69444, 0, 0],
-        "67": [0, 0.69444, 0, 0],
-        "68": [0, 0.69444, 0, 0],
-        "69": [0, 0.69444, 0, 0],
-        "70": [0, 0.69444, 0, 0],
-        "71": [0, 0.69444, 0, 0],
-        "72": [0, 0.69444, 0, 0],
-        "73": [0, 0.69444, 0, 0],
-        "74": [0, 0.69444, 0, 0],
-        "75": [0, 0.69444, 0, 0],
-        "76": [0, 0.69444, 0, 0],
-        "77": [0, 0.69444, 0, 0],
-        "78": [0, 0.69444, 0, 0],
-        "79": [0, 0.69444, 0, 0],
-        "80": [0, 0.69444, 0, 0],
-        "81": [0.10556, 0.69444, 0, 0],
-        "82": [0, 0.69444, 0, 0],
-        "83": [0, 0.69444, 0, 0],
-        "84": [0, 0.69444, 0, 0],
-        "85": [0, 0.69444, 0, 0],
-        "86": [0, 0.69444, 0.01528, 0],
-        "87": [0, 0.69444, 0.01528, 0],
-        "88": [0, 0.69444, 0, 0],
-        "89": [0, 0.69444, 0.0275, 0],
-        "90": [0, 0.69444, 0, 0],
-        "91": [0.25, 0.75, 0, 0],
-        "93": [0.25, 0.75, 0, 0],
-        "94": [0, 0.69444, 0, 0],
-        "95": [0.35, 0.10833, 0.03056, 0],
-        "97": [0, 0.45833, 0, 0],
-        "98": [0, 0.69444, 0, 0],
-        "99": [0, 0.45833, 0, 0],
-        "100": [0, 0.69444, 0, 0],
-        "101": [0, 0.45833, 0, 0],
-        "102": [0, 0.69444, 0.07639, 0],
-        "103": [0.19444, 0.45833, 0.01528, 0],
-        "104": [0, 0.69444, 0, 0],
-        "105": [0, 0.69444, 0, 0],
-        "106": [0.19444, 0.69444, 0, 0],
-        "107": [0, 0.69444, 0, 0],
-        "108": [0, 0.69444, 0, 0],
-        "109": [0, 0.45833, 0, 0],
-        "110": [0, 0.45833, 0, 0],
-        "111": [0, 0.45833, 0, 0],
-        "112": [0.19444, 0.45833, 0, 0],
-        "113": [0.19444, 0.45833, 0, 0],
-        "114": [0, 0.45833, 0.01528, 0],
-        "115": [0, 0.45833, 0, 0],
-        "116": [0, 0.58929, 0, 0],
-        "117": [0, 0.45833, 0, 0],
-        "118": [0, 0.45833, 0.01528, 0],
-        "119": [0, 0.45833, 0.01528, 0],
-        "120": [0, 0.45833, 0, 0],
-        "121": [0.19444, 0.45833, 0.01528, 0],
-        "122": [0, 0.45833, 0, 0],
-        "126": [0.35, 0.34444, 0, 0],
-        "305": [0, 0.45833, 0, 0],
-        "567": [0.19444, 0.45833, 0, 0],
-        "768": [0, 0.69444, 0, 0],
-        "769": [0, 0.69444, 0, 0],
-        "770": [0, 0.69444, 0, 0],
-        "771": [0, 0.69444, 0, 0],
-        "772": [0, 0.63778, 0, 0],
-        "774": [0, 0.69444, 0, 0],
-        "775": [0, 0.69444, 0, 0],
-        "776": [0, 0.69444, 0, 0],
-        "778": [0, 0.69444, 0, 0],
-        "779": [0, 0.69444, 0, 0],
-        "780": [0, 0.63542, 0, 0],
-        "915": [0, 0.69444, 0, 0],
-        "916": [0, 0.69444, 0, 0],
-        "920": [0, 0.69444, 0, 0],
-        "923": [0, 0.69444, 0, 0],
-        "926": [0, 0.69444, 0, 0],
-        "928": [0, 0.69444, 0, 0],
-        "931": [0, 0.69444, 0, 0],
-        "933": [0, 0.69444, 0, 0],
-        "934": [0, 0.69444, 0, 0],
-        "936": [0, 0.69444, 0, 0],
-        "937": [0, 0.69444, 0, 0],
-        "8211": [0, 0.45833, 0.03056, 0],
-        "8212": [0, 0.45833, 0.03056, 0],
-        "8216": [0, 0.69444, 0, 0],
-        "8217": [0, 0.69444, 0, 0],
-        "8220": [0, 0.69444, 0, 0],
-        "8221": [0, 0.69444, 0, 0]
+        "33": [0, 0.69444, 0, 0, 0.36667],
+        "34": [0, 0.69444, 0, 0, 0.55834],
+        "35": [0.19444, 0.69444, 0, 0, 0.91667],
+        "36": [0.05556, 0.75, 0, 0, 0.55],
+        "37": [0.05556, 0.75, 0, 0, 1.02912],
+        "38": [0, 0.69444, 0, 0, 0.83056],
+        "39": [0, 0.69444, 0, 0, 0.30556],
+        "40": [0.25, 0.75, 0, 0, 0.42778],
+        "41": [0.25, 0.75, 0, 0, 0.42778],
+        "42": [0, 0.75, 0, 0, 0.55],
+        "43": [0.11667, 0.61667, 0, 0, 0.85556],
+        "44": [0.10556, 0.13056, 0, 0, 0.30556],
+        "45": [0, 0.45833, 0, 0, 0.36667],
+        "46": [0, 0.13056, 0, 0, 0.30556],
+        "47": [0.25, 0.75, 0, 0, 0.55],
+        "48": [0, 0.69444, 0, 0, 0.55],
+        "49": [0, 0.69444, 0, 0, 0.55],
+        "50": [0, 0.69444, 0, 0, 0.55],
+        "51": [0, 0.69444, 0, 0, 0.55],
+        "52": [0, 0.69444, 0, 0, 0.55],
+        "53": [0, 0.69444, 0, 0, 0.55],
+        "54": [0, 0.69444, 0, 0, 0.55],
+        "55": [0, 0.69444, 0, 0, 0.55],
+        "56": [0, 0.69444, 0, 0, 0.55],
+        "57": [0, 0.69444, 0, 0, 0.55],
+        "58": [0, 0.45833, 0, 0, 0.30556],
+        "59": [0.10556, 0.45833, 0, 0, 0.30556],
+        "61": [-0.09375, 0.40625, 0, 0, 0.85556],
+        "63": [0, 0.69444, 0, 0, 0.51945],
+        "64": [0, 0.69444, 0, 0, 0.73334],
+        "65": [0, 0.69444, 0, 0, 0.73334],
+        "66": [0, 0.69444, 0, 0, 0.73334],
+        "67": [0, 0.69444, 0, 0, 0.70278],
+        "68": [0, 0.69444, 0, 0, 0.79445],
+        "69": [0, 0.69444, 0, 0, 0.64167],
+        "70": [0, 0.69444, 0, 0, 0.61111],
+        "71": [0, 0.69444, 0, 0, 0.73334],
+        "72": [0, 0.69444, 0, 0, 0.79445],
+        "73": [0, 0.69444, 0, 0, 0.33056],
+        "74": [0, 0.69444, 0, 0, 0.51945],
+        "75": [0, 0.69444, 0, 0, 0.76389],
+        "76": [0, 0.69444, 0, 0, 0.58056],
+        "77": [0, 0.69444, 0, 0, 0.97778],
+        "78": [0, 0.69444, 0, 0, 0.79445],
+        "79": [0, 0.69444, 0, 0, 0.79445],
+        "80": [0, 0.69444, 0, 0, 0.70278],
+        "81": [0.10556, 0.69444, 0, 0, 0.79445],
+        "82": [0, 0.69444, 0, 0, 0.70278],
+        "83": [0, 0.69444, 0, 0, 0.61111],
+        "84": [0, 0.69444, 0, 0, 0.73334],
+        "85": [0, 0.69444, 0, 0, 0.76389],
+        "86": [0, 0.69444, 0.01528, 0, 0.73334],
+        "87": [0, 0.69444, 0.01528, 0, 1.03889],
+        "88": [0, 0.69444, 0, 0, 0.73334],
+        "89": [0, 0.69444, 0.0275, 0, 0.73334],
+        "90": [0, 0.69444, 0, 0, 0.67223],
+        "91": [0.25, 0.75, 0, 0, 0.34306],
+        "93": [0.25, 0.75, 0, 0, 0.34306],
+        "94": [0, 0.69444, 0, 0, 0.55],
+        "95": [0.35, 0.10833, 0.03056, 0, 0.55],
+        "97": [0, 0.45833, 0, 0, 0.525],
+        "98": [0, 0.69444, 0, 0, 0.56111],
+        "99": [0, 0.45833, 0, 0, 0.48889],
+        "100": [0, 0.69444, 0, 0, 0.56111],
+        "101": [0, 0.45833, 0, 0, 0.51111],
+        "102": [0, 0.69444, 0.07639, 0, 0.33611],
+        "103": [0.19444, 0.45833, 0.01528, 0, 0.55],
+        "104": [0, 0.69444, 0, 0, 0.56111],
+        "105": [0, 0.69444, 0, 0, 0.25556],
+        "106": [0.19444, 0.69444, 0, 0, 0.28611],
+        "107": [0, 0.69444, 0, 0, 0.53056],
+        "108": [0, 0.69444, 0, 0, 0.25556],
+        "109": [0, 0.45833, 0, 0, 0.86667],
+        "110": [0, 0.45833, 0, 0, 0.56111],
+        "111": [0, 0.45833, 0, 0, 0.55],
+        "112": [0.19444, 0.45833, 0, 0, 0.56111],
+        "113": [0.19444, 0.45833, 0, 0, 0.56111],
+        "114": [0, 0.45833, 0.01528, 0, 0.37222],
+        "115": [0, 0.45833, 0, 0, 0.42167],
+        "116": [0, 0.58929, 0, 0, 0.40417],
+        "117": [0, 0.45833, 0, 0, 0.56111],
+        "118": [0, 0.45833, 0.01528, 0, 0.5],
+        "119": [0, 0.45833, 0.01528, 0, 0.74445],
+        "120": [0, 0.45833, 0, 0, 0.5],
+        "121": [0.19444, 0.45833, 0.01528, 0, 0.5],
+        "122": [0, 0.45833, 0, 0, 0.47639],
+        "126": [0.35, 0.34444, 0, 0, 0.55],
+        "305": [0, 0.45833, 0, 0, 0.25556],
+        "567": [0.19444, 0.45833, 0, 0, 0.28611],
+        "768": [0, 0.69444, 0, 0, 0.55],
+        "769": [0, 0.69444, 0, 0, 0.55],
+        "770": [0, 0.69444, 0, 0, 0.55],
+        "771": [0, 0.69444, 0, 0, 0.55],
+        "772": [0, 0.63778, 0, 0, 0.55],
+        "774": [0, 0.69444, 0, 0, 0.55],
+        "775": [0, 0.69444, 0, 0, 0.30556],
+        "776": [0, 0.69444, 0, 0, 0.55],
+        "778": [0, 0.69444, 0, 0, 0.73334],
+        "779": [0, 0.69444, 0, 0, 0.55],
+        "780": [0, 0.63542, 0, 0, 0.55],
+        "915": [0, 0.69444, 0, 0, 0.58056],
+        "916": [0, 0.69444, 0, 0, 0.91667],
+        "920": [0, 0.69444, 0, 0, 0.85556],
+        "923": [0, 0.69444, 0, 0, 0.67223],
+        "926": [0, 0.69444, 0, 0, 0.73334],
+        "928": [0, 0.69444, 0, 0, 0.79445],
+        "931": [0, 0.69444, 0, 0, 0.79445],
+        "933": [0, 0.69444, 0, 0, 0.85556],
+        "934": [0, 0.69444, 0, 0, 0.79445],
+        "936": [0, 0.69444, 0, 0, 0.85556],
+        "937": [0, 0.69444, 0, 0, 0.79445],
+        "8211": [0, 0.45833, 0.03056, 0, 0.55],
+        "8212": [0, 0.45833, 0.03056, 0, 1.10001],
+        "8216": [0, 0.69444, 0, 0, 0.30556],
+        "8217": [0, 0.69444, 0, 0, 0.30556],
+        "8220": [0, 0.69444, 0, 0, 0.55834],
+        "8221": [0, 0.69444, 0, 0, 0.55834]
     },
     "SansSerif-Italic": {
-        "33": [0, 0.69444, 0.05733, 0],
-        "34": [0, 0.69444, 0.00316, 0],
-        "35": [0.19444, 0.69444, 0.05087, 0],
-        "36": [0.05556, 0.75, 0.11156, 0],
-        "37": [0.05556, 0.75, 0.03126, 0],
-        "38": [0, 0.69444, 0.03058, 0],
-        "39": [0, 0.69444, 0.07816, 0],
-        "40": [0.25, 0.75, 0.13164, 0],
-        "41": [0.25, 0.75, 0.02536, 0],
-        "42": [0, 0.75, 0.11775, 0],
-        "43": [0.08333, 0.58333, 0.02536, 0],
-        "44": [0.125, 0.08333, 0, 0],
-        "45": [0, 0.44444, 0.01946, 0],
-        "46": [0, 0.08333, 0, 0],
-        "47": [0.25, 0.75, 0.13164, 0],
-        "48": [0, 0.65556, 0.11156, 0],
-        "49": [0, 0.65556, 0.11156, 0],
-        "50": [0, 0.65556, 0.11156, 0],
-        "51": [0, 0.65556, 0.11156, 0],
-        "52": [0, 0.65556, 0.11156, 0],
-        "53": [0, 0.65556, 0.11156, 0],
-        "54": [0, 0.65556, 0.11156, 0],
-        "55": [0, 0.65556, 0.11156, 0],
-        "56": [0, 0.65556, 0.11156, 0],
-        "57": [0, 0.65556, 0.11156, 0],
-        "58": [0, 0.44444, 0.02502, 0],
-        "59": [0.125, 0.44444, 0.02502, 0],
-        "61": [-0.13, 0.37, 0.05087, 0],
-        "63": [0, 0.69444, 0.11809, 0],
-        "64": [0, 0.69444, 0.07555, 0],
-        "65": [0, 0.69444, 0, 0],
-        "66": [0, 0.69444, 0.08293, 0],
-        "67": [0, 0.69444, 0.11983, 0],
-        "68": [0, 0.69444, 0.07555, 0],
-        "69": [0, 0.69444, 0.11983, 0],
-        "70": [0, 0.69444, 0.13372, 0],
-        "71": [0, 0.69444, 0.11983, 0],
-        "72": [0, 0.69444, 0.08094, 0],
-        "73": [0, 0.69444, 0.13372, 0],
-        "74": [0, 0.69444, 0.08094, 0],
-        "75": [0, 0.69444, 0.11983, 0],
-        "76": [0, 0.69444, 0, 0],
-        "77": [0, 0.69444, 0.08094, 0],
-        "78": [0, 0.69444, 0.08094, 0],
-        "79": [0, 0.69444, 0.07555, 0],
-        "80": [0, 0.69444, 0.08293, 0],
-        "81": [0.125, 0.69444, 0.07555, 0],
-        "82": [0, 0.69444, 0.08293, 0],
-        "83": [0, 0.69444, 0.09205, 0],
-        "84": [0, 0.69444, 0.13372, 0],
-        "85": [0, 0.69444, 0.08094, 0],
-        "86": [0, 0.69444, 0.1615, 0],
-        "87": [0, 0.69444, 0.1615, 0],
-        "88": [0, 0.69444, 0.13372, 0],
-        "89": [0, 0.69444, 0.17261, 0],
-        "90": [0, 0.69444, 0.11983, 0],
-        "91": [0.25, 0.75, 0.15942, 0],
-        "93": [0.25, 0.75, 0.08719, 0],
-        "94": [0, 0.69444, 0.0799, 0],
-        "95": [0.35, 0.09444, 0.08616, 0],
-        "97": [0, 0.44444, 0.00981, 0],
-        "98": [0, 0.69444, 0.03057, 0],
-        "99": [0, 0.44444, 0.08336, 0],
-        "100": [0, 0.69444, 0.09483, 0],
-        "101": [0, 0.44444, 0.06778, 0],
-        "102": [0, 0.69444, 0.21705, 0],
-        "103": [0.19444, 0.44444, 0.10836, 0],
-        "104": [0, 0.69444, 0.01778, 0],
-        "105": [0, 0.67937, 0.09718, 0],
-        "106": [0.19444, 0.67937, 0.09162, 0],
-        "107": [0, 0.69444, 0.08336, 0],
-        "108": [0, 0.69444, 0.09483, 0],
-        "109": [0, 0.44444, 0.01778, 0],
-        "110": [0, 0.44444, 0.01778, 0],
-        "111": [0, 0.44444, 0.06613, 0],
-        "112": [0.19444, 0.44444, 0.0389, 0],
-        "113": [0.19444, 0.44444, 0.04169, 0],
-        "114": [0, 0.44444, 0.10836, 0],
-        "115": [0, 0.44444, 0.0778, 0],
-        "116": [0, 0.57143, 0.07225, 0],
-        "117": [0, 0.44444, 0.04169, 0],
-        "118": [0, 0.44444, 0.10836, 0],
-        "119": [0, 0.44444, 0.10836, 0],
-        "120": [0, 0.44444, 0.09169, 0],
-        "121": [0.19444, 0.44444, 0.10836, 0],
-        "122": [0, 0.44444, 0.08752, 0],
-        "126": [0.35, 0.32659, 0.08826, 0],
-        "305": [0, 0.44444, 0.04169, 0],
-        "567": [0.19444, 0.44444, 0.04169, 0],
-        "768": [0, 0.69444, 0, 0],
-        "769": [0, 0.69444, 0.09205, 0],
-        "770": [0, 0.69444, 0.0799, 0],
-        "771": [0, 0.67659, 0.08826, 0],
-        "772": [0, 0.60889, 0.08776, 0],
-        "774": [0, 0.69444, 0.09483, 0],
-        "775": [0, 0.67937, 0.07774, 0],
-        "776": [0, 0.67937, 0.06385, 0],
-        "778": [0, 0.69444, 0, 0],
-        "779": [0, 0.69444, 0.09205, 0],
-        "780": [0, 0.63194, 0.08432, 0],
-        "915": [0, 0.69444, 0.13372, 0],
-        "916": [0, 0.69444, 0, 0],
-        "920": [0, 0.69444, 0.07555, 0],
-        "923": [0, 0.69444, 0, 0],
-        "926": [0, 0.69444, 0.12816, 0],
-        "928": [0, 0.69444, 0.08094, 0],
-        "931": [0, 0.69444, 0.11983, 0],
-        "933": [0, 0.69444, 0.09031, 0],
-        "934": [0, 0.69444, 0.04603, 0],
-        "936": [0, 0.69444, 0.09031, 0],
-        "937": [0, 0.69444, 0.08293, 0],
-        "8211": [0, 0.44444, 0.08616, 0],
-        "8212": [0, 0.44444, 0.08616, 0],
-        "8216": [0, 0.69444, 0.07816, 0],
-        "8217": [0, 0.69444, 0.07816, 0],
-        "8220": [0, 0.69444, 0.14205, 0],
-        "8221": [0, 0.69444, 0.00316, 0]
+        "33": [0, 0.69444, 0.05733, 0, 0.31945],
+        "34": [0, 0.69444, 0.00316, 0, 0.5],
+        "35": [0.19444, 0.69444, 0.05087, 0, 0.83334],
+        "36": [0.05556, 0.75, 0.11156, 0, 0.5],
+        "37": [0.05556, 0.75, 0.03126, 0, 0.83334],
+        "38": [0, 0.69444, 0.03058, 0, 0.75834],
+        "39": [0, 0.69444, 0.07816, 0, 0.27778],
+        "40": [0.25, 0.75, 0.13164, 0, 0.38889],
+        "41": [0.25, 0.75, 0.02536, 0, 0.38889],
+        "42": [0, 0.75, 0.11775, 0, 0.5],
+        "43": [0.08333, 0.58333, 0.02536, 0, 0.77778],
+        "44": [0.125, 0.08333, 0, 0, 0.27778],
+        "45": [0, 0.44444, 0.01946, 0, 0.33333],
+        "46": [0, 0.08333, 0, 0, 0.27778],
+        "47": [0.25, 0.75, 0.13164, 0, 0.5],
+        "48": [0, 0.65556, 0.11156, 0, 0.5],
+        "49": [0, 0.65556, 0.11156, 0, 0.5],
+        "50": [0, 0.65556, 0.11156, 0, 0.5],
+        "51": [0, 0.65556, 0.11156, 0, 0.5],
+        "52": [0, 0.65556, 0.11156, 0, 0.5],
+        "53": [0, 0.65556, 0.11156, 0, 0.5],
+        "54": [0, 0.65556, 0.11156, 0, 0.5],
+        "55": [0, 0.65556, 0.11156, 0, 0.5],
+        "56": [0, 0.65556, 0.11156, 0, 0.5],
+        "57": [0, 0.65556, 0.11156, 0, 0.5],
+        "58": [0, 0.44444, 0.02502, 0, 0.27778],
+        "59": [0.125, 0.44444, 0.02502, 0, 0.27778],
+        "61": [-0.13, 0.37, 0.05087, 0, 0.77778],
+        "63": [0, 0.69444, 0.11809, 0, 0.47222],
+        "64": [0, 0.69444, 0.07555, 0, 0.66667],
+        "65": [0, 0.69444, 0, 0, 0.66667],
+        "66": [0, 0.69444, 0.08293, 0, 0.66667],
+        "67": [0, 0.69444, 0.11983, 0, 0.63889],
+        "68": [0, 0.69444, 0.07555, 0, 0.72223],
+        "69": [0, 0.69444, 0.11983, 0, 0.59722],
+        "70": [0, 0.69444, 0.13372, 0, 0.56945],
+        "71": [0, 0.69444, 0.11983, 0, 0.66667],
+        "72": [0, 0.69444, 0.08094, 0, 0.70834],
+        "73": [0, 0.69444, 0.13372, 0, 0.27778],
+        "74": [0, 0.69444, 0.08094, 0, 0.47222],
+        "75": [0, 0.69444, 0.11983, 0, 0.69445],
+        "76": [0, 0.69444, 0, 0, 0.54167],
+        "77": [0, 0.69444, 0.08094, 0, 0.875],
+        "78": [0, 0.69444, 0.08094, 0, 0.70834],
+        "79": [0, 0.69444, 0.07555, 0, 0.73611],
+        "80": [0, 0.69444, 0.08293, 0, 0.63889],
+        "81": [0.125, 0.69444, 0.07555, 0, 0.73611],
+        "82": [0, 0.69444, 0.08293, 0, 0.64584],
+        "83": [0, 0.69444, 0.09205, 0, 0.55556],
+        "84": [0, 0.69444, 0.13372, 0, 0.68056],
+        "85": [0, 0.69444, 0.08094, 0, 0.6875],
+        "86": [0, 0.69444, 0.1615, 0, 0.66667],
+        "87": [0, 0.69444, 0.1615, 0, 0.94445],
+        "88": [0, 0.69444, 0.13372, 0, 0.66667],
+        "89": [0, 0.69444, 0.17261, 0, 0.66667],
+        "90": [0, 0.69444, 0.11983, 0, 0.61111],
+        "91": [0.25, 0.75, 0.15942, 0, 0.28889],
+        "93": [0.25, 0.75, 0.08719, 0, 0.28889],
+        "94": [0, 0.69444, 0.0799, 0, 0.5],
+        "95": [0.35, 0.09444, 0.08616, 0, 0.5],
+        "97": [0, 0.44444, 0.00981, 0, 0.48056],
+        "98": [0, 0.69444, 0.03057, 0, 0.51667],
+        "99": [0, 0.44444, 0.08336, 0, 0.44445],
+        "100": [0, 0.69444, 0.09483, 0, 0.51667],
+        "101": [0, 0.44444, 0.06778, 0, 0.44445],
+        "102": [0, 0.69444, 0.21705, 0, 0.30556],
+        "103": [0.19444, 0.44444, 0.10836, 0, 0.5],
+        "104": [0, 0.69444, 0.01778, 0, 0.51667],
+        "105": [0, 0.67937, 0.09718, 0, 0.23889],
+        "106": [0.19444, 0.67937, 0.09162, 0, 0.26667],
+        "107": [0, 0.69444, 0.08336, 0, 0.48889],
+        "108": [0, 0.69444, 0.09483, 0, 0.23889],
+        "109": [0, 0.44444, 0.01778, 0, 0.79445],
+        "110": [0, 0.44444, 0.01778, 0, 0.51667],
+        "111": [0, 0.44444, 0.06613, 0, 0.5],
+        "112": [0.19444, 0.44444, 0.0389, 0, 0.51667],
+        "113": [0.19444, 0.44444, 0.04169, 0, 0.51667],
+        "114": [0, 0.44444, 0.10836, 0, 0.34167],
+        "115": [0, 0.44444, 0.0778, 0, 0.38333],
+        "116": [0, 0.57143, 0.07225, 0, 0.36111],
+        "117": [0, 0.44444, 0.04169, 0, 0.51667],
+        "118": [0, 0.44444, 0.10836, 0, 0.46111],
+        "119": [0, 0.44444, 0.10836, 0, 0.68334],
+        "120": [0, 0.44444, 0.09169, 0, 0.46111],
+        "121": [0.19444, 0.44444, 0.10836, 0, 0.46111],
+        "122": [0, 0.44444, 0.08752, 0, 0.43472],
+        "126": [0.35, 0.32659, 0.08826, 0, 0.5],
+        "305": [0, 0.44444, 0.04169, 0, 0.23889],
+        "567": [0.19444, 0.44444, 0.04169, 0, 0.26667],
+        "768": [0, 0.69444, 0, 0, 0.5],
+        "769": [0, 0.69444, 0.09205, 0, 0.5],
+        "770": [0, 0.69444, 0.0799, 0, 0.5],
+        "771": [0, 0.67659, 0.08826, 0, 0.5],
+        "772": [0, 0.60889, 0.08776, 0, 0.5],
+        "774": [0, 0.69444, 0.09483, 0, 0.5],
+        "775": [0, 0.67937, 0.07774, 0, 0.27778],
+        "776": [0, 0.67937, 0.06385, 0, 0.5],
+        "778": [0, 0.69444, 0, 0, 0.73752],
+        "779": [0, 0.69444, 0.09205, 0, 0.5],
+        "780": [0, 0.63194, 0.08432, 0, 0.5],
+        "915": [0, 0.69444, 0.13372, 0, 0.54167],
+        "916": [0, 0.69444, 0, 0, 0.83334],
+        "920": [0, 0.69444, 0.07555, 0, 0.77778],
+        "923": [0, 0.69444, 0, 0, 0.61111],
+        "926": [0, 0.69444, 0.12816, 0, 0.66667],
+        "928": [0, 0.69444, 0.08094, 0, 0.70834],
+        "931": [0, 0.69444, 0.11983, 0, 0.72222],
+        "933": [0, 0.69444, 0.09031, 0, 0.77778],
+        "934": [0, 0.69444, 0.04603, 0, 0.72222],
+        "936": [0, 0.69444, 0.09031, 0, 0.77778],
+        "937": [0, 0.69444, 0.08293, 0, 0.72222],
+        "8211": [0, 0.44444, 0.08616, 0, 0.5],
+        "8212": [0, 0.44444, 0.08616, 0, 1.0],
+        "8216": [0, 0.69444, 0.07816, 0, 0.27778],
+        "8217": [0, 0.69444, 0.07816, 0, 0.27778],
+        "8220": [0, 0.69444, 0.14205, 0, 0.5],
+        "8221": [0, 0.69444, 0.00316, 0, 0.5]
     },
     "SansSerif-Regular": {
-        "33": [0, 0.69444, 0, 0],
-        "34": [0, 0.69444, 0, 0],
-        "35": [0.19444, 0.69444, 0, 0],
-        "36": [0.05556, 0.75, 0, 0],
-        "37": [0.05556, 0.75, 0, 0],
-        "38": [0, 0.69444, 0, 0],
-        "39": [0, 0.69444, 0, 0],
-        "40": [0.25, 0.75, 0, 0],
-        "41": [0.25, 0.75, 0, 0],
-        "42": [0, 0.75, 0, 0],
-        "43": [0.08333, 0.58333, 0, 0],
-        "44": [0.125, 0.08333, 0, 0],
-        "45": [0, 0.44444, 0, 0],
-        "46": [0, 0.08333, 0, 0],
-        "47": [0.25, 0.75, 0, 0],
-        "48": [0, 0.65556, 0, 0],
-        "49": [0, 0.65556, 0, 0],
-        "50": [0, 0.65556, 0, 0],
-        "51": [0, 0.65556, 0, 0],
-        "52": [0, 0.65556, 0, 0],
-        "53": [0, 0.65556, 0, 0],
-        "54": [0, 0.65556, 0, 0],
-        "55": [0, 0.65556, 0, 0],
-        "56": [0, 0.65556, 0, 0],
-        "57": [0, 0.65556, 0, 0],
-        "58": [0, 0.44444, 0, 0],
-        "59": [0.125, 0.44444, 0, 0],
-        "61": [-0.13, 0.37, 0, 0],
-        "63": [0, 0.69444, 0, 0],
-        "64": [0, 0.69444, 0, 0],
-        "65": [0, 0.69444, 0, 0],
-        "66": [0, 0.69444, 0, 0],
-        "67": [0, 0.69444, 0, 0],
-        "68": [0, 0.69444, 0, 0],
-        "69": [0, 0.69444, 0, 0],
-        "70": [0, 0.69444, 0, 0],
-        "71": [0, 0.69444, 0, 0],
-        "72": [0, 0.69444, 0, 0],
-        "73": [0, 0.69444, 0, 0],
-        "74": [0, 0.69444, 0, 0],
-        "75": [0, 0.69444, 0, 0],
-        "76": [0, 0.69444, 0, 0],
-        "77": [0, 0.69444, 0, 0],
-        "78": [0, 0.69444, 0, 0],
-        "79": [0, 0.69444, 0, 0],
-        "80": [0, 0.69444, 0, 0],
-        "81": [0.125, 0.69444, 0, 0],
-        "82": [0, 0.69444, 0, 0],
-        "83": [0, 0.69444, 0, 0],
-        "84": [0, 0.69444, 0, 0],
-        "85": [0, 0.69444, 0, 0],
-        "86": [0, 0.69444, 0.01389, 0],
-        "87": [0, 0.69444, 0.01389, 0],
-        "88": [0, 0.69444, 0, 0],
-        "89": [0, 0.69444, 0.025, 0],
-        "90": [0, 0.69444, 0, 0],
-        "91": [0.25, 0.75, 0, 0],
-        "93": [0.25, 0.75, 0, 0],
-        "94": [0, 0.69444, 0, 0],
-        "95": [0.35, 0.09444, 0.02778, 0],
-        "97": [0, 0.44444, 0, 0],
-        "98": [0, 0.69444, 0, 0],
-        "99": [0, 0.44444, 0, 0],
-        "100": [0, 0.69444, 0, 0],
-        "101": [0, 0.44444, 0, 0],
-        "102": [0, 0.69444, 0.06944, 0],
-        "103": [0.19444, 0.44444, 0.01389, 0],
-        "104": [0, 0.69444, 0, 0],
-        "105": [0, 0.67937, 0, 0],
-        "106": [0.19444, 0.67937, 0, 0],
-        "107": [0, 0.69444, 0, 0],
-        "108": [0, 0.69444, 0, 0],
-        "109": [0, 0.44444, 0, 0],
-        "110": [0, 0.44444, 0, 0],
-        "111": [0, 0.44444, 0, 0],
-        "112": [0.19444, 0.44444, 0, 0],
-        "113": [0.19444, 0.44444, 0, 0],
-        "114": [0, 0.44444, 0.01389, 0],
-        "115": [0, 0.44444, 0, 0],
-        "116": [0, 0.57143, 0, 0],
-        "117": [0, 0.44444, 0, 0],
-        "118": [0, 0.44444, 0.01389, 0],
-        "119": [0, 0.44444, 0.01389, 0],
-        "120": [0, 0.44444, 0, 0],
-        "121": [0.19444, 0.44444, 0.01389, 0],
-        "122": [0, 0.44444, 0, 0],
-        "126": [0.35, 0.32659, 0, 0],
-        "305": [0, 0.44444, 0, 0],
-        "567": [0.19444, 0.44444, 0, 0],
-        "768": [0, 0.69444, 0, 0],
-        "769": [0, 0.69444, 0, 0],
-        "770": [0, 0.69444, 0, 0],
-        "771": [0, 0.67659, 0, 0],
-        "772": [0, 0.60889, 0, 0],
-        "774": [0, 0.69444, 0, 0],
-        "775": [0, 0.67937, 0, 0],
-        "776": [0, 0.67937, 0, 0],
-        "778": [0, 0.69444, 0, 0],
-        "779": [0, 0.69444, 0, 0],
-        "780": [0, 0.63194, 0, 0],
-        "915": [0, 0.69444, 0, 0],
-        "916": [0, 0.69444, 0, 0],
-        "920": [0, 0.69444, 0, 0],
-        "923": [0, 0.69444, 0, 0],
-        "926": [0, 0.69444, 0, 0],
-        "928": [0, 0.69444, 0, 0],
-        "931": [0, 0.69444, 0, 0],
-        "933": [0, 0.69444, 0, 0],
-        "934": [0, 0.69444, 0, 0],
-        "936": [0, 0.69444, 0, 0],
-        "937": [0, 0.69444, 0, 0],
-        "8211": [0, 0.44444, 0.02778, 0],
-        "8212": [0, 0.44444, 0.02778, 0],
-        "8216": [0, 0.69444, 0, 0],
-        "8217": [0, 0.69444, 0, 0],
-        "8220": [0, 0.69444, 0, 0],
-        "8221": [0, 0.69444, 0, 0]
+        "33": [0, 0.69444, 0, 0, 0.31945],
+        "34": [0, 0.69444, 0, 0, 0.5],
+        "35": [0.19444, 0.69444, 0, 0, 0.83334],
+        "36": [0.05556, 0.75, 0, 0, 0.5],
+        "37": [0.05556, 0.75, 0, 0, 0.83334],
+        "38": [0, 0.69444, 0, 0, 0.75834],
+        "39": [0, 0.69444, 0, 0, 0.27778],
+        "40": [0.25, 0.75, 0, 0, 0.38889],
+        "41": [0.25, 0.75, 0, 0, 0.38889],
+        "42": [0, 0.75, 0, 0, 0.5],
+        "43": [0.08333, 0.58333, 0, 0, 0.77778],
+        "44": [0.125, 0.08333, 0, 0, 0.27778],
+        "45": [0, 0.44444, 0, 0, 0.33333],
+        "46": [0, 0.08333, 0, 0, 0.27778],
+        "47": [0.25, 0.75, 0, 0, 0.5],
+        "48": [0, 0.65556, 0, 0, 0.5],
+        "49": [0, 0.65556, 0, 0, 0.5],
+        "50": [0, 0.65556, 0, 0, 0.5],
+        "51": [0, 0.65556, 0, 0, 0.5],
+        "52": [0, 0.65556, 0, 0, 0.5],
+        "53": [0, 0.65556, 0, 0, 0.5],
+        "54": [0, 0.65556, 0, 0, 0.5],
+        "55": [0, 0.65556, 0, 0, 0.5],
+        "56": [0, 0.65556, 0, 0, 0.5],
+        "57": [0, 0.65556, 0, 0, 0.5],
+        "58": [0, 0.44444, 0, 0, 0.27778],
+        "59": [0.125, 0.44444, 0, 0, 0.27778],
+        "61": [-0.13, 0.37, 0, 0, 0.77778],
+        "63": [0, 0.69444, 0, 0, 0.47222],
+        "64": [0, 0.69444, 0, 0, 0.66667],
+        "65": [0, 0.69444, 0, 0, 0.66667],
+        "66": [0, 0.69444, 0, 0, 0.66667],
+        "67": [0, 0.69444, 0, 0, 0.63889],
+        "68": [0, 0.69444, 0, 0, 0.72223],
+        "69": [0, 0.69444, 0, 0, 0.59722],
+        "70": [0, 0.69444, 0, 0, 0.56945],
+        "71": [0, 0.69444, 0, 0, 0.66667],
+        "72": [0, 0.69444, 0, 0, 0.70834],
+        "73": [0, 0.69444, 0, 0, 0.27778],
+        "74": [0, 0.69444, 0, 0, 0.47222],
+        "75": [0, 0.69444, 0, 0, 0.69445],
+        "76": [0, 0.69444, 0, 0, 0.54167],
+        "77": [0, 0.69444, 0, 0, 0.875],
+        "78": [0, 0.69444, 0, 0, 0.70834],
+        "79": [0, 0.69444, 0, 0, 0.73611],
+        "80": [0, 0.69444, 0, 0, 0.63889],
+        "81": [0.125, 0.69444, 0, 0, 0.73611],
+        "82": [0, 0.69444, 0, 0, 0.64584],
+        "83": [0, 0.69444, 0, 0, 0.55556],
+        "84": [0, 0.69444, 0, 0, 0.68056],
+        "85": [0, 0.69444, 0, 0, 0.6875],
+        "86": [0, 0.69444, 0.01389, 0, 0.66667],
+        "87": [0, 0.69444, 0.01389, 0, 0.94445],
+        "88": [0, 0.69444, 0, 0, 0.66667],
+        "89": [0, 0.69444, 0.025, 0, 0.66667],
+        "90": [0, 0.69444, 0, 0, 0.61111],
+        "91": [0.25, 0.75, 0, 0, 0.28889],
+        "93": [0.25, 0.75, 0, 0, 0.28889],
+        "94": [0, 0.69444, 0, 0, 0.5],
+        "95": [0.35, 0.09444, 0.02778, 0, 0.5],
+        "97": [0, 0.44444, 0, 0, 0.48056],
+        "98": [0, 0.69444, 0, 0, 0.51667],
+        "99": [0, 0.44444, 0, 0, 0.44445],
+        "100": [0, 0.69444, 0, 0, 0.51667],
+        "101": [0, 0.44444, 0, 0, 0.44445],
+        "102": [0, 0.69444, 0.06944, 0, 0.30556],
+        "103": [0.19444, 0.44444, 0.01389, 0, 0.5],
+        "104": [0, 0.69444, 0, 0, 0.51667],
+        "105": [0, 0.67937, 0, 0, 0.23889],
+        "106": [0.19444, 0.67937, 0, 0, 0.26667],
+        "107": [0, 0.69444, 0, 0, 0.48889],
+        "108": [0, 0.69444, 0, 0, 0.23889],
+        "109": [0, 0.44444, 0, 0, 0.79445],
+        "110": [0, 0.44444, 0, 0, 0.51667],
+        "111": [0, 0.44444, 0, 0, 0.5],
+        "112": [0.19444, 0.44444, 0, 0, 0.51667],
+        "113": [0.19444, 0.44444, 0, 0, 0.51667],
+        "114": [0, 0.44444, 0.01389, 0, 0.34167],
+        "115": [0, 0.44444, 0, 0, 0.38333],
+        "116": [0, 0.57143, 0, 0, 0.36111],
+        "117": [0, 0.44444, 0, 0, 0.51667],
+        "118": [0, 0.44444, 0.01389, 0, 0.46111],
+        "119": [0, 0.44444, 0.01389, 0, 0.68334],
+        "120": [0, 0.44444, 0, 0, 0.46111],
+        "121": [0.19444, 0.44444, 0.01389, 0, 0.46111],
+        "122": [0, 0.44444, 0, 0, 0.43472],
+        "126": [0.35, 0.32659, 0, 0, 0.5],
+        "305": [0, 0.44444, 0, 0, 0.23889],
+        "567": [0.19444, 0.44444, 0, 0, 0.26667],
+        "768": [0, 0.69444, 0, 0, 0.5],
+        "769": [0, 0.69444, 0, 0, 0.5],
+        "770": [0, 0.69444, 0, 0, 0.5],
+        "771": [0, 0.67659, 0, 0, 0.5],
+        "772": [0, 0.60889, 0, 0, 0.5],
+        "774": [0, 0.69444, 0, 0, 0.5],
+        "775": [0, 0.67937, 0, 0, 0.27778],
+        "776": [0, 0.67937, 0, 0, 0.5],
+        "778": [0, 0.69444, 0, 0, 0.66667],
+        "779": [0, 0.69444, 0, 0, 0.5],
+        "780": [0, 0.63194, 0, 0, 0.5],
+        "915": [0, 0.69444, 0, 0, 0.54167],
+        "916": [0, 0.69444, 0, 0, 0.83334],
+        "920": [0, 0.69444, 0, 0, 0.77778],
+        "923": [0, 0.69444, 0, 0, 0.61111],
+        "926": [0, 0.69444, 0, 0, 0.66667],
+        "928": [0, 0.69444, 0, 0, 0.70834],
+        "931": [0, 0.69444, 0, 0, 0.72222],
+        "933": [0, 0.69444, 0, 0, 0.77778],
+        "934": [0, 0.69444, 0, 0, 0.72222],
+        "936": [0, 0.69444, 0, 0, 0.77778],
+        "937": [0, 0.69444, 0, 0, 0.72222],
+        "8211": [0, 0.44444, 0.02778, 0, 0.5],
+        "8212": [0, 0.44444, 0.02778, 0, 1.0],
+        "8216": [0, 0.69444, 0, 0, 0.27778],
+        "8217": [0, 0.69444, 0, 0, 0.27778],
+        "8220": [0, 0.69444, 0, 0, 0.5],
+        "8221": [0, 0.69444, 0, 0, 0.5]
     },
     "Script-Regular": {
-        "65": [0, 0.7, 0.22925, 0],
-        "66": [0, 0.7, 0.04087, 0],
-        "67": [0, 0.7, 0.1689, 0],
-        "68": [0, 0.7, 0.09371, 0],
-        "69": [0, 0.7, 0.18583, 0],
-        "70": [0, 0.7, 0.13634, 0],
-        "71": [0, 0.7, 0.17322, 0],
-        "72": [0, 0.7, 0.29694, 0],
-        "73": [0, 0.7, 0.19189, 0],
-        "74": [0.27778, 0.7, 0.19189, 0],
-        "75": [0, 0.7, 0.31259, 0],
-        "76": [0, 0.7, 0.19189, 0],
-        "77": [0, 0.7, 0.15981, 0],
-        "78": [0, 0.7, 0.3525, 0],
-        "79": [0, 0.7, 0.08078, 0],
-        "80": [0, 0.7, 0.08078, 0],
-        "81": [0, 0.7, 0.03305, 0],
-        "82": [0, 0.7, 0.06259, 0],
-        "83": [0, 0.7, 0.19189, 0],
-        "84": [0, 0.7, 0.29087, 0],
-        "85": [0, 0.7, 0.25815, 0],
-        "86": [0, 0.7, 0.27523, 0],
-        "87": [0, 0.7, 0.27523, 0],
-        "88": [0, 0.7, 0.26006, 0],
-        "89": [0, 0.7, 0.2939, 0],
-        "90": [0, 0.7, 0.24037, 0]
+        "65": [0, 0.7, 0.22925, 0, 0.80253],
+        "66": [0, 0.7, 0.04087, 0, 0.90757],
+        "67": [0, 0.7, 0.1689, 0, 0.66619],
+        "68": [0, 0.7, 0.09371, 0, 0.77443],
+        "69": [0, 0.7, 0.18583, 0, 0.56162],
+        "70": [0, 0.7, 0.13634, 0, 0.89544],
+        "71": [0, 0.7, 0.17322, 0, 0.60961],
+        "72": [0, 0.7, 0.29694, 0, 0.96919],
+        "73": [0, 0.7, 0.19189, 0, 0.80907],
+        "74": [0.27778, 0.7, 0.19189, 0, 1.05159],
+        "75": [0, 0.7, 0.31259, 0, 0.91364],
+        "76": [0, 0.7, 0.19189, 0, 0.87373],
+        "77": [0, 0.7, 0.15981, 0, 1.08031],
+        "78": [0, 0.7, 0.3525, 0, 0.9015],
+        "79": [0, 0.7, 0.08078, 0, 0.73787],
+        "80": [0, 0.7, 0.08078, 0, 1.01262],
+        "81": [0, 0.7, 0.03305, 0, 0.88282],
+        "82": [0, 0.7, 0.06259, 0, 0.85],
+        "83": [0, 0.7, 0.19189, 0, 0.86767],
+        "84": [0, 0.7, 0.29087, 0, 0.74697],
+        "85": [0, 0.7, 0.25815, 0, 0.79996],
+        "86": [0, 0.7, 0.27523, 0, 0.62204],
+        "87": [0, 0.7, 0.27523, 0, 0.80532],
+        "88": [0, 0.7, 0.26006, 0, 0.94445],
+        "89": [0, 0.7, 0.2939, 0, 0.70961],
+        "90": [0, 0.7, 0.24037, 0, 0.8212]
     },
     "Size1-Regular": {
-        "40": [0.35001, 0.85, 0, 0],
-        "41": [0.35001, 0.85, 0, 0],
-        "47": [0.35001, 0.85, 0, 0],
-        "91": [0.35001, 0.85, 0, 0],
-        "92": [0.35001, 0.85, 0, 0],
-        "93": [0.35001, 0.85, 0, 0],
-        "123": [0.35001, 0.85, 0, 0],
-        "125": [0.35001, 0.85, 0, 0],
-        "710": [0, 0.72222, 0, 0],
-        "732": [0, 0.72222, 0, 0],
-        "770": [0, 0.72222, 0, 0],
-        "771": [0, 0.72222, 0, 0],
-        "8214": [-0.00099, 0.601, 0, 0],
-        "8593": [1e-05, 0.6, 0, 0],
-        "8595": [1e-05, 0.6, 0, 0],
-        "8657": [1e-05, 0.6, 0, 0],
-        "8659": [1e-05, 0.6, 0, 0],
-        "8719": [0.25001, 0.75, 0, 0],
-        "8720": [0.25001, 0.75, 0, 0],
-        "8721": [0.25001, 0.75, 0, 0],
-        "8730": [0.35001, 0.85, 0, 0],
-        "8739": [-0.00599, 0.606, 0, 0],
-        "8741": [-0.00599, 0.606, 0, 0],
-        "8747": [0.30612, 0.805, 0.19445, 0],
-        "8748": [0.306, 0.805, 0.19445, 0],
-        "8749": [0.306, 0.805, 0.19445, 0],
-        "8750": [0.30612, 0.805, 0.19445, 0],
-        "8896": [0.25001, 0.75, 0, 0],
-        "8897": [0.25001, 0.75, 0, 0],
-        "8898": [0.25001, 0.75, 0, 0],
-        "8899": [0.25001, 0.75, 0, 0],
-        "8968": [0.35001, 0.85, 0, 0],
-        "8969": [0.35001, 0.85, 0, 0],
-        "8970": [0.35001, 0.85, 0, 0],
-        "8971": [0.35001, 0.85, 0, 0],
-        "9168": [-0.00099, 0.601, 0, 0],
-        "10216": [0.35001, 0.85, 0, 0],
-        "10217": [0.35001, 0.85, 0, 0],
-        "10752": [0.25001, 0.75, 0, 0],
-        "10753": [0.25001, 0.75, 0, 0],
-        "10754": [0.25001, 0.75, 0, 0],
-        "10756": [0.25001, 0.75, 0, 0],
-        "10758": [0.25001, 0.75, 0, 0]
+        "40": [0.35001, 0.85, 0, 0, 0.45834],
+        "41": [0.35001, 0.85, 0, 0, 0.45834],
+        "47": [0.35001, 0.85, 0, 0, 0.57778],
+        "91": [0.35001, 0.85, 0, 0, 0.41667],
+        "92": [0.35001, 0.85, 0, 0, 0.57778],
+        "93": [0.35001, 0.85, 0, 0, 0.41667],
+        "123": [0.35001, 0.85, 0, 0, 0.58334],
+        "125": [0.35001, 0.85, 0, 0, 0.58334],
+        "710": [0, 0.72222, 0, 0, 0.55556],
+        "732": [0, 0.72222, 0, 0, 0.55556],
+        "770": [0, 0.72222, 0, 0, 0.55556],
+        "771": [0, 0.72222, 0, 0, 0.55556],
+        "8214": [-0.00099, 0.601, 0, 0, 0.77778],
+        "8593": [1e-05, 0.6, 0, 0, 0.66667],
+        "8595": [1e-05, 0.6, 0, 0, 0.66667],
+        "8657": [1e-05, 0.6, 0, 0, 0.77778],
+        "8659": [1e-05, 0.6, 0, 0, 0.77778],
+        "8719": [0.25001, 0.75, 0, 0, 0.94445],
+        "8720": [0.25001, 0.75, 0, 0, 0.94445],
+        "8721": [0.25001, 0.75, 0, 0, 1.05556],
+        "8730": [0.35001, 0.85, 0, 0, 1.0],
+        "8739": [-0.00599, 0.606, 0, 0, 0.33333],
+        "8741": [-0.00599, 0.606, 0, 0, 0.55556],
+        "8747": [0.30612, 0.805, 0.19445, 0, 0.47222],
+        "8748": [0.306, 0.805, 0.19445, 0, 0.47222],
+        "8749": [0.306, 0.805, 0.19445, 0, 0.47222],
+        "8750": [0.30612, 0.805, 0.19445, 0, 0.47222],
+        "8896": [0.25001, 0.75, 0, 0, 0.83334],
+        "8897": [0.25001, 0.75, 0, 0, 0.83334],
+        "8898": [0.25001, 0.75, 0, 0, 0.83334],
+        "8899": [0.25001, 0.75, 0, 0, 0.83334],
+        "8968": [0.35001, 0.85, 0, 0, 0.47222],
+        "8969": [0.35001, 0.85, 0, 0, 0.47222],
+        "8970": [0.35001, 0.85, 0, 0, 0.47222],
+        "8971": [0.35001, 0.85, 0, 0, 0.47222],
+        "9168": [-0.00099, 0.601, 0, 0, 0.66667],
+        "10216": [0.35001, 0.85, 0, 0, 0.47222],
+        "10217": [0.35001, 0.85, 0, 0, 0.47222],
+        "10752": [0.25001, 0.75, 0, 0, 1.11111],
+        "10753": [0.25001, 0.75, 0, 0, 1.11111],
+        "10754": [0.25001, 0.75, 0, 0, 1.11111],
+        "10756": [0.25001, 0.75, 0, 0, 0.83334],
+        "10758": [0.25001, 0.75, 0, 0, 0.83334]
     },
     "Size2-Regular": {
-        "40": [0.65002, 1.15, 0, 0],
-        "41": [0.65002, 1.15, 0, 0],
-        "47": [0.65002, 1.15, 0, 0],
-        "91": [0.65002, 1.15, 0, 0],
-        "92": [0.65002, 1.15, 0, 0],
-        "93": [0.65002, 1.15, 0, 0],
-        "123": [0.65002, 1.15, 0, 0],
-        "125": [0.65002, 1.15, 0, 0],
-        "710": [0, 0.75, 0, 0],
-        "732": [0, 0.75, 0, 0],
-        "770": [0, 0.75, 0, 0],
-        "771": [0, 0.75, 0, 0],
-        "8719": [0.55001, 1.05, 0, 0],
-        "8720": [0.55001, 1.05, 0, 0],
-        "8721": [0.55001, 1.05, 0, 0],
-        "8730": [0.65002, 1.15, 0, 0],
-        "8747": [0.86225, 1.36, 0.44445, 0],
-        "8748": [0.862, 1.36, 0.44445, 0],
-        "8749": [0.862, 1.36, 0.44445, 0],
-        "8750": [0.86225, 1.36, 0.44445, 0],
-        "8896": [0.55001, 1.05, 0, 0],
-        "8897": [0.55001, 1.05, 0, 0],
-        "8898": [0.55001, 1.05, 0, 0],
-        "8899": [0.55001, 1.05, 0, 0],
-        "8968": [0.65002, 1.15, 0, 0],
-        "8969": [0.65002, 1.15, 0, 0],
-        "8970": [0.65002, 1.15, 0, 0],
-        "8971": [0.65002, 1.15, 0, 0],
-        "10216": [0.65002, 1.15, 0, 0],
-        "10217": [0.65002, 1.15, 0, 0],
-        "10752": [0.55001, 1.05, 0, 0],
-        "10753": [0.55001, 1.05, 0, 0],
-        "10754": [0.55001, 1.05, 0, 0],
-        "10756": [0.55001, 1.05, 0, 0],
-        "10758": [0.55001, 1.05, 0, 0]
+        "40": [0.65002, 1.15, 0, 0, 0.59722],
+        "41": [0.65002, 1.15, 0, 0, 0.59722],
+        "47": [0.65002, 1.15, 0, 0, 0.81111],
+        "91": [0.65002, 1.15, 0, 0, 0.47222],
+        "92": [0.65002, 1.15, 0, 0, 0.81111],
+        "93": [0.65002, 1.15, 0, 0, 0.47222],
+        "123": [0.65002, 1.15, 0, 0, 0.66667],
+        "125": [0.65002, 1.15, 0, 0, 0.66667],
+        "710": [0, 0.75, 0, 0, 1.0],
+        "732": [0, 0.75, 0, 0, 1.0],
+        "770": [0, 0.75, 0, 0, 1.0],
+        "771": [0, 0.75, 0, 0, 1.0],
+        "8719": [0.55001, 1.05, 0, 0, 1.27778],
+        "8720": [0.55001, 1.05, 0, 0, 1.27778],
+        "8721": [0.55001, 1.05, 0, 0, 1.44445],
+        "8730": [0.65002, 1.15, 0, 0, 1.0],
+        "8747": [0.86225, 1.36, 0.44445, 0, 0.55556],
+        "8748": [0.862, 1.36, 0.44445, 0, 0.55556],
+        "8749": [0.862, 1.36, 0.44445, 0, 0.55556],
+        "8750": [0.86225, 1.36, 0.44445, 0, 0.55556],
+        "8896": [0.55001, 1.05, 0, 0, 1.11111],
+        "8897": [0.55001, 1.05, 0, 0, 1.11111],
+        "8898": [0.55001, 1.05, 0, 0, 1.11111],
+        "8899": [0.55001, 1.05, 0, 0, 1.11111],
+        "8968": [0.65002, 1.15, 0, 0, 0.52778],
+        "8969": [0.65002, 1.15, 0, 0, 0.52778],
+        "8970": [0.65002, 1.15, 0, 0, 0.52778],
+        "8971": [0.65002, 1.15, 0, 0, 0.52778],
+        "10216": [0.65002, 1.15, 0, 0, 0.61111],
+        "10217": [0.65002, 1.15, 0, 0, 0.61111],
+        "10752": [0.55001, 1.05, 0, 0, 1.51112],
+        "10753": [0.55001, 1.05, 0, 0, 1.51112],
+        "10754": [0.55001, 1.05, 0, 0, 1.51112],
+        "10756": [0.55001, 1.05, 0, 0, 1.11111],
+        "10758": [0.55001, 1.05, 0, 0, 1.11111]
     },
     "Size3-Regular": {
-        "40": [0.95003, 1.45, 0, 0],
-        "41": [0.95003, 1.45, 0, 0],
-        "47": [0.95003, 1.45, 0, 0],
-        "91": [0.95003, 1.45, 0, 0],
-        "92": [0.95003, 1.45, 0, 0],
-        "93": [0.95003, 1.45, 0, 0],
-        "123": [0.95003, 1.45, 0, 0],
-        "125": [0.95003, 1.45, 0, 0],
-        "710": [0, 0.75, 0, 0],
-        "732": [0, 0.75, 0, 0],
-        "770": [0, 0.75, 0, 0],
-        "771": [0, 0.75, 0, 0],
-        "8730": [0.95003, 1.45, 0, 0],
-        "8968": [0.95003, 1.45, 0, 0],
-        "8969": [0.95003, 1.45, 0, 0],
-        "8970": [0.95003, 1.45, 0, 0],
-        "8971": [0.95003, 1.45, 0, 0],
-        "10216": [0.95003, 1.45, 0, 0],
-        "10217": [0.95003, 1.45, 0, 0]
+        "40": [0.95003, 1.45, 0, 0, 0.73611],
+        "41": [0.95003, 1.45, 0, 0, 0.73611],
+        "47": [0.95003, 1.45, 0, 0, 1.04445],
+        "91": [0.95003, 1.45, 0, 0, 0.52778],
+        "92": [0.95003, 1.45, 0, 0, 1.04445],
+        "93": [0.95003, 1.45, 0, 0, 0.52778],
+        "123": [0.95003, 1.45, 0, 0, 0.75],
+        "125": [0.95003, 1.45, 0, 0, 0.75],
+        "710": [0, 0.75, 0, 0, 1.44445],
+        "732": [0, 0.75, 0, 0, 1.44445],
+        "770": [0, 0.75, 0, 0, 1.44445],
+        "771": [0, 0.75, 0, 0, 1.44445],
+        "8730": [0.95003, 1.45, 0, 0, 1.0],
+        "8968": [0.95003, 1.45, 0, 0, 0.58334],
+        "8969": [0.95003, 1.45, 0, 0, 0.58334],
+        "8970": [0.95003, 1.45, 0, 0, 0.58334],
+        "8971": [0.95003, 1.45, 0, 0, 0.58334],
+        "10216": [0.95003, 1.45, 0, 0, 0.75],
+        "10217": [0.95003, 1.45, 0, 0, 0.75]
     },
     "Size4-Regular": {
-        "40": [1.25003, 1.75, 0, 0],
-        "41": [1.25003, 1.75, 0, 0],
-        "47": [1.25003, 1.75, 0, 0],
-        "91": [1.25003, 1.75, 0, 0],
-        "92": [1.25003, 1.75, 0, 0],
-        "93": [1.25003, 1.75, 0, 0],
-        "123": [1.25003, 1.75, 0, 0],
-        "125": [1.25003, 1.75, 0, 0],
-        "710": [0, 0.825, 0, 0],
-        "732": [0, 0.825, 0, 0],
-        "770": [0, 0.825, 0, 0],
-        "771": [0, 0.825, 0, 0],
-        "8730": [1.25003, 1.75, 0, 0],
-        "8968": [1.25003, 1.75, 0, 0],
-        "8969": [1.25003, 1.75, 0, 0],
-        "8970": [1.25003, 1.75, 0, 0],
-        "8971": [1.25003, 1.75, 0, 0],
-        "9115": [0.64502, 1.155, 0, 0],
-        "9116": [1e-05, 0.6, 0, 0],
-        "9117": [0.64502, 1.155, 0, 0],
-        "9118": [0.64502, 1.155, 0, 0],
-        "9119": [1e-05, 0.6, 0, 0],
-        "9120": [0.64502, 1.155, 0, 0],
-        "9121": [0.64502, 1.155, 0, 0],
-        "9122": [-0.00099, 0.601, 0, 0],
-        "9123": [0.64502, 1.155, 0, 0],
-        "9124": [0.64502, 1.155, 0, 0],
-        "9125": [-0.00099, 0.601, 0, 0],
-        "9126": [0.64502, 1.155, 0, 0],
-        "9127": [1e-05, 0.9, 0, 0],
-        "9128": [0.65002, 1.15, 0, 0],
-        "9129": [0.90001, 0, 0, 0],
-        "9130": [0, 0.3, 0, 0],
-        "9131": [1e-05, 0.9, 0, 0],
-        "9132": [0.65002, 1.15, 0, 0],
-        "9133": [0.90001, 0, 0, 0],
-        "9143": [0.88502, 0.915, 0, 0],
-        "10216": [1.25003, 1.75, 0, 0],
-        "10217": [1.25003, 1.75, 0, 0],
-        "57344": [-0.00499, 0.605, 0, 0],
-        "57345": [-0.00499, 0.605, 0, 0],
-        "57680": [0, 0.12, 0, 0],
-        "57681": [0, 0.12, 0, 0],
-        "57682": [0, 0.12, 0, 0],
-        "57683": [0, 0.12, 0, 0]
+        "40": [1.25003, 1.75, 0, 0, 0.79167],
+        "41": [1.25003, 1.75, 0, 0, 0.79167],
+        "47": [1.25003, 1.75, 0, 0, 1.27778],
+        "91": [1.25003, 1.75, 0, 0, 0.58334],
+        "92": [1.25003, 1.75, 0, 0, 1.27778],
+        "93": [1.25003, 1.75, 0, 0, 0.58334],
+        "123": [1.25003, 1.75, 0, 0, 0.80556],
+        "125": [1.25003, 1.75, 0, 0, 0.80556],
+        "710": [0, 0.825, 0, 0, 1.8889],
+        "732": [0, 0.825, 0, 0, 1.8889],
+        "770": [0, 0.825, 0, 0, 1.8889],
+        "771": [0, 0.825, 0, 0, 1.8889],
+        "8730": [1.25003, 1.75, 0, 0, 1.0],
+        "8968": [1.25003, 1.75, 0, 0, 0.63889],
+        "8969": [1.25003, 1.75, 0, 0, 0.63889],
+        "8970": [1.25003, 1.75, 0, 0, 0.63889],
+        "8971": [1.25003, 1.75, 0, 0, 0.63889],
+        "9115": [0.64502, 1.155, 0, 0, 0.875],
+        "9116": [1e-05, 0.6, 0, 0, 0.875],
+        "9117": [0.64502, 1.155, 0, 0, 0.875],
+        "9118": [0.64502, 1.155, 0, 0, 0.875],
+        "9119": [1e-05, 0.6, 0, 0, 0.875],
+        "9120": [0.64502, 1.155, 0, 0, 0.875],
+        "9121": [0.64502, 1.155, 0, 0, 0.66667],
+        "9122": [-0.00099, 0.601, 0, 0, 0.66667],
+        "9123": [0.64502, 1.155, 0, 0, 0.66667],
+        "9124": [0.64502, 1.155, 0, 0, 0.66667],
+        "9125": [-0.00099, 0.601, 0, 0, 0.66667],
+        "9126": [0.64502, 1.155, 0, 0, 0.66667],
+        "9127": [1e-05, 0.9, 0, 0, 0.88889],
+        "9128": [0.65002, 1.15, 0, 0, 0.88889],
+        "9129": [0.90001, 0, 0, 0, 0.88889],
+        "9130": [0, 0.3, 0, 0, 0.88889],
+        "9131": [1e-05, 0.9, 0, 0, 0.88889],
+        "9132": [0.65002, 1.15, 0, 0, 0.88889],
+        "9133": [0.90001, 0, 0, 0, 0.88889],
+        "9143": [0.88502, 0.915, 0, 0, 1.05556],
+        "10216": [1.25003, 1.75, 0, 0, 0.80556],
+        "10217": [1.25003, 1.75, 0, 0, 0.80556],
+        "57344": [-0.00499, 0.605, 0, 0, 1.05556],
+        "57345": [-0.00499, 0.605, 0, 0, 1.05556],
+        "57680": [0, 0.12, 0, 0, 0.45],
+        "57681": [0, 0.12, 0, 0, 0.45],
+        "57682": [0, 0.12, 0, 0, 0.45],
+        "57683": [0, 0.12, 0, 0, 0.45]
     },
     "Typewriter-Regular": {
-        "33": [0, 0.61111, 0, 0],
-        "34": [0, 0.61111, 0, 0],
-        "35": [0, 0.61111, 0, 0],
-        "36": [0.08333, 0.69444, 0, 0],
-        "37": [0.08333, 0.69444, 0, 0],
-        "38": [0, 0.61111, 0, 0],
-        "39": [0, 0.61111, 0, 0],
-        "40": [0.08333, 0.69444, 0, 0],
-        "41": [0.08333, 0.69444, 0, 0],
-        "42": [0, 0.52083, 0, 0],
-        "43": [-0.08056, 0.53055, 0, 0],
-        "44": [0.13889, 0.125, 0, 0],
-        "45": [-0.08056, 0.53055, 0, 0],
-        "46": [0, 0.125, 0, 0],
-        "47": [0.08333, 0.69444, 0, 0],
-        "48": [0, 0.61111, 0, 0],
-        "49": [0, 0.61111, 0, 0],
-        "50": [0, 0.61111, 0, 0],
-        "51": [0, 0.61111, 0, 0],
-        "52": [0, 0.61111, 0, 0],
-        "53": [0, 0.61111, 0, 0],
-        "54": [0, 0.61111, 0, 0],
-        "55": [0, 0.61111, 0, 0],
-        "56": [0, 0.61111, 0, 0],
-        "57": [0, 0.61111, 0, 0],
-        "58": [0, 0.43056, 0, 0],
-        "59": [0.13889, 0.43056, 0, 0],
-        "60": [-0.05556, 0.55556, 0, 0],
-        "61": [-0.19549, 0.41562, 0, 0],
-        "62": [-0.05556, 0.55556, 0, 0],
-        "63": [0, 0.61111, 0, 0],
-        "64": [0, 0.61111, 0, 0],
-        "65": [0, 0.61111, 0, 0],
-        "66": [0, 0.61111, 0, 0],
-        "67": [0, 0.61111, 0, 0],
-        "68": [0, 0.61111, 0, 0],
-        "69": [0, 0.61111, 0, 0],
-        "70": [0, 0.61111, 0, 0],
-        "71": [0, 0.61111, 0, 0],
-        "72": [0, 0.61111, 0, 0],
-        "73": [0, 0.61111, 0, 0],
-        "74": [0, 0.61111, 0, 0],
-        "75": [0, 0.61111, 0, 0],
-        "76": [0, 0.61111, 0, 0],
-        "77": [0, 0.61111, 0, 0],
-        "78": [0, 0.61111, 0, 0],
-        "79": [0, 0.61111, 0, 0],
-        "80": [0, 0.61111, 0, 0],
-        "81": [0.13889, 0.61111, 0, 0],
-        "82": [0, 0.61111, 0, 0],
-        "83": [0, 0.61111, 0, 0],
-        "84": [0, 0.61111, 0, 0],
-        "85": [0, 0.61111, 0, 0],
-        "86": [0, 0.61111, 0, 0],
-        "87": [0, 0.61111, 0, 0],
-        "88": [0, 0.61111, 0, 0],
-        "89": [0, 0.61111, 0, 0],
-        "90": [0, 0.61111, 0, 0],
-        "91": [0.08333, 0.69444, 0, 0],
-        "92": [0.08333, 0.69444, 0, 0],
-        "93": [0.08333, 0.69444, 0, 0],
-        "94": [0, 0.61111, 0, 0],
-        "95": [0.09514, 0, 0, 0],
-        "96": [0, 0.61111, 0, 0],
-        "97": [0, 0.43056, 0, 0],
-        "98": [0, 0.61111, 0, 0],
-        "99": [0, 0.43056, 0, 0],
-        "100": [0, 0.61111, 0, 0],
-        "101": [0, 0.43056, 0, 0],
-        "102": [0, 0.61111, 0, 0],
-        "103": [0.22222, 0.43056, 0, 0],
-        "104": [0, 0.61111, 0, 0],
-        "105": [0, 0.61111, 0, 0],
-        "106": [0.22222, 0.61111, 0, 0],
-        "107": [0, 0.61111, 0, 0],
-        "108": [0, 0.61111, 0, 0],
-        "109": [0, 0.43056, 0, 0],
-        "110": [0, 0.43056, 0, 0],
-        "111": [0, 0.43056, 0, 0],
-        "112": [0.22222, 0.43056, 0, 0],
-        "113": [0.22222, 0.43056, 0, 0],
-        "114": [0, 0.43056, 0, 0],
-        "115": [0, 0.43056, 0, 0],
-        "116": [0, 0.55358, 0, 0],
-        "117": [0, 0.43056, 0, 0],
-        "118": [0, 0.43056, 0, 0],
-        "119": [0, 0.43056, 0, 0],
-        "120": [0, 0.43056, 0, 0],
-        "121": [0.22222, 0.43056, 0, 0],
-        "122": [0, 0.43056, 0, 0],
-        "123": [0.08333, 0.69444, 0, 0],
-        "124": [0.08333, 0.69444, 0, 0],
-        "125": [0.08333, 0.69444, 0, 0],
-        "126": [0, 0.61111, 0, 0],
-        "127": [0, 0.61111, 0, 0],
-        "305": [0, 0.43056, 0, 0],
-        "567": [0.22222, 0.43056, 0, 0],
-        "768": [0, 0.61111, 0, 0],
-        "769": [0, 0.61111, 0, 0],
-        "770": [0, 0.61111, 0, 0],
-        "771": [0, 0.61111, 0, 0],
-        "772": [0, 0.56555, 0, 0],
-        "774": [0, 0.61111, 0, 0],
-        "776": [0, 0.61111, 0, 0],
-        "778": [0, 0.61111, 0, 0],
-        "780": [0, 0.56597, 0, 0],
-        "915": [0, 0.61111, 0, 0],
-        "916": [0, 0.61111, 0, 0],
-        "920": [0, 0.61111, 0, 0],
-        "923": [0, 0.61111, 0, 0],
-        "926": [0, 0.61111, 0, 0],
-        "928": [0, 0.61111, 0, 0],
-        "931": [0, 0.61111, 0, 0],
-        "933": [0, 0.61111, 0, 0],
-        "934": [0, 0.61111, 0, 0],
-        "936": [0, 0.61111, 0, 0],
-        "937": [0, 0.61111, 0, 0],
-        "8216": [0, 0.61111, 0, 0],
-        "8217": [0, 0.61111, 0, 0],
-        "8242": [0, 0.61111, 0, 0],
-        "9251": [0.11111, 0.21944, 0, 0]
+        "33": [0, 0.61111, 0, 0, 0.525],
+        "34": [0, 0.61111, 0, 0, 0.525],
+        "35": [0, 0.61111, 0, 0, 0.525],
+        "36": [0.08333, 0.69444, 0, 0, 0.525],
+        "37": [0.08333, 0.69444, 0, 0, 0.525],
+        "38": [0, 0.61111, 0, 0, 0.525],
+        "39": [0, 0.61111, 0, 0, 0.525],
+        "40": [0.08333, 0.69444, 0, 0, 0.525],
+        "41": [0.08333, 0.69444, 0, 0, 0.525],
+        "42": [0, 0.52083, 0, 0, 0.525],
+        "43": [-0.08056, 0.53055, 0, 0, 0.525],
+        "44": [0.13889, 0.125, 0, 0, 0.525],
+        "45": [-0.08056, 0.53055, 0, 0, 0.525],
+        "46": [0, 0.125, 0, 0, 0.525],
+        "47": [0.08333, 0.69444, 0, 0, 0.525],
+        "48": [0, 0.61111, 0, 0, 0.525],
+        "49": [0, 0.61111, 0, 0, 0.525],
+        "50": [0, 0.61111, 0, 0, 0.525],
+        "51": [0, 0.61111, 0, 0, 0.525],
+        "52": [0, 0.61111, 0, 0, 0.525],
+        "53": [0, 0.61111, 0, 0, 0.525],
+        "54": [0, 0.61111, 0, 0, 0.525],
+        "55": [0, 0.61111, 0, 0, 0.525],
+        "56": [0, 0.61111, 0, 0, 0.525],
+        "57": [0, 0.61111, 0, 0, 0.525],
+        "58": [0, 0.43056, 0, 0, 0.525],
+        "59": [0.13889, 0.43056, 0, 0, 0.525],
+        "60": [-0.05556, 0.55556, 0, 0, 0.525],
+        "61": [-0.19549, 0.41562, 0, 0, 0.525],
+        "62": [-0.05556, 0.55556, 0, 0, 0.525],
+        "63": [0, 0.61111, 0, 0, 0.525],
+        "64": [0, 0.61111, 0, 0, 0.525],
+        "65": [0, 0.61111, 0, 0, 0.525],
+        "66": [0, 0.61111, 0, 0, 0.525],
+        "67": [0, 0.61111, 0, 0, 0.525],
+        "68": [0, 0.61111, 0, 0, 0.525],
+        "69": [0, 0.61111, 0, 0, 0.525],
+        "70": [0, 0.61111, 0, 0, 0.525],
+        "71": [0, 0.61111, 0, 0, 0.525],
+        "72": [0, 0.61111, 0, 0, 0.525],
+        "73": [0, 0.61111, 0, 0, 0.525],
+        "74": [0, 0.61111, 0, 0, 0.525],
+        "75": [0, 0.61111, 0, 0, 0.525],
+        "76": [0, 0.61111, 0, 0, 0.525],
+        "77": [0, 0.61111, 0, 0, 0.525],
+        "78": [0, 0.61111, 0, 0, 0.525],
+        "79": [0, 0.61111, 0, 0, 0.525],
+        "80": [0, 0.61111, 0, 0, 0.525],
+        "81": [0.13889, 0.61111, 0, 0, 0.525],
+        "82": [0, 0.61111, 0, 0, 0.525],
+        "83": [0, 0.61111, 0, 0, 0.525],
+        "84": [0, 0.61111, 0, 0, 0.525],
+        "85": [0, 0.61111, 0, 0, 0.525],
+        "86": [0, 0.61111, 0, 0, 0.525],
+        "87": [0, 0.61111, 0, 0, 0.525],
+        "88": [0, 0.61111, 0, 0, 0.525],
+        "89": [0, 0.61111, 0, 0, 0.525],
+        "90": [0, 0.61111, 0, 0, 0.525],
+        "91": [0.08333, 0.69444, 0, 0, 0.525],
+        "92": [0.08333, 0.69444, 0, 0, 0.525],
+        "93": [0.08333, 0.69444, 0, 0, 0.525],
+        "94": [0, 0.61111, 0, 0, 0.525],
+        "95": [0.09514, 0, 0, 0, 0.525],
+        "96": [0, 0.61111, 0, 0, 0.525],
+        "97": [0, 0.43056, 0, 0, 0.525],
+        "98": [0, 0.61111, 0, 0, 0.525],
+        "99": [0, 0.43056, 0, 0, 0.525],
+        "100": [0, 0.61111, 0, 0, 0.525],
+        "101": [0, 0.43056, 0, 0, 0.525],
+        "102": [0, 0.61111, 0, 0, 0.525],
+        "103": [0.22222, 0.43056, 0, 0, 0.525],
+        "104": [0, 0.61111, 0, 0, 0.525],
+        "105": [0, 0.61111, 0, 0, 0.525],
+        "106": [0.22222, 0.61111, 0, 0, 0.525],
+        "107": [0, 0.61111, 0, 0, 0.525],
+        "108": [0, 0.61111, 0, 0, 0.525],
+        "109": [0, 0.43056, 0, 0, 0.525],
+        "110": [0, 0.43056, 0, 0, 0.525],
+        "111": [0, 0.43056, 0, 0, 0.525],
+        "112": [0.22222, 0.43056, 0, 0, 0.525],
+        "113": [0.22222, 0.43056, 0, 0, 0.525],
+        "114": [0, 0.43056, 0, 0, 0.525],
+        "115": [0, 0.43056, 0, 0, 0.525],
+        "116": [0, 0.55358, 0, 0, 0.525],
+        "117": [0, 0.43056, 0, 0, 0.525],
+        "118": [0, 0.43056, 0, 0, 0.525],
+        "119": [0, 0.43056, 0, 0, 0.525],
+        "120": [0, 0.43056, 0, 0, 0.525],
+        "121": [0.22222, 0.43056, 0, 0, 0.525],
+        "122": [0, 0.43056, 0, 0, 0.525],
+        "123": [0.08333, 0.69444, 0, 0, 0.525],
+        "124": [0.08333, 0.69444, 0, 0, 0.525],
+        "125": [0.08333, 0.69444, 0, 0, 0.525],
+        "126": [0, 0.61111, 0, 0, 0.525],
+        "127": [0, 0.61111, 0, 0, 0.525],
+        "305": [0, 0.43056, 0, 0, 0.525],
+        "567": [0.22222, 0.43056, 0, 0, 0.525],
+        "768": [0, 0.61111, 0, 0, 0.525],
+        "769": [0, 0.61111, 0, 0, 0.525],
+        "770": [0, 0.61111, 0, 0, 0.525],
+        "771": [0, 0.61111, 0, 0, 0.525],
+        "772": [0, 0.56555, 0, 0, 0.525],
+        "774": [0, 0.61111, 0, 0, 0.525],
+        "776": [0, 0.61111, 0, 0, 0.525],
+        "778": [0, 0.61111, 0, 0, 0.525],
+        "780": [0, 0.56597, 0, 0, 0.525],
+        "915": [0, 0.61111, 0, 0, 0.525],
+        "916": [0, 0.61111, 0, 0, 0.525],
+        "920": [0, 0.61111, 0, 0, 0.525],
+        "923": [0, 0.61111, 0, 0, 0.525],
+        "926": [0, 0.61111, 0, 0, 0.525],
+        "928": [0, 0.61111, 0, 0, 0.525],
+        "931": [0, 0.61111, 0, 0, 0.525],
+        "933": [0, 0.61111, 0, 0, 0.525],
+        "934": [0, 0.61111, 0, 0, 0.525],
+        "936": [0, 0.61111, 0, 0, 0.525],
+        "937": [0, 0.61111, 0, 0, 0.525],
+        "8216": [0, 0.61111, 0, 0, 0.525],
+        "8217": [0, 0.61111, 0, 0, 0.525],
+        "8242": [0, 0.61111, 0, 0, 0.525],
+        "9251": [0.11111, 0.21944, 0, 0, 0.525]
     }
 };
 
@@ -10383,9 +10026,13 @@ var _defineFunction2 = require("./defineFunction");
 
 var _defineFunction3 = _interopRequireDefault(_defineFunction2);
 
+require("./functions/sqrt");
+
 require("./functions/color");
 
 require("./functions/text");
+
+require("./functions/enclose");
 
 require("./functions/overline");
 
@@ -10411,6 +10058,8 @@ require("./functions/smash");
 
 require("./functions/delimsizing");
 
+require("./functions/verb");
+
 require("./functions/href");
 
 require("./functions/mathchoice");
@@ -10431,20 +10080,6 @@ var defineFunction = function defineFunction(names, props, handler) // null only
     (0, _defineFunction3.default)({ names: names, props: props, handler: handler });
 };
 
-// A normal square root
-defineFunction(["\\sqrt"], {
-    numArgs: 1,
-    numOptionalArgs: 1
-}, function (context, args, optArgs) {
-    var index = optArgs[0];
-    var body = args[0];
-    return {
-        type: "sqrt",
-        body: body,
-        index: index
-    };
-});
-
 // \color is handled in Parser.js's parseImplicitGroup
 defineFunction(["\\color"], {
     numArgs: 1,
@@ -10452,42 +10087,6 @@ defineFunction(["\\color"], {
     greediness: 3,
     argTypes: ["color"]
 }, null);
-
-// colorbox
-defineFunction(["\\colorbox"], {
-    numArgs: 2,
-    allowedInText: true,
-    greediness: 3,
-    argTypes: ["color", "text"]
-}, function (context, args) {
-    var color = args[0];
-    var body = args[1];
-    return {
-        type: "enclose",
-        label: context.funcName,
-        backgroundColor: color,
-        body: body
-    };
-});
-
-// fcolorbox
-defineFunction(["\\fcolorbox"], {
-    numArgs: 3,
-    allowedInText: true,
-    greediness: 3,
-    argTypes: ["color", "color", "text"]
-}, function (context, args) {
-    var borderColor = args[0];
-    var backgroundColor = args[1];
-    var body = args[2];
-    return {
-        type: "enclose",
-        label: context.funcName,
-        backgroundColor: backgroundColor,
-        borderColor: borderColor,
-        body: body
-    };
-});
 
 // Math class commands except \mathop
 defineFunction(["\\mathord", "\\mathbin", "\\mathrel", "\\mathopen", "\\mathclose", "\\mathpunct", "\\mathinner"], {
@@ -10560,7 +10159,7 @@ defineFunction(["\\arcsin", "\\arccos", "\\arctan", "\\arctg", "\\arcctg", "\\ar
 });
 
 // Limits, not symbols
-defineFunction(["\\det", "\\gcd", "\\inf", "\\lim", "\\liminf", "\\limsup", "\\max", "\\min", "\\Pr", "\\sup"], {
+defineFunction(["\\det", "\\gcd", "\\inf", "\\lim", "\\max", "\\min", "\\Pr", "\\sup"], {
     numArgs: 0
 }, function (context) {
     return {
@@ -10697,18 +10296,6 @@ defineFunction(["\\xleftarrow", "\\xrightarrow", "\\xLeftarrow", "\\xRightarrow"
     };
 });
 
-// enclose
-defineFunction(["\\cancel", "\\bcancel", "\\xcancel", "\\sout", "\\fbox"], {
-    numArgs: 1
-}, function (context, args) {
-    var body = args[0];
-    return {
-        type: "enclose",
-        label: context.funcName,
-        body: body
-    };
-});
-
 // Infix generalized fractions
 defineFunction(["\\over", "\\choose", "\\atop"], {
     numArgs: 0,
@@ -10784,23 +10371,12 @@ defineFunction(["\\raisebox"], {
     };
 });
 
-// \verb and \verb* are dealt with directly in Parser.js.
-// If we end up here, it's because of a failure to match the two delimiters
-// in the regex in Lexer.js.  LaTeX raises the following error when \verb is
-// terminated by end of line (or file).
-defineFunction(["\\verb"], {
-    numArgs: 0,
-    allowedInText: true
-}, function (context) {
-    throw new _ParseError2.default("\\verb ended by end of line instead of matching delimiter");
-});
-
 // Hyperlinks
 
 
 // MathChoice
 
-},{"./ParseError":84,"./ParseNode":85,"./defineFunction":96,"./functions/color":104,"./functions/delimsizing":105,"./functions/genfrac":106,"./functions/href":107,"./functions/kern":108,"./functions/lap":109,"./functions/mathchoice":110,"./functions/mod":111,"./functions/op":112,"./functions/operatorname":113,"./functions/overline":114,"./functions/phantom":115,"./functions/rule":116,"./functions/smash":117,"./functions/text":118,"./functions/underline":119,"./utils":128}],104:[function(require,module,exports){
+},{"./ParseError":84,"./ParseNode":85,"./defineFunction":96,"./functions/color":104,"./functions/delimsizing":105,"./functions/enclose":106,"./functions/genfrac":107,"./functions/href":108,"./functions/kern":109,"./functions/lap":110,"./functions/mathchoice":111,"./functions/mod":112,"./functions/op":113,"./functions/operatorname":114,"./functions/overline":115,"./functions/phantom":116,"./functions/rule":117,"./functions/smash":118,"./functions/sqrt":119,"./functions/text":120,"./functions/underline":121,"./functions/verb":122,"./utils":133}],104:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -10893,7 +10469,7 @@ var mathmlBuilder = function mathmlBuilder(group, options) {
     mathmlBuilder: mathmlBuilder
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],105:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124}],105:[function(require,module,exports){
 "use strict";
 
 var _buildCommon = require("../buildCommon");
@@ -11153,7 +10729,216 @@ function checkDelimiter(delim, context) {
     }
 });
 
-},{"../ParseError":84,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":121,"../utils":128}],106:[function(require,module,exports){
+},{"../ParseError":84,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":124,"../utils":133}],106:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _utils = require("../utils");
+
+var _utils2 = _interopRequireDefault(_utils);
+
+var _stretchy = require("../stretchy");
+
+var _stretchy2 = _interopRequireDefault(_stretchy);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var htmlBuilder = function htmlBuilder(group, options) {
+    // \cancel, \bcancel, \xcancel, \sout, \fbox, \colorbox, \fcolorbox
+    var inner = html.buildGroup(group.value.body, options);
+
+    var label = group.value.label.substr(1);
+    var scale = options.sizeMultiplier;
+    var img = void 0;
+    var imgShift = 0;
+    var isColorbox = /color/.test(label);
+
+    if (label === "sout") {
+        img = _buildCommon2.default.makeSpan(["stretchy", "sout"]);
+        img.height = options.fontMetrics().defaultRuleThickness / scale;
+        imgShift = -0.5 * options.fontMetrics().xHeight;
+    } else {
+        // Add horizontal padding
+        inner.classes.push(/cancel/.test(label) ? "cancel-pad" : "boxpad");
+
+        // Add vertical padding
+        var vertPad = 0;
+        // ref: LaTeX source2e: \fboxsep = 3pt;  \fboxrule = .4pt
+        // ref: cancel package: \advance\totalheight2\p@ % "+2"
+        if (/box/.test(label)) {
+            vertPad = label === "colorbox" ? 0.3 : 0.34;
+        } else {
+            vertPad = _utils2.default.isCharacterBox(group.value.body) ? 0.2 : 0;
+        }
+
+        img = _stretchy2.default.encloseSpan(inner, label, vertPad, options);
+        imgShift = inner.depth + vertPad;
+
+        if (isColorbox) {
+            img.style.backgroundColor = group.value.backgroundColor.value;
+            if (label === "fcolorbox") {
+                img.style.borderColor = group.value.borderColor.value;
+            }
+        }
+    }
+
+    var vlist = void 0;
+    if (isColorbox) {
+        vlist = _buildCommon2.default.makeVList({
+            positionType: "individualShift",
+            children: [
+            // Put the color background behind inner;
+            { type: "elem", elem: img, shift: imgShift }, { type: "elem", elem: inner, shift: 0 }]
+        }, options);
+    } else {
+        vlist = _buildCommon2.default.makeVList({
+            positionType: "individualShift",
+            children: [
+            // Write the \cancel stroke on top of inner.
+            {
+                type: "elem",
+                elem: inner,
+                shift: 0
+            }, {
+                type: "elem",
+                elem: img,
+                shift: imgShift,
+                wrapperClasses: /cancel/.test(label) ? ["svg-align"] : []
+            }]
+        }, options);
+    }
+
+    if (/cancel/.test(label)) {
+        // cancel does not create horiz space for its line extension.
+        // That is, not when adjacent to a mord.
+        return _buildCommon2.default.makeSpan(["mord", "cancel-lap"], [vlist], options);
+    } else {
+        return _buildCommon2.default.makeSpan(["mord"], [vlist], options);
+    }
+};
+
+
+var mathmlBuilder = function mathmlBuilder(group, options) {
+    var node = new _mathMLTree2.default.MathNode("menclose", [mml.buildGroup(group.value.body, options)]);
+    switch (group.value.label) {
+        case "\\cancel":
+            node.setAttribute("notation", "updiagonalstrike");
+            break;
+        case "\\bcancel":
+            node.setAttribute("notation", "downdiagonalstrike");
+            break;
+        case "\\sout":
+            node.setAttribute("notation", "horizontalstrike");
+            break;
+        case "\\fbox":
+            node.setAttribute("notation", "box");
+            break;
+        case "\\colorbox":
+            node.setAttribute("mathbackground", group.value.backgroundColor.value);
+            break;
+        case "\\fcolorbox":
+            node.setAttribute("mathbackground", group.value.backgroundColor.value);
+            // TODO(ron): I don't know any way to set the border color.
+            node.setAttribute("notation", "box");
+            break;
+        default:
+            // xcancel
+            node.setAttribute("notation", "updiagonalstrike downdiagonalstrike");
+    }
+    return node;
+};
+
+(0, _defineFunction2.default)({
+    type: "enclose",
+    names: ["\\colorbox"],
+    props: {
+        numArgs: 2,
+        allowedInText: true,
+        greediness: 3,
+        argTypes: ["color", "text"]
+    },
+    handler: function handler(context, args, optArgs) {
+        var color = args[0];
+        var body = args[1];
+        return {
+            type: "enclose",
+            label: context.funcName,
+            backgroundColor: color,
+            body: body
+        };
+    },
+
+    htmlBuilder: htmlBuilder,
+    mathmlBuilder: mathmlBuilder
+});
+
+(0, _defineFunction2.default)({
+    type: "enclose",
+    names: ["\\fcolorbox"],
+    props: {
+        numArgs: 3,
+        allowedInText: true,
+        greediness: 3,
+        argTypes: ["color", "color", "text"]
+    },
+    handler: function handler(context, args, optArgs) {
+        var borderColor = args[0];
+        var backgroundColor = args[1];
+        var body = args[2];
+        return {
+            type: "enclose",
+            label: context.funcName,
+            backgroundColor: backgroundColor,
+            borderColor: borderColor,
+            body: body
+        };
+    },
+
+    htmlBuilder: htmlBuilder,
+    mathmlBuilder: mathmlBuilder
+});
+
+(0, _defineFunction2.default)({
+    type: "enclose",
+    names: ["\\cancel", "\\bcancel", "\\xcancel", "\\sout", "\\fbox"],
+    props: {
+        numArgs: 1
+    },
+    handler: function handler(context, args, optArgs) {
+        var body = args[0];
+        return {
+            type: "enclose",
+            label: context.funcName,
+            body: body
+        };
+    },
+
+    htmlBuilder: htmlBuilder,
+    mathmlBuilder: mathmlBuilder
+});
+
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124,"../stretchy":126,"../utils":133}],107:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11302,7 +11087,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
         }
 
         var frac = void 0;
-        if (ruleWidth === 0) {
+        if (!rule) {
             // Rule 15c
             var candidateClearance = numShift - numerm.depth - (denomm.height - denomShift);
             if (candidateClearance < clearance) {
@@ -11331,8 +11116,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
             frac = _buildCommon2.default.makeVList({
                 positionType: "individualShift",
                 children: [{ type: "elem", elem: denomm, shift: denomShift },
-                // $FlowFixMe `rule` cannot be `null` here.
-                { type: "elem", elem: rule, shift: midShift }, { type: "elem", elem: numerm, shift: -numShift }]
+                // The next line would ordinarily contain "shift: midShift".
+                // But we put the rule into a a span that is 5 rules tall,
+                // to overcome a Chrome rendering issue. Put another way,
+                // we've replaced a kern of width = 2 * ruleWidth with a
+                // bottom gap in the SVG = 2 * ruleWidth.
+                { type: "elem", elem: rule, shift: midShift + 2 * ruleWidth }, { type: "elem", elem: numerm, shift: -numShift }]
             }, options);
         }
 
@@ -11402,7 +11191,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":121}],107:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../mathMLTree":124}],108:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11490,7 +11279,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],108:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124}],109:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11550,7 +11339,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
         if (group.value.dimension) {
             var dimension = (0, _units.calculateSize)(group.value.dimension, options);
-            rule.style.marginLeft = dimension + "em";
+            rule.style.marginRight = dimension + "em";
         }
 
         return rule;
@@ -11569,7 +11358,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /* eslint no-console:0 */
 // Horizontal spacing commands
 
-},{"../ParseError":84,"../buildCommon":91,"../defineFunction":96,"../mathMLTree":121,"../units":127}],109:[function(require,module,exports){
+},{"../ParseError":84,"../buildCommon":91,"../defineFunction":96,"../mathMLTree":124,"../units":132}],110:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11640,7 +11429,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 // Horizontal overlap functions
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],110:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124}],111:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11712,7 +11501,7 @@ var chooseMathStyle = function chooseMathStyle(group, options) {
     }
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],111:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124}],112:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -11854,7 +11643,7 @@ var mmlModBuilder = function mmlModBuilder(group, options) {
     mathmlBuilder: mmlModBuilder
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],112:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124}],113:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -12124,8 +11913,12 @@ var singleCharBigOps = {
     mathmlBuilder: mathmlBuilder
 });
 
-},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":121,"../utils":128}],113:[function(require,module,exports){
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":124,"../utils":133}],114:[function(require,module,exports){
 "use strict";
+
+var _getIterator2 = require("babel-runtime/core-js/get-iterator");
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
 
 var _defineFunction = require("../defineFunction");
 
@@ -12178,22 +11971,47 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
             var mode = "";
 
             // Consolidate Greek letter function names into symbol characters.
-            var temp = html.buildExpression(group.value.value, options, true);
+            var temp = html.buildExpression(group.value.value, options.withFontFamily("mathrm"), true);
 
             // All we want from temp are the letters. With them, we'll
             // create a text operator similar to \tan or \cos.
-            for (var i = 0; i < temp.length; i++) {
-                letter = temp[i].value;
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
-                // In the amsopn package, \newmcodes@ changes four
-                // characters, *-/:’, from math operators back into text.
-                // Given what is in temp, we have to address two of them.
-                letter = letter.replace(/\u2212/, "-"); // minus => hyphen
-                letter = letter.replace(/\u2217/, "*");
+            try {
+                for (var _iterator = (0, _getIterator3.default)(temp), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var child = _step.value;
 
-                // Use math mode for Greek letters
-                mode = /[\u0391-\u03D7]/.test(letter) ? "math" : "text";
-                output.push(_buildCommon2.default.mathsym(letter, mode));
+                    if (child instanceof _domTree2.default.symbolNode) {
+                        letter = child.value;
+
+                        // In the amsopn package, \newmcodes@ changes four
+                        // characters, *-/:’, from math operators back into text.
+                        // Given what is in temp, we have to address two of them.
+                        letter = letter.replace(/\u2212/, "-"); // minus => hyphen
+                        letter = letter.replace(/\u2217/, "*");
+
+                        // Use math mode for Greek letters
+                        mode = /[\u0391-\u03D7]/.test(letter) ? "math" : "text";
+                        output.push(_buildCommon2.default.mathsym(letter, mode));
+                    } else {
+                        output.push(child);
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
             }
         }
         return _buildCommon2.default.makeSpan(["mop"], output, options);
@@ -12203,12 +12021,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
         // The steps taken here are similar to the html version.
         var output = [];
         if (group.value.value.length > 0) {
-            var temp = mml.buildExpression(group.value.value, options);
+            var temp = mml.buildExpression(group.value.value, options.withFontFamily("mathrm"));
 
-            var word = "";
-            for (var i = 0; i < temp.length; i++) {
-                word += temp[i].children[0].text;
-            }
+            var word = temp.map(function (node) {
+                return node.toText();
+            }).join("");
+
             word = word.replace(/\u2212/g, "-");
             word = word.replace(/\u2217/g, "*");
             output = [new _mathMLTree2.default.TextNode(word)];
@@ -12224,7 +12042,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":121}],114:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../domTree":98,"../mathMLTree":124,"babel-runtime/core-js/get-iterator":3}],115:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -12276,7 +12094,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
         // Generate the vlist, with the appropriate kerns
         var vlist = _buildCommon2.default.makeVList({
             positionType: "firstBaseline",
-            children: [{ type: "elem", elem: innerGroup }, { type: "kern", size: 3 * line.height }, { type: "elem", elem: line }, { type: "kern", size: line.height }]
+            children: [{ type: "elem", elem: innerGroup },
+            // The kern on the next line would ordinarily be 3 * line.height
+            // But we put the line into a span that is 5 lines tall, to
+            // overcome a Chrome rendering issue. The SVG has a space in
+            // the bottom that is 2 lines high. That and the 1-line-high
+            // kern sum up to the same distance as the old 3 line kern.
+            { type: "kern", size: line.height }, { type: "elem", elem: line }]
         }, options);
 
         return _buildCommon2.default.makeSpan(["mord", "overline"], [vlist], options);
@@ -12292,7 +12116,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],115:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124}],116:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -12414,7 +12238,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],116:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124}],117:[function(require,module,exports){
 "use strict";
 
 var _buildCommon = require("../buildCommon");
@@ -12490,7 +12314,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../defineFunction":96,"../mathMLTree":121,"../units":127}],117:[function(require,module,exports){
+},{"../buildCommon":91,"../defineFunction":96,"../mathMLTree":124,"../units":132}],118:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -12611,7 +12435,155 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 // smash, with optional [tb], as in AMS
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],118:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124}],119:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _domTree = require("../domTree");
+
+var _domTree2 = _interopRequireDefault(_domTree);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _delimiter = require("../delimiter");
+
+var _delimiter2 = _interopRequireDefault(_delimiter);
+
+var _Style = require("../Style");
+
+var _Style2 = _interopRequireDefault(_Style);
+
+var _buildHTML = require("../buildHTML");
+
+var html = _interopRequireWildcard(_buildHTML);
+
+var _buildMathML = require("../buildMathML");
+
+var mml = _interopRequireWildcard(_buildMathML);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _defineFunction2.default)({
+    type: "sqrt",
+    names: ["\\sqrt"],
+    props: {
+        numArgs: 1,
+        numOptionalArgs: 1
+    },
+    handler: function handler(context, args, optArgs) {
+        var index = optArgs[0];
+        var body = args[0];
+        return {
+            type: "sqrt",
+            body: body,
+            index: index
+        };
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        // Square roots are handled in the TeXbook pg. 443, Rule 11.
+
+        // First, we do the same steps as in overline to build the inner group
+        // and line
+        var inner = html.buildGroup(group.value.body, options.havingCrampedStyle());
+        if (inner.height === 0) {
+            // Render a small surd.
+            inner.height = options.fontMetrics().xHeight;
+        }
+
+        // Some groups can return document fragments.  Handle those by wrapping
+        // them in a span.
+        if (inner instanceof _domTree2.default.documentFragment) {
+            inner = _buildCommon2.default.makeSpan([], [inner], options);
+        }
+
+        // Calculate the minimum size for the \surd delimiter
+        var metrics = options.fontMetrics();
+        var theta = metrics.defaultRuleThickness;
+
+        var phi = theta;
+        if (options.style.id < _Style2.default.TEXT.id) {
+            phi = options.fontMetrics().xHeight;
+        }
+
+        // Calculate the clearance between the body and line
+        var lineClearance = theta + phi / 4;
+
+        var minDelimiterHeight = (inner.height + inner.depth + lineClearance + theta) * options.sizeMultiplier;
+
+        // Create a sqrt SVG of the required minimum size
+
+        var _delimiter$sqrtImage = _delimiter2.default.sqrtImage(minDelimiterHeight, options),
+            img = _delimiter$sqrtImage.span,
+            ruleWidth = _delimiter$sqrtImage.ruleWidth;
+
+        var delimDepth = img.height - ruleWidth;
+
+        // Adjust the clearance based on the delimiter size
+        if (delimDepth > inner.height + inner.depth + lineClearance) {
+            lineClearance = (lineClearance + delimDepth - inner.height - inner.depth) / 2;
+        }
+
+        // Shift the sqrt image
+        var imgShift = img.height - inner.height - lineClearance - ruleWidth;
+
+        inner.style.paddingLeft = img.advanceWidth + "em";
+
+        // Overlay the image and the argument.
+        var body = _buildCommon2.default.makeVList({
+            positionType: "firstBaseline",
+            children: [{ type: "elem", elem: inner, wrapperClasses: ["svg-align"] }, { type: "kern", size: -(inner.height + imgShift) }, { type: "elem", elem: img }, { type: "kern", size: ruleWidth }]
+        }, options);
+
+        if (!group.value.index) {
+            return _buildCommon2.default.makeSpan(["mord", "sqrt"], [body], options);
+        } else {
+            // Handle the optional root index
+
+            // The index is always in scriptscript style
+            var newOptions = options.havingStyle(_Style2.default.SCRIPTSCRIPT);
+            var rootm = html.buildGroup(group.value.index, newOptions, options);
+
+            // The amount the index is shifted by. This is taken from the TeX
+            // source, in the definition of `\r@@t`.
+            var toShift = 0.6 * (body.height - body.depth);
+
+            // Build a VList with the superscript shifted up correctly
+            var rootVList = _buildCommon2.default.makeVList({
+                positionType: "shift",
+                positionData: -toShift,
+                children: [{ type: "elem", elem: rootm }]
+            }, options);
+            // Add a class surrounding it so we can add on the appropriate
+            // kerning
+            var rootVListWrap = _buildCommon2.default.makeSpan(["root"], [rootVList]);
+
+            return _buildCommon2.default.makeSpan(["mord", "sqrt"], [rootVListWrap, body], options);
+        }
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        var node = void 0;
+        if (group.value.index) {
+            node = new _mathMLTree2.default.MathNode("mroot", [mml.buildGroup(group.value.body, options), mml.buildGroup(group.value.index, options)]);
+        } else {
+            node = new _mathMLTree2.default.MathNode("msqrt", [mml.buildGroup(group.value.body, options)]);
+        }
+
+        return node;
+    }
+});
+
+},{"../Style":89,"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../delimiter":97,"../domTree":98,"../mathMLTree":124}],120:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -12721,7 +12693,7 @@ var textFontShapes = {
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],119:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124}],121:[function(require,module,exports){
 "use strict";
 
 var _defineFunction = require("../defineFunction");
@@ -12766,14 +12738,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
         // Build the inner group.
         var innerGroup = html.buildGroup(group.value.body, options);
 
-        // Create the line above the body
+        // Create the line to go below the body
         var line = _buildCommon2.default.makeLineSpan("underline-line", options);
 
         // Generate the vlist, with the appropriate kerns
         var vlist = _buildCommon2.default.makeVList({
             positionType: "top",
             positionData: innerGroup.height,
-            children: [{ type: "kern", size: line.height }, { type: "elem", elem: line }, { type: "kern", size: 3 * line.height }, { type: "elem", elem: innerGroup }]
+            children: [
+            // The SVG image is 5x as tall as the line.
+            // The bottom 2/5 of the image is blank and acts like a kern.
+            // So we omit the kern that would otherwise go at the bottom.
+            { type: "elem", elem: line }, { type: "kern", size: 5 * line.height }, { type: "elem", elem: innerGroup }]
         }, options);
 
         return _buildCommon2.default.makeSpan(["mord", "underline"], [vlist], options);
@@ -12789,12 +12765,82 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
 });
 
-},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":121}],120:[function(require,module,exports){
+},{"../buildCommon":91,"../buildHTML":92,"../buildMathML":93,"../defineFunction":96,"../mathMLTree":124}],122:[function(require,module,exports){
+"use strict";
+
+var _defineFunction = require("../defineFunction");
+
+var _defineFunction2 = _interopRequireDefault(_defineFunction);
+
+var _buildCommon = require("../buildCommon");
+
+var _buildCommon2 = _interopRequireDefault(_buildCommon);
+
+var _mathMLTree = require("../mathMLTree");
+
+var _mathMLTree2 = _interopRequireDefault(_mathMLTree);
+
+var _ParseError = require("../ParseError");
+
+var _ParseError2 = _interopRequireDefault(_ParseError);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _defineFunction2.default)({
+    type: "verb",
+    names: ["\\verb"],
+    props: {
+        numArgs: 0,
+        allowedInText: true
+    },
+    handler: function handler(context, args, optArgs) {
+        // \verb and \verb* are dealt with directly in Parser.js.
+        // If we end up here, it's because of a failure to match the two delimiters
+        // in the regex in Lexer.js.  LaTeX raises the following error when \verb is
+        // terminated by end of line (or file).
+        throw new _ParseError2.default("\\verb ended by end of line instead of matching delimiter");
+    },
+    htmlBuilder: function htmlBuilder(group, options) {
+        var text = _buildCommon2.default.makeVerb(group, options);
+        var body = [];
+        // \verb enters text mode and therefore is sized like \textstyle
+        var newOptions = options.havingStyle(options.style.text());
+        for (var i = 0; i < text.length; i++) {
+            if (text[i] === '\xA0') {
+                // spaces appear as nonbreaking space
+                // The space character isn't in the Typewriter-Regular font,
+                // so we implement it as a kern of the same size as a character.
+                // 0.525 is the width of a texttt character in LaTeX.
+                // It automatically gets scaled by the font size.
+                var rule = _buildCommon2.default.makeSpan(["mord", "rule"], [], newOptions);
+                rule.style.marginLeft = "0.525em";
+                body.push(rule);
+            } else {
+                body.push(_buildCommon2.default.makeSymbol(text[i], "Typewriter-Regular", group.mode, newOptions, ["mathtt"]));
+            }
+        }
+        _buildCommon2.default.tryCombineChars(body);
+        return _buildCommon2.default.makeSpan(["mord", "text"].concat(newOptions.sizingClasses(options)),
+        // tryCombinChars expects CombinableDomNode[] while makeSpan expects
+        // DomChildNode[].
+        // $FlowFixMe: CombinableDomNode[] is not compatible with DomChildNode[]
+        body, newOptions);
+    },
+    mathmlBuilder: function mathmlBuilder(group, options) {
+        var text = new _mathMLTree2.default.TextNode(_buildCommon2.default.makeVerb(group, options));
+        var node = new _mathMLTree2.default.MathNode("mtext", [text]);
+        node.setAttribute("mathvariant", _buildCommon2.default.fontMap["mathtt"].variant);
+        return node;
+    }
+});
+
+},{"../ParseError":84,"../buildCommon":91,"../defineFunction":96,"../mathMLTree":124}],123:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.defineMacro = defineMacro;
 
 var _fontMetricsData = require("./fontMetricsData");
 
@@ -12837,11 +12883,23 @@ function defineMacro(name, body) {
 //////////////////////////////////////////////////////////////////////
 // macro tools
 
+// LaTeX's \@firstoftwo{#1}{#2} expands to #1, skipping #2
+// TeX source: \long\def\@firstoftwo#1#2{#1}
 defineMacro("\\@firstoftwo", function (context) {
     var args = context.consumeArgs(2);
     return { tokens: args[0], numArgs: 0 };
 });
 
+// LaTeX's \@secondoftwo{#1}{#2} expands to #2, skipping #1
+// TeX source: \long\def\@secondoftwo#1#2{#2}
+defineMacro("\\@secondoftwo", function (context) {
+    var args = context.consumeArgs(2);
+    return { tokens: args[1], numArgs: 0 };
+});
+
+// LaTeX's \@ifnextchar{#1}{#2}{#3} looks ahead to the next (unexpanded)
+// symbol.  If it matches #1, then the macro expands to #2; otherwise, #3.
+// Note, however, that it does not consume the next symbol in either case.
 defineMacro("\\@ifnextchar", function (context) {
     var args = context.consumeArgs(3); // symbol, if, else
     var nextToken = context.future();
@@ -12852,8 +12910,21 @@ defineMacro("\\@ifnextchar", function (context) {
     }
 });
 
-// \def\@ifstar#1{\@ifnextchar *{\@firstoftwo{#1}}}
+// LaTeX's \@ifstar{#1}{#2} looks ahead to the next (unexpanded) symbol.
+// If it is `*`, then it consumes the symbol, and the macro expands to #1;
+// otherwise, the macro expands to #2 (without consuming the symbol).
+// TeX source: \def\@ifstar#1{\@ifnextchar *{\@firstoftwo{#1}}}
 defineMacro("\\@ifstar", "\\@ifnextchar *{\\@firstoftwo{#1}}");
+
+// LaTeX's \TextOrMath{#1}{#2} expands to #1 in text mode, #2 in math mode
+defineMacro("\\TextOrMath", function (context) {
+    var args = context.consumeArgs(2);
+    if (context.mode === 'text') {
+        return { tokens: args[0], numArgs: 0 };
+    } else {
+        return { tokens: args[1], numArgs: 0 };
+    }
+});
 
 //////////////////////////////////////////////////////////////////////
 // basics
@@ -13153,8 +13224,10 @@ defineMacro("\\approxcoloncolon", "\\approx\\mathrel{\\mkern-1.2mu}\\dblcolon");
 //       macro turned into a propper defineSymbol in symbols.js. That way, the
 //       MathML result will be much cleaner.
 defineMacro("\\notni", "\\not\\ni");
+defineMacro("\\limsup", "\\DOTSB\\mathop{\\operatorname{lim\\,sup}}\\limits");
+defineMacro("\\liminf", "\\DOTSB\\mathop{\\operatorname{lim\\,inf}}\\limits");
 
-},{"./Token":90,"./fontMetricsData":102,"./symbols":125,"./utils":128}],121:[function(require,module,exports){
+},{"./Token":90,"./fontMetricsData":102,"./symbols":128,"./utils":133}],124:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13282,6 +13355,27 @@ var MathNode = function () {
 
             return markup;
         }
+
+        /**
+         * Converts the math node into a string, similar to innerText.
+         */
+
+    }, {
+        key: "toText",
+        value: function toText() {
+            if (this.type === "mspace") {
+                if (this.attributes.width === "0.16667em") {
+                    return "\u2006";
+                } else {
+                    // TODO: Use other space characters for different widths.
+                    // https://github.com/Khan/KaTeX/issues/1036
+                    return " ";
+                }
+            }
+            return this.children.map(function (child) {
+                return child.toText();
+            }).join("");
+        }
     }]);
     return MathNode;
 }();
@@ -13327,6 +13421,16 @@ var TextNode = function () {
         value: function toMarkup() {
             return _utils2.default.escape(this.text);
         }
+
+        /**
+         * Converts the text node into a string (which is just the text iteself).
+         */
+
+    }, {
+        key: "toText",
+        value: function toText() {
+            return this.text;
+        }
     }]);
     return TextNode;
 }();
@@ -13336,7 +13440,7 @@ exports.default = {
     TextNode: TextNode
 };
 
-},{"./utils":128,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],122:[function(require,module,exports){
+},{"./utils":133,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/classCallCheck":8,"babel-runtime/helpers/createClass":9}],125:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13367,7 +13471,7 @@ var parseTree = function parseTree(toParse, settings) {
 
 exports.default = parseTree;
 
-},{"./Parser":86}],123:[function(require,module,exports){
+},{"./Parser":86}],126:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13708,16 +13812,51 @@ var encloseSpan = function encloseSpan(inner, label, pad, options) {
     return img;
 };
 
-var ruleSpan = function ruleSpan(className, options) {
-    // Get a big square image. The parent span will hide the overflow.
-    var pathNode = new _domTree2.default.pathNode('bigRule');
-    var svg = new _domTree2.default.svgNode([pathNode], {
-        "width": "400em",
-        "height": "400em",
-        "viewBox": "0 0 400000 400000",
-        "preserveAspectRatio": "xMinYMin slice"
-    });
-    return _buildCommon2.default.makeSpan([className, "hide-tail"], [svg], options);
+var ruleSpan = function ruleSpan(className, lineThickness, options) {
+
+    // Get a span with an SVG line that fills the middle fifth of the span.
+    // We're using an extra wide span so Chrome won't round it down to zero.
+
+    var lines = [];
+    var svgNode = void 0;
+    if (className === "vertical-separator") {
+        // Apply 2 brush strokes for sharper edges on low-res screens.
+        for (var i = 0; i < 2; i++) {
+            lines.push(new _domTree2.default.lineNode({
+                "x1": "5",
+                "y1": "0",
+                "x2": "5",
+                "y2": "10",
+                "stroke-width": "2"
+            }));
+        }
+
+        svgNode = new _domTree2.default.svgNode(lines, {
+            "width": "0.25em",
+            "height": "100%",
+            "viewBox": "0 0 10 10",
+            "preserveAspectRatio": "none"
+        });
+    } else {
+        for (var _i = 0; _i < 2; _i++) {
+            lines.push(new _domTree2.default.lineNode({
+                "x1": "0",
+                "y1": "5",
+                "x2": "10",
+                "y2": "5",
+                "stroke-width": "2"
+            }));
+        }
+
+        svgNode = new _domTree2.default.svgNode(lines, {
+            "width": "100%",
+            "height": 5 * lineThickness + "em",
+            "viewBox": "0 0 10 10",
+            "preserveAspectRatio": "none"
+        });
+    }
+
+    return _buildCommon2.default.makeSpan([className], [svgNode], options);
 };
 
 exports.default = {
@@ -13727,132 +13866,128 @@ exports.default = {
     svgSpan: svgSpan
 };
 
-},{"./buildCommon":91,"./domTree":98,"./mathMLTree":121,"./utils":128,"babel-runtime/helpers/slicedToArray":10}],124:[function(require,module,exports){
-'use strict';
+},{"./buildCommon":91,"./domTree":98,"./mathMLTree":124,"./utils":133,"babel-runtime/helpers/slicedToArray":10}],127:[function(require,module,exports){
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 var path = {
-    // bigRule provides a big square image for frac-lines, etc.
-    // The actual rendered rule is smaller, controlled by overflow:hidden.
-    bigRule: 'M0 0 h400000 v400000 h-400000z M0 0 h400000 v400000 h-400000z',
-
     // sqrtMain path geometry is from glyph U221A in the font KaTeX Main
-    sqrtMain: 'M95 622c-2.667 0-7.167-2.667-13.5\n-8S72 604 72 600c0-2 .333-3.333 1-4 1.333-2.667 23.833-20.667 67.5-54s\n65.833-50.333 66.5-51c1.333-1.333 3-2 5-2 4.667 0 8.667 3.333 12 10l173\n378c.667 0 35.333-71 104-213s137.5-285 206.5-429S812 17.333 812 14c5.333\n-9.333 12-14 20-14h399166v40H845.272L620 507 385 993c-2.667 4.667-9 7-19\n7-6 0-10-1-12-3L160 575l-65 47zM834 0h399166v40H845z',
+    sqrtMain: "M95 622c-2.667 0-7.167-2.667-13.5\n-8S72 604 72 600c0-2 .333-3.333 1-4 1.333-2.667 23.833-20.667 67.5-54s\n65.833-50.333 66.5-51c1.333-1.333 3-2 5-2 4.667 0 8.667 3.333 12 10l173\n378c.667 0 35.333-71 104-213s137.5-285 206.5-429S812 17.333 812 14c5.333\n-9.333 12-14 20-14h399166v40H845.272L620 507 385 993c-2.667 4.667-9 7-19\n7-6 0-10-1-12-3L160 575l-65 47zM834 0h399166v40H845z",
 
     // size1 is from glyph U221A in the font KaTeX_Size1-Regular
-    sqrtSize1: 'M263 601c.667 0 18 39.667 52 119s68.167\n 158.667 102.5 238 51.833 119.333 52.5 120C810 373.333 980.667 17.667 982 11\nc4.667-7.333 11-11 19-11h398999v40H1012.333L741 607c-38.667 80.667-84 175-136\n 283s-89.167 185.333-111.5 232-33.833 70.333-34.5 71c-4.667 4.667-12.333 7-23\n 7l-12-1-109-253c-72.667-168-109.333-252-110-252-10.667 8-22 16.667-34 26-22\n 17.333-33.333 26-34 26l-26-26 76-59 76-60zM1001 0h398999v40H1012z',
+    sqrtSize1: "M263 601c.667 0 18 39.667 52 119s68.167\n 158.667 102.5 238 51.833 119.333 52.5 120C810 373.333 980.667 17.667 982 11\nc4.667-7.333 11-11 19-11h398999v40H1012.333L741 607c-38.667 80.667-84 175-136\n 283s-89.167 185.333-111.5 232-33.833 70.333-34.5 71c-4.667 4.667-12.333 7-23\n 7l-12-1-109-253c-72.667-168-109.333-252-110-252-10.667 8-22 16.667-34 26-22\n 17.333-33.333 26-34 26l-26-26 76-59 76-60zM1001 0h398999v40H1012z",
 
     // size2 is from glyph U221A in the font KaTeX_Size2-Regular
-    sqrtSize2: 'M1001 0h398999v40H1013.084S929.667 308 749\n 880s-277 876.333-289 913c-4.667 4.667-12.667 7-24 7h-12c-1.333-3.333-3.667\n-11.667-7-25-35.333-125.333-106.667-373.333-214-744-10 12-21 25-33 39l-32 39\nc-6-5.333-15-14-27-26l25-30c26.667-32.667 52-63 76-91l52-60 208 722c56-175.333\n 126.333-397.333 211-666s153.833-488.167 207.5-658.5C944.167 129.167 975 32.667\n 983 10c4-6.667 10-10 18-10zm0 0h398999v40H1013z',
+    sqrtSize2: "M1001 0h398999v40H1013.084S929.667 308 749\n 880s-277 876.333-289 913c-4.667 4.667-12.667 7-24 7h-12c-1.333-3.333-3.667\n-11.667-7-25-35.333-125.333-106.667-373.333-214-744-10 12-21 25-33 39l-32 39\nc-6-5.333-15-14-27-26l25-30c26.667-32.667 52-63 76-91l52-60 208 722c56-175.333\n 126.333-397.333 211-666s153.833-488.167 207.5-658.5C944.167 129.167 975 32.667\n 983 10c4-6.667 10-10 18-10zm0 0h398999v40H1013z",
 
     // size3 is from glyph U221A in the font KaTeX_Size3-Regular
-    sqrtSize3: 'M424 2398c-1.333-.667-38.5-172-111.5-514 S202.667 1370.667 202\n 1370c0-2-10.667 14.333-32 49-4.667 7.333-9.833 15.667-15.5 25s-9.833 16-12.5\n 20l-5 7c-4-3.333-8.333-7.667-13-13l-13-13 76-122 77-121 209 968c0-2 84.667\n-361.667 254-1079C896.333 373.667 981.667 13.333 983 10c4-6.667 10-10 18-10\nh398999v40H1014.622S927.332 418.667 742 1206c-185.333 787.333-279.333 1182.333\n-282 1185-2 6-10 9-24 9-8 0-12-.667-12-2zM1001 0h398999v40H1014z',
+    sqrtSize3: "M424 2398c-1.333-.667-38.5-172-111.5-514 S202.667 1370.667 202\n 1370c0-2-10.667 14.333-32 49-4.667 7.333-9.833 15.667-15.5 25s-9.833 16-12.5\n 20l-5 7c-4-3.333-8.333-7.667-13-13l-13-13 76-122 77-121 209 968c0-2 84.667\n-361.667 254-1079C896.333 373.667 981.667 13.333 983 10c4-6.667 10-10 18-10\nh398999v40H1014.622S927.332 418.667 742 1206c-185.333 787.333-279.333 1182.333\n-282 1185-2 6-10 9-24 9-8 0-12-.667-12-2zM1001 0h398999v40H1014z",
 
     // size4 is from glyph U221A in the font KaTeX_Size4-Regular
-    sqrtSize4: 'M473 2713C812.333 913.667 982.333 13 983 11c3.333-7.333 9.333\n-11 18-11h399110v40H1017.698S927.168 518 741.5 1506C555.833 2494 462 2989 460\n 2991c-2 6-10 9-24 9-8 0-12-.667-12-2s-5.333-32-16-92c-50.667-293.333-119.667\n-693.333-207-1200 0-1.333-5.333 8.667-16 30l-32 64-16 33-26-26 76-153 77-151\nc.667.667 35.667 202 105 604 67.333 400.667 102 602.667 104 606z\nM1001 0h398999v40H1017z',
+    sqrtSize4: "M473 2713C812.333 913.667 982.333 13 983 11c3.333-7.333 9.333\n-11 18-11h399110v40H1017.698S927.168 518 741.5 1506C555.833 2494 462 2989 460\n 2991c-2 6-10 9-24 9-8 0-12-.667-12-2s-5.333-32-16-92c-50.667-293.333-119.667\n-693.333-207-1200 0-1.333-5.333 8.667-16 30l-32 64-16 33-26-26 76-153 77-151\nc.667.667 35.667 202 105 604 67.333 400.667 102 602.667 104 606z\nM1001 0h398999v40H1017z",
 
     // The doubleleftarrow geometry is from glyph U+21D0 in the font KaTeX Main
-    doubleleftarrow: 'M262 157\nl10-10c34-36 62.7-77 86-123 3.3-8 5-13.3 5-16 0-5.3-6.7-8-20-8-7.3\n 0-12.2.5-14.5 1.5-2.3 1-4.8 4.5-7.5 10.5-49.3 97.3-121.7 169.3-217 216-28\n 14-57.3 25-88 33-6.7 2-11 3.8-13 5.5-2 1.7-3 4.2-3 7.5s1 5.8 3 7.5\nc2 1.7 6.3 3.5 13 5.5 68 17.3 128.2 47.8 180.5 91.5 52.3 43.7 93.8 96.2 124.5\n 157.5 9.3 8 15.3 12.3 18 13h6c12-.7 18-4 18-10 0-2-1.7-7-5-15-23.3-46-52-87\n-86-123l-10-10h399738v-40H218c328 0 0 0 0 0l-10-8c-26.7-20-65.7-43-117-69 2.7\n-2 6-3.7 10-5 36.7-16 72.3-37.3 107-64l10-8h399782v-40z\nm8 0v40h399730v-40zm0 194v40h399730v-40z',
+    doubleleftarrow: "M262 157\nl10-10c34-36 62.7-77 86-123 3.3-8 5-13.3 5-16 0-5.3-6.7-8-20-8-7.3\n 0-12.2.5-14.5 1.5-2.3 1-4.8 4.5-7.5 10.5-49.3 97.3-121.7 169.3-217 216-28\n 14-57.3 25-88 33-6.7 2-11 3.8-13 5.5-2 1.7-3 4.2-3 7.5s1 5.8 3 7.5\nc2 1.7 6.3 3.5 13 5.5 68 17.3 128.2 47.8 180.5 91.5 52.3 43.7 93.8 96.2 124.5\n 157.5 9.3 8 15.3 12.3 18 13h6c12-.7 18-4 18-10 0-2-1.7-7-5-15-23.3-46-52-87\n-86-123l-10-10h399738v-40H218c328 0 0 0 0 0l-10-8c-26.7-20-65.7-43-117-69 2.7\n-2 6-3.7 10-5 36.7-16 72.3-37.3 107-64l10-8h399782v-40z\nm8 0v40h399730v-40zm0 194v40h399730v-40z",
 
     // doublerightarrow is from glyph U+21D2 in font KaTeX Main
-    doublerightarrow: 'M399738 392l\n-10 10c-34 36-62.7 77-86 123-3.3 8-5 13.3-5 16 0 5.3 6.7 8 20 8 7.3 0 12.2-.5\n 14.5-1.5 2.3-1 4.8-4.5 7.5-10.5 49.3-97.3 121.7-169.3 217-216 28-14 57.3-25 88\n-33 6.7-2 11-3.8 13-5.5 2-1.7 3-4.2 3-7.5s-1-5.8-3-7.5c-2-1.7-6.3-3.5-13-5.5-68\n-17.3-128.2-47.8-180.5-91.5-52.3-43.7-93.8-96.2-124.5-157.5-9.3-8-15.3-12.3-18\n-13h-6c-12 .7-18 4-18 10 0 2 1.7 7 5 15 23.3 46 52 87 86 123l10 10H0v40h399782\nc-328 0 0 0 0 0l10 8c26.7 20 65.7 43 117 69-2.7 2-6 3.7-10 5-36.7 16-72.3 37.3\n-107 64l-10 8H0v40zM0 157v40h399730v-40zm0 194v40h399730v-40z',
+    doublerightarrow: "M399738 392l\n-10 10c-34 36-62.7 77-86 123-3.3 8-5 13.3-5 16 0 5.3 6.7 8 20 8 7.3 0 12.2-.5\n 14.5-1.5 2.3-1 4.8-4.5 7.5-10.5 49.3-97.3 121.7-169.3 217-216 28-14 57.3-25 88\n-33 6.7-2 11-3.8 13-5.5 2-1.7 3-4.2 3-7.5s-1-5.8-3-7.5c-2-1.7-6.3-3.5-13-5.5-68\n-17.3-128.2-47.8-180.5-91.5-52.3-43.7-93.8-96.2-124.5-157.5-9.3-8-15.3-12.3-18\n-13h-6c-12 .7-18 4-18 10 0 2 1.7 7 5 15 23.3 46 52 87 86 123l10 10H0v40h399782\nc-328 0 0 0 0 0l10 8c26.7 20 65.7 43 117 69-2.7 2-6 3.7-10 5-36.7 16-72.3 37.3\n-107 64l-10 8H0v40zM0 157v40h399730v-40zm0 194v40h399730v-40z",
 
     // leftarrow is from glyph U+2190 in font KaTeX Main
-    leftarrow: 'M400000 241H110l3-3c68.7-52.7 113.7-120\n 135-202 4-14.7 6-23 6-25 0-7.3-7-11-21-11-8 0-13.2.8-15.5 2.5-2.3 1.7-4.2 5.8\n-5.5 12.5-1.3 4.7-2.7 10.3-4 17-12 48.7-34.8 92-68.5 130S65.3 228.3 18 247\nc-10 4-16 7.7-18 11 0 8.7 6 14.3 18 17 47.3 18.7 87.8 47 121.5 85S196 441.3 208\n 490c.7 2 1.3 5 2 9s1.2 6.7 1.5 8c.3 1.3 1 3.3 2 6s2.2 4.5 3.5 5.5c1.3 1 3.3\n 1.8 6 2.5s6 1 10 1c14 0 21-3.7 21-11 0-2-2-10.3-6-25-20-79.3-65-146.7-135-202\n l-3-3h399890zM100 241v40h399900v-40z',
+    leftarrow: "M400000 241H110l3-3c68.7-52.7 113.7-120\n 135-202 4-14.7 6-23 6-25 0-7.3-7-11-21-11-8 0-13.2.8-15.5 2.5-2.3 1.7-4.2 5.8\n-5.5 12.5-1.3 4.7-2.7 10.3-4 17-12 48.7-34.8 92-68.5 130S65.3 228.3 18 247\nc-10 4-16 7.7-18 11 0 8.7 6 14.3 18 17 47.3 18.7 87.8 47 121.5 85S196 441.3 208\n 490c.7 2 1.3 5 2 9s1.2 6.7 1.5 8c.3 1.3 1 3.3 2 6s2.2 4.5 3.5 5.5c1.3 1 3.3\n 1.8 6 2.5s6 1 10 1c14 0 21-3.7 21-11 0-2-2-10.3-6-25-20-79.3-65-146.7-135-202\n l-3-3h399890zM100 241v40h399900v-40z",
 
     // overbrace is from glyphs U+23A9/23A8/23A7 in font KaTeX_Size4-Regular
-    leftbrace: 'M6 548l-6-6v-35l6-11c56-104 135.3-181.3 238-232 57.3-28.7 117\n-45 179-50h399577v120H403c-43.3 7-81 15-113 26-100.7 33-179.7 91-237 174-2.7\n 5-6 9-10 13-.7 1-7.3 1-20 1H6z',
+    leftbrace: "M6 548l-6-6v-35l6-11c56-104 135.3-181.3 238-232 57.3-28.7 117\n-45 179-50h399577v120H403c-43.3 7-81 15-113 26-100.7 33-179.7 91-237 174-2.7\n 5-6 9-10 13-.7 1-7.3 1-20 1H6z",
 
-    leftbraceunder: 'M0 6l6-6h17c12.688 0 19.313.3 20 1 4 4 7.313 8.3 10 13\n 35.313 51.3 80.813 93.8 136.5 127.5 55.688 33.7 117.188 55.8 184.5 66.5.688\n 0 2 .3 4 1 18.688 2.7 76 4.3 172 5h399450v120H429l-6-1c-124.688-8-235-61.7\n-331-161C60.687 138.7 32.312 99.3 7 54L0 41V6z',
+    leftbraceunder: "M0 6l6-6h17c12.688 0 19.313.3 20 1 4 4 7.313 8.3 10 13\n 35.313 51.3 80.813 93.8 136.5 127.5 55.688 33.7 117.188 55.8 184.5 66.5.688\n 0 2 .3 4 1 18.688 2.7 76 4.3 172 5h399450v120H429l-6-1c-124.688-8-235-61.7\n-331-161C60.687 138.7 32.312 99.3 7 54L0 41V6z",
 
     // overgroup is from the MnSymbol package (public domain)
-    leftgroup: 'M400000 80\nH435C64 80 168.3 229.4 21 260c-5.9 1.2-18 0-18 0-2 0-3-1-3-3v-38C76 61 257 0\n 435 0h399565z',
+    leftgroup: "M400000 80\nH435C64 80 168.3 229.4 21 260c-5.9 1.2-18 0-18 0-2 0-3-1-3-3v-38C76 61 257 0\n 435 0h399565z",
 
-    leftgroupunder: 'M400000 262\nH435C64 262 168.3 112.6 21 82c-5.9-1.2-18 0-18 0-2 0-3 1-3 3v38c76 158 257 219\n 435 219h399565z',
+    leftgroupunder: "M400000 262\nH435C64 262 168.3 112.6 21 82c-5.9-1.2-18 0-18 0-2 0-3 1-3 3v38c76 158 257 219\n 435 219h399565z",
 
     // Harpoons are from glyph U+21BD in font KaTeX Main
-    leftharpoon: 'M0 267c.7 5.3 3 10 7 14h399993v-40H93c3.3\n-3.3 10.2-9.5 20.5-18.5s17.8-15.8 22.5-20.5c50.7-52 88-110.3 112-175 4-11.3 5\n-18.3 3-21-1.3-4-7.3-6-18-6-8 0-13 .7-15 2s-4.7 6.7-8 16c-42 98.7-107.3 174.7\n-196 228-6.7 4.7-10.7 8-12 10-1.3 2-2 5.7-2 11zm100-26v40h399900v-40z',
+    leftharpoon: "M0 267c.7 5.3 3 10 7 14h399993v-40H93c3.3\n-3.3 10.2-9.5 20.5-18.5s17.8-15.8 22.5-20.5c50.7-52 88-110.3 112-175 4-11.3 5\n-18.3 3-21-1.3-4-7.3-6-18-6-8 0-13 .7-15 2s-4.7 6.7-8 16c-42 98.7-107.3 174.7\n-196 228-6.7 4.7-10.7 8-12 10-1.3 2-2 5.7-2 11zm100-26v40h399900v-40z",
 
-    leftharpoonplus: 'M0 267c.7 5.3 3 10 7 14h399993v-40H93c3.3-3.3 10.2-9.5\n 20.5-18.5s17.8-15.8 22.5-20.5c50.7-52 88-110.3 112-175 4-11.3 5-18.3 3-21-1.3\n-4-7.3-6-18-6-8 0-13 .7-15 2s-4.7 6.7-8 16c-42 98.7-107.3 174.7-196 228-6.7 4.7\n-10.7 8-12 10-1.3 2-2 5.7-2 11zm100-26v40h399900v-40zM0 435v40h400000v-40z\nm0 0v40h400000v-40z',
+    leftharpoonplus: "M0 267c.7 5.3 3 10 7 14h399993v-40H93c3.3-3.3 10.2-9.5\n 20.5-18.5s17.8-15.8 22.5-20.5c50.7-52 88-110.3 112-175 4-11.3 5-18.3 3-21-1.3\n-4-7.3-6-18-6-8 0-13 .7-15 2s-4.7 6.7-8 16c-42 98.7-107.3 174.7-196 228-6.7 4.7\n-10.7 8-12 10-1.3 2-2 5.7-2 11zm100-26v40h399900v-40zM0 435v40h400000v-40z\nm0 0v40h400000v-40z",
 
-    leftharpoondown: 'M7 241c-4 4-6.333 8.667-7 14 0 5.333.667 9 2 11s5.333\n 5.333 12 10c90.667 54 156 130 196 228 3.333 10.667 6.333 16.333 9 17 2 .667 5\n 1 9 1h5c10.667 0 16.667-2 18-6 2-2.667 1-9.667-3-21-32-87.333-82.667-157.667\n-152-211l-3-3h399907v-40zM93 281 H400000 v-40L7 241z',
+    leftharpoondown: "M7 241c-4 4-6.333 8.667-7 14 0 5.333.667 9 2 11s5.333\n 5.333 12 10c90.667 54 156 130 196 228 3.333 10.667 6.333 16.333 9 17 2 .667 5\n 1 9 1h5c10.667 0 16.667-2 18-6 2-2.667 1-9.667-3-21-32-87.333-82.667-157.667\n-152-211l-3-3h399907v-40zM93 281 H400000 v-40L7 241z",
 
-    leftharpoondownplus: 'M7 435c-4 4-6.3 8.7-7 14 0 5.3.7 9 2 11s5.3 5.3 12\n 10c90.7 54 156 130 196 228 3.3 10.7 6.3 16.3 9 17 2 .7 5 1 9 1h5c10.7 0 16.7\n-2 18-6 2-2.7 1-9.7-3-21-32-87.3-82.7-157.7-152-211l-3-3h399907v-40H7zm93 0\nv40h399900v-40zM0 241v40h399900v-40zm0 0v40h399900v-40z',
+    leftharpoondownplus: "M7 435c-4 4-6.3 8.7-7 14 0 5.3.7 9 2 11s5.3 5.3 12\n 10c90.7 54 156 130 196 228 3.3 10.7 6.3 16.3 9 17 2 .7 5 1 9 1h5c10.7 0 16.7\n-2 18-6 2-2.7 1-9.7-3-21-32-87.3-82.7-157.7-152-211l-3-3h399907v-40H7zm93 0\nv40h399900v-40zM0 241v40h399900v-40zm0 0v40h399900v-40z",
 
     // hook is from glyph U+21A9 in font KaTeX Main
-    lefthook: 'M400000 281 H103s-33-11.2-61-33.5S0 197.3 0 164s14.2-61.2 42.5\n-83.5C70.8 58.2 104 47 142 47 c16.7 0 25 6.7 25 20 0 12-8.7 18.7-26 20-40 3.3\n-68.7 15.7-86 37-10 12-15 25.3-15 40 0 22.7 9.8 40.7 29.5 54 19.7 13.3 43.5 21\n 71.5 23h399859zM103 281v-40h399897v40z',
+    lefthook: "M400000 281 H103s-33-11.2-61-33.5S0 197.3 0 164s14.2-61.2 42.5\n-83.5C70.8 58.2 104 47 142 47 c16.7 0 25 6.7 25 20 0 12-8.7 18.7-26 20-40 3.3\n-68.7 15.7-86 37-10 12-15 25.3-15 40 0 22.7 9.8 40.7 29.5 54 19.7 13.3 43.5 21\n 71.5 23h399859zM103 281v-40h399897v40z",
 
-    leftlinesegment: 'M40 281 V428 H0 V94 H40 V241 H400000 v40z\nM40 281 V428 H0 V94 H40 V241 H400000 v40z',
+    leftlinesegment: "M40 281 V428 H0 V94 H40 V241 H400000 v40z\nM40 281 V428 H0 V94 H40 V241 H400000 v40z",
 
-    leftmapsto: 'M40 281 V448H0V74H40V241H400000v40z\nM40 281 V448H0V74H40V241H400000v40z',
+    leftmapsto: "M40 281 V448H0V74H40V241H400000v40z\nM40 281 V448H0V74H40V241H400000v40z",
 
     // tofrom is from glyph U+21C4 in font KaTeX AMS Regular
-    leftToFrom: 'M0 147h400000v40H0zm0 214c68 40 115.7 95.7 143 167h22c15.3 0 23\n-.3 23-1 0-1.3-5.3-13.7-16-37-18-35.3-41.3-69-70-101l-7-8h399905v-40H95l7-8\nc28.7-32 52-65.7 70-101 10.7-23.3 16-35.7 16-37 0-.7-7.7-1-23-1h-22C115.7 265.3\n 68 321 0 361zm0-174v-40h399900v40zm100 154v40h399900v-40z',
+    leftToFrom: "M0 147h400000v40H0zm0 214c68 40 115.7 95.7 143 167h22c15.3 0 23\n-.3 23-1 0-1.3-5.3-13.7-16-37-18-35.3-41.3-69-70-101l-7-8h399905v-40H95l7-8\nc28.7-32 52-65.7 70-101 10.7-23.3 16-35.7 16-37 0-.7-7.7-1-23-1h-22C115.7 265.3\n 68 321 0 361zm0-174v-40h399900v40zm100 154v40h399900v-40z",
 
-    longequal: 'M0 50 h400000 v40H0z m0 194h40000v40H0z\nM0 50 h400000 v40H0z m0 194h40000v40H0z',
+    longequal: "M0 50 h400000 v40H0z m0 194h40000v40H0z\nM0 50 h400000 v40H0z m0 194h40000v40H0z",
 
-    midbrace: 'M200428 334\nc-100.7-8.3-195.3-44-280-108-55.3-42-101.7-93-139-153l-9-14c-2.7 4-5.7 8.7-9 14\n-53.3 86.7-123.7 153-211 199-66.7 36-137.3 56.3-212 62H0V214h199568c178.3-11.7\n 311.7-78.3 403-201 6-8 9.7-12 11-12 .7-.7 6.7-1 18-1s17.3.3 18 1c1.3 0 5 4 11\n 12 44.7 59.3 101.3 106.3 170 141s145.3 54.3 229 60h199572v120z',
+    midbrace: "M200428 334\nc-100.7-8.3-195.3-44-280-108-55.3-42-101.7-93-139-153l-9-14c-2.7 4-5.7 8.7-9 14\n-53.3 86.7-123.7 153-211 199-66.7 36-137.3 56.3-212 62H0V214h199568c178.3-11.7\n 311.7-78.3 403-201 6-8 9.7-12 11-12 .7-.7 6.7-1 18-1s17.3.3 18 1c1.3 0 5 4 11\n 12 44.7 59.3 101.3 106.3 170 141s145.3 54.3 229 60h199572v120z",
 
-    midbraceunder: 'M199572 214\nc100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14\n 53.3-86.7 123.7-153 211-199 66.7-36 137.3-56.3 212-62h199568v120H200432c-178.3\n 11.7-311.7 78.3-403 201-6 8-9.7 12-11 12-.7.7-6.7 1-18 1s-17.3-.3-18-1c-1.3 0\n-5-4-11-12-44.7-59.3-101.3-106.3-170-141s-145.3-54.3-229-60H0V214z',
+    midbraceunder: "M199572 214\nc100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14\n 53.3-86.7 123.7-153 211-199 66.7-36 137.3-56.3 212-62h199568v120H200432c-178.3\n 11.7-311.7 78.3-403 201-6 8-9.7 12-11 12-.7.7-6.7 1-18 1s-17.3-.3-18-1c-1.3 0\n-5-4-11-12-44.7-59.3-101.3-106.3-170-141s-145.3-54.3-229-60H0V214z",
 
-    rightarrow: 'M0 241v40h399891c-47.3 35.3-84 78-110 128\n-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20\n 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7\n 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85\n-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5\n-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67\n 151.7 139 205zm0 0v40h399900v-40z',
+    rightarrow: "M0 241v40h399891c-47.3 35.3-84 78-110 128\n-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20\n 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7\n 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85\n-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5\n-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67\n 151.7 139 205zm0 0v40h399900v-40z",
 
-    rightbrace: 'M400000 542l\n-6 6h-17c-12.7 0-19.3-.3-20-1-4-4-7.3-8.3-10-13-35.3-51.3-80.8-93.8-136.5-127.5\ns-117.2-55.8-184.5-66.5c-.7 0-2-.3-4-1-18.7-2.7-76-4.3-172-5H0V214h399571l6 1\nc124.7 8 235 61.7 331 161 31.3 33.3 59.7 72.7 85 118l7 13v35z',
+    rightbrace: "M400000 542l\n-6 6h-17c-12.7 0-19.3-.3-20-1-4-4-7.3-8.3-10-13-35.3-51.3-80.8-93.8-136.5-127.5\ns-117.2-55.8-184.5-66.5c-.7 0-2-.3-4-1-18.7-2.7-76-4.3-172-5H0V214h399571l6 1\nc124.7 8 235 61.7 331 161 31.3 33.3 59.7 72.7 85 118l7 13v35z",
 
-    rightbraceunder: 'M399994 0l6 6v35l-6 11c-56 104-135.3 181.3-238 232-57.3\n 28.7-117 45-179 50H-300V214h399897c43.3-7 81-15 113-26 100.7-33 179.7-91 237\n-174 2.7-5 6-9 10-13 .7-1 7.3-1 20-1h17z',
+    rightbraceunder: "M399994 0l6 6v35l-6 11c-56 104-135.3 181.3-238 232-57.3\n 28.7-117 45-179 50H-300V214h399897c43.3-7 81-15 113-26 100.7-33 179.7-91 237\n-174 2.7-5 6-9 10-13 .7-1 7.3-1 20-1h17z",
 
-    rightgroup: 'M0 80h399565c371 0 266.7 149.4 414 180 5.9 1.2 18 0 18 0 2 0\n 3-1 3-3v-38c-76-158-257-219-435-219H0z',
+    rightgroup: "M0 80h399565c371 0 266.7 149.4 414 180 5.9 1.2 18 0 18 0 2 0\n 3-1 3-3v-38c-76-158-257-219-435-219H0z",
 
-    rightgroupunder: 'M0 262h399565c371 0 266.7-149.4 414-180 5.9-1.2 18 0 18\n 0 2 0 3 1 3 3v38c-76 158-257 219-435 219H0z',
+    rightgroupunder: "M0 262h399565c371 0 266.7-149.4 414-180 5.9-1.2 18 0 18\n 0 2 0 3 1 3 3v38c-76 158-257 219-435 219H0z",
 
-    rightharpoon: 'M0 241v40h399993c4.7-4.7 7-9.3 7-14 0-9.3\n-3.7-15.3-11-18-92.7-56.7-159-133.7-199-231-3.3-9.3-6-14.7-8-16-2-1.3-7-2-15-2\n-10.7 0-16.7 2-18 6-2 2.7-1 9.7 3 21 15.3 42 36.7 81.8 64 119.5 27.3 37.7 58\n 69.2 92 94.5zm0 0v40h399900v-40z',
+    rightharpoon: "M0 241v40h399993c4.7-4.7 7-9.3 7-14 0-9.3\n-3.7-15.3-11-18-92.7-56.7-159-133.7-199-231-3.3-9.3-6-14.7-8-16-2-1.3-7-2-15-2\n-10.7 0-16.7 2-18 6-2 2.7-1 9.7 3 21 15.3 42 36.7 81.8 64 119.5 27.3 37.7 58\n 69.2 92 94.5zm0 0v40h399900v-40z",
 
-    rightharpoonplus: 'M0 241v40h399993c4.7-4.7 7-9.3 7-14 0-9.3-3.7-15.3-11\n-18-92.7-56.7-159-133.7-199-231-3.3-9.3-6-14.7-8-16-2-1.3-7-2-15-2-10.7 0-16.7\n 2-18 6-2 2.7-1 9.7 3 21 15.3 42 36.7 81.8 64 119.5 27.3 37.7 58 69.2 92 94.5z\nm0 0v40h399900v-40z m100 194v40h399900v-40zm0 0v40h399900v-40z',
+    rightharpoonplus: "M0 241v40h399993c4.7-4.7 7-9.3 7-14 0-9.3-3.7-15.3-11\n-18-92.7-56.7-159-133.7-199-231-3.3-9.3-6-14.7-8-16-2-1.3-7-2-15-2-10.7 0-16.7\n 2-18 6-2 2.7-1 9.7 3 21 15.3 42 36.7 81.8 64 119.5 27.3 37.7 58 69.2 92 94.5z\nm0 0v40h399900v-40z m100 194v40h399900v-40zm0 0v40h399900v-40z",
 
-    rightharpoondown: 'M399747 511c0 7.3 6.7 11 20 11 8 0 13-.8 15-2.5s4.7-6.8\n 8-15.5c40-94 99.3-166.3 178-217 13.3-8 20.3-12.3 21-13 5.3-3.3 8.5-5.8 9.5\n-7.5 1-1.7 1.5-5.2 1.5-10.5s-2.3-10.3-7-15H0v40h399908c-34 25.3-64.7 57-92 95\n-27.3 38-48.7 77.7-64 119-3.3 8.7-5 14-5 16zM0 241v40h399900v-40z',
+    rightharpoondown: "M399747 511c0 7.3 6.7 11 20 11 8 0 13-.8 15-2.5s4.7-6.8\n 8-15.5c40-94 99.3-166.3 178-217 13.3-8 20.3-12.3 21-13 5.3-3.3 8.5-5.8 9.5\n-7.5 1-1.7 1.5-5.2 1.5-10.5s-2.3-10.3-7-15H0v40h399908c-34 25.3-64.7 57-92 95\n-27.3 38-48.7 77.7-64 119-3.3 8.7-5 14-5 16zM0 241v40h399900v-40z",
 
-    rightharpoondownplus: 'M399747 705c0 7.3 6.7 11 20 11 8 0 13-.8\n 15-2.5s4.7-6.8 8-15.5c40-94 99.3-166.3 178-217 13.3-8 20.3-12.3 21-13 5.3-3.3\n 8.5-5.8 9.5-7.5 1-1.7 1.5-5.2 1.5-10.5s-2.3-10.3-7-15H0v40h399908c-34 25.3\n-64.7 57-92 95-27.3 38-48.7 77.7-64 119-3.3 8.7-5 14-5 16zM0 435v40h399900v-40z\nm0-194v40h400000v-40zm0 0v40h400000v-40z',
+    rightharpoondownplus: "M399747 705c0 7.3 6.7 11 20 11 8 0 13-.8\n 15-2.5s4.7-6.8 8-15.5c40-94 99.3-166.3 178-217 13.3-8 20.3-12.3 21-13 5.3-3.3\n 8.5-5.8 9.5-7.5 1-1.7 1.5-5.2 1.5-10.5s-2.3-10.3-7-15H0v40h399908c-34 25.3\n-64.7 57-92 95-27.3 38-48.7 77.7-64 119-3.3 8.7-5 14-5 16zM0 435v40h399900v-40z\nm0-194v40h400000v-40zm0 0v40h400000v-40z",
 
-    righthook: 'M399859 241c-764 0 0 0 0 0 40-3.3 68.7-15.7 86-37 10-12 15-25.3\n 15-40 0-22.7-9.8-40.7-29.5-54-19.7-13.3-43.5-21-71.5-23-17.3-1.3-26-8-26-20 0\n-13.3 8.7-20 26-20 38 0 71 11.2 99 33.5 0 0 7 5.6 21 16.7 14 11.2 21 33.5 21\n 66.8s-14 61.2-42 83.5c-28 22.3-61 33.5-99 33.5L0 241z M0 281v-40h399859v40z',
+    righthook: "M399859 241c-764 0 0 0 0 0 40-3.3 68.7-15.7 86-37 10-12 15-25.3\n 15-40 0-22.7-9.8-40.7-29.5-54-19.7-13.3-43.5-21-71.5-23-17.3-1.3-26-8-26-20 0\n-13.3 8.7-20 26-20 38 0 71 11.2 99 33.5 0 0 7 5.6 21 16.7 14 11.2 21 33.5 21\n 66.8s-14 61.2-42 83.5c-28 22.3-61 33.5-99 33.5L0 241z M0 281v-40h399859v40z",
 
-    rightlinesegment: 'M399960 241 V94 h40 V428 h-40 V281 H0 v-40z\nM399960 241 V94 h40 V428 h-40 V281 H0 v-40z',
+    rightlinesegment: "M399960 241 V94 h40 V428 h-40 V281 H0 v-40z\nM399960 241 V94 h40 V428 h-40 V281 H0 v-40z",
 
-    rightToFrom: 'M400000 167c-70.7-42-118-97.7-142-167h-23c-15.3 0-23 .3-23\n 1 0 1.3 5.3 13.7 16 37 18 35.3 41.3 69 70 101l7 8H0v40h399905l-7 8c-28.7 32\n-52 65.7-70 101-10.7 23.3-16 35.7-16 37 0 .7 7.7 1 23 1h23c24-69.3 71.3-125 142\n-167z M100 147v40h399900v-40zM0 341v40h399900v-40z',
+    rightToFrom: "M400000 167c-70.7-42-118-97.7-142-167h-23c-15.3 0-23 .3-23\n 1 0 1.3 5.3 13.7 16 37 18 35.3 41.3 69 70 101l7 8H0v40h399905l-7 8c-28.7 32\n-52 65.7-70 101-10.7 23.3-16 35.7-16 37 0 .7 7.7 1 23 1h23c24-69.3 71.3-125 142\n-167z M100 147v40h399900v-40zM0 341v40h399900v-40z",
 
     // twoheadleftarrow is from glyph U+219E in font KaTeX AMS Regular
-    twoheadleftarrow: 'M0 167c68 40\n 115.7 95.7 143 167h22c15.3 0 23-.3 23-1 0-1.3-5.3-13.7-16-37-18-35.3-41.3-69\n-70-101l-7-8h125l9 7c50.7 39.3 85 86 103 140h46c0-4.7-6.3-18.7-19-42-18-35.3\n-40-67.3-66-96l-9-9h399716v-40H284l9-9c26-28.7 48-60.7 66-96 12.7-23.333 19\n-37.333 19-42h-46c-18 54-52.3 100.7-103 140l-9 7H95l7-8c28.7-32 52-65.7 70-101\n 10.7-23.333 16-35.7 16-37 0-.7-7.7-1-23-1h-22C115.7 71.3 68 127 0 167z',
+    twoheadleftarrow: "M0 167c68 40\n 115.7 95.7 143 167h22c15.3 0 23-.3 23-1 0-1.3-5.3-13.7-16-37-18-35.3-41.3-69\n-70-101l-7-8h125l9 7c50.7 39.3 85 86 103 140h46c0-4.7-6.3-18.7-19-42-18-35.3\n-40-67.3-66-96l-9-9h399716v-40H284l9-9c26-28.7 48-60.7 66-96 12.7-23.333 19\n-37.333 19-42h-46c-18 54-52.3 100.7-103 140l-9 7H95l7-8c28.7-32 52-65.7 70-101\n 10.7-23.333 16-35.7 16-37 0-.7-7.7-1-23-1h-22C115.7 71.3 68 127 0 167z",
 
-    twoheadrightarrow: 'M400000 167\nc-68-40-115.7-95.7-143-167h-22c-15.3 0-23 .3-23 1 0 1.3 5.3 13.7 16 37 18 35.3\n 41.3 69 70 101l7 8h-125l-9-7c-50.7-39.3-85-86-103-140h-46c0 4.7 6.3 18.7 19 42\n 18 35.3 40 67.3 66 96l9 9H0v40h399716l-9 9c-26 28.7-48 60.7-66 96-12.7 23.333\n-19 37.333-19 42h46c18-54 52.3-100.7 103-140l9-7h125l-7 8c-28.7 32-52 65.7-70\n 101-10.7 23.333-16 35.7-16 37 0 .7 7.7 1 23 1h22c27.3-71.3 75-127 143-167z',
+    twoheadrightarrow: "M400000 167\nc-68-40-115.7-95.7-143-167h-22c-15.3 0-23 .3-23 1 0 1.3 5.3 13.7 16 37 18 35.3\n 41.3 69 70 101l7 8h-125l-9-7c-50.7-39.3-85-86-103-140h-46c0 4.7 6.3 18.7 19 42\n 18 35.3 40 67.3 66 96l9 9H0v40h399716l-9 9c-26 28.7-48 60.7-66 96-12.7 23.333\n-19 37.333-19 42h46c18-54 52.3-100.7 103-140l9-7h125l-7 8c-28.7 32-52 65.7-70\n 101-10.7 23.333-16 35.7-16 37 0 .7 7.7 1 23 1h22c27.3-71.3 75-127 143-167z",
 
     // tilde1 is a modified version of a glyph from the MnSymbol package
-    tilde1: 'M200 55.538c-77 0-168 73.953-177 73.953-3 0-7\n-2.175-9-5.437L2 97c-1-2-2-4-2-6 0-4 2-7 5-9l20-12C116 12 171 0 207 0c86 0\n 114 68 191 68 78 0 168-68 177-68 4 0 7 2 9 5l12 19c1 2.175 2 4.35 2 6.525 0\n 4.35-2 7.613-5 9.788l-19 13.05c-92 63.077-116.937 75.308-183 76.128\n-68.267.847-113-73.952-191-73.952z',
+    tilde1: "M200 55.538c-77 0-168 73.953-177 73.953-3 0-7\n-2.175-9-5.437L2 97c-1-2-2-4-2-6 0-4 2-7 5-9l20-12C116 12 171 0 207 0c86 0\n 114 68 191 68 78 0 168-68 177-68 4 0 7 2 9 5l12 19c1 2.175 2 4.35 2 6.525 0\n 4.35-2 7.613-5 9.788l-19 13.05c-92 63.077-116.937 75.308-183 76.128\n-68.267.847-113-73.952-191-73.952z",
 
     // ditto tilde2, tilde3, & tilde4
-    tilde2: 'M344 55.266c-142 0-300.638 81.316-311.5 86.418\n-8.01 3.762-22.5 10.91-23.5 5.562L1 120c-1-2-1-3-1-4 0-5 3-9 8-10l18.4-9C160.9\n 31.9 283 0 358 0c148 0 188 122 331 122s314-97 326-97c4 0 8 2 10 7l7 21.114\nc1 2.14 1 3.21 1 4.28 0 5.347-3 9.626-7 10.696l-22.3 12.622C852.6 158.372 751\n 181.476 676 181.476c-149 0-189-126.21-332-126.21z',
+    tilde2: "M344 55.266c-142 0-300.638 81.316-311.5 86.418\n-8.01 3.762-22.5 10.91-23.5 5.562L1 120c-1-2-1-3-1-4 0-5 3-9 8-10l18.4-9C160.9\n 31.9 283 0 358 0c148 0 188 122 331 122s314-97 326-97c4 0 8 2 10 7l7 21.114\nc1 2.14 1 3.21 1 4.28 0 5.347-3 9.626-7 10.696l-22.3 12.622C852.6 158.372 751\n 181.476 676 181.476c-149 0-189-126.21-332-126.21z",
 
-    tilde3: 'M786 59C457 59 32 175.242 13 175.242c-6 0-10-3.457\n-11-10.37L.15 138c-1-7 3-12 10-13l19.2-6.4C378.4 40.7 634.3 0 804.3 0c337 0\n 411.8 157 746.8 157 328 0 754-112 773-112 5 0 10 3 11 9l1 14.075c1 8.066-.697\n 16.595-6.697 17.492l-21.052 7.31c-367.9 98.146-609.15 122.696-778.15 122.696\n -338 0-409-156.573-744-156.573z',
+    tilde3: "M786 59C457 59 32 175.242 13 175.242c-6 0-10-3.457\n-11-10.37L.15 138c-1-7 3-12 10-13l19.2-6.4C378.4 40.7 634.3 0 804.3 0c337 0\n 411.8 157 746.8 157 328 0 754-112 773-112 5 0 10 3 11 9l1 14.075c1 8.066-.697\n 16.595-6.697 17.492l-21.052 7.31c-367.9 98.146-609.15 122.696-778.15 122.696\n -338 0-409-156.573-744-156.573z",
 
-    tilde4: 'M786 58C457 58 32 177.487 13 177.487c-6 0-10-3.345\n-11-10.035L.15 143c-1-7 3-12 10-13l22-6.7C381.2 35 637.15 0 807.15 0c337 0 409\n 177 744 177 328 0 754-127 773-127 5 0 10 3 11 9l1 14.794c1 7.805-3 13.38-9\n 14.495l-20.7 5.574c-366.85 99.79-607.3 139.372-776.3 139.372-338 0-409\n -175.236-744-175.236z',
+    tilde4: "M786 58C457 58 32 177.487 13 177.487c-6 0-10-3.345\n-11-10.035L.15 143c-1-7 3-12 10-13l22-6.7C381.2 35 637.15 0 807.15 0c337 0 409\n 177 744 177 328 0 754-127 773-127 5 0 10 3 11 9l1 14.794c1 7.805-3 13.38-9\n 14.495l-20.7 5.574c-366.85 99.79-607.3 139.372-776.3 139.372-338 0-409\n -175.236-744-175.236z",
 
     // vec is from glyph U+20D7 in font KaTeX Main
-    vec: 'M377 20c0-5.333 1.833-10 5.5-14S391 0 397 0c4.667 0 8.667 1.667 12 5\n3.333 2.667 6.667 9 10 19 6.667 24.667 20.333 43.667 41 57 7.333 4.667 11\n10.667 11 18 0 6-1 10-3 12s-6.667 5-14 9c-28.667 14.667-53.667 35.667-75 63\n-1.333 1.333-3.167 3.5-5.5 6.5s-4 4.833-5 5.5c-1 .667-2.5 1.333-4.5 2s-4.333 1\n-7 1c-4.667 0-9.167-1.833-13.5-5.5S337 184 337 178c0-12.667 15.667-32.333 47-59\nH213l-171-1c-8.667-6-13-12.333-13-19 0-4.667 4.333-11.333 13-20h359\nc-16-25.333-24-45-24-59z',
+    vec: "M377 20c0-5.333 1.833-10 5.5-14S391 0 397 0c4.667 0 8.667 1.667 12 5\n3.333 2.667 6.667 9 10 19 6.667 24.667 20.333 43.667 41 57 7.333 4.667 11\n10.667 11 18 0 6-1 10-3 12s-6.667 5-14 9c-28.667 14.667-53.667 35.667-75 63\n-1.333 1.333-3.167 3.5-5.5 6.5s-4 4.833-5 5.5c-1 .667-2.5 1.333-4.5 2s-4.333 1\n-7 1c-4.667 0-9.167-1.833-13.5-5.5S337 184 337 178c0-12.667 15.667-32.333 47-59\nH213l-171-1c-8.667-6-13-12.333-13-19 0-4.667 4.333-11.333 13-20h359\nc-16-25.333-24-45-24-59z",
 
     // widehat1 is a modified version of a glyph from the MnSymbol package
-    widehat1: 'M529 0h5l519 115c5 1 9 5 9 10 0 1-1 2-1 3l-4 22\nc-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z',
+    widehat1: "M529 0h5l519 115c5 1 9 5 9 10 0 1-1 2-1 3l-4 22\nc-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z",
 
     // ditto widehat2, widehat3, & widehat4
-    widehat2: 'M1181 0h2l1171 176c6 0 10 5 10 11l-2 23c-1 6-5 10\n-11 10h-1L1182 67 15 220h-1c-6 0-10-4-11-10l-2-23c-1-6 4-11 10-11z',
+    widehat2: "M1181 0h2l1171 176c6 0 10 5 10 11l-2 23c-1 6-5 10\n-11 10h-1L1182 67 15 220h-1c-6 0-10-4-11-10l-2-23c-1-6 4-11 10-11z",
 
-    widehat3: 'M1181 0h2l1171 236c6 0 10 5 10 11l-2 23c-1 6-5 10\n-11 10h-1L1182 67 15 280h-1c-6 0-10-4-11-10l-2-23c-1-6 4-11 10-11z',
+    widehat3: "M1181 0h2l1171 236c6 0 10 5 10 11l-2 23c-1 6-5 10\n-11 10h-1L1182 67 15 280h-1c-6 0-10-4-11-10l-2-23c-1-6 4-11 10-11z",
 
-    widehat4: 'M1181 0h2l1171 296c6 0 10 5 10 11l-2 23c-1 6-5 10\n-11 10h-1L1182 67 15 340h-1c-6 0-10-4-11-10l-2-23c-1-6 4-11 10-11z'
+    widehat4: "M1181 0h2l1171 296c6 0 10 5 10 11l-2 23c-1 6-5 10\n-11 10h-1L1182 67 15 340h-1c-6 0-10-4-11-10l-2-23c-1-6 4-11 10-11z"
 };
 
 exports.default = { path: path };
 
-},{}],125:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14490,8 +14625,18 @@ defineSymbol(math, main, accent, "\u02C7", "\\check");
 defineSymbol(math, main, accent, "^", "\\hat");
 defineSymbol(math, main, accent, "\u20D7", "\\vec");
 defineSymbol(math, main, accent, "\u02D9", "\\dot");
-defineSymbol(math, main, mathord, "\u0131", "\\imath");
-defineSymbol(math, main, mathord, "\u0237", "\\jmath");
+defineSymbol(math, main, mathord, "\u0131", "\\imath", true);
+defineSymbol(math, main, mathord, "\u0237", "\\jmath", true);
+defineSymbol(text, main, textord, "\u0131", "\\i", true);
+defineSymbol(text, main, textord, "\u0237", "\\j", true);
+defineSymbol(text, main, textord, "\xDF", "\\ss", true);
+defineSymbol(text, main, textord, "\xE6", "\\ae", true);
+defineSymbol(text, main, textord, "\xE6", "\\ae", true);
+defineSymbol(text, main, textord, "\u0153", "\\oe", true);
+defineSymbol(text, main, textord, "\xF8", "\\o", true);
+defineSymbol(text, main, textord, "\xC6", "\\AE", true);
+defineSymbol(text, main, textord, "\u0152", "\\OE", true);
+defineSymbol(text, main, textord, "\xD8", "\\O", true);
 defineSymbol(text, main, accent, "\u02CA", "\\'"); // acute
 defineSymbol(text, main, accent, "\u02CB", "\\`"); // grave
 defineSymbol(text, main, accent, "\u02C6", "\\^"); // circumflex
@@ -14523,7 +14668,7 @@ defineSymbol(text, main, textord, "\xB0", "\\degree");
 defineSymbol(math, main, mathord, "\xA3", "\\pounds");
 defineSymbol(math, main, mathord, "\xA3", "\\mathsterling", true);
 defineSymbol(text, main, mathord, "\xA3", "\\pounds");
-defineSymbol(text, main, mathord, "\xA3", "\\textsterling");
+defineSymbol(text, main, mathord, "\xA3", "\\textsterling", true);
 defineSymbol(math, ams, textord, "\u2720", "\\maltese");
 defineSymbol(text, ams, textord, "\u2720", "\\maltese");
 
@@ -14555,29 +14700,26 @@ for (var _i2 = 0; _i2 < letters.length; _i2++) {
     defineSymbol(text, main, textord, _ch2, _ch2);
 }
 
-// Latin-1 letters
-for (var _i3 = 0x00C0; _i3 <= 0x00D6; _i3++) {
-    var _ch3 = String.fromCharCode(_i3);
+// We add these Latin-1 letters as symbols for backwards-compatibility,
+// but they are not actually in the font, nor are they supported by the
+// Unicode accent mechanism, so they fall back to Times font and look ugly.
+// TODO(edemaine): Fix this.
+var extraLatin = "ÇÐÞçðþ";
+for (var _i3 = 0; _i3 < extraLatin.length; _i3++) {
+    var _ch3 = extraLatin.charAt(_i3);
     defineSymbol(math, main, mathord, _ch3, _ch3);
     defineSymbol(text, main, textord, _ch3, _ch3);
 }
-
-for (var _i4 = 0x00D8; _i4 <= 0x00F6; _i4++) {
-    var _ch4 = String.fromCharCode(_i4);
+var extraLatinMath = "Åå";
+for (var _i4 = 0; _i4 < extraLatinMath.length; _i4++) {
+    var _ch4 = extraLatinMath.charAt(_i4);
     defineSymbol(math, main, mathord, _ch4, _ch4);
-    defineSymbol(text, main, textord, _ch4, _ch4);
-}
-
-for (var _i5 = 0x00F8; _i5 <= 0x00FF; _i5++) {
-    var _ch5 = String.fromCharCode(_i5);
-    defineSymbol(math, main, mathord, _ch5, _ch5);
-    defineSymbol(text, main, textord, _ch5, _ch5);
 }
 
 // Cyrillic
-for (var _i6 = 0x0410; _i6 <= 0x044F; _i6++) {
-    var _ch6 = String.fromCharCode(_i6);
-    defineSymbol(text, main, textord, _ch6, _ch6);
+for (var _i5 = 0x0410; _i5 <= 0x044F; _i5++) {
+    var _ch5 = String.fromCharCode(_i5);
+    defineSymbol(text, main, textord, _ch5, _ch5);
 }
 
 // Unicode versions of existing characters
@@ -14588,25 +14730,511 @@ defineSymbol(text, main, textord, "\u2019", "’");
 defineSymbol(text, main, textord, "\u201C", "“");
 defineSymbol(text, main, textord, "\u201D", "”");
 
-},{}],126:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
+'use strict';
+
+// Mapping of Unicode accent characters to their LaTeX equivalent in text and
+// math mode (when they exist).
+
+// NOTE: This module needs to be written with Node-style modules (not
+// ES6 modules) so that unicodeMake.js (a Node application) can import it.
+module.exports = {
+    '\u0301': { text: "\\'", math: '\\acute' },
+    '\u0300': { text: '\\`', math: '\\grave' },
+    '\u0308': { text: '\\"', math: '\\ddot' },
+    '\u0303': { text: '\\~', math: '\\tilde' },
+    '\u0304': { text: '\\=', math: '\\bar' },
+    '\u0306': { text: '\\u', math: '\\breve' },
+    '\u030C': { text: '\\v', math: '\\check' },
+    '\u0302': { text: '\\^', math: '\\hat' },
+    '\u0307': { text: '\\.', math: '\\dot' },
+    '\u030A': { text: '\\r' },
+    '\u030B': { text: '\\H' }
+};
+
+},{}],130:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
+
+var _getIterator2 = require('babel-runtime/core-js/get-iterator');
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+exports.scriptFromCodepoint = scriptFromCodepoint;
+exports.supportedCodepoint = supportedCodepoint;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Unicode block data for the families of scripts we support.
+ */
+var scriptData = [{
+    // Chinese and Japanese.
+    // The "k" in cjk is for Korean, but we've separated Korean out
+    name: "cjk",
+    blocks: [[0x3000, 0x30FF], // CJK symbols and punctuation, Hiragana, Katakana
+    [0x4E00, 0x9FAF], // CJK ideograms
+    [0xFF00, 0xFF60]]
+}, {
+    // Korean
+    name: 'hangul',
+    blocks: [[0xAC00, 0xD7AF]]
+}, {
+    // The Brahmic scripts of South and Southeast Asia
+    // Devanagari (0900–097F)
+    // Bengali (0980–09FF)
+    // Gurmukhi (0A00–0A7F)
+    // Gujarati (0A80–0AFF)
+    // Oriya (0B00–0B7F)
+    // Tamil (0B80–0BFF)
+    // Telugu (0C00–0C7F)
+    // Kannada (0C80–0CFF)
+    // Malayalam (0D00–0D7F)
+    // Sinhala (0D80–0DFF)
+    // Thai (0E00–0E7F)
+    // Lao (0E80–0EFF)
+    // Tibetan (0F00–0FFF)
+    // Myanmar (1000–109F)
+    name: 'brahmic',
+    blocks: [[0x0900, 0x109F]]
+}];
+
+/**
+ * Given a codepoint, return the name of the script or script family
+ * it is from, or null if it is not part of a known block
+ */
+
+
+/*
+ * This file defines the Unicode scripts and script families that we
+ * support. To add new scripts or families, just add a new entry to the
+ * scriptData array below. Adding scripts to the scriptData array allows
+ * characters from that script to appear in \text{} environments.
+ */
+
+/**
+ * Each script or script family has a name and an array of blocks.
+ * Each block is an array of two numbers which specify the start and
+ * end points (inclusive) of a block of Unicode codepoints.
+ */
+function scriptFromCodepoint(codepoint) {
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = (0, _getIterator3.default)(scriptData), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var script = _step.value;
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = (0, _getIterator3.default)(script.blocks), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var block = _step2.value;
+
+                    if (codepoint >= block[0] && codepoint <= block[1]) {
+                        return script.name;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    return null;
+}
+
+/**
+ * A flattened version of all the supported blocks in a single array.
+ * This is an optimization to make supportedCodepoint() fast.
+ */
+var allBlocks = [];
+scriptData.forEach(function (s) {
+    return s.blocks.forEach(function (b) {
+        return allBlocks.push.apply(allBlocks, (0, _toConsumableArray3.default)(b));
+    });
+});
+
+/**
+ * Given a codepoint, return true if it falls within one of the
+ * scripts or script families defined above and false otherwise.
+ *
+ * Micro benchmarks shows that this is faster than
+ * /[\u3000-\u30FF\u4E00-\u9FAF\uFF00-\uFF60\uAC00-\uD7AF\u0900-\u109F]/.test()
+ * in Firefox, Chrome and Node.
+ */
+function supportedCodepoint(codepoint) {
+    for (var i = 0; i < allBlocks.length; i += 2) {
+        if (codepoint >= allBlocks[i] && codepoint <= allBlocks[i + 1]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+},{"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/toConsumableArray":11}],131:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var hangulRegex = exports.hangulRegex = /[\uAC00-\uD7AF]/;
+// This file is GENERATED by unicodeMake.js. DO NOT MODIFY.
 
-// This regex combines
-// - CJK symbols and punctuation: [\u3000-\u303F]
-// - Hiragana: [\u3040-\u309F]
-// - Katakana: [\u30A0-\u30FF]
-// - CJK ideograms: [\u4E00-\u9FAF]
-// - Hangul syllables: [\uAC00-\uD7AF]
-// - Fullwidth punctuation: [\uFF00-\uFF60]
-// Notably missing are halfwidth Katakana and Romanji glyphs.
-var cjkRegex = exports.cjkRegex = /[\u3000-\u30FF\u4E00-\u9FAF\uAC00-\uD7AF\uFF00-\uFF60]/;
+exports.default = {
+    "\xE1": "a\u0301", // á = \'{a}
+    "\xE0": "a\u0300", // à = \`{a}
+    "\xE4": "a\u0308", // ä = \"{a}
+    "\u01DF": "a\u0308\u0304", // ǟ = \"\={a}
+    "\xE3": "a\u0303", // ã = \~{a}
+    "\u0101": "a\u0304", // ā = \={a}
+    "\u0103": "a\u0306", // ă = \u{a}
+    "\u1EAF": "a\u0306\u0301", // ắ = \u\'{a}
+    "\u1EB1": "a\u0306\u0300", // ằ = \u\`{a}
+    "\u1EB5": "a\u0306\u0303", // ẵ = \u\~{a}
+    "\u01CE": "a\u030C", // ǎ = \v{a}
+    "\xE2": "a\u0302", // â = \^{a}
+    "\u1EA5": "a\u0302\u0301", // ấ = \^\'{a}
+    "\u1EA7": "a\u0302\u0300", // ầ = \^\`{a}
+    "\u1EAB": "a\u0302\u0303", // ẫ = \^\~{a}
+    "\u0227": "a\u0307", // ȧ = \.{a}
+    "\u01E1": "a\u0307\u0304", // ǡ = \.\={a}
+    "\xE5": "a\u030A", // å = \r{a}
+    "\u01FB": "a\u030A\u0301", // ǻ = \r\'{a}
+    "\u1E03": "b\u0307", // ḃ = \.{b}
+    "\u0107": "c\u0301", // ć = \'{c}
+    "\u010D": "c\u030C", // č = \v{c}
+    "\u0109": "c\u0302", // ĉ = \^{c}
+    "\u010B": "c\u0307", // ċ = \.{c}
+    "\u010F": "d\u030C", // ď = \v{d}
+    "\u1E0B": "d\u0307", // ḋ = \.{d}
+    "\xE9": "e\u0301", // é = \'{e}
+    "\xE8": "e\u0300", // è = \`{e}
+    "\xEB": "e\u0308", // ë = \"{e}
+    "\u1EBD": "e\u0303", // ẽ = \~{e}
+    "\u0113": "e\u0304", // ē = \={e}
+    "\u1E17": "e\u0304\u0301", // ḗ = \=\'{e}
+    "\u1E15": "e\u0304\u0300", // ḕ = \=\`{e}
+    "\u0115": "e\u0306", // ĕ = \u{e}
+    "\u011B": "e\u030C", // ě = \v{e}
+    "\xEA": "e\u0302", // ê = \^{e}
+    "\u1EBF": "e\u0302\u0301", // ế = \^\'{e}
+    "\u1EC1": "e\u0302\u0300", // ề = \^\`{e}
+    "\u1EC5": "e\u0302\u0303", // ễ = \^\~{e}
+    "\u0117": "e\u0307", // ė = \.{e}
+    "\u1E1F": "f\u0307", // ḟ = \.{f}
+    "\u01F5": "g\u0301", // ǵ = \'{g}
+    "\u1E21": "g\u0304", // ḡ = \={g}
+    "\u011F": "g\u0306", // ğ = \u{g}
+    "\u01E7": "g\u030C", // ǧ = \v{g}
+    "\u011D": "g\u0302", // ĝ = \^{g}
+    "\u0121": "g\u0307", // ġ = \.{g}
+    "\u1E27": "h\u0308", // ḧ = \"{h}
+    "\u021F": "h\u030C", // ȟ = \v{h}
+    "\u0125": "h\u0302", // ĥ = \^{h}
+    "\u1E23": "h\u0307", // ḣ = \.{h}
+    "\xED": "i\u0301", // í = \'{i}
+    "\xEC": "i\u0300", // ì = \`{i}
+    "\xEF": "i\u0308", // ï = \"{i}
+    "\u1E2F": "i\u0308\u0301", // ḯ = \"\'{i}
+    "\u0129": "i\u0303", // ĩ = \~{i}
+    "\u012B": "i\u0304", // ī = \={i}
+    "\u012D": "i\u0306", // ĭ = \u{i}
+    "\u01D0": "i\u030C", // ǐ = \v{i}
+    "\xEE": "i\u0302", // î = \^{i}
+    "\u01F0": "j\u030C", // ǰ = \v{j}
+    "\u0135": "j\u0302", // ĵ = \^{j}
+    "\u1E31": "k\u0301", // ḱ = \'{k}
+    "\u01E9": "k\u030C", // ǩ = \v{k}
+    "\u013A": "l\u0301", // ĺ = \'{l}
+    "\u013E": "l\u030C", // ľ = \v{l}
+    "\u1E3F": "m\u0301", // ḿ = \'{m}
+    "\u1E41": "m\u0307", // ṁ = \.{m}
+    "\u0144": "n\u0301", // ń = \'{n}
+    "\u01F9": "n\u0300", // ǹ = \`{n}
+    "\xF1": "n\u0303", // ñ = \~{n}
+    "\u0148": "n\u030C", // ň = \v{n}
+    "\u1E45": "n\u0307", // ṅ = \.{n}
+    "\xF3": "o\u0301", // ó = \'{o}
+    "\xF2": "o\u0300", // ò = \`{o}
+    "\xF6": "o\u0308", // ö = \"{o}
+    "\u022B": "o\u0308\u0304", // ȫ = \"\={o}
+    "\xF5": "o\u0303", // õ = \~{o}
+    "\u1E4D": "o\u0303\u0301", // ṍ = \~\'{o}
+    "\u1E4F": "o\u0303\u0308", // ṏ = \~\"{o}
+    "\u022D": "o\u0303\u0304", // ȭ = \~\={o}
+    "\u014D": "o\u0304", // ō = \={o}
+    "\u1E53": "o\u0304\u0301", // ṓ = \=\'{o}
+    "\u1E51": "o\u0304\u0300", // ṑ = \=\`{o}
+    "\u014F": "o\u0306", // ŏ = \u{o}
+    "\u01D2": "o\u030C", // ǒ = \v{o}
+    "\xF4": "o\u0302", // ô = \^{o}
+    "\u1ED1": "o\u0302\u0301", // ố = \^\'{o}
+    "\u1ED3": "o\u0302\u0300", // ồ = \^\`{o}
+    "\u1ED7": "o\u0302\u0303", // ỗ = \^\~{o}
+    "\u022F": "o\u0307", // ȯ = \.{o}
+    "\u0231": "o\u0307\u0304", // ȱ = \.\={o}
+    "\u0151": "o\u030B", // ő = \H{o}
+    "\u1E55": "p\u0301", // ṕ = \'{p}
+    "\u1E57": "p\u0307", // ṗ = \.{p}
+    "\u0155": "r\u0301", // ŕ = \'{r}
+    "\u0159": "r\u030C", // ř = \v{r}
+    "\u1E59": "r\u0307", // ṙ = \.{r}
+    "\u015B": "s\u0301", // ś = \'{s}
+    "\u1E65": "s\u0301\u0307", // ṥ = \'\.{s}
+    "\u0161": "s\u030C", // š = \v{s}
+    "\u1E67": "s\u030C\u0307", // ṧ = \v\.{s}
+    "\u015D": "s\u0302", // ŝ = \^{s}
+    "\u1E61": "s\u0307", // ṡ = \.{s}
+    "\u1E97": "t\u0308", // ẗ = \"{t}
+    "\u0165": "t\u030C", // ť = \v{t}
+    "\u1E6B": "t\u0307", // ṫ = \.{t}
+    "\xFA": "u\u0301", // ú = \'{u}
+    "\xF9": "u\u0300", // ù = \`{u}
+    "\xFC": "u\u0308", // ü = \"{u}
+    "\u01D8": "u\u0308\u0301", // ǘ = \"\'{u}
+    "\u01DC": "u\u0308\u0300", // ǜ = \"\`{u}
+    "\u01D6": "u\u0308\u0304", // ǖ = \"\={u}
+    "\u01DA": "u\u0308\u030C", // ǚ = \"\v{u}
+    "\u0169": "u\u0303", // ũ = \~{u}
+    "\u1E79": "u\u0303\u0301", // ṹ = \~\'{u}
+    "\u016B": "u\u0304", // ū = \={u}
+    "\u1E7B": "u\u0304\u0308", // ṻ = \=\"{u}
+    "\u016D": "u\u0306", // ŭ = \u{u}
+    "\u01D4": "u\u030C", // ǔ = \v{u}
+    "\xFB": "u\u0302", // û = \^{u}
+    "\u016F": "u\u030A", // ů = \r{u}
+    "\u0171": "u\u030B", // ű = \H{u}
+    "\u1E7D": "v\u0303", // ṽ = \~{v}
+    "\u1E83": "w\u0301", // ẃ = \'{w}
+    "\u1E81": "w\u0300", // ẁ = \`{w}
+    "\u1E85": "w\u0308", // ẅ = \"{w}
+    "\u0175": "w\u0302", // ŵ = \^{w}
+    "\u1E87": "w\u0307", // ẇ = \.{w}
+    "\u1E98": "w\u030A", // ẘ = \r{w}
+    "\u1E8D": "x\u0308", // ẍ = \"{x}
+    "\u1E8B": "x\u0307", // ẋ = \.{x}
+    "\xFD": "y\u0301", // ý = \'{y}
+    "\u1EF3": "y\u0300", // ỳ = \`{y}
+    "\xFF": "y\u0308", // ÿ = \"{y}
+    "\u1EF9": "y\u0303", // ỹ = \~{y}
+    "\u0233": "y\u0304", // ȳ = \={y}
+    "\u0177": "y\u0302", // ŷ = \^{y}
+    "\u1E8F": "y\u0307", // ẏ = \.{y}
+    "\u1E99": "y\u030A", // ẙ = \r{y}
+    "\u017A": "z\u0301", // ź = \'{z}
+    "\u017E": "z\u030C", // ž = \v{z}
+    "\u1E91": "z\u0302", // ẑ = \^{z}
+    "\u017C": "z\u0307", // ż = \.{z}
+    "\xC1": "A\u0301", // Á = \'{A}
+    "\xC0": "A\u0300", // À = \`{A}
+    "\xC4": "A\u0308", // Ä = \"{A}
+    "\u01DE": "A\u0308\u0304", // Ǟ = \"\={A}
+    "\xC3": "A\u0303", // Ã = \~{A}
+    "\u0100": "A\u0304", // Ā = \={A}
+    "\u0102": "A\u0306", // Ă = \u{A}
+    "\u1EAE": "A\u0306\u0301", // Ắ = \u\'{A}
+    "\u1EB0": "A\u0306\u0300", // Ằ = \u\`{A}
+    "\u1EB4": "A\u0306\u0303", // Ẵ = \u\~{A}
+    "\u01CD": "A\u030C", // Ǎ = \v{A}
+    "\xC2": "A\u0302", // Â = \^{A}
+    "\u1EA4": "A\u0302\u0301", // Ấ = \^\'{A}
+    "\u1EA6": "A\u0302\u0300", // Ầ = \^\`{A}
+    "\u1EAA": "A\u0302\u0303", // Ẫ = \^\~{A}
+    "\u0226": "A\u0307", // Ȧ = \.{A}
+    "\u01E0": "A\u0307\u0304", // Ǡ = \.\={A}
+    "\xC5": "A\u030A", // Å = \r{A}
+    "\u01FA": "A\u030A\u0301", // Ǻ = \r\'{A}
+    "\u1E02": "B\u0307", // Ḃ = \.{B}
+    "\u0106": "C\u0301", // Ć = \'{C}
+    "\u010C": "C\u030C", // Č = \v{C}
+    "\u0108": "C\u0302", // Ĉ = \^{C}
+    "\u010A": "C\u0307", // Ċ = \.{C}
+    "\u010E": "D\u030C", // Ď = \v{D}
+    "\u1E0A": "D\u0307", // Ḋ = \.{D}
+    "\xC9": "E\u0301", // É = \'{E}
+    "\xC8": "E\u0300", // È = \`{E}
+    "\xCB": "E\u0308", // Ë = \"{E}
+    "\u1EBC": "E\u0303", // Ẽ = \~{E}
+    "\u0112": "E\u0304", // Ē = \={E}
+    "\u1E16": "E\u0304\u0301", // Ḗ = \=\'{E}
+    "\u1E14": "E\u0304\u0300", // Ḕ = \=\`{E}
+    "\u0114": "E\u0306", // Ĕ = \u{E}
+    "\u011A": "E\u030C", // Ě = \v{E}
+    "\xCA": "E\u0302", // Ê = \^{E}
+    "\u1EBE": "E\u0302\u0301", // Ế = \^\'{E}
+    "\u1EC0": "E\u0302\u0300", // Ề = \^\`{E}
+    "\u1EC4": "E\u0302\u0303", // Ễ = \^\~{E}
+    "\u0116": "E\u0307", // Ė = \.{E}
+    "\u1E1E": "F\u0307", // Ḟ = \.{F}
+    "\u01F4": "G\u0301", // Ǵ = \'{G}
+    "\u1E20": "G\u0304", // Ḡ = \={G}
+    "\u011E": "G\u0306", // Ğ = \u{G}
+    "\u01E6": "G\u030C", // Ǧ = \v{G}
+    "\u011C": "G\u0302", // Ĝ = \^{G}
+    "\u0120": "G\u0307", // Ġ = \.{G}
+    "\u1E26": "H\u0308", // Ḧ = \"{H}
+    "\u021E": "H\u030C", // Ȟ = \v{H}
+    "\u0124": "H\u0302", // Ĥ = \^{H}
+    "\u1E22": "H\u0307", // Ḣ = \.{H}
+    "\xCD": "I\u0301", // Í = \'{I}
+    "\xCC": "I\u0300", // Ì = \`{I}
+    "\xCF": "I\u0308", // Ï = \"{I}
+    "\u1E2E": "I\u0308\u0301", // Ḯ = \"\'{I}
+    "\u0128": "I\u0303", // Ĩ = \~{I}
+    "\u012A": "I\u0304", // Ī = \={I}
+    "\u012C": "I\u0306", // Ĭ = \u{I}
+    "\u01CF": "I\u030C", // Ǐ = \v{I}
+    "\xCE": "I\u0302", // Î = \^{I}
+    "\u0130": "I\u0307", // İ = \.{I}
+    "\u0134": "J\u0302", // Ĵ = \^{J}
+    "\u1E30": "K\u0301", // Ḱ = \'{K}
+    "\u01E8": "K\u030C", // Ǩ = \v{K}
+    "\u0139": "L\u0301", // Ĺ = \'{L}
+    "\u013D": "L\u030C", // Ľ = \v{L}
+    "\u1E3E": "M\u0301", // Ḿ = \'{M}
+    "\u1E40": "M\u0307", // Ṁ = \.{M}
+    "\u0143": "N\u0301", // Ń = \'{N}
+    "\u01F8": "N\u0300", // Ǹ = \`{N}
+    "\xD1": "N\u0303", // Ñ = \~{N}
+    "\u0147": "N\u030C", // Ň = \v{N}
+    "\u1E44": "N\u0307", // Ṅ = \.{N}
+    "\xD3": "O\u0301", // Ó = \'{O}
+    "\xD2": "O\u0300", // Ò = \`{O}
+    "\xD6": "O\u0308", // Ö = \"{O}
+    "\u022A": "O\u0308\u0304", // Ȫ = \"\={O}
+    "\xD5": "O\u0303", // Õ = \~{O}
+    "\u1E4C": "O\u0303\u0301", // Ṍ = \~\'{O}
+    "\u1E4E": "O\u0303\u0308", // Ṏ = \~\"{O}
+    "\u022C": "O\u0303\u0304", // Ȭ = \~\={O}
+    "\u014C": "O\u0304", // Ō = \={O}
+    "\u1E52": "O\u0304\u0301", // Ṓ = \=\'{O}
+    "\u1E50": "O\u0304\u0300", // Ṑ = \=\`{O}
+    "\u014E": "O\u0306", // Ŏ = \u{O}
+    "\u01D1": "O\u030C", // Ǒ = \v{O}
+    "\xD4": "O\u0302", // Ô = \^{O}
+    "\u1ED0": "O\u0302\u0301", // Ố = \^\'{O}
+    "\u1ED2": "O\u0302\u0300", // Ồ = \^\`{O}
+    "\u1ED6": "O\u0302\u0303", // Ỗ = \^\~{O}
+    "\u022E": "O\u0307", // Ȯ = \.{O}
+    "\u0230": "O\u0307\u0304", // Ȱ = \.\={O}
+    "\u0150": "O\u030B", // Ő = \H{O}
+    "\u1E54": "P\u0301", // Ṕ = \'{P}
+    "\u1E56": "P\u0307", // Ṗ = \.{P}
+    "\u0154": "R\u0301", // Ŕ = \'{R}
+    "\u0158": "R\u030C", // Ř = \v{R}
+    "\u1E58": "R\u0307", // Ṙ = \.{R}
+    "\u015A": "S\u0301", // Ś = \'{S}
+    "\u1E64": "S\u0301\u0307", // Ṥ = \'\.{S}
+    "\u0160": "S\u030C", // Š = \v{S}
+    "\u1E66": "S\u030C\u0307", // Ṧ = \v\.{S}
+    "\u015C": "S\u0302", // Ŝ = \^{S}
+    "\u1E60": "S\u0307", // Ṡ = \.{S}
+    "\u0164": "T\u030C", // Ť = \v{T}
+    "\u1E6A": "T\u0307", // Ṫ = \.{T}
+    "\xDA": "U\u0301", // Ú = \'{U}
+    "\xD9": "U\u0300", // Ù = \`{U}
+    "\xDC": "U\u0308", // Ü = \"{U}
+    "\u01D7": "U\u0308\u0301", // Ǘ = \"\'{U}
+    "\u01DB": "U\u0308\u0300", // Ǜ = \"\`{U}
+    "\u01D5": "U\u0308\u0304", // Ǖ = \"\={U}
+    "\u01D9": "U\u0308\u030C", // Ǚ = \"\v{U}
+    "\u0168": "U\u0303", // Ũ = \~{U}
+    "\u1E78": "U\u0303\u0301", // Ṹ = \~\'{U}
+    "\u016A": "U\u0304", // Ū = \={U}
+    "\u1E7A": "U\u0304\u0308", // Ṻ = \=\"{U}
+    "\u016C": "U\u0306", // Ŭ = \u{U}
+    "\u01D3": "U\u030C", // Ǔ = \v{U}
+    "\xDB": "U\u0302", // Û = \^{U}
+    "\u016E": "U\u030A", // Ů = \r{U}
+    "\u0170": "U\u030B", // Ű = \H{U}
+    "\u1E7C": "V\u0303", // Ṽ = \~{V}
+    "\u1E82": "W\u0301", // Ẃ = \'{W}
+    "\u1E80": "W\u0300", // Ẁ = \`{W}
+    "\u1E84": "W\u0308", // Ẅ = \"{W}
+    "\u0174": "W\u0302", // Ŵ = \^{W}
+    "\u1E86": "W\u0307", // Ẇ = \.{W}
+    "\u1E8C": "X\u0308", // Ẍ = \"{X}
+    "\u1E8A": "X\u0307", // Ẋ = \.{X}
+    "\xDD": "Y\u0301", // Ý = \'{Y}
+    "\u1EF2": "Y\u0300", // Ỳ = \`{Y}
+    "\u0178": "Y\u0308", // Ÿ = \"{Y}
+    "\u1EF8": "Y\u0303", // Ỹ = \~{Y}
+    "\u0232": "Y\u0304", // Ȳ = \={Y}
+    "\u0176": "Y\u0302", // Ŷ = \^{Y}
+    "\u1E8E": "Y\u0307", // Ẏ = \.{Y}
+    "\u0179": "Z\u0301", // Ź = \'{Z}
+    "\u017D": "Z\u030C", // Ž = \v{Z}
+    "\u1E90": "Z\u0302", // Ẑ = \^{Z}
+    "\u017B": "Z\u0307", // Ż = \.{Z}
+    "\u03AC": "\u03B1\u0301", // ά = \'{α}
+    "\u1F70": "\u03B1\u0300", // ὰ = \`{α}
+    "\u1FB1": "\u03B1\u0304", // ᾱ = \={α}
+    "\u1FB0": "\u03B1\u0306", // ᾰ = \u{α}
+    "\u03AD": "\u03B5\u0301", // έ = \'{ε}
+    "\u1F72": "\u03B5\u0300", // ὲ = \`{ε}
+    "\u03AE": "\u03B7\u0301", // ή = \'{η}
+    "\u1F74": "\u03B7\u0300", // ὴ = \`{η}
+    "\u03AF": "\u03B9\u0301", // ί = \'{ι}
+    "\u1F76": "\u03B9\u0300", // ὶ = \`{ι}
+    "\u03CA": "\u03B9\u0308", // ϊ = \"{ι}
+    "\u0390": "\u03B9\u0308\u0301", // ΐ = \"\'{ι}
+    "\u1FD2": "\u03B9\u0308\u0300", // ῒ = \"\`{ι}
+    "\u1FD1": "\u03B9\u0304", // ῑ = \={ι}
+    "\u1FD0": "\u03B9\u0306", // ῐ = \u{ι}
+    "\u03CC": "\u03BF\u0301", // ό = \'{ο}
+    "\u1F78": "\u03BF\u0300", // ὸ = \`{ο}
+    "\u03CD": "\u03C5\u0301", // ύ = \'{υ}
+    "\u1F7A": "\u03C5\u0300", // ὺ = \`{υ}
+    "\u03CB": "\u03C5\u0308", // ϋ = \"{υ}
+    "\u03B0": "\u03C5\u0308\u0301", // ΰ = \"\'{υ}
+    "\u1FE2": "\u03C5\u0308\u0300", // ῢ = \"\`{υ}
+    "\u1FE1": "\u03C5\u0304", // ῡ = \={υ}
+    "\u1FE0": "\u03C5\u0306", // ῠ = \u{υ}
+    "\u03CE": "\u03C9\u0301", // ώ = \'{ω}
+    "\u1F7C": "\u03C9\u0300", // ὼ = \`{ω}
+    "\u038E": "\u03A5\u0301", // Ύ = \'{Υ}
+    "\u1FEA": "\u03A5\u0300", // Ὺ = \`{Υ}
+    "\u03AB": "\u03A5\u0308", // Ϋ = \"{Υ}
+    "\u1FE9": "\u03A5\u0304", // Ῡ = \={Υ}
+    "\u1FE8": "\u03A5\u0306", // Ῠ = \u{Υ}
+    "\u038F": "\u03A9\u0301", // Ώ = \'{Ω}
+    "\u1FFA": "\u03A9\u0300" // Ὼ = \`{Ω}
+};
 
-},{}],127:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14717,7 +15345,7 @@ var calculateSize = exports.calculateSize = function calculateSize(sizeValue, op
     return Math.min(sizeValue.number * scale, options.maxSize);
 };
 
-},{"./Options":83,"./ParseError":84}],128:[function(require,module,exports){
+},{"./Options":83,"./ParseError":84}],133:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14816,6 +15444,45 @@ function clearNode(node) {
     setTextContent(node, "");
 }
 
+/**
+ * Sometimes we want to pull out the innermost element of a group. In most
+ * cases, this will just be the group itself, but when ordgroups and colors have
+ * a single element, we want to pull that out.
+ */
+var getBaseElem = function getBaseElem(group) {
+    if (!group) {
+        return false;
+    } else if (group.type === "ordgroup") {
+        if (group.value.length === 1) {
+            return getBaseElem(group.value[0]);
+        } else {
+            return group;
+        }
+    } else if (group.type === "color") {
+        if (group.value.value.length === 1) {
+            return getBaseElem(group.value.value[0]);
+        } else {
+            return group;
+        }
+    } else if (group.type === "font") {
+        return getBaseElem(group.value.body);
+    } else {
+        return group;
+    }
+};
+
+/**
+ * TeXbook algorithms often reference "character boxes", which are simply groups
+ * with a single character in them. To decide if something is a character box,
+ * we find its innermost group, and see if it is a single character.
+ */
+var isCharacterBox = function isCharacterBox(group) {
+    var baseElem = getBaseElem(group);
+
+    // These are all they types of groups which hold single characters
+    return baseElem.type === "mathord" || baseElem.type === "textord" || baseElem.type === "bin" || baseElem.type === "rel" || baseElem.type === "inner" || baseElem.type === "open" || baseElem.type === "close" || baseElem.type === "punct";
+};
+
 exports.default = {
     contains: contains,
     deflt: deflt,
@@ -14823,7 +15490,9 @@ exports.default = {
     hyphenate: hyphenate,
     indexOf: indexOf,
     setTextContent: setTextContent,
-    clearNode: clearNode
+    clearNode: clearNode,
+    getBaseElem: getBaseElem,
+    isCharacterBox: isCharacterBox
 };
 
 },{}]},{},[1])(1)
