@@ -211,6 +211,7 @@ pre.sourceCode {
 ul#refs {
     list-style:none;
     font-size: small;
+    width: 100%;
 }
 
 ul#refs > li {
