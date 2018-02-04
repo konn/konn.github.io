@@ -34,6 +34,7 @@ executable site
                      , binary
                      , blaze-builder
                      , blaze-html
+                     , blaze-markup
                      , bytestring
                      , case-insensitive
                      , conduit

@@ -33,6 +33,15 @@ li[id^="fn"]:before {
     visibility: hidden;
 } 
 
+ul#refs li:before {
+    content: '';
+    width: 0px;
+    padding-top: 80px;
+    margin-top: -80px;
+    display: inline-block; /* required for webkit browsers */
+    visibility: hidden;
+}
+
 li[id^="fn"] p:first-of-type {
     display: inline;
 }
@@ -199,7 +208,25 @@ pre.sourceCode {
     border-left: solid gray;
 }
 
-div#refs > div[id^="ref-"] > p  {
-    margin: 0px;
+ul#refs {
+    list-style:none;
+    font-size: small;
 }
 
+ul#refs > li {
+    display: table;
+    clear: both;
+    content: "";
+}
+
+ul#refs span.ref-label {
+    margin-right: 1em;
+    width: 1em;
+    float: left;
+    text-align: right;
+}
+
+ul#refs span.ref-body {
+    float: left;
+    width: 90%;
+}

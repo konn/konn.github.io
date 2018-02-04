@@ -1,13 +1,14 @@
-{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, FlexibleContexts    #-}
-{-# LANGUAGE GADTs, LambdaCase, NoMonomorphismRestriction                  #-}
-{-# LANGUAGE OverloadedStrings, PatternGuards, QuasiQuotes                 #-}
-{-# LANGUAGE RecordWildCards, TemplateHaskell, TupleSections, TypeFamilies #-}
-{-# LANGUAGE ViewPatterns                                                  #-}
+{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, FlexibleContexts   #-}
+{-# LANGUAGE GADTs, LambdaCase, MultiParamTypeClasses                     #-}
+{-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, PatternGuards  #-}
+{-# LANGUAGE QuasiQuotes, RecordWildCards, TemplateHaskell, TupleSections #-}
+{-# LANGUAGE TypeFamilies, ViewPatterns                                   #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind -fno-warn-type-defaults         #-}
 module Main where
-import           Blaze.ByteString.Builder        (toByteString)
-import           Control.Applicative
-import           Control.Lens                    (rmapping, (%~), (.~), (<&>), (<>~), (^?), _Unwrapping')
+import Blaze.ByteString.Builder (toByteString)
+import Control.Applicative
+import Control.Lens             (rmapping, (%~), (.~), (<&>), (<>~), (^?),
+                                 _Unwrapping')
 
 
 import           Control.Monad                   hiding (mapM, sequence)
@@ -51,13 +52,15 @@ import           System.IO                       (hPutStrLn, stderr)
 import           Text.Blaze.Html.Renderer.String
 import           Text.Blaze.Html5                ((!))
 import qualified Text.Blaze.Html5                as H5
-import qualified Text.Blaze.Html5.Attributes     as H5
+import qualified Text.Blaze.Html5.Attributes     as H5 hiding (span)
+import           Text.Blaze.Internal             (Attributable)
 import           Text.CSL                        (Reference, Style,
                                                   readBiblioFile, readCSLFile)
 import           Text.CSL.Pandoc
 import           Text.Hamlet
 import           Text.HTML.TagSoup
 import qualified Text.HTML.TagSoup               as TS
+import           Text.HTML.TagSoup.Match
 import           Text.LaTeX.Base                 (render)
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
@@ -636,8 +639,7 @@ postList mcount pat = do
         descr <- T.pack <$> getMetadataField' ident "description"
         fp <- fromJust <$> getRoute ident
         src <- loadBody $ itemIdentifier item
-        let Right (Pandoc _ obs) = runPure $ readHtml readerConf $ T.pack src
-            refs = buildRefInfo obs
+        let refs = buildRefInfo src
         let output = T.unpack $ fromPure $
                      writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
                      =<< readMarkdown readerConf descr
@@ -773,12 +775,43 @@ myProcCites style bib p = do
       pars  = map (Para . pure . flip Cite []) $ cs ++ extractNoCites p
       -- Pandoc _ bibs = processCites style bib (Pandoc mempty pars)
       Pandoc info pan' = processCites style bib p
-      refs = filter isReference pan'
+      refs = bottomUp refBlockToList $ filter isReference pan'
       body = filter (not . isReference) pan'
   return $ bottomUp removeTeXGomiStr $ bottomUp linkLocalCite $
      if null pars
      then p
      else Pandoc info (body ++ [Header 1 ("biblio", [], []) [Str "参考文献"]] ++ refs)
+
+refBlockToList :: Block -> Block
+refBlockToList
+  (Div ("refs", ["references"], atts) divs) =
+    RawBlock "html" $ renderHtml $
+    applyAtts atts $
+    H5.ul ! H5.id "refs" ! H5.class_ "references" $
+    mapM_ listise divs
+  where
+    listise (Div (ident, cls, ats) [Para (Str lab : dv)]) =
+      applyAtts ats $
+      H5.li ! H5.id (H5.stringValue ident)
+            ! H5.class_ (H5.stringValue $ unwords $ "ref" : cls)
+            ! H5.dataAttribute "ref-label" (fromString $ unbracket lab) $ do
+              H5.span ! H5.class_ "ref-label" $
+                fromString lab
+              H5.span ! H5.class_ "ref-body" $
+                fromRight $ runPure $
+                writeHtml5 writerConf $
+                Pandoc nullMeta [Plain $ dropWhile (== Space) dv]
+    listise _ = ""
+refBlockToList d = d
+
+paraToPlain :: Block -> Block
+paraToPlain (Para bs) = Plain bs
+paraToPlain b         = b
+
+applyAtts :: Attributable b => [(String, String)] -> b -> b
+applyAtts ats elt =
+  let as = map (\(k, v) -> H5.customAttribute (fromString k) (fromString v)) ats
+  in foldl (!) elt as
 
 linkLocalCite :: Inline -> Inline
 linkLocalCite (Cite cs bdy) =
@@ -805,13 +838,18 @@ isReference _                              = False
 data RefInfo = RefInfo { refAnchor :: String, refLabel :: String }
              deriving (Read, Show, Eq, Ord)
 
-buildRefInfo :: Walkable Block b => b -> HM.HashMap [Char] RefInfo
-buildRefInfo = query $ \case
-  Div (ref, _, _) [Para is]
-    | Just ident <- L.stripPrefix "ref-" ref
-    -> let lab = unbracket $ stringify $ takeWhile (/= Space) $ dropWhile (== Space) is
-       in HM.singleton ident (RefInfo ref lab)
-  _ -> HM.empty
+buildRefInfo :: String -> HM.HashMap String RefInfo
+buildRefInfo =
+  foldMap go
+  .
+  filter (tagOpen (== "li") (maybe False (elem "ref" . words) .  lookup "class"))
+  .
+  TS.parseTags
+  where
+    go ~(TagOpen _ atts) =
+      maybe HM.empty (\(r, lab) -> HM.singleton r (RefInfo ("ref-" ++ r) lab)) $
+        (,) <$> (L.stripPrefix "ref-" =<< lookup "id" atts)
+            <*> lookup "data-ref-label" atts
 
 unbracket :: String -> String
 unbracket ('[':l)

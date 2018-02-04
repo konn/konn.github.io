@@ -8,6 +8,7 @@ tag: Boole値モデル,無矛盾性証明,強制法,公理的集合論,集合論
 katex: true
 macro:
   M: '\mathbb{M}'
+  Add: '\mathop{\mathsf{Add}}'
 ---
 \RequirePackage{luatex85}
 \documentclass[a4j]{ltjsarticle}
@@ -28,6 +29,7 @@ macro:
 \newcommand{\val}{\mathop{\mathrm{val}}}
 \newcommand{\spanning}{\mathop{\downarrow}}
 \newcommand{\reduce}{\mathbin{\downarrow}}
+\renewcommand{\Add}{\mathop{\mathsf{Add}}}
 \title{Boole値モデルと強制法}
 \author{石井大海}
 \begin{document}
