@@ -639,12 +639,12 @@ postList mcount pat = do
         let Right (Pandoc _ obs) = runPure $ readHtml readerConf $ T.pack src
             refs = buildRefInfo obs
         let output = T.unpack $ fromPure $
-                     writeHtml5String writerConf . bottomUp (citeLink fp refs)
+                     writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
                      =<< readMarkdown readerConf descr
         return $ output
-
-  src <- unsafeCompiler . prerenderKaTeX =<<
-         applyTemplateList postItemTpl (pdfField <> myDateField <> descField <> defaultContext) posts
+      ctxs = (pdfField <> myDateField <> descField <> defaultContext)
+  src <- unsafeCompiler . prerenderKaTeX
+         =<< applyTemplateList postItemTpl ctxs posts
   return (length posts, src)
 
 itemPDFLink :: Item a -> Compiler String
@@ -775,13 +775,18 @@ myProcCites style bib p = do
       Pandoc info pan' = processCites style bib p
       refs = filter isReference pan'
       body = filter (not . isReference) pan'
-  return $ bottomUp removeTeXGomiStr $
+  return $ bottomUp removeTeXGomiStr $ bottomUp linkLocalCite $
      if null pars
      then p
      else Pandoc info (body ++ [Header 1 ("biblio", [], []) [Str "参考文献"]] ++ refs)
 
-citeLink :: String -> HM.HashMap String RefInfo -> Inline -> Inline
-citeLink base refInfo (Cite cs _) =
+linkLocalCite :: Inline -> Inline
+linkLocalCite (Cite cs bdy) =
+  Cite cs [Link ("", [], []) bdy ("#ref-" ++ citationId (head cs), "")]
+linkLocalCite i = i
+
+remoteCiteLink :: String -> HM.HashMap String RefInfo -> Inline -> Inline
+remoteCiteLink base refInfo (Cite cs _) =
   let ctLinks = [ maybe
                     (Strong [Str citationId])
                     (\RefInfo{..} -> Link ("", [], []) [Str refLabel] (base ++ "#" ++ refAnchor, ""))
@@ -791,8 +796,7 @@ citeLink base refInfo (Cite cs _) =
                 ]
   in Span ("", ["citation"], [("data-cites", intercalate "," $ map citationId cs)]) $
      concat [ [Str "["], ctLinks, [Str "]"]]
-
-citeLink _ _ i                    = i
+remoteCiteLink _ _ i                    = i
 
 isReference :: Block -> Bool
 isReference (Div (_, ["references"], _) _) = True
