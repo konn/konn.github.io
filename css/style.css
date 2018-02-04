@@ -221,13 +221,15 @@ ul#refs > li {
 }
 
 ul#refs span.ref-label {
-    margin-right: 1em;
-    width: 1em;
-    float: left;
+    vertical-align: top;
+    padding-right: 1em;
+    width: 1.5em;
     text-align: right;
+    display: table-cell;
 }
 
 ul#refs span.ref-body {
-    float: left;
-    width: 90%;
+    vertical-align: top;
+    display: inline-block;
+    width: auto;
 }
