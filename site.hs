@@ -1,22 +1,25 @@
-{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, GADTs, LambdaCase #-}
-{-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, PatternGuards #-}
-{-# LANGUAGE QuasiQuotes, TemplateHaskell, TupleSections, TypeFamilies   #-}
-{-# LANGUAGE ViewPatterns                                                #-}
+{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, FlexibleContexts    #-}
+{-# LANGUAGE GADTs, LambdaCase, NoMonomorphismRestriction                  #-}
+{-# LANGUAGE OverloadedStrings, PatternGuards, QuasiQuotes                 #-}
+{-# LANGUAGE RecordWildCards, TemplateHaskell, TupleSections, TypeFamilies #-}
+{-# LANGUAGE ViewPatterns                                                  #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind -fno-warn-type-defaults         #-}
 module Main where
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
-import           Control.Lens                    (rmapping, (%~), (.~), (<&>),
-                                                  (<>~), (^?), _Unwrapping')
+import           Control.Lens                    (rmapping, (%~), (.~), (<&>), (<>~), (^?), _Unwrapping')
+
+
 import           Control.Monad                   hiding (mapM, sequence)
 import           Control.Monad.Error.Class       (throwError)
 import           Data.Binary
 import qualified Data.ByteString.Char8           as BS
 import qualified Data.CaseInsensitive            as CI
-import           Data.Char
+import           Data.Char                       hiding (Space)
 import           Data.Data
 import           Data.Function
 import           Data.List                       hiding (stripPrefix)
+import qualified Data.List                       as L
 import           Data.Maybe
 import           Data.Monoid
 import           Data.Ord
@@ -199,16 +202,11 @@ main = hakyllWith config $ do
     compile' $ do
       CopyFile{} <- loadBody "katex/katex.min.js"
       fp <- decodeString . fromJust <$> (getRoute =<< getUnderlying)
-      mbib <- fmap itemBody <$> optional (load $ fromFilePath $ replaceExtension fp "bib")
-      gbib <- unsafeCompiler $ readBiblioFile $ encodeString globalBib
-      style <- unsafeCompiler . readCSLFile Nothing . Hakyll.toFilePath . itemIdentifier
-                  =<< load (fromFilePath $ replaceExtension fp "csl")
-                  <|> (load "default.csl" :: Compiler (Item CSL))
       macs <- loadBody "config/macros.yml"
       cmacs <- itemMacros =<< getResourceBody
-      let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib
+      (style, bibs) <- cslAndBib
       ipandoc <- mapM (unsafeCompiler . texToMarkdown (cmacs <> macs) fp) =<< getResourceBody
-      let ip' = fmap (myProcCites style bibs) ipandoc
+      ip' <- mapM (myProcCites style bibs) ipandoc
       conv'd <- mapM (return . addPDFLink ("/" </> replaceExtension fp "pdf") .
                       addAmazonAssociateLink "konn06-22"
                       <=< procSchemes) ip'
@@ -248,6 +246,17 @@ main = hakyllWith config $ do
         =<< applyTemplateList tpl
                (defaultContext  <> modificationTimeField "date" "%Y-%m-%d")
                items
+
+cslAndBib :: Compiler (Style, [Reference])
+cslAndBib = do
+  fp <- decodeString . fromJust <$> (getRoute =<< getUnderlying)
+  mbib <- fmap itemBody <$> optional (load $ fromFilePath $ replaceExtension fp "bib")
+  gbib <- unsafeCompiler $ readBiblioFile $ encodeString globalBib
+  style <- unsafeCompiler . readCSLFile Nothing . Hakyll.toFilePath . itemIdentifier
+              =<< load (fromFilePath $ replaceExtension fp "csl")
+              <|> (load "default.csl" :: Compiler (Item CSL))
+  let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib
+  return (style, bibs)
 
 pandocContext :: Pandoc -> Context a
 pandocContext (Pandoc meta _)
@@ -387,11 +396,14 @@ readerConf :: ReaderOptions
 readerConf = def { readerExtensions = myExts }
 
 myPandocCompiler :: Compiler (Item String)
-myPandocCompiler =
+myPandocCompiler = do
+  (csl, bib) <- cslAndBib
   pandocCompilerWithTransformM
-  readerConf
-  writerConf
-  (procSchemes >=> return . addAmazonAssociateLink "konn06-22")
+    readerConf
+    writerConf
+    (    myProcCites csl bib
+     >=> procSchemes
+     >=> return . addAmazonAssociateLink "konn06-22")
 
 readHtml' :: ReaderOptions -> T.Text -> Pandoc
 readHtml' opt = fromRight . runPure . readHtml opt
@@ -620,8 +632,16 @@ postList mcount pat = do
   let myDateField = field "date" itemDateStr
       pdfField = field "pdf" itemPDFLink
       descField = field "description" $ \item -> do
-        descr <- T.pack <$> getMetadataField' (itemIdentifier item) "description"
-        return $ T.unpack $ fromPure $ writeHtml5String writerConf =<< readMarkdown readerConf descr
+        let ident = itemIdentifier item
+        descr <- T.pack <$> getMetadataField' ident "description"
+        fp <- fromJust <$> getRoute ident
+        src <- loadBody $ itemIdentifier item
+        let Right (Pandoc _ obs) = runPure $ readHtml readerConf $ T.pack src
+            refs = buildRefInfo obs
+        let output = T.unpack $ fromPure $
+                     writeHtml5String writerConf . bottomUp (citeLink fp refs)
+                     =<< readMarkdown readerConf descr
+        return $ output
 
   src <- unsafeCompiler . prerenderKaTeX =<<
          applyTemplateList postItemTpl (pdfField <> myDateField <> descField <> defaultContext) posts
@@ -747,18 +767,53 @@ extractNoCites = queryWith collect
           _ -> []
     collect _ = []
 
-myProcCites :: Style -> [Reference] -> Pandoc -> Pandoc
-myProcCites style bib p =
+myProcCites :: Style -> [Reference] -> Pandoc -> Compiler Pandoc
+myProcCites style bib p = do
   let cs = extractCites p
       pars  = map (Para . pure . flip Cite []) $ cs ++ extractNoCites p
       -- Pandoc _ bibs = processCites style bib (Pandoc mempty pars)
       Pandoc info pan' = processCites style bib p
-      isReference (Div (_, ["references"], _) _) = True
-      isReference _                              = False
+      refs = filter isReference pan'
       body = filter (not . isReference) pan'
-  in bottomUp removeTeXGomiStr $ if null pars
+  return $ bottomUp removeTeXGomiStr $
+     if null pars
      then p
-     else Pandoc info (body ++ [Header 1 ("biblio", [], []) [Str "参考文献"]] ++ filter isReference pan')
+     else Pandoc info (body ++ [Header 1 ("biblio", [], []) [Str "参考文献"]] ++ refs)
+
+citeLink :: String -> HM.HashMap String RefInfo -> Inline -> Inline
+citeLink base refInfo (Cite cs _) =
+  let ctLinks = [ maybe
+                    (Strong [Str citationId])
+                    (\RefInfo{..} -> Link ("", [], []) [Str refLabel] (base ++ "#" ++ refAnchor, ""))
+                    mres
+                | Citation{..} <- cs
+                , let mres = HM.lookup citationId refInfo
+                ]
+  in Span ("", ["citation"], [("data-cites", intercalate "," $ map citationId cs)]) $
+     concat [ [Str "["], ctLinks, [Str "]"]]
+
+citeLink _ _ i                    = i
+
+isReference :: Block -> Bool
+isReference (Div (_, ["references"], _) _) = True
+isReference _                              = False
+
+data RefInfo = RefInfo { refAnchor :: String, refLabel :: String }
+             deriving (Read, Show, Eq, Ord)
+
+buildRefInfo :: Walkable Block b => b -> HM.HashMap [Char] RefInfo
+buildRefInfo = query $ \case
+  Div (ref, _, _) [Para is]
+    | Just ident <- L.stripPrefix "ref-" ref
+    -> let lab = unbracket $ stringify $ takeWhile (/= Space) $ dropWhile (== Space) is
+       in HM.singleton ident (RefInfo ref lab)
+  _ -> HM.empty
+
+unbracket :: String -> String
+unbracket ('[':l)
+  | Just lab <- T.stripSuffix "]" (T.pack l) = T.unpack lab
+  | otherwise = l
+unbracket lab = lab
 
 removeTeXGomiStr :: String -> String
 removeTeXGomiStr = packed %~ T.replace "\\qed" ""

@@ -58,6 +58,5 @@ top-star: false
 
 [Keybase](https://keybase.io/konn)
 :    PGP鍵共有。
-
 </div>
 </div>

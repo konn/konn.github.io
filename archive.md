@@ -1,7 +1,7 @@
 ---
 title: アーカイブ
 author: 石井大海
-description: このサイトのアーカイブ。
+description: このサイトのアーカイブです。
 top-star: false
 ---
 
