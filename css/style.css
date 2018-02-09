@@ -244,3 +244,7 @@ section#disqus_area {
     margin-bottom: 20px;
     text-align: center;
 }
+
+footer {
+    margin: 20px;
+}

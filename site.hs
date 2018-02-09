@@ -146,7 +146,7 @@ main = hakyllWith config $ do
       (count, posts) <- postList (Just 5) subContentsWithoutIndex
       let ctx = mconcat [ constField "child-count" (show count)
                         , constField "updates" posts
-                        , defaultContext
+                        , myDefaultContext
                         ]
       myPandocCompiler
               >>= applyDefaultTemplate ctx {- tags -}
@@ -157,7 +157,7 @@ main = hakyllWith config $ do
       (count, posts) <- postList Nothing subContentsWithoutIndex
       let ctx = mconcat [ constField "child-count" (show count)
                         , constField "children" posts
-                        , defaultContext
+                        , myDefaultContext
                         ]
       myPandocCompiler
               >>= applyDefaultTemplate ctx {- tags -}
@@ -183,7 +183,7 @@ main = hakyllWith config $ do
       (count, chl) <- postList Nothing (fromList $ map itemIdentifier chs)
       let ctx = mconcat [ constField "child-count" (show count)
                         , constField "children" chl
-                        , defaultContext
+                        , myDefaultContext
                         ]
       myPandocCompiler >>= applyDefaultTemplate ctx >>= saveSnapshot "content"
 
@@ -227,7 +227,7 @@ main = hakyllWith config $ do
   match (("articles/**.md" .||. "articles/**.html" .||. "profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ do
     route $ setExtension "html"
     compile' $
-      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate mempty
+      myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate myDefaultContext
 
   create ["feed.xml"] $ do
     route idRoute
@@ -244,10 +244,10 @@ main = hakyllWith config $ do
                =<< loadAll  (("**.md" .||. ("math/**.tex" .&&. hasVersion "html")) .&&. complement ("t/**" .||. "templates/**"))
       tpl <- loadBody "templates/sitemap-item.xml"
       loadAndApplyTemplate "templates/sitemap.xml"
-        defaultContext
+        myDefaultContext
         =<< makeItem
         =<< applyTemplateList tpl
-               (defaultContext  <> modificationTimeField "date" "%Y-%m-%d")
+               (myDefaultContext  <> modificationTimeField "date" "%Y-%m-%d")
                items
 
 cslAndBib :: Compiler (Style, [Reference])
@@ -372,7 +372,7 @@ feedCxt :: Context String
 feedCxt =  mconcat [ field "published" itemDateStr
                    , field "updated" itemDateStr
                    , bodyField "description"
-                   , defaultContext
+                   , myDefaultContext
                    ]
 
 itemDateStr :: Item a -> Compiler String
@@ -461,7 +461,7 @@ applyDefaultTemplate addCtx item = do
           H5.meta ! H5.name "Keywords"    ! H5.content (H5.toValue tags)
           H5.meta ! H5.name "description" ! H5.content (H5.toValue desc)
       cxt  = mconcat [ thumb, plainDescr, unpublished, toc, addCtx, navbar, bcrumb
-                     , hdr, meta, date, noTopStar, defaultContext]
+                     , hdr, meta, date, noTopStar, myDefaultContext]
   let item' = demoteHeaders . withTags addRequiredClasses <$> item
       links = filter isURI $ getUrls $ parseTags $ itemBody item'
   unsafeCompiler $ do
@@ -644,10 +644,23 @@ postList mcount pat = do
                      writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
                      =<< readMarkdown readerConf descr
         return $ output
-      ctxs = (pdfField <> myDateField <> descField <> defaultContext)
+      ctxs = (pdfField <> myDateField <> descField <> myDefaultContext)
   src <- unsafeCompiler . prerenderKaTeX
          =<< applyTemplateList postItemTpl ctxs posts
   return (length posts, src)
+
+myDefaultContext :: Context String
+myDefaultContext =
+  mconcat [ disqusCtx, defaultContext ]
+  where
+    blacklist = ["index.md", "**/index.*", "archive.md", "profile.md"]
+    disqusCtx = field "disqus" $ \item -> do
+      let banned = foldr1 (.||.) blacklist `matches` itemIdentifier item
+      dic <- getMetadata $ itemIdentifier item
+      let enabled = fromMaybe True $ maybeResult . fromJSON =<< HM.lookup "disqus" dic
+      if not banned && enabled
+        then return ""
+        else empty
 
 itemPDFLink :: Item a -> Compiler String
 itemPDFLink item
