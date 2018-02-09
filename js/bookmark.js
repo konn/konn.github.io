@@ -15,16 +15,18 @@ $(document).ready(function(){
         count = Number(data);
         if (count > 0) {
             var li = $("<li>");
+            var span = $('<span>').attr("id", "old-bookmark-numbers");
             var msg = "";
-            msg += data;
-            msg += " user"
+            span.append(data + " user");
             if (count > 1) {
-                msg += "s"
+                span.append("s");
             }
-            msg += " including ";
-            var link = $("<a>").text("HTTP version").attr('href', "http://b.hatena.ne.jp/entry/http:" + urlBody);
-            $('<span>').attr("id", "old-bookmark-numbers").text(msg).append(link).appendTo(li);
-            li.insertAfter("#social #hatena-bookmarks")
+            span.append(" (with ");
+            var link = $("<a>").text("HTTP ver.")
+                               .attr('href', "http://b.hatena.ne.jp/entry/http:" + urlBody);
+            span.append(link);
+            span.append(")");
+            $("<li>").append(span).insertAfter("#social #hatena-bookmarks");
        }
     });
 });
