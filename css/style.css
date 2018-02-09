@@ -246,5 +246,6 @@ section#disqus_area {
 }
 
 footer {
+    text-align: right;
     margin: 20px;
 }
