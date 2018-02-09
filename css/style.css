@@ -224,3 +224,12 @@ ul#refs span.ref-body {
     display: table-cell;
     width: auto;
 }
+
+#old-bookmark-numbers {
+    font-size: small;
+    color: red;
+    vertical-align: center;
+    display: inline-block;
+    border-bottom: solid 2px red;
+    margin-bottom: 10px;
+}
