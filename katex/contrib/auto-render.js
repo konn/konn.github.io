@@ -7,7 +7,7 @@
 		exports["renderMathInElement"] = factory(require("katex"));
 	else
 		root["renderMathInElement"] = factory(root["katex"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_38__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_38__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};

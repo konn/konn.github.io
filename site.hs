@@ -878,9 +878,13 @@ unicodiseMath i = i
 
 prerenderKaTeX :: String -> IO String
 prerenderKaTeX src = shelly $ silently $ handleany_sh (const $ return src) $ do
-  cd "data"
+  cd "katex"
   setStdin $ T.pack src
-  T.unpack <$> cmd "node" "prerender.js"
+  nodePath <- get_env_text "NODE_PATH"
+  wd <- pwd
+  setenv "NODE_PATH" $
+    T.intercalate ":" [Path.encode (wd </> "contrib"), Path.encode wd, nodePath]
+  T.unpack <$> cmd "node" "../data/prerender.js"
 
 fromPure :: PandocPure T.Text -> T.Text
 fromPure = either (const "") id . runPure

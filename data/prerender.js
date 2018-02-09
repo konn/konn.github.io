@@ -2,8 +2,7 @@ const jsdom = require('jsdom');
 const {JSDOM} = jsdom;
 const dom = new JSDOM(require('fs').readFileSync('/dev/stdin', 'utf8'));
 document = dom.window.document;
-katex = require('../katex/katex');
-const renderMathInElement = require('../katex/auto-render');
+const renderMathInElement = require('auto-render');
 renderMathInElement(document.body, {
     delimiters:
     [ {left: "\\(", right: "\\)", display: false },
