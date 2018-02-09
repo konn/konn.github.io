@@ -22,7 +22,7 @@ $(document).ready(function(){
                 span.append("s");
             }
             span.append(" (with ");
-            var link = $("<a>").text("HTTP ver.")
+            var link = $("<a>").text("HTTP ver")
                                .attr('href', "http://b.hatena.ne.jp/entry/http:" + urlBody);
             span.append(link);
             span.append(")");
