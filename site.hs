@@ -899,4 +899,5 @@ myExts = extensionsFromList exts <> pandocExtensions
            , Ext_raw_html
            , Ext_raw_tex
            , Ext_tex_math_dollars
+           , Ext_emoji
            ]
