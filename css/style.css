@@ -226,8 +226,8 @@ ul#refs span.ref-body {
 }
 
 #old-bookmark-numbers {
-    font-size: small;
-    color: red;
+    font-size: small1;
+    color: #ff4166;
     font-weight: bold;
     vertical-align: center;
     display: inline-block;
