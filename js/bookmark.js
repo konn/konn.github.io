@@ -1,6 +1,6 @@
 $(document).ready(function(){
     var urlBody = location.href.replace(location.protocol, "");
-    var protos =  ["http", "https"];
+    var protos =  ["http"];
     var query = "?";
     for (i = 0; i < 2 ; i+=1) {
         query += `url=${encodeURIComponent(protos[i] + ":" + urlBody)};`
@@ -17,7 +17,7 @@ $(document).ready(function(){
             var li = $("<li>");
             var span = $('<span>').attr("id", "old-bookmark-numbers");
             var msg = "";
-            span.append(data + " user");
+            span.append("+"+data + " user");
             if (count > 1) {
                 span.append("s");
             }
