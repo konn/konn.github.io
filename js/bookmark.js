@@ -1,6 +1,6 @@
 $(document).ready(function(){
     var urlBody = location.href.replace(location.protocol, "");
-    var protos =  ["http", "https"];
+    var protos =  ["https", "http"];
     var query = "?";
     for (i = 0; i < 2 ; i+=1) {
         query += `url=${encodeURIComponent(protos[i] + ":" + urlBody)};`
