@@ -12,11 +12,16 @@ $(document).ready(function(){
         crossDomain: true,
         dataType: 'jsonp'
     }).done(function(data) {
-        if (Number(data) > 0) {
+        count = Number(data);
+        if (count > 0) {
             var li = $("<li>");
             var msg = "";
             msg += data;
-            msg += " user(s) including ";
+            msg += " user"
+            if (count > 1) {
+                msg += "s"
+            }
+            msg += " including ";
             var link = $("<a>").text("HTTP version").attr('href', "http://b.hatena.ne.jp/entry/http:" + urlBody);
             $('<span>').attr("id", "old-bookmark-numbers").text(msg).append(link).appendTo(li);
             li.insertAfter("#social #hatena-bookmarks")
