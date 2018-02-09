@@ -21,7 +21,7 @@ $(document).ready(function(){
             if (count > 1) {
                 span.append("s");
             }
-            span.append(" (with ");
+            span.append(" (from ");
             var link = $("<a>").text("HTTP ver")
                                .attr('href', "http://b.hatena.ne.jp/entry/http:" + urlBody);
             span.append(link);
