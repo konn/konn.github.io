@@ -236,3 +236,11 @@ ul#refs span.ref-body {
     padding-left:  3px;
     padding-right: 3px;
 }
+
+section#disqus_area {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+}

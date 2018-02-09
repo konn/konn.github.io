@@ -14,6 +14,7 @@
   <meta name="robots" content="noindex,nofollow">
   $endif$
   <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com$url$" />
   <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
   <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" >
@@ -90,6 +91,25 @@
           </section>
           $endif$
           $body$
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area">
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com$url$";
+          this.page.identifier = "$url$";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
         </div>
       </div>
   <footer>
