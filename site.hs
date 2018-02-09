@@ -383,13 +383,13 @@ feedConf = FeedConfiguration { feedTitle = "konn-san.com 建設予定地"
                              , feedDescription = "数理論理学を中心に数学、Haskell、推理小説、評論など。"
                              , feedAuthorName = "Hiromi ISHII"
                              , feedAuthorEmail = ""
-                             , feedRoot = "http://konn-san.com"
+                             , feedRoot = "https://konn-san.com"
                              }
 
 
 writerConf :: WriterOptions
 writerConf =
-  def{ writerHTMLMathMethod = MathJax "http://konn-san.com/math/mathjax/MathJax.js?config=xypic"
+  def{ writerHTMLMathMethod = MathJax "https://konn-san.com/math/mathjax/MathJax.js?config=xypic"
      , writerHighlightStyle = Just pygments
      , writerSectionDivs = True
      , writerExtensions = disableExtension Ext_tex_math_dollars myExts
@@ -430,11 +430,11 @@ applyDefaultTemplate addCtx item = do
   pub <- isPublished item
   descr <- fromMaybe "" <$> getMetadataField (itemIdentifier item) "description"
   r <- fromMaybe "" <$> getRoute (itemIdentifier item)
-  let imgs = map (("http://konn-san.com/" <>) . resolveRelatives (PFP.takeDirectory r)) $
+  let imgs = map (("https://konn-san.com/" <>) . resolveRelatives (PFP.takeDirectory r)) $
              extractLocalImages $ TS.parseTags $ itemBody item
       navbar = constField "navbar" nav
       thumb  = constField "thumbnail" $
-               fromMaybe "http://konn-san.com/img/myface_mosaic.jpg" $
+               fromMaybe "https://konn-san.com/img/myface_mosaic.jpg" $
                listToMaybe imgs
       bcrumb = constField "breadcrumb" bc
       sdescr = either (const "") (T.unpack . T.replace "\n" " ") $ runPure $

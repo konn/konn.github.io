@@ -44,24 +44,24 @@ date: 2017/12/11 21:00:00 JST
 \begin{abstract}
  本稿は集合論の地質学に関する記事の第四回目です：
  \begin{enumerate}[label={\arabic*.}]
-  \item \href{http://konn-san.com/math/geology-ground-definability.html}{概観と基礎モデルの定義可能性}
-  \item \href{http://konn-san.com/math/geology-mantle-and-ddg.html}{マントルの構造と下方有向性原理}
-  \item \href{http://konn-san.com/math/geology-bukovsky-theorem.html}{Bukovsk\'{y}の定理──強制拡大の特徴付け}
+  \item \href{https://konn-san.com/math/geology-ground-definability.html}{概観と基礎モデルの定義可能性}
+  \item \href{https://konn-san.com/math/geology-mantle-and-ddg.html}{マントルの構造と下方有向性原理}
+  \item \href{https://konn-san.com/math/geology-bukovsky-theorem.html}{Bukovsk\'{y}の定理──強制拡大の特徴付け}
   \item 下方有向性原理の証明（今回）
  \end{enumerate} 
  \emph{集合論の地質学}は，与えられた集合論の宇宙$V$の内部モデルがいかなる生成拡大になっているかを考える集合論の分野です．
  今回は，薄葉~\cite{Usuba:2017fp}で証明された基本定理である\emph{下方有向性原理}（$\mathrm{sDDG}$）の証明を与えます．
  $\mathrm{sDDG}$は全ての基礎モデルの共通部分であるマントル$\mathbb{M}$が$\ZFC$のモデルとなることや、生成多宇宙における包含関係と生成拡大関係が一致することなどを導く強力な原理でした。
- その詳しい帰結については、\href{http://konn-san.com/math/geology-ground-definability.html}{初回}や\href{http://konn-san.com/math/geology-mantle-and-ddg.html}{前々回}を御覧ください。
+ その詳しい帰結については、\href{https://konn-san.com/math/geology-ground-definability.html}{初回}や\href{https://konn-san.com/math/geology-mantle-and-ddg.html}{前々回}を御覧ください。
 \end{abstract}
 \section{下方有向性定理の証明}
 いよいよこのシリーズのメインデュッシュである，次の定理の証明を与えます：
 \begin{theorem}[Strong Downwad Directed Grounds Theorem, Usuba 2017~\cite{Usuba:2017fp}]
  任意の集合個の$V$の基礎モデル$\Set{W_r | r \in X}$に対し，共通の基礎モデル$W \subseteq \bigcap_r W_r$が存在する．
 \end{theorem}
-この$\sDDG$から，全ての基礎モデルの共通部分であるマントル$\M$が$\ZFC$を満たす内部モデルとなることや，強制法で不変な最大のクラスであること，また$V$の生成多宇宙における包含関係と生成拡大の関係は一致することなどは\href{http://konn-san.com/math/geology-mantle-and-ddg.html}{第二回}で既に見ました．
+この$\sDDG$から，全ての基礎モデルの共通部分であるマントル$\M$が$\ZFC$を満たす内部モデルとなることや，強制法で不変な最大のクラスであること，また$V$の生成多宇宙における包含関係と生成拡大の関係は一致することなどは\href{https://konn-san.com/math/geology-mantle-and-ddg.html}{第二回}で既に見ました．
 
-\href{http://konn-san.com/math/geology-bukovsky-theorem.html}{前回}はこの証明の中で重要な役割を担うBukovsk\'{y}による$\kappa$-\cc{}拡大の特徴付けを与えました：
+\href{https://konn-san.com/math/geology-bukovsky-theorem.html}{前回}はこの証明の中で重要な役割を担うBukovsk\'{y}による$\kappa$-\cc{}拡大の特徴付けを与えました：
 \begin{theorem}[Bukovsk\'{y}~\cite{Bukovsky:1973ph}]\label{thm:bukovsky}
  $\ZFC^{\leq \delta}$の推移的モデルの組$(W, V)$が$\delta$-大域被覆性質を持つことと，$V$が$W$の$\delta$-\cc{}生成拡大であることは同値．
 \end{theorem}
@@ -71,7 +71,7 @@ date: 2017/12/11 21:00:00 JST
  $W, W' \subseteq V$が$\ZFC^{\leq\mu}$の推移的モデルで$(W, V)$および$(W', V)$が共に$\delta$-大域被覆性質を持つとする．
  もし$\power{<\mu}{2} \cap W = \power{<\mu}{2} \cap W'$なら$W = W'$となる．
 \end{lemma}
-また，一般の強制拡大は$\kappa$-擬基礎モデルと呼ばれるものになることが\href{http://konn-san.com/math/geology-ground-definability.html\#lem:ground-is-pseudoground}{初回の議論でわかって}いました：
+また，一般の強制拡大は$\kappa$-擬基礎モデルと呼ばれるものになることが\href{https://konn-san.com/math/geology-ground-definability.html\#lem:ground-is-pseudoground}{初回の議論でわかって}いました：
 \begin{lemma}\label{lem:ground-is-pseudoground}
  $\mathbb{P}$を擬順序，$G$を$(V, \mathbb{P})$-生成フィルター，$|\mathbb{P}| \leq \kappa$とする．
  この時$V$は$V[G]$の擬基礎モデルとなる．
