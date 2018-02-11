@@ -15,6 +15,6 @@ Articles
 --------
 
 <dl id="children">
-\$children\$
+{{{children}}}
 </dl>
 

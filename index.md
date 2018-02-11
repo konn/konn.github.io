@@ -10,7 +10,7 @@ top-star: false
 更新履歴など{#updates}
 ==========
 
-<dl id="children">\$updates\$</dl>
+<dl id="children">{{{updates}}}</dl>
 
 上記最新5件以外は、[アーカイブ](./archive.html) をご覧ください。
 

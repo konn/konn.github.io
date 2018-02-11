@@ -24,49 +24,49 @@ latexmk を使うには、まず設定ファイルを書いてやる必要があ
 
 ~~~{.perl}
 #!/usr/bin/env perl
-$$latex            = 'platex -synctex=1 -halt-on-error';
-$$latex_silent     = 'platex -synctex=1 -halt-on-error -interaction=batchmode';
-$$bibtex           = 'pbibtex';
-$$dvipdf           = 'dvipdfmx %O -o %D %S';
-$$makeindex        = 'mendex %O -o %D %S';
-$$max_repeat       = 5;
-$$pdf_mode	  = 3; # generates pdf via dvipdfmx
+$latex            = 'platex -synctex=1 -halt-on-error';
+$latex_silent     = 'platex -synctex=1 -halt-on-error -interaction=batchmode';
+$bibtex           = 'pbibtex';
+$dvipdf           = 'dvipdfmx %O -o %D %S';
+$makeindex        = 'mendex %O -o %D %S';
+$max_repeat       = 5;
+$pdf_mode	  = 3; # generates pdf via dvipdfmx
 
 # Prevent latexmk from removing PDF after typeset.
 # This enables Skim to chase the update in PDF automatically.
-$$pvc_view_file_via_temporary = 0;
+$pvc_view_file_via_temporary = 0;
 
 # Use Skim as a previewer
-$$pdf_previewer    = "open -ga /Applications/Skim.app";
+$pdf_previewer    = "open -ga /Applications/Skim.app";
 ~~~
 
 これは何をしているのか順に説明しましょう。
 
-まず `$$latex`{.perl} の値はその名の通り .tex ファイルのコンパイルに使う `latex` コマンドを指定しています。ちなみに`-synctex=1`というオプションを付けておくと、SyncTeX が有効になり、SyncTeX対応のPDFビューワ（Skimとか）を使っていると、PDFの文章から tex ファイルの対応する部分に即座に飛ぶことが出来るようになります。便利です。
+まず `$latex`{.perl} の値はその名の通り .tex ファイルのコンパイルに使う `latex` コマンドを指定しています。ちなみに`-synctex=1`というオプションを付けておくと、SyncTeX が有効になり、SyncTeX対応のPDFビューワ（Skimとか）を使っていると、PDFの文章から tex ファイルの対応する部分に即座に飛ぶことが出来るようになります。便利です。
 
 また、`-halt-on-error` オプションを付けておくと、文法エラーやらコマンド未定義やらでコンパイルに失敗した時、あの鬱陶しいプロンプトが出ずにそのまま TeX エンジンが終了してくれます。これは、後述の `-pvc` コマンドと組合せたときに、コンパイルに失敗してもいちいち C-d を送ったりする必要がなく、単にファイルを修正して保存しなおせば再度コンパイルが走ってくれるようになるので便利です。
 
-`$$bibtex` とか `$$dvipdf`、`$$mendex` とかもその他のツールを指定しているだけです。
+`$bibtex` とか `$dvipdf`、`$mendex` とかもその他のツールを指定しているだけです。
 
-`$$pdf_mode	  = 3;`ってえのは、「latex で .dvi ファイルを生成してから dvipdf を使って PDF を生成するんだぜ」と云う意味です。日本語のTeX環境で直接PDFを吐かせる実用的な方法はまだない（XeTeXとかLuaTeXとかがあるにはありますが）ので、この方法を指定している訳です。
+`$pdf_mode	  = 3;`ってえのは、「latex で .dvi ファイルを生成してから dvipdf を使って PDF を生成するんだぜ」と云う意味です。日本語のTeX環境で直接PDFを吐かせる実用的な方法はまだない（XeTeXとかLuaTeXとかがあるにはありますが）ので、この方法を指定している訳です。
 
-`$$pdf_previewer  = "open -ga /Applications/Skim.app";` ではPDFプレビューの方法を指定してます。僕はOSX使いなので、[Skim](http://skim-app.sourceforge.net/)を使っています。Skim はPDFファイルの変更を自動的に検知して表示を自動的に更新してくれる他、先述のように SyncTeX 機能を使って PDF から TeX ソースの当該個所に直にジャンプ出来たりします。スライドショー向けの機能もついていたりして、かなり便利なビューワです。
+`$pdf_previewer  = "open -ga /Applications/Skim.app";` ではPDFプレビューの方法を指定してます。僕はOSX使いなので、[Skim](http://skim-app.sourceforge.net/)を使っています。Skim はPDFファイルの変更を自動的に検知して表示を自動的に更新してくれる他、先述のように SyncTeX 機能を使って PDF から TeX ソースの当該個所に直にジャンプ出来たりします。スライドショー向けの機能もついていたりして、かなり便利なビューワです。
 
-これと関連して必要になるのが `$$pvc_view_file_via_temporary = 0;` の設定です。latexmk はデフォルトではタイプセットする度に古い PDF を削除してから新しい PDF を生成します。しかし、この方式だと Skim がファイルの変更を検知できず、折角の自動更新が無効になってしまいます。そこで、「古いPDFファイルを削除せず上書きする」という風に設定を変更することで、Skim の自動更新機能を使えるようにしているのです。
-例えば Skim ではなく Preview.app を使う場合だったらこの設定は要らず、その代わりに`$$pdf_update_command = "open -ga Preview %S';`とかしておけば勝手に更新されるようになる筈。
+これと関連して必要になるのが `$pvc_view_file_via_temporary = 0;` の設定です。latexmk はデフォルトではタイプセットする度に古い PDF を削除してから新しい PDF を生成します。しかし、この方式だと Skim がファイルの変更を検知できず、折角の自動更新が無効になってしまいます。そこで、「古いPDFファイルを削除せず上書きする」という風に設定を変更することで、Skim の自動更新機能を使えるようにしているのです。
+例えば Skim ではなく Preview.app を使う場合だったらこの設定は要らず、その代わりに`$pdf_update_command = "open -ga Preview %S';`とかしておけば勝手に更新されるようになる筈。
 
 latexmk を使う
 -------------
 ここまで整えればもう一瞬です[^1]。コマンドラインで
 
 ```sh
-$$ latexmk my-great-work.tex
+$ latexmk my-great-work.tex
 ```
 
 とかやればあとは全部一瞬でよしなにやってくれます。また、
 
 ```sh
-$$ latexmk -pvc my-great-work.tex
+$ latexmk -pvc my-great-work.tex
 ```
 
 とすると、一度タイプセットしただけでは終了せず、`my-great-work.tex` や、それが依存するファイルに変更があるたびに latexmk が必要な回数だけ走って、自動的に PDF が更新されます。依存するファイルというのは、そのファイル自身以外にも .bib ファイルや .sty ファイル、include されている他の tex ファイルなどです。texmf に配置してあるグローバルなスタイルファイルやbibファイルの変更までも追い掛けて、更新があったらタイプセットしなおしてくれます。OMake ではここまでやってくれませんでした。これはべんり！
@@ -74,7 +74,7 @@ $$ latexmk -pvc my-great-work.tex
 また、文書によっては違う設定をしたいときがあると思います。そういう時は `latexmk` に直接オプションを渡してやったり、そのディレクトリに新たに `.latexmkrc` を作成しておけばそっちの設定を優先してくれます。たとえば XeLaTeX でタイプセットしたいんだったら、
 
 ```sh
-$$ latexmk -xelatex -pvc my-great-work.tex
+$ latexmk -xelatex -pvc my-great-work.tex
 ```
 
 とかすれば良い。他にも `--help` を見れば色々と有用な情報が書いてあります。設定するパラメータについては、latexmk 本体を読むと色々わかります。
@@ -82,7 +82,7 @@ $$ latexmk -xelatex -pvc my-great-work.tex
 そうそう、本来の用途からは外れますが、例えばタイプセットに成功する度に `git commit -am` したいというような場合は、
 
 ```perl
-$$pdf_update_command = "git commit -am'update'";
+$pdf_update_command = "git commit -am'update'";
 ```
 
 とか書いておけば、PDFのアップデートコマンドが走るタイミングでコミットされて `git` で自動的にバックアップが取れます。
@@ -99,9 +99,9 @@ upLaTex っていうのは、`platex`の内部をユニコードに対応させ�
 みたいに、`uplatex`を引数に渡せばそのままコンパイルが通るようになります。latexmk でこいつを使うようにするには、`-latex=uplatex`などとしてコマンドライン引数の形で指定するか、`.latexmkrc` をいじって
 
 ```perl
-$$latex            = 'uplatex -synctex=1';
-$$latex_silent     = 'uplatex -synctex=1 -interaction=batchmode';
-$$bibtex           = 'upbibtex';
+$latex            = 'uplatex -synctex=1';
+$latex_silent     = 'uplatex -synctex=1 -interaction=batchmode';
+$bibtex           = 'upbibtex';
 ```
 
 などとしておけばよいです。`upbibtex` というのは `pbibtex` の内部ユニコード版です。
@@ -157,7 +157,7 @@ biblatex を使うには、preamble に次のように書きます：
 
 biblatex にバックエンドとして bibtex と組み合わせて使う際には、一つ注意があります。どうした訳か `upbibtex` は `biblatex` の吐いた aux ファイルを処理しようとするとフリーズしてしまいます。ですので、latexmk での設定では
 ```perl
-$$bibtex = 'pbibtex';
+$bibtex = 'pbibtex';
 ```
 と pbibtex を利用するように指定してやりましょう。そうすればちゃんと動きます。
 
@@ -187,7 +187,7 @@ $$bibtex = 'pbibtex';
 ただ、単に backend を biber に指定しただけでは uplatex でちゃんと参考文献一覧を印字出来ません。latexmk の設定を次のように弄るひつようがあります：
 
 ```perl
-$$biber = 'biber --bblencoding=utf8 -u -U --output_safechars';
+$biber = 'biber --bblencoding=utf8 -u -U --output_safechars';
 ```
 
 これは、「.bblファイルのエンコードは UTF-8、入出力も共に UTF-8 を使って、アクセント記号とかちょっとヤバめの記号は TeX にエンコードする」という意味の設定です。最後の「ヤバめ」云々というのがちょっと判りづらいですね。例えば biber はデフォルトのままだと bib ファイルで `G{\"o}del` のように書かれているものを、自動的に `Gödel` に変更して bbl に出力します。欧米では既にUTF-8をサポートしたTeXのエンジンが広く用いられているのでこれで問題がないのですが、upLaTeX はユニコード文字は全て和文だと判断して処理します。すると、上の文字は`G ö del`のように字間や書体が変な形で印字されてしまうのです。それを避けるために、アクセント記号をはじめとしたユニコード文字は LaTeX の命令を使ってエンコードした形で出力させる必要があります。それに必要なのが `--output_safechars` オプションという訳です。

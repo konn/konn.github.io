@@ -40,7 +40,7 @@ import Language.C.Quote.ObjC
 objc_import ["<Foundation/Foundation.h>"]
 
 nsLog :: String -> IO ()
-nsLog msg = $$(objc ['msg :> ''String] $$
+nsLog msg = $(objc ['msg :> ''String] $
               void [cexp| NSLog(@"%@", msg) |])
 
 objc_emit
@@ -65,10 +65,10 @@ main = do
 では、これで動くかどうか実際にコンパイル&実行してみましょう。`hello.hs`などという名前で保存されているとすると、これをコンパイルするには、次のようにします：
 
 ```zsh
-$$ ghc -c hello.hs
-$$ cc -fobjc-arc -I/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/include -I/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/../../includes -c -o hello_objc.o hello_objc.m
-$$ ghc -o hello hello.o hello_objc.o -package language-c-quote -package language-c-inline -framework Foundation 
-$$ ./hello
+$ ghc -c hello.hs
+$ cc -fobjc-arc -I/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/include -I/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/../../includes -c -o hello_objc.o hello_objc.m
+$ ghc -o hello hello.o hello_objc.o -package language-c-quote -package language-c-inline -framework Foundation 
+$ ./hello
 2014-12-13 00:00:00.000 hello[88135:507] Hello, from Haskell-Cocoa!
 ```
 
@@ -126,7 +126,7 @@ convert :: AppDelegate -> IO ()
 convert app = do
   input <- intValue    =<< dollarsField app
   rate  <- doubleValue =<< rateField app
-  setIntValue (floor $$ fromIntegral input * rate) =<< resultField app
+  setIntValue (floor $ fromIntegral input * rate) =<< resultField app
 ```
 
 このあとすべき事が幾つかあります：
@@ -181,16 +181,16 @@ objc_marshaller 'marshalNSTextField 'marshalNSTextField
 
 ```haskell
 intValue :: NSTextField -> IO Int
-intValue txt = $$(objc ['txt :> ''NSTextField] $$
+intValue txt = $(objc ['txt :> ''NSTextField] $
                  ''Int <: [cexp| [txt intValue] |])
 
 rateField :: AppDelegate -> IO NSTextField
-rateField app = $$(objc ['app :> ''AppDelegate] $$
+rateField app = $(objc ['app :> ''AppDelegate] $
                      Class ''NSTextField <: [cexp| app.rateField |])
 
 setIntValue :: Int -> NSTextField -> IO ()
 setIntValue i txt =
-  $$(objc ['i :> ''Int, 'txt :> ''NSTextField] $$
+  $(objc ['i :> ''Int, 'txt :> ''NSTextField] $
     void [cexp| [txt setIntValue: i] |])
 ```
 
@@ -254,7 +254,7 @@ data Class where
 
 ```haskell
 nsApplicationMain :: IO ()
-nsApplicationMain = $$(objc [] $$ void [cexp| NSApplicationMain(0, NULL) |])
+nsApplicationMain = $(objc [] $ void [cexp| NSApplicationMain(0, NULL) |])
 
 objc_emit
 
@@ -272,15 +272,15 @@ main = do
 では、アプリケーションバンドルを作成しましょう。まず、`Main.hs`を今まで通りコンパイルします：
 
 ```zsh
-$$ ghc -c Main.hs
-$$ cc -fobjc-arc -I/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/include -I/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/../../includes   -c -o Main_objc.o Main_objc.m
-$$ ghc -o CurrencyConverter Main.o Main_objc.o -package language-c-quote -package language-c-inline -framework Cocoa
+$ ghc -c Main.hs
+$ cc -fobjc-arc -I/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/include -I/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/../../includes   -c -o Main_objc.o Main_objc.m
+$ ghc -o CurrencyConverter Main.o Main_objc.o -package language-c-quote -package language-c-inline -framework Cocoa
 ```
 
 問題なくコンパイルできていれば、`CurrencyConverter`バイナリが出来ている筈です。そこで、これを一番最初にXcodeで作成しておいた `CurrencyConverter.app` のしかるべき場所にコピーします（`CurrencyConverter.app`は同じディレクトリに配置されていると仮定します）：
 
 ```zsh
-$$ cp CurrencyConverter CurrencyConverter.app/Contents/MacOS/CurrencyConverter
+$ cp CurrencyConverter CurrencyConverter.app/Contents/MacOS/CurrencyConverter
 ```
 
 これで完了です！早速起動してみましょう：
@@ -356,7 +356,7 @@ class Selector cls msg | msg -> cls where
 instance Selector "NSControl" "setObjectValue" where
   data Message "setObjectValue" = SetIntValue NSObject
   type Returns "setObjectValue" = IO ()
-  send' ctrl (SetObjectValue num) = $$(objc ['ctrl :> Class ''NSControl, 'obj :> Class ''NSObject] $$
+  send' ctrl (SetObjectValue num) = $(objc ['ctrl :> Class ''NSControl, 'obj :> Class ''NSObject] $
                                       void [cexp| [ctrl setObjectValue: obj] |])
 ```
 
@@ -365,11 +365,11 @@ instance Selector "NSControl" "setObjectValue" where
 ```haskell
 infixl 4 #
 (#) :: (a :> b, Selector a msg, Returns msg ~ IO c, MonadIO m) => Object b -> Message msg -> m c
-obj # f = liftIO $$ send' obj f
+obj # f = liftIO $ send' obj f
 
 infixl 4 #.
 (#.) :: (a :> b, Selector a msg, Returns msg ~ IO c, MonadIO m) => IO (Object b) -> Message msg -> m c
-recv #. sel = liftIO $$ recv >>= flip send' sel
+recv #. sel = liftIO $ recv >>= flip send' sel
 ```
 
 `(#)`{.haskell}が中置演算子版で、のものは、メソッドチェーンにして呼び出していくときに、便利なように定義されたものです。
@@ -391,8 +391,8 @@ instance (a :> b, b :> c) => a :> c
 
 ```haskell
 defineClass "NSObject" Nothing
-defineClass "NSString" $$ Just ''NSObject
-defineClass "NSMutableString" $$ Just ''NSString
+defineClass "NSString" $ Just ''NSObject
+defineClass "NSMutableString" $ Just ''NSString
 ```
 
 つまり、`NSObject :> NSString`{.haskell}, `NSString :> NSMutableString`{.haskell}, `NSObject :> NSMutableString`{.haskell}といった、必要な`(:>)`のインスタンスがこれにより全て生成され、`type NSObject = Object "NSObject"`{.haskell}などの型シノニムも定義されます。
@@ -400,7 +400,7 @@ defineClass "NSMutableString" $$ Just ''NSString
 `definePhantomClass`{.haskell} は、更に幽霊型を引数にもつように定義してくれます。たとえば、
 
 ```haskell
-definePhantomClass 1 "NSArray" $$ Just ''NSObject
+definePhantomClass 1 "NSArray" $ Just ''NSObject
 ```
 
 のようにすると、`type NSArray a = Object "NSArray"`{.haskell} といったような、型シノニムが宣言されるのです。ただ、これは今のところ共変性や反変性とかを全く考慮していないので、あんまり嬉しくないかもしれません。
@@ -507,7 +507,7 @@ import qualified AppDelegate as Delegate
 objc_import ["<Cocoa/Cocoa.h>"]
 
 nsApplicationMain :: IO ()
-nsApplicationMain = $$(objc [] $$ void [cexp| NSApplicationMain(0, NULL) |])
+nsApplicationMain = $(objc [] $ void [cexp| NSApplicationMain(0, NULL) |])
 
 objc_emit
 
@@ -540,7 +540,7 @@ marshalAppDel <span class="fu">=</span> return
 objc_marshaller <span class="ch">'marshalAppDel</span> <span class="ch">'marshalAppDel</span>
 
 <span class="ot">nsLog ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
-nsLog str <span class="fu">=</span> <span class="fu">$$</span>(objc [<span class="ch">'str</span> :&gt; <span class="ch">''String</span>] $$ void [cexp| NSLog(@&quot;%@&quot;, str) |] )</span>
+nsLog str <span class="fu">=</span> <span class="fu">$</span>(objc [<span class="ch">'str</span> :&gt; <span class="ch">''String</span>] $ void [cexp| NSLog(@&quot;%@&quot;, str) |] )</span>
 
 <span class="ot">changed ::</span> <span class="dt">AppDelegate</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 changed app <span class="fu">=</span> nsLog <span class="st">&quot;dummy!&quot;</span>
@@ -571,7 +571,7 @@ objc_emit</code></pre>
 コンパイルしてみます。
 
 ```zsh
-$$ runhaskell ./Builder.hs
+$ runhaskell ./Builder.hs
 ```
 
 簡単！起動してみると、まあ単に何も起きないウィンドウ一枚だけのアプリになってます。それでもConsole.appでログを見てみると、入力するたびに `controlTextDidChange:` のログが残っていることがわかるでしょう。
@@ -590,12 +590,12 @@ data Session = Session { pushDollars :: Dollars -> IO ()
                        } deriving (Typeable)
 
 newSession :: AppDelegate -> IO Session
-newSession app = sync $$ do
+newSession app = sync $ do
   (dolBh, dolL) <- newBehaviour 0
   (ratBh, ratL) <- newBehaviour 0
-  _ <- listen (value $$ (*) <$$> dolBh <*> ratBh) $$ \val ->
+  _ <- listen (value $ (*) <$> dolBh <*> ratBh) $ \val ->
     app # resultField #. setIntValue (floor val)
-  return $$ Session (sync . dolL . fromIntegral) (sync . ratL) app
+  return $ Session (sync . dolL . fromIntegral) (sync . ratL) app
 
 ```
 
@@ -710,7 +710,7 @@ defineSelector newSelector { selector = "sender"
 あとはさっき作っておいた`Builder.hs`を使ってコンパイルすれば良いだけですね：
 
 ```zsh
-$$ runhaskell Builer.hs clean && runhaskell Builder.hs
+$ runhaskell Builer.hs clean && runhaskell Builder.hs
 ```
 
 起動すれば、望む通りの挙動をするようになっています！やりました！
@@ -732,17 +732,17 @@ objc_typecheck
 
 nsArrToListOfStrings :: NSArray -> IO [String]
 nsArrToListOfStrings arr = do
-  len <- $$(objc ['arr :> Class ''NSArray] $$ ''Int <: [cexp| [arr count] |])
-  forM [0..len -1] $$ \ i ->
-    $$(objc ['arr :> Class ''NSArray, 'i :> ''Int] $$ ''String <: [cexp| [arr objectAtIndex: i] |])
+  len <- $(objc ['arr :> Class ''NSArray] $ ''Int <: [cexp| [arr count] |])
+  forM [0..len -1] $ \ i ->
+    $(objc ['arr :> Class ''NSArray, 'i :> ''Int] $ ''String <: [cexp| [arr objectAtIndex: i] |])
 
 listOfStringsToNSArr :: [String] -> IO NSArray
 listOfStringsToNSArr strs = do
-  marr <- $$(objc [] $$ Class ''NSMutableArray <: [cexp| [NSMutableArray array] |])
-  forM_ strs $$ \str ->
-    $$(objc ['marr :> Class ''NSMutableArray, 'str :> ''String] $$
+  marr <- $(objc [] $ Class ''NSMutableArray <: [cexp| [NSMutableArray array] |])
+  forM_ strs $ \str ->
+    $(objc ['marr :> Class ''NSMutableArray, 'str :> ''String] $
       void [cexp| [marr addObject: str] |])
-  $$(objc ['marr :> Class ''NSMutableArray] $$
+  $(objc ['marr :> Class ''NSMutableArray] $
            Class ''NSArray <: [cexp| marr |])
 
 objc_marshaller 'listOfStringsToNSArr 'nsArrToListOfStrings

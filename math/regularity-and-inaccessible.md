@@ -4,6 +4,9 @@ date: 2016/02/01 18:02:38 JST
 author: 石井大海
 description: 修士論文。Solovayによる「ZF+弱い選択公理+"任意の実数の集合が可測"」という体系の無矛盾性証明と、およびKhomskiiによる一般化、そしてSolovayの逆向きの結果であるShelahの結果についてのサーヴェイ論文。また、上述の体系における代替的な解析学の結果も簡単に紹介。
 tag: ZFC,set theory,公理的集合論,測度論,Solovay,Shelah,Khomskii
+macros:
+  ZF: \mathrm{ZF}
+  ZFC: \mathrm{ZFC}
 ---
 
 # 概要 #
@@ -17,12 +20,12 @@ tag: ZFC,set theory,公理的集合論,測度論,Solovay,Shelah,Khomskii
 <div class="theorem" id="1">
 次の三つの体系は、無矛盾性の意味において同値：
 
-1. $\ZF$+$\DC$+「任意の実数の集合が可測」
-2. $\ZF$+$\mathrm{CC}$+「任意の実数の集合が可測」
-3. $\ZFC$ +「到達不能基数の存在 ($\mathrm{IC}$)」
+1. $\mathrm{ZF}$+$\mathrm{DC}$+「任意の実数の集合が可測」
+2. $\mathrm{ZF}$+$\mathrm{CC}$+「任意の実数の集合が可測」
+3. $\mathrm{ZFC}$ +「到達不能基数の存在 ($\mathrm{IC}$)」
 </div>
 
-ここで、**到達不能基数**とは、その存在からZFCの無矛盾性が証明されるため、$\ZFC$単体からは存在を証明出来ない**巨大基数**の一種で、その中でも最も大人しいものです。
+ここで、**到達不能基数**とは、その存在からZFCの無矛盾性が証明されるため、$\mathrm{ZFC}$単体からは存在を証明出来ない**巨大基数**の一種で、その中でも最も大人しいものです。
 
 (3)「到達不能基数の存在」から (1)「ZF+DC+任意の実数の集合が可測」 を導いたのがSolovayで、当初到達不能基数の仮定は落とせると予想していましたが、後にShelahが (1)または(2)から(3)を示し、必要十分であることが明らかにされました[^1]。
 
@@ -44,9 +47,9 @@ In this thesis, we will treat the following theorems due to Solovay and Shelah:
 <div class="theorem" id="2">
 The following three systems are equiconsitent (i.e. have the same consistency strength):
 
-1. $\ZF$ + $\DC$ + "Every set of reals is Lebesgue measurable"
-2. $\ZF$ + $\mathrm{CC}$ + "Every set of reals is Lebesgue measurable"
-3. $\ZFC$ +"The exisntence of an inaccessible cardinal ($\mathrm{IC}$)"
+1. $\mathrm{ZF}$ + $\mathrm{DC}$ + "Every set of reals is Lebesgue measurable"
+2. $\mathrm{ZF}$ + $\mathrm{CC}$ + "Every set of reals is Lebesgue measurable"
+3. $\mathrm{ZFC}$ +"The exisntence of an inaccessible cardinal ($\mathrm{IC}$)"
 </div>
 
 First, Solovay showed the direction (3) to (1) and he conjectured the use of inaccessibles can be dropped.

@@ -102,7 +102,7 @@ ghci<span class="fu">&gt;</span> <span class="fu">:</span>t notRight
 <h2 id="簡単な証明支援系">簡単な証明支援系</h2>
 <p>上のライブラリを使って書いた証明支援系が、<a href="http://gitweb.konn-san.com/repo/logic/blob/master/assistant.hs"><code>assistant.hs</code></a>です。まだひたすら進んでいくだけの簡単な機能しかなくて、例えば適用の取消をしたりすることは出来ませんが、一通り動きます。</p>
 <p>例えば、Peirce の法則 $((P \to Q) \to P) \to P$ の証明は次のように行います。</p>
-<pre><code>$$ ./assistant
+<pre><code>$ ./assistant
 |- ((P-&gt;Q)-&gt;P)-&gt;P
 ----------------------
 Goal:  |- ((P → Q) → P) → P
@@ -145,12 +145,12 @@ $$</p>
   (<span class="st">&quot;permutationL&quot;</span><span class="fu">:</span>args) <span class="ot">-&gt;</span> unapplyList permutationL args [fm]
   (<span class="st">&quot;permutationR&quot;</span><span class="fu">:</span>rest) <span class="ot">-&gt;</span> unapplyList permutationR rest [fm]
   (<span class="st">&quot;contractL&quot;</span><span class="fu">:</span>rest) <span class="ot">-&gt;</span> unapplyList contractL rest [fm]
-  (<span class="st">&quot;contractR&quot;</span><span class="fu">:</span>_) <span class="ot">-&gt;</span> <span class="kw">Just</span> <span class="fu">$$</span> unapply contractR
-  (<span class="st">&quot;weakenL&quot;</span><span class="fu">:</span>_) <span class="ot">-&gt;</span> <span class="kw">Just</span> <span class="fu">$$</span> unapply weakenL
-  (<span class="st">&quot;weakenR&quot;</span><span class="fu">:</span>_) <span class="ot">-&gt;</span> <span class="kw">Just</span> <span class="fu">$$</span> unapply weakenR
+  (<span class="st">&quot;contractR&quot;</span><span class="fu">:</span>_) <span class="ot">-&gt;</span> <span class="kw">Just</span> <span class="fu">$</span> unapply contractR
+  (<span class="st">&quot;weakenL&quot;</span><span class="fu">:</span>_) <span class="ot">-&gt;</span> <span class="kw">Just</span> <span class="fu">$</span> unapply weakenL
+  (<span class="st">&quot;weakenR&quot;</span><span class="fu">:</span>_) <span class="ot">-&gt;</span> <span class="kw">Just</span> <span class="fu">$</span> unapply weakenR
   (<span class="st">&quot;andRight&quot;</span><span class="fu">:</span>args)
     <span class="fu">|</span> [lkseq<span class="fu">|</span> <span class="kw">as</span> <span class="fu">|-</span> gs, a ∧ b <span class="fu">|</span>] <span class="ot">&lt;-</span> fm <span class="ot">-&gt;</span> unapplyList andRight args [seqs<span class="fu">|</span> <span class="kw">as</span> <span class="fu">|-</span> gs <span class="fu">|</span>]
-  (<span class="st">&quot;andLeftR&quot;</span><span class="fu">:</span>_) <span class="ot">-&gt;</span> <span class="kw">Just</span> <span class="fu">$$</span> unapply andLeftR
+  (<span class="st">&quot;andLeftR&quot;</span><span class="fu">:</span>_) <span class="ot">-&gt;</span> <span class="kw">Just</span> <span class="fu">$</span> unapply andLeftR
 <span class="fu">...</span> many other <span class="fu">lines...</span></code></pre>
 <p>実は、ちょっとこれは不正をしています、妙ちきりんな型エラーが出て仕舞うので、ベクトルを <code>[*] :~&gt; fs</code> に適用する為の型クラス <code>ApplyVec</code> を見てみましょう。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> (<span class="dt">List</span> len <span class="fu">~</span> xs) <span class="ot">=&gt;</span> <span class="dt">ApplyVec</span> len xs <span class="kw">where</span>
@@ -164,7 +164,7 @@ $$</p>
 <span class="kw">instance</span> (<span class="dt">RuleArgument</span> x, <span class="dt">ApplyVec</span> len xs) <span class="ot">=&gt;</span> <span class="dt">ApplyVec</span> (<span class="dt">S</span> len) (x <span class="ch">&#39;: xs) where</span>
   <span class="kw">type</span> <span class="dt">List</span> (<span class="dt">S</span> len) <span class="fu">=</span> <span class="dt">List</span> (<span class="dt">S</span> len)
   applyVec f s (<span class="dt">VCons</span> x xs) <span class="fu">=</span>
-      <span class="kw">case</span> f <span class="fu">&lt;$$&gt;</span> toArg s x <span class="kw">of</span>
+      <span class="kw">case</span> f <span class="fu">&lt;$&gt;</span> toArg s x <span class="kw">of</span>
         <span class="kw">Just</span> f&#39; <span class="ot">-&gt;</span> applyVec f&#39; s xs
         <span class="kw">Nothing</span> <span class="ot">-&gt;</span> <span class="kw">Nothing</span></code></pre>
 <p>スーパークラスで型同値判定を使っているので、これは関数従属性とほぼ同値です。関数従属性で定義しなおすと、<code>ApplyVec</code>の頭部は</p>

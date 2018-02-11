@@ -1,24 +1,35 @@
-{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, FlexibleContexts   #-}
-{-# LANGUAGE GADTs, LambdaCase, MultiParamTypeClasses                     #-}
-{-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, PatternGuards  #-}
-{-# LANGUAGE QuasiQuotes, RecordWildCards, TemplateHaskell, TupleSections #-}
-{-# LANGUAGE TypeFamilies, ViewPatterns                                   #-}
+{-# LANGUAGE DeriveDataTypeable, ExtendedDefaultRules, FlexibleContexts  #-}
+{-# LANGUAGE GADTs, LambdaCase, MultiParamTypeClasses, OverloadedStrings #-}
+{-# LANGUAGE PatternGuards, QuasiQuotes, RankNTypes, RecordWildCards     #-}
+{-# LANGUAGE ScopedTypeVariables, TemplateHaskell, TupleSections         #-}
+{-# LANGUAGE TypeFamilies, ViewPatterns                                  #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind -fno-warn-type-defaults         #-}
 module Main where
-import Blaze.ByteString.Builder (toByteString)
-import Control.Applicative
-import Control.Lens             (rmapping, (%~), (.~), (<&>), (<>~), (^?),
-                                 _Unwrapping')
+import           Lenses
+import           Macro
+import           MathConv
+import qualified MustacheTemplate as MT
+import           Settings
 
-
+import           Blaze.ByteString.Builder        (toByteString)
+import           Control.Applicative
+import           Control.Exception               (IOException, handle)
+import           Control.Lens                    (rmapping, (%~), (.~), (<>~),
+                                                  (^?), _Unwrapping')
+import           Control.Lens                    (imap)
 import           Control.Monad                   hiding (mapM, sequence)
 import           Control.Monad.Error.Class       (throwError)
+import           Control.Monad.State
+import           Data.Aeson                      (Result (..), fromJSON)
 import           Data.Binary
 import qualified Data.ByteString.Char8           as BS
+import qualified Data.ByteString.Lazy            as LBS
 import qualified Data.CaseInsensitive            as CI
 import           Data.Char                       hiding (Space)
 import           Data.Data
+import           Data.Foldable                   (asum)
 import           Data.Function
+import qualified Data.HashMap.Strict             as HM
 import           Data.List                       hiding (stripPrefix)
 import qualified Data.List                       as L
 import           Data.Maybe
@@ -29,7 +40,8 @@ import qualified Data.Text                       as T
 import qualified Data.Text.Lazy                  as LT
 import           Data.Text.Lens                  (packed)
 import           Data.Time
-import           Data.Traversable                hiding (forM)
+import           Data.Yaml                       (object, toJSON, (.=))
+import qualified Data.Yaml                       as Y
 import           Filesystem
 import           Filesystem.Path.CurrentOS       hiding (concat, empty, null,
                                                   (<.>), (</>))
@@ -39,14 +51,14 @@ import           Hakyll                          hiding (fromFilePath,
 import qualified Hakyll
 import           Instances
 import           Language.Haskell.TH             (litE, runIO, stringL)
-import           MathConv
 import           Network.HTTP.Types
 import           Network.URI                     hiding (query)
 import           Prelude                         hiding (FilePath, div, mapM,
                                                   sequence, span)
 import qualified Prelude                         as P
 import           Shelly                          hiding (tag)
-import           Skylighting                     hiding (Context (), Style)
+import           Skylighting                     hiding (Context (..), Style)
+import           System.Exit                     (ExitCode (..))
 import qualified System.FilePath.Posix           as PFP
 import           System.IO                       (hPutStrLn, stderr)
 import           Text.Blaze.Html.Renderer.String
@@ -71,19 +83,6 @@ import qualified Text.Pandoc.Builder             as Pan
 import           Text.Pandoc.Shared              (stringify)
 import           Text.Pandoc.Walk
 import           Text.TeXMath
-
-import           Control.Exception    (IOException, handle)
-import           Control.Lens         (imap)
-import           Data.Aeson           (Result (..), fromJSON)
-import qualified Data.ByteString.Lazy as LBS
-import           Data.Foldable        (asum)
-import qualified Data.HashMap.Strict  as HM
-import           Data.Yaml            (object, toJSON, (.=))
-import qualified Data.Yaml            as Y
-import           Lenses
-import           Macro
-import           Settings
-import           System.Exit          (ExitCode (..))
 
 default (T.Text)
 
@@ -144,8 +143,8 @@ main = hakyllWith config $ do
     route $ setExtension "html"
     compile' $ do
       (count, posts) <- postList (Just 5) subContentsWithoutIndex
-      let ctx = mconcat [ constField "child-count" (show count)
-                        , constField "updates" posts
+      let ctx = mconcat [ MT.constField "child-count" (show count)
+                        , MT.constField "updates" posts
                         , myDefaultContext
                         ]
       myPandocCompiler
@@ -155,8 +154,8 @@ main = hakyllWith config $ do
     route $ setExtension "html"
     compile' $ do
       (count, posts) <- postList Nothing subContentsWithoutIndex
-      let ctx = mconcat [ constField "child-count" (show count)
-                        , constField "children" posts
+      let ctx = mconcat [ MT.constField "child-count" (show count)
+                        , MT.constField "children" posts
                         , myDefaultContext
                         ]
       myPandocCompiler
@@ -181,8 +180,8 @@ main = hakyllWith config $ do
     compile' $ do
       chs <- listChildren True
       (count, chl) <- postList Nothing (fromList $ map itemIdentifier chs)
-      let ctx = mconcat [ constField "child-count" (show count)
-                        , constField "children" chl
+      let ctx = mconcat [ MT.constField "child-count" (show count)
+                        , MT.constField "children" chl
                         , myDefaultContext
                         ]
       myPandocCompiler >>= applyDefaultTemplate ctx >>= saveSnapshot "content"
@@ -242,13 +241,13 @@ main = hakyllWith config $ do
     compile $ do
       items <- filterM isPublished
                =<< loadAll  (("**.md" .||. ("math/**.tex" .&&. hasVersion "html")) .&&. complement ("t/**" .||. "templates/**"))
-      tpl <- loadBody "templates/sitemap-item.xml"
-      loadAndApplyTemplate "templates/sitemap.xml"
-        myDefaultContext
-        =<< makeItem
-        =<< applyTemplateList tpl
-               (myDefaultContext  <> modificationTimeField "date" "%Y-%m-%d")
-               items
+      let ctx = mconcat [ MT.defaultMusContext
+                        , MT.itemsFieldWithContext
+                            (MT.defaultMusContext <> MT.modificationTimeField "date" "%Y-%m-%d")
+                            "items" (items :: [Item String])
+                        ]
+      MT.loadAndApplyMustache "templates/sitemap.mustache" ctx
+        =<< makeItem ()
 
 cslAndBib :: Compiler (Style, [Reference])
 cslAndBib = do
@@ -261,10 +260,10 @@ cslAndBib = do
   let bibs = maybe [] (\(BibTeX bs) -> bs) mbib ++ gbib
   return (style, bibs)
 
-pandocContext :: Pandoc -> Context a
+pandocContext :: Pandoc -> MT.MusContext a
 pandocContext (Pandoc meta _)
   | Just abst <- lookupMeta "abstract" meta =
-        constField "abstract" $ T.unpack $
+        MT.constField "abstract" $ T.unpack $
         fromPure $
         writeHtml5String writerConf $ Pandoc meta (mvToBlocks abst)
   | otherwise = mempty
@@ -372,7 +371,7 @@ feedCxt :: Context String
 feedCxt =  mconcat [ field "published" itemDateStr
                    , field "updated" itemDateStr
                    , bodyField "description"
-                   , myDefaultContext
+                   , defaultContext
                    ]
 
 itemDateStr :: Item a -> Compiler String
@@ -423,7 +422,7 @@ resolveRelatives rt pth =
     go rs       (fp  : rest)   = go (fp : rs) rest
     go fps      []             = PFP.joinPath $ reverse fps
 
-applyDefaultTemplate :: Context String -> Item String -> Compiler (Item String)
+applyDefaultTemplate :: MT.MusContext String -> Item String -> Compiler (Item String)
 applyDefaultTemplate addCtx item = do
   bc <- makeBreadcrumb item
   nav <- makeNavBar $ itemIdentifier item
@@ -432,26 +431,27 @@ applyDefaultTemplate addCtx item = do
   r <- fromMaybe "" <$> getRoute (itemIdentifier item)
   let imgs = map (("https://konn-san.com/" <>) . resolveRelatives (PFP.takeDirectory r)) $
              extractLocalImages $ TS.parseTags $ itemBody item
-      navbar = constField "navbar" nav
-      thumb  = constField "thumbnail" $
+      navbar = MT.constField "navbar" nav
+      thumb  = MT.constField "thumbnail" $
                fromMaybe "https://konn-san.com/img/myface_mosaic.jpg" $
                listToMaybe imgs
-      bcrumb = constField "breadcrumb" bc
+      bcrumb = MT.constField "breadcrumb" bc
       sdescr = either (const "") (T.unpack . T.replace "\n" " ") $ runPure $
                writePlain def . bottomUp unicodiseMath =<< readMarkdown readerConf (T.pack descr)
-      plainDescr = constField "short_description" sdescr
-      unpublished = boolField "unpublished" $ \_ -> not pub
-      date = field "date" itemDateStr
-      toc = field "toc" $ return . buildTOC . readHtml' readerConf . T.pack . itemBody
-      noTopStar = field "no-top-star" $ \i ->
-        getMetadataField (itemIdentifier i) "top-star" <&> \case
-          Just t | Just False <- txtToBool t  -> return (error "NO Text Data")
-          _ -> empty
-      hdr = field "head" $ \i -> return $
-        if "math" `isPrefixOf` Hakyll.toFilePath (itemIdentifier i) && "math/index.md" /= toFilePath (itemIdentifier i)
-        then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
-        else ""
-      meta = field "meta" $ \i -> do
+      plainDescr = MT.constField "short_description" sdescr
+      unpublished = MT.boolField "unpublished" $ \_ -> not pub
+      date = MT.field "date" itemDateStr
+      toc = MT.field "toc" $ return . buildTOC . readHtml' readerConf . T.pack . itemBody
+      noTopStar = MT.field "no-top-star" $ \i -> do
+        getMetadataField (itemIdentifier i) "top-star" >>= \case
+          Just t | Just False <- txtToBool t  -> return True
+          _ -> return False
+      hdr = MT.field "head" $ \i -> do
+        return $
+          if "math" `isPrefixOf` Hakyll.toFilePath (itemIdentifier i) && "math/index.md" /= toFilePath (itemIdentifier i)
+          then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
+          else ""
+      meta = MT.field "meta" $ \i -> do
         [desc0, tags] <- forM ["description", "tag"] $ \key ->
           fromMaybe "" <$> getMetadataField (itemIdentifier i) key
         let desc = fromPure $ writePlain writerConf { writerHTMLMathMethod = PlainMath
@@ -467,14 +467,15 @@ applyDefaultTemplate addCtx item = do
   unsafeCompiler $ do
     broken <- filterM isLinkBroken links
     forM_ broken $ \l -> hPutStrLn stderr $ "*** Link Broken: " ++ l
-
-  applyAsTemplate cxt item'
-    >>= loadAndApplyTemplate "templates/default.html" cxt
+  i <-  MT.applyAsMustache cxt item'
+    >>= MT.loadAndApplyMustache "templates/default.mustache" cxt
     >>= relativizeUrls
     >>= procKaTeX
+  return i
 
-procKaTeX :: Traversable t => t String -> Compiler (t String)
+procKaTeX :: Item String -> Compiler (Item String)
 procKaTeX item = do
+  -- macs <- (<>) <$> loadBody "config/macros.yml" <*> itemMacros item
   isKat <- useKaTeX =<< getResourceBody
   if isKat
      then unsafeCompiler $ mapM prerenderKaTeX item
@@ -612,7 +613,6 @@ makeBreadcrumb item = do
 makeNavBar :: Identifier -> Compiler String
 makeNavBar ident = do
   NavBar cDic <- loadBody "config/navbar.yml"
-  debugCompiler $ "cDic: " ++ show cDic
   let cats = toJSON [object ["path" .= pth
                             ,"category" .= cat
                             ,"active" .= (getActive cDic ident == pth)
@@ -630,11 +630,17 @@ readHierarchy = mapMaybe (toTup . words) . lines
 
 postList :: Maybe Int -> Pattern -> Compiler (Int, String)
 postList mcount pat = do
-  postItemTpl <- loadBody "templates/update.html"
+  postItemTpl <- loadBody "templates/update.mustache"
   posts <- fmap (maybe id take mcount) . myRecentFirst =<< loadAll pat
-  let myDateField = field "date" itemDateStr
-      pdfField = field "pdf" itemPDFLink
-      descField = field "description" $ \item -> do
+  let myDateField = MT.field "date" itemDateStr
+      pdfField  = MT.field "pdf" $ \item ->
+        let ident = itemIdentifier item in
+        if "**.tex" `matches` ident
+        then do
+          Just r <- getRoute ident
+          return $ Just $ encodeString $ "/" </> replaceExtension (decodeString r) "pdf"
+        else return Nothing
+      descField = MT.field "description" $ \item -> do
         let ident = itemIdentifier item
         descr <- T.pack <$> getMetadataField' ident "description"
         fp <- fromJust <$> getRoute ident
@@ -644,23 +650,22 @@ postList mcount pat = do
                      writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
                      =<< readMarkdown readerConf descr
         return $ output
-      ctxs = (pdfField <> myDateField <> descField <> myDefaultContext)
-  src <- unsafeCompiler . prerenderKaTeX
-         =<< applyTemplateList postItemTpl ctxs posts
-  return (length posts, src)
+      iCtxs = (pdfField <> myDateField <> descField <> MT.defaultMusContext) :: MT.MusContext String
+      postsField = MT.itemsFieldWithContext iCtxs "posts" posts
+  src <- procKaTeX
+         =<< MT.applyMustacheTemplate postItemTpl postsField =<< (makeItem ())
+  return (length posts, itemBody src)
 
-myDefaultContext :: Context String
+myDefaultContext :: MT.MusContext String
 myDefaultContext =
-  mconcat [ disqusCtx, defaultContext ]
+  mconcat [ disqusCtx, MT.defaultMusContext ]
   where
     blacklist = ["index.md", "**/index.*", "archive.md", "profile.md"]
-    disqusCtx = field "disqus" $ \item -> do
+    disqusCtx = MT.field "disqus" $ \item -> do
       let banned = foldr1 (.||.) blacklist `matches` itemIdentifier item
       dic <- getMetadata $ itemIdentifier item
       let enabled = fromMaybe True $ maybeResult . fromJSON =<< HM.lookup "disqus" dic
-      if not banned && enabled
-        then return ""
-        else empty
+      return $ not banned && enabled
 
 itemPDFLink :: Item a -> Compiler String
 itemPDFLink item

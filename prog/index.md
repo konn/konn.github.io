@@ -13,7 +13,7 @@ top-star: false
 記事一覧
 =======
 <dl id="#children">
-\$children\$
+{{{children}}}
 </dl>
 
 プロジェクト関連

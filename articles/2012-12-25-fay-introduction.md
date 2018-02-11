@@ -49,7 +49,7 @@ Fay の概観
 まずは
 
 ```
-$$ cabal install fay
+$ cabal install fay
 ```
 
 として `fay` をインストールしよう。
@@ -61,7 +61,7 @@ Fay を使った開発のワークフローとしては、
 1. お気に入りのエディタを起動する
 2. 一見 Haskell っぽいプログラムを書く
 3. GHCi に読み込ませて型検査をする
-4. `$$ fay Hoge.hs` などとして JavaScript に変換する
+4. `$ fay Hoge.hs` などとして JavaScript に変換する
 5. ブラウザや Node.js を使って動作を検証するre
 
 と云う流れになる。GHCi は型検査にしか使わないところが要なのだが、詳細は後程ということにして、早速コードを見ていこう。まず大まかにコードの設計について紹介しよう。主なデータ型の意味は以下の通り。
@@ -162,15 +162,15 @@ instance Foreign a => Foreign (Ref a)
 
 -- | Make a new mutable reference.
 newRef :: Foreign a => a -> Fay (Ref a)
-newRef = ffi "new Fay$$$$Ref(%1)"
+newRef = ffi "new Fay$$Ref(%1)"
 
 -- | Replace the value in the mutable reference.
 writeRef :: Foreign a => Ref a -> a -> Fay ()
-writeRef = ffi "Fay$$$$writeRef(%1,%2)"
+writeRef = ffi "Fay$$writeRef(%1,%2)"
 
 -- | Get the referred value from the mutable value.
 readRef :: Foreign a => Ref a -> Fay a
-readRef = ffi "Fay$$$$readRef(%1)"
+readRef = ffi "Fay$$readRef(%1)"
 ```
 
 Fay では `State`{.haskell} や `Reader`{.haskell} は使えないので、この `Ref`{.haskell} を使って、状態を引き回すことになる。他の関数を見ると、アプリの内部状態や canvas の文脈を引数として引き回しているのが判ると思う。
@@ -186,9 +186,9 @@ getTransShape AutomatonState{..} Trans{transFrom = src, transTo = targ} =
       then Just (Arc p0)
       else let theta = if x <= x' then atan ((y-y') / (x-x')) else pi + atan ((y-y') / (x-x'))
       in if any (\t -> transFrom t == targ && transTo t == src) (transs automaton)
-      then Just $$ Line (p0 %+ stateRadius %* angle (theta + pi/8))
+      then Just $ Line (p0 %+ stateRadius %* angle (theta + pi/8))
                        (p1 %- stateRadius %* angle (theta - pi/8))
-      else Just $$ Line (p0 %+ stateRadius %* angle theta)
+      else Just $ Line (p0 %+ stateRadius %* angle theta)
                        (p1 %- stateRadius %* angle theta)
     _ -> Nothing
 ```
@@ -218,8 +218,8 @@ setTransSelected ts asRef = do
   hideInspectors
   expose =<< jQuery "#trans-inspector"
   [tFrom, tInps, tTo] <- mapM jQuery ["#trans-info-from", "#trans-info-inputs", "#trans-info-to"]
-  setValue tFrom (show $$ transFrom $$ head ts)
-  setValue tTo (show $$ transTo $$ head ts)
+  setValue tFrom (show $ transFrom $ head ts)
+  setValue tTo (show $ transTo $ head ts)
   setValue tInps =<< arrToStr (map transAlphabet ts)
 ```
 
@@ -263,10 +263,10 @@ Fay は基本的には Haskell のサブセットなので、普段 Haskell を�
 
 Fay で提供されている `(>>=)`{.haskell}, `return`{.haskell} などは全て `Fay`{.haskell} モナドに特化した形に書き換えられている。`do`{.haskell} 構文はどのモナドに対しても使えるのだが、`return`{.haskell} が使えないので余り意味を成さない。
 
-この制限は正直かなしかった。特に、今回のように `canvas`{.haskell} を引き回して描画命令を出す必要がある場合、`Reader`{.haskell} モナドが使えないと正直書きづらくてしょうがないし、`Maybe`{.haskell} も `lookup`{.haskell} を `>>=`{.haskell}} でチェーンしたり、`(,) <$$> lookup a hoge <*> lookup b fuga`{.haskell} のような書き方が出来ないのは割と辛いものがある。`Reader`{.haskell} や `State`{.haskell} は諦めて `Ref`{.haskell} を噛ませて引数として引き回すしかない。
+この制限は正直かなしかった。特に、今回のように `canvas`{.haskell} を引き回して描画命令を出す必要がある場合、`Reader`{.haskell} モナドが使えないと正直書きづらくてしょうがないし、`Maybe`{.haskell} も `lookup`{.haskell} を `>>=`{.haskell} でチェーンしたり、`(,) <$> lookup a hoge <*> lookup b fuga`{.haskell} のような書き方が出来ないのは割と辛いものがある。`Reader`{.haskell} や `State`{.haskell} は諦めて `Ref`{.haskell} を噛ませて引数として引き回すしかない。
 
 ### GHC で型検査は出来るが、実行は出来ない関数がある。
-前節でも触れたが、 GHC では実行出来ない関数がある。主に数値計算や文字列処理の辺りだ。これらは ffi を用いて実装されていて、GHC 内部では `undefined`{.haskell} 扱いなので、こういった操作を行おうとすると失敗する。したがって、ブラウザで実行しながらがんばって printf デバッグをするか、或いは一旦 `Language.Fay.Prelude`{.haskell} をコメントアウトして `Prelude`{.haskell} を読み込むなどして動かしてみて試すしかない。間違っても吐き出された JS のソーコードを読もうと思ってはいけない。というか読めない。`$$ fay Automaton.hs --pretty`{.sh} と云う具合に `--pretty` オプションを付ければちょっとは読み易くはなり、公式サイトのほうにシンボルの読み方等はあることにはある。
+前節でも触れたが、 GHC では実行出来ない関数がある。主に数値計算や文字列処理の辺りだ。これらは ffi を用いて実装されていて、GHC 内部では `undefined`{.haskell} 扱いなので、こういった操作を行おうとすると失敗する。したがって、ブラウザで実行しながらがんばって printf デバッグをするか、或いは一旦 `Language.Fay.Prelude`{.haskell} をコメントアウトして `Prelude`{.haskell} を読み込むなどして動かしてみて試すしかない。間違っても吐き出された JS のソーコードを読もうと思ってはいけない。というか読めない。`$ fay Automaton.hs --pretty`{.sh} と云う具合に `--pretty` オプションを付ければちょっとは読み易くはなり、公式サイトのほうにシンボルの読み方等はあることにはある。
 
 このような関数をデバッグするのは、ちょっと慣れないと大変だ。
 

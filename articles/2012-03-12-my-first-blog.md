@@ -20,14 +20,14 @@ import Import
 
 getRootR :: Handler RepHtml
 getRootR = do
-  articles <- runDB $$ do
-    as <- map entityVal <$$> selectList [] [Asc ArticleCreatedDate, Asc ArticleCreatedTime, LimitTo 5 :: SelectOpt Article]
-    zip as <$$> mapM (get404 . articleAuthor) as
+  articles <- runDB $ do
+    as <- map entityVal <$> selectList [] [Asc ArticleCreatedDate, Asc ArticleCreatedTime, LimitTo 5 :: SelectOpt Article]
+    zip as <$> mapM (get404 . articleAuthor) as
   let render = writeHtml defaultWriterOptions . readMarkdown defaultParserState
-  defaultLayout $$ do
+  defaultLayout $ do
     h2id <- lift newIdent
     setTitle "Yablog homepage"
-    $$(widgetFile "homepage")
+    $(widgetFile "homepage")
 ```
 
 また、[MathJax](http://www.mathjax.org/)を使った数式のレンダリングにも対応している。$\sqrt{2}=\frac{1}{\frac{1}{1 + \frac{1}{\vdots}}}$ みたいにインラインで数式を書くこともできるし、

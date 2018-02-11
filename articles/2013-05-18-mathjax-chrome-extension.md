@@ -13,7 +13,7 @@ tags: 数学,Chrome,技術,ANN,MathChrome
 * [MathChrome](https://github.com/konn/MathChrome/blob/master/MathChrome.crx?raw=true)
     * [レポジトリ](https://github.com/konn/MathChrome) はここ。
 
-上のリンクから `.crx` ファイルをダウンロードしたら、拡張機能ウインドウを開いてドラッグ・アンド・ドロップすれば使えます。Chrome Store だかにないのは、あそこに登録するのに $$5 もかかるからです。ふざけるな。
+上のリンクから `.crx` ファイルをダウンロードしたら、拡張機能ウインドウを開いてドラッグ・アンド・ドロップすれば使えます。Chrome Store だかにないのは、あそこに登録するのに $5 もかかるからです。ふざけるな。
 
 こんな感じの記事が、  
 

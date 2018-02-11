@@ -9,7 +9,7 @@ top-star: false
 
 コンテンツ一覧
 ===========
-<dl id="children">\$children\$</dl>
+<dl id="children">{{{children}}}</dl>
 
 発表資料
 =======

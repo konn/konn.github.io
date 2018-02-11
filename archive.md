@@ -7,4 +7,4 @@ top-star: false
 
 記事一覧
 =======
-<dl id="#children">\$children\$</dl>
+<dl id="#children">{{{children}}}</dl>
