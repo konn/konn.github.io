@@ -238,8 +238,10 @@ ul#refs span.ref-body {
 }
 
 section#disqus_area {
+    margin: 0 auto;
     margin-top: 15px;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 footer {
