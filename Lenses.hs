@@ -19,6 +19,7 @@ newtype MonoidFun a w = MonoidFun { runMonoidArr :: a -> w }
 makePrisms ''MonoidFun
 makeWrapped ''MonoidFun
 makePrisms ''Inline
+makePrisms ''Pandoc
 makePrisms ''Block
 makePrisms ''MetaValue
 makeFields ''Inline

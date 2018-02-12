@@ -237,15 +237,7 @@ ul#refs span.ref-body {
     padding-right: 3px;
 }
 
-@media screen and ( max-width: 479px )
-{  
-    section#disqus_area {
-        width: 100%, !important;
-    }
-}
 section#disqus_area {
-    width: 80%;
-    margin: 0 auto;
     margin-top: 15px;
     margin-bottom: 20px;
     text-align: center;

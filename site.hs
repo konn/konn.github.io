@@ -14,8 +14,8 @@ import           Settings
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
 import           Control.Exception               (IOException, handle)
-import           Control.Lens                    (rmapping, (%~), (.~), (<>~),
-                                                  (^?), _Unwrapping')
+import           Control.Lens                    (rmapping, (%~), (.~), (<&>),
+                                                  (<>~), (^?), _2, _Unwrapping')
 import           Control.Lens                    (imap)
 import           Control.Monad                   hiding (mapM, sequence)
 import           Control.Monad.Error.Class       (throwError)
@@ -212,8 +212,7 @@ main = hakyllWith config $ do
       conv'd <- mapM (return . addPDFLink ("/" </> replaceExtension fp "pdf") .
                       addAmazonAssociateLink "konn06-22"
                       <=< procSchemes) ip'
-      let item = writePandocWith
-                     writerConf $ procCrossRef <$> conv'd
+      let item = ("{{=<% %>=}}\n" ++) <$>writePandocWith writerConf (procCrossRef <$> conv'd)
       saveSnapshot "content" =<< applyDefaultTemplate (pandocContext $ itemBody conv'd) item
 
   match "math/**.tex" $ version "pdf" $ do

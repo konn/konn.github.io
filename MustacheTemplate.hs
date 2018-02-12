@@ -30,7 +30,7 @@ import           Hakyll.Web.Html
 import           Hakyll.Web.Template.Context (getItemModificationTime,
                                               getItemUTC)
 import           System.FilePath             (takeBaseName)
-import           Text.Megaparsec             (parseErrorPretty)
+import           Text.Megaparsec             (parseErrorPretty')
 import           Text.Mustache
 
 data MusContext a = SimpleContext Metadata
@@ -104,8 +104,9 @@ dateFieldWith locale key format = field key $ \i -> do
 applyAsMustache :: MusContext String -> Item String -> Compiler (Item String)
 applyAsMustache ctx item =
   let fname = fromString $ toFilePath $ itemIdentifier item
-  in case compileMustacheText fname $ T.pack $ itemBody item of
-    Left err  -> throwError $ lines $ parseErrorPretty err
+      src   = T.pack $ itemBody item
+  in case compileMustacheText fname $ src of
+    Left err  -> throwError [ parseErrorPretty' src err ]
     Right tpl -> applyMustacheTemplate tpl ctx item
 
 applyMustacheTemplate :: Template -> MusContext a -> Item a -> Compiler (Item String)
