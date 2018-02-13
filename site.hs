@@ -14,8 +14,8 @@ import           Settings
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
 import           Control.Exception               (IOException, handle)
-import           Control.Lens                    (rmapping, (%~), (.~), (<&>),
-                                                  (<>~), (^?), _2, _Unwrapping')
+import           Control.Lens                    (rmapping, (%~), (.~), (<>~),
+                                                  (^?), _2, _Unwrapping')
 import           Control.Lens                    (imap)
 import           Control.Monad                   hiding (mapM, sequence)
 import           Control.Monad.Error.Class       (throwError)
@@ -212,8 +212,12 @@ main = hakyllWith config $ do
       conv'd <- mapM (return . addPDFLink ("/" </> replaceExtension fp "pdf") .
                       addAmazonAssociateLink "konn06-22"
                       <=< procSchemes) ip'
-      let item = ("{{=<% %>=}}\n" ++) <$>writePandocWith writerConf (procCrossRef <$> conv'd)
-      saveSnapshot "content" =<< applyDefaultTemplate (pandocContext $ itemBody conv'd) item
+      let item = ("{{=<% %>=}}\n" ++) <$> writePandocWith writerConf (procCrossRef <$> conv'd)
+          panCtx = pandocContext $
+                   itemBody conv'd & _Pandoc . _2 %~ (RawBlock "html" "{{=<% %>=}}\n":)
+      applyDefaultTemplate panCtx . fmap ("{{=<% %>=}}\n" ++)
+        =<< saveSnapshot "content"
+        =<< MT.applyAsMustache panCtx item
 
   match "math/**.tex" $ version "pdf" $ do
     route $ setExtension "pdf"
@@ -233,7 +237,7 @@ main = hakyllWith config $ do
       loadAllSnapshots subContentsWithoutIndex "content"
         >>= myRecentFirst
         >>= return . take 10 . filter (matches ("index.md" .||. complement "**/index.md") . itemIdentifier)
-        >>= renderAtom feedConf feedCxt
+        >>= renderAtom feedConf (MT.musContextToContext feedCxt)
 
   create ["sitemap.xml"] $ do
     route idRoute
@@ -366,11 +370,11 @@ subContentsWithoutIndex :: Pattern
 subContentsWithoutIndex = ("**.md" .||. "articles/**.html" .||. ("math/**.tex" .&&. hasVersion "html"))
                      .&&. complement ("index.md" .||. "**/index.md" .||. "archive.md")
 
-feedCxt :: Context String
-feedCxt =  mconcat [ field "published" itemDateStr
-                   , field "updated" itemDateStr
-                   , bodyField "description"
-                   , defaultContext
+feedCxt :: MT.MusContext String
+feedCxt =  mconcat [ MT.field "published" itemDateStr
+                   , MT.field "updated" itemDateStr
+                   , MT.bodyField "description"
+                   , MT.defaultMusContext
                    ]
 
 itemDateStr :: Item a -> Compiler String
@@ -652,7 +656,7 @@ postList mcount pat = do
       iCtxs = (pdfField <> myDateField <> descField <> MT.defaultMusContext) :: MT.MusContext String
       postsField = MT.itemsFieldWithContext iCtxs "posts" posts
   src <- procKaTeX
-         =<< MT.applyMustacheTemplate postItemTpl postsField =<< (makeItem ())
+         =<< MT.applyMustache postItemTpl postsField =<< (makeItem ())
   return (length posts, itemBody src)
 
 myDefaultContext :: MT.MusContext String
