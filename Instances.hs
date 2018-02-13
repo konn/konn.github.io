@@ -5,10 +5,12 @@ module Instances (biblioToBibTeX, bibTeXToBiblio, BibTeX(..)) where
 import           Control.Lens
 import           Data.Aeson
 import           Data.Binary
+import qualified Data.Binary              as Bin
 import           Data.Data
 import           Data.Hashable            (Hashable)
 import           Data.HashMap.Strict      (HashMap)
 import qualified Data.HashMap.Strict      as HM
+import qualified Data.Text                as T
 import           GHC.Generics
 import           Hakyll.Core.Writable
 import           Hakyll.Web.Pandoc.Biblio
@@ -23,7 +25,7 @@ newtype BibTeX = BibTeX { runBibTeX :: [Reference] }
     deriving (Read, Show, Eq, Typeable, Generic)
 
 instance Writable BibTeX where
-  write _ _ = return ()
+  write fp = write fp . fmap Bin.encode
 
 instance (Eq k, Hashable k, Binary k, Binary v) => Binary (HashMap k v) where
   put = put . HM.toList
@@ -60,4 +62,7 @@ instance Binary Mus.PName
 instance Binary Mus.Node
 instance Binary Mus.Template
 instance Writable Mus.Template where
-  write _ _ = return ()
+  write fp = write fp . fmap Bin.encode
+
+instance Writable T.Text where
+  write fp = write fp . fmap T.unpack

@@ -26,6 +26,8 @@ executable site
                        MyTeXMathConv
                        Macro
                        Settings
+                       MustacheTemplate
+                       Utils
   other-extensions:    DeriveDataTypeable, TemplateHaskell
   build-depends:       HaTeX
                      , HaTeX-qq
@@ -39,6 +41,7 @@ executable site
                      , case-insensitive
                      , conduit
                      , containers
+                     , cryptohash-sha256
                      , data-default
                      , filepath
                      , hakyll

@@ -1,22 +1,30 @@
-{-# LANGUAGE DataKinds, DeriveDataTypeable, ExtendedDefaultRules          #-}
-{-# LANGUAGE FlexibleContexts, GADTs, LambdaCase, MultiParamTypeClasses   #-}
-{-# LANGUAGE NamedFieldPuns, NoMonomorphismRestriction, OverloadedStrings #-}
-{-# LANGUAGE PatternGuards, ScopedTypeVariables, StandaloneDeriving       #-}
-{-# LANGUAGE TemplateHaskell, TypeOperators, ViewPatterns                 #-}
+{-# LANGUAGE DataKinds, DeriveAnyClass, DeriveDataTypeable, DeriveGeneric #-}
+{-# LANGUAGE ExtendedDefaultRules, FlexibleContexts, GADTs, LambdaCase    #-}
+{-# LANGUAGE MultiParamTypeClasses, NamedFieldPuns                        #-}
+{-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, PatternGuards  #-}
+{-# LANGUAGE ScopedTypeVariables, StandaloneDeriving, TemplateHaskell     #-}
+{-# LANGUAGE TypeOperators, ViewPatterns                                  #-}
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
-module MathConv where
-import Instances ()
-import Lenses
-import Macro
+module MathConv
+       (generateImages, preprocessLaTeX,
+        texToMarkdown, PreprocessedLaTeX(..)
+       ) where
+import           Instances     ()
+import           Lenses
+import           Macro
+import qualified MyTeXMathConv as MyT
+import           Utils
 
 import           Control.Arrow                   (left)
 import           Control.Lens                    hiding (op, rewrite, (<.>))
 import           Control.Lens.Extras             (is)
 import           Control.Monad.Identity
-import           Control.Monad.State.Strict      (runStateT)
+import           Control.Monad.State.Strict      (MonadState, evalStateT, gets,
+                                                  modify, runState, runStateT)
 import           Control.Monad.State.Strict      (StateT)
 import           Control.Monad.Trans             (MonadIO)
 import           Control.Monad.Writer.Strict     (runWriter, tell)
+import qualified Data.Binary                     as Bin
 import           Data.Char                       (isSpace)
 import           Data.Char                       (isAscii)
 import           Data.Char                       (isAlphaNum)
@@ -32,11 +40,14 @@ import           Data.Maybe                      (fromMaybe)
 import           Data.Maybe                      (listToMaybe)
 import           Data.Maybe                      (mapMaybe)
 import           Data.Sequence                   (Seq)
+import qualified Data.Sequence                   as Seq
 import qualified Data.Text                       as T
+import           Data.Typeable
 import qualified Debug.Trace                     as DT
 import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
                                                   (</>))
-import qualified MyTeXMathConv                   as MyT
+import           GHC.Generics                    (Generic)
+import           Hakyll.Core.Writable
 import           Prelude                         hiding (FilePath)
 import           Shelly                          hiding (get)
 import           Text.Blaze.Html.Renderer.String (renderHtml)
@@ -63,16 +74,54 @@ import           Text.TeXMath.Readers.TeX.Macros
 
 default (T.Text , Integer)
 
-fromRight :: Either a b -> b
-fromRight ~(Right a) = a
-
-data MachineState = MachineState { _tikzPictures :: Seq LaTeX
-                                 , _macroDefs    :: [Macro]
-                                 , _imgPath      :: FilePath
-                                 , _texMacros    :: TeXMacros
+data MachineState = MachineState { _macroDefs :: [Macro]
+                                 , _imgPath   :: FilePath
                                  }
                   deriving (Show)
 makeLenses ''MachineState
+
+data PreprocessedLaTeX =
+  PreprocessedLaTeX { latexSource :: String
+                    , images      :: Maybe (Int, Text)
+                    }
+  deriving (Read, Show, Eq, Ord, Generic, Bin.Binary, Typeable)
+
+instance Writable PreprocessedLaTeX where
+  write fp = write fp . fmap Bin.encode
+
+preprocessLaTeX :: TeXMacros -> String -> PreprocessedLaTeX
+preprocessLaTeX macs tsrc =
+  case parseLaTeX $ T.pack tsrc of
+    Right lat0 ->
+      let ltree = procCrossRef myCrossRefConf $ rewriteEnvAndBrakets lat0
+          tlibs = extractTikZLib ltree
+          (lat, localMacros) = extractMacros ltree
+          preamble = tlibs ++ localMacros
+          macros = macs <> parseTeXMacros localMacros
+          (l, st) = runState (extractTikZ $ applyTeXMacro macros lat) mempty
+          proc'd  = T.unpack $ render l
+          diags = render $ buildTikzer preamble $ toList st
+          imgs | Seq.null st = Nothing
+               | otherwise =  Just $ (Seq.length st, diags)
+      in PreprocessedLaTeX proc'd imgs
+    Left _  -> PreprocessedLaTeX tsrc Nothing
+
+extractTikZLib :: LaTeX -> [LaTeX]
+extractTikZLib = queryWith go
+  where
+    go c@(TeXComm "usetikzlibrary" _) = [c]
+    go c@(TeXComm "tikzset" _)        = [c]
+    go c@(TeXComm "pgfplotsset" _)    = [c]
+    go _                              = []
+
+extractMacros :: LaTeX -> (LaTeX, [LaTeX])
+extractMacros = runWriter . transformM go
+  where
+    go c@(TeXComm "newcommand" _)    = TeXEmpty  <$ tell [c]
+    go c@(TeXComm "renewcommand" _)  = TeXEmpty  <$ tell [c]
+    go c@(TeXComm "newcommand*" _)   = TeXEmpty <$ tell [c]
+    go c@(TeXComm "renewcommand*" _) = TeXEmpty <$ tell [c]
+    go c                             = return c
 
 type Machine = StateT MachineState IO
 
@@ -91,88 +140,58 @@ myReaderOpts = def { readerExtensions = extensionsFromList exts
 parseTeX :: String -> Either String LaTeX
 parseTeX = left show . P.runParser latexParser defaultParserConf "" . T.pack
 
-message :: MonadIO m => String -> m ()
-message = liftIO . putStrLn
-
-texToMarkdown :: TeXMacros -> FilePath -> String -> IO Pandoc
-texToMarkdown macs0 fp src_ = do
-  pth <- liftIO $ shelly $ canonic fp
+texToMarkdown :: FilePath -> String -> IO Pandoc
+texToMarkdown fp src_ = do
   macros <- liftIO $ fst . parseMacroDefinitions <$>
             readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
-  let ltree0 = procCrossRef myCrossRefConf $
-                  view _Right $ parseTeX $ applyMacros macros src_
-      tlibs0 = queryWith (\ case
-                            c@(TeXComm "usetikzlibrary" _) -> [c]
-                            c@(TeXComm "tikzset" _) -> [c]
-                            c@(TeXComm "pgfplotsset" _) -> [c]
-                            _ -> [])
-               ltree0
-      (latexTree, locMacros) = runWriter $
-         transformM (\ case
-                         c@(TeXComm "newcommand" _) -> TeXEmpty    <$ tell [c]
-                         c@(TeXComm "renewcommand" _) -> TeXEmpty  <$ tell [c]
-                         c@(TeXComm "newcommand*" _) -> TeXEmpty   <$ tell [c]
-                         c@(TeXComm "renewcommand*" _) -> TeXEmpty <$ tell [c]
-                         c -> return c)
-               ltree0
-      macs  = macs0 <> parseTeXMacros locMacros
-      tlibs = tlibs0 ++ locMacros
+  let ltree0 = view _Right $ parseTeX $ applyMacros macros src_
       initial = T.pack $ applyMacros macros $ T.unpack $ render $
-                applyTeXMacro macs $ preprocessTeX $ latexTree
-      st0 = MachineState { _tikzPictures = mempty
-                         , _macroDefs = macros -- ++ lms
+                rewriteEnvAndBrakets $ ltree0
+      st0 = MachineState { _macroDefs = macros -- ++ lms
                          , _imgPath = dropExtension fp
-                         , _texMacros = macs
                          }
       mabs = either (const Nothing) ((^? _MetaBlocks) <=< M.lookup "abstract" . unMeta . getMeta) $
              runPure $ readLaTeX myReaderOpts initial
-  (pan, s) <- do
+  pan <- do
     (p0@(Pandoc meta0 bdy), s0) <- runStateT (texToMarkdownM initial) st0
     case mabs of
-      Nothing -> return (p0, s0)
+      Nothing -> return p0
       Just bs -> do
         let ps0 = Pandoc meta0 bs
             asrc = either (const "") id $ runPure $ writeLaTeX def ps0
-        (Pandoc _ abbs, s') <- runStateT (texToMarkdownM asrc) s0
-        return (Pandoc (Meta $ M.insert "abstract" (MetaBlocks abbs) $ unMeta meta0)  bdy, s')
+        Pandoc _ abbs <- evalStateT (texToMarkdownM asrc) s0
+        return $ Pandoc (Meta $ M.insert "abstract" (MetaBlocks abbs) $ unMeta meta0)  bdy
 
-  let tikzs = toList $ s ^. tikzPictures
-  unless (null tikzs) $ shelly $ silently $ do
-    master <- canonic $ dropExtension pth
-    mkdir_p master
-    -- let tmp = "tmp" in do
-    withTmpDir $ \tmp -> do
-      cp ".latexmkrc" tmp
-      cd tmp
-      writefile "image.tex" $ render $ buildTikzer tlibs tikzs
-      cmd "latexmk" "-pdflua" "image.tex"
-      cmd "tex2img" "--latex=luajittex --fmt=luajitlatex.fmt" "--with-text" "image.tex" "image.svg"
-      mv "image.svg" "image-0.svg"
-      -- Generating PNGs
-      cmd "convert" "-density" "200" "image.pdf" "image-%d.png"
-      infos <- cmd "pdftk" "image.pdf" "dump_data_utf8"
-      let pages = fromMaybe (0 :: Integer) $ listToMaybe $ mapMaybe
-                   (readMaybe . T.unpack <=< T.stripPrefix "NumberOfPages: ")  (T.lines infos)
-      forM [1..pages - 1] $ \n -> do
-        let targ = fromString ("image-" <> show n) <.> "svg"
-        echo $ "generating " <> encode targ
-        mv (fromString ("image-" <> show (n + 1)) <.> "svg") targ
-      pngs <- findWhen (return . hasExt "png") "."
-      svgs <- findWhen (return . hasExt "svg") "."
-      mapM_ (flip cp master) (pngs ++ svgs)
   return $ adjustJapaneseSpacing pan
+
+generateImages :: (MonadIO m) => FilePath -> Text -> m ()
+generateImages fp body = shelly $ silently $ do
+  pth <- canonic fp
+  master <- canonic $ dropExtension pth
+  mkdir_p master
+  -- let tmp = "tmp" in do
+  withTmpDir $ \tmp -> do
+    cp ".latexmkrc" tmp
+    cd tmp
+    writefile "image.tex" body
+    cmd "latexmk" "-pdflua" "image.tex"
+    cmd "tex2img" "--latex=luajittex --fmt=luajitlatex.fmt" "--with-text" "image.tex" "image.svg"
+    mv "image.svg" "image-0.svg"
+    -- Generating PNGs
+    cmd "convert" "-density" "200" "image.pdf" "image-%d.png"
+    infos <- cmd "pdftk" "image.pdf" "dump_data_utf8"
+    let pages = fromMaybe (0 :: Integer) $ listToMaybe $ mapMaybe
+                 (readMaybe . T.unpack <=< T.stripPrefix "NumberOfPages: ")  (T.lines infos)
+    forM [1..pages - 1] $ \n -> do
+      let targ = fromString ("image-" <> show n) <.> "svg"
+      echo $ "generating " <> encode targ
+      mv (fromString ("image-" <> show (n + 1)) <.> "svg") targ
+    pngs <- findWhen (return . hasExt "png") "."
+    svgs <- findWhen (return . hasExt "svg") "."
+    mapM_ (flip cp master) (pngs ++ svgs)
 
 getMeta :: Pandoc -> Meta
 getMeta (Pandoc m _) = m
-
-tshow :: Show a => a -> Text
-tshow = T.pack . show
-
-readMaybe :: Read a => String -> Maybe a
-readMaybe str =
-  case reads str of
-    [(a, "")] -> Just a
-    _         -> Nothing
 
 texToMarkdownM :: Text -> Machine Pandoc
 texToMarkdownM s = do
@@ -209,8 +228,8 @@ insertBoundary c p q = boundary p q <&> \(l, r) -> [l, c,  r]
 boundary :: (a -> Bool) -> (a -> Bool) -> RE a (a, a)
 boundary p q = (,) <$> psym p <*> psym q
 
-preprocessTeX :: LaTeX -> LaTeX
-preprocessTeX = bottomUp rewrite . bottomUp alterEnv
+rewriteEnvAndBrakets :: LaTeX -> LaTeX
+rewriteEnvAndBrakets = bottomUp rewrite . bottomUp alterEnv
   where
     expands = ["Set", "Braket"]
     alterEnv (TeXEnv env args body)
@@ -453,32 +472,40 @@ buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
   usepackage [] "mymacros"
   comm1 "usetikzlibrary" "matrix,arrows,backgrounds,calc,shapes"
   mapM_ fromLaTeX tikzLibs
-  -- comm1 "tikzset" $ do
-  --   "node distance=2cm, auto, >=latex,"
-  --   "description/.style="
-  --   braces "fill=white,inner sep=1.5pt,auto=false"
-  -- comm1 "pgfplotsset" $ do
-  --   "tick label style="
-  --   braces "font=\\tiny"
-  --   ",compat=1.8,width=6cm"
   document $ mapM_ textell tkzs
+
+extractTikZ :: MonadState (Seq LaTeX) m => LaTeX -> m LaTeX
+extractTikZ pan = bottomUpM step pan
+  where
+    step t@(TeXEnv "tikzpicture" _ _) = save t
+    step (TeXComm "tikz" args) = do
+      case splitAt (length args - 1) args of
+        (opts, ~[FixArg l]) -> save $ TeXEnv "tikzpicture" opts l
+    step t = return t
+
+    save t = do
+      n <- gets length
+      modify (|> t)
+      return $ TeXComm generatedGraphicPlaceholder [FixArg $ TeXRaw $ T.pack $ show n]
+
+generatedGraphicPlaceholder :: String
+generatedGraphicPlaceholder = "generatedgraphic"
 
 procTikz :: Pandoc -> Machine Pandoc
 procTikz pan = bottomUpM step pan
   where
     step (RawBlock "latex" src_)
       | Right ts <- parseTeX src_ = do
-        liftM Plain $ forM [ t | t@(TeXEnv "tikzpicture" _ _) <- universe ts] $ \t -> do
-          n <- uses tikzPictures length
-          tikzPictures %= (|> t)
+        liftM Plain $ forM [ nth
+                           | (TeXComm c [FixArg nth]) <- universe ts
+                           , c == generatedGraphicPlaceholder] $ \nth -> do
+          liftIO $ putStrLn $ "generated image: " ++ T.unpack (render nth)
+          let n = fromMaybe 0 $ readMaybe $ T.unpack $ render nth
           fp <- use imgPath
           let dest = toValue $ encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".svg")
               alts = toValue $ encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".png")
           return $ Span ("", ["img-fluid"], [])
                    [
-                   -- Image ("", ["thumbnail", "media-object"], [])
-                   --       [Str $ "Figure-" ++ show (n+1 :: Int)]
-                   --
                     RawInline "html" $
                     renderHtml $
                     object ! class_ "img-thumbnail media-object"
@@ -505,11 +532,3 @@ texToEnvNamePlainString str =
     go = bottomUp $ \a -> case a of
       Math _ math ->  Str $ stringify $ MyT.readTeXMath  math
       t           -> t
-
-mvToBlocks :: MetaValue -> [Block]
-mvToBlocks (MetaMap _)       = []
-mvToBlocks (MetaList v)      = concatMap mvToBlocks v
-mvToBlocks (MetaBool b)      = [ Plain  [ Str $ show b ] ]
-mvToBlocks (MetaString s)    = [ Plain [ Str s ] ]
-mvToBlocks (MetaInlines ins) = [Plain ins]
-mvToBlocks (MetaBlocks bs)   = bs

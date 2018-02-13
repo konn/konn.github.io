@@ -2,7 +2,7 @@
 {-# LANGUAGE GADTs, LambdaCase, MultiParamTypeClasses, OverloadedStrings #-}
 {-# LANGUAGE PatternGuards, QuasiQuotes, RankNTypes, RecordWildCards     #-}
 {-# LANGUAGE ScopedTypeVariables, TemplateHaskell, TupleSections         #-}
-{-# LANGUAGE TypeFamilies, ViewPatterns                                  #-}
+{-# LANGUAGE TypeApplications, TypeFamilies, ViewPatterns                #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind -fno-warn-type-defaults         #-}
 module Main where
 import           Lenses
@@ -10,6 +10,7 @@ import           Macro
 import           MathConv
 import qualified MustacheTemplate as MT
 import           Settings
+import           Utils
 
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
@@ -20,6 +21,7 @@ import           Control.Lens                    (imap)
 import           Control.Monad                   hiding (mapM, sequence)
 import           Control.Monad.Error.Class       (throwError)
 import           Control.Monad.State
+import           Crypto.Hash.SHA256
 import           Data.Aeson                      (Result (..), fromJSON)
 import           Data.Binary
 import qualified Data.ByteString.Char8           as BS
@@ -37,6 +39,7 @@ import           Data.Monoid
 import           Data.Ord
 import           Data.String
 import qualified Data.Text                       as T
+import qualified Data.Text.Encoding              as T
 import qualified Data.Text.Lazy                  as LT
 import           Data.Text.Lens                  (packed)
 import           Data.Time
@@ -49,6 +52,9 @@ import qualified Filesystem.Path.CurrentOS       as Path
 import           Hakyll                          hiding (fromFilePath,
                                                   toFilePath, writePandoc)
 import qualified Hakyll
+import           Hakyll.Core.Compiler.Internal
+import           Hakyll.Core.Provider
+import qualified Hakyll.Core.Store               as Store
 import           Instances
 import           Language.Haskell.TH             (litE, runIO, stringL)
 import           Network.HTTP.Types
@@ -133,12 +139,6 @@ main = hakyllWith config $ do
   match ("templates/**" .&&. complement "**.mustache") $ compile' templateCompiler
   match ("templates/**.mustache") $ compile' mustacheCompiler
 
-  {-
-  tags <- buildTagsWith myGetTags
-          (("**.md" .||. "**.tex") .&&. complement ("index.md" .||. "*/index.md"))
-          (fromCapture "tags/*.html")
-  -}
-
   match "index.md" $ do
     route $ setExtension "html"
     compile' $ do
@@ -199,15 +199,56 @@ main = hakyllWith config $ do
     route idRoute >> compile' copyFileCompiler
   match "**.csl" $ compile' cslCompiler
   match "**.bib" $ compile' (fmap biblioToBibTeX <$> biblioCompiler)
+
+  match "math/**.tex" $ version "preprocess" $ compile $ cached "preprocess" $ do
+    cmacs <- itemMacros =<< getResourceBody
+    macs <- loadBody "config/macros.yml"
+    fmap (preprocessLaTeX (cmacs <> macs)) <$> getResourceBody
+
+  match "math/**.tex" $ version "image-source" $ compile $ cached "image-source" $ do
+    ident <- getUnderlying
+    PreprocessedLaTeX{..} <- loadBody $ setVersion (Just "preprocess") ident
+    makeItem $ maybe "" snd images
+
+  match "math/**.tex" $ version "images" $ compile $ cached "images" $ do
+    ident <- getUnderlying
+    store    <- compilerStore      <$> compilerAsk
+    let imgSrcId = setVersion (Just "image-source") ident
+        rebuildImages = do
+          src <- loadBody @T.Text imgSrcId
+          if T.null src
+            then makeItem ""
+            else do
+            fp <- decodeString . fromJust <$> getRoute (setVersion (Just "html") ident)
+            unsafeCompiler $ generateImages fp src
+            makeItem $ hash $ T.encodeUtf8 src
+    provider <- compilerProvider <$> compilerAsk
+    if (resourceModified provider imgSrcId)
+      then rebuildImages
+      else do
+        compilerTellCacheHits 1
+        x <- compilerUnsafeIO $ Store.get store ["images", show ident]
+        case x of
+          Store.Found s -> return s
+          _             -> rebuildImages
+
   match "math/**.tex" $ version "html" $ do
     route $ setExtension "html"
     compile' $ do
-      CopyFile{} <- loadBody "katex/katex.min.js"
+      ident <- getUnderlying
       fp <- decodeString . fromJust <$> (getRoute =<< getUnderlying)
-      macs <- loadBody "config/macros.yml"
-      cmacs <- itemMacros =<< getResourceBody
+      PreprocessedLaTeX{..} <- loadBody $ setVersion (Just "preprocess") ident
+      forM_ images $ \(count, _) -> do
+        void $ loadBody @BS.ByteString $ setVersion (Just "images") ident
+        forM_ [0..count-1] $ \n -> do
+          let base = dropExtension fp </> fromString ("image-" <> show n)
+              svgId = fromString $ encodeString $ base <.> "svg"
+              pngId = fromString $ encodeString $ base <.> "png"
+          void $ loadBody @CopyFile svgId
+          void $ loadBody @CopyFile pngId
+      loadBody @CopyFile "katex/katex.min.js"
+      ipandoc <- mapM (unsafeCompiler . texToMarkdown fp) =<< makeItem latexSource
       (style, bibs) <- cslAndBib
-      ipandoc <- mapM (unsafeCompiler . texToMarkdown (cmacs <> macs) fp) =<< getResourceBody
       ip' <- mapM (myProcCites style bibs) ipandoc
       conv'd <- mapM (return . addPDFLink ("/" </> replaceExtension fp "pdf") .
                       addAmazonAssociateLink "konn06-22"
@@ -226,7 +267,7 @@ main = hakyllWith config $ do
   match ("math/**.png" .||. "math/**.jpg" .||. "math/**.svg") $
     route idRoute >> compile' copyFileCompiler
 
-  match (("articles/**.md" .||. "articles/**.html" .||. "profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ do
+  match (("articles/**.md" .||. "articles/**.html" .||. "profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ version "html" $ do
     route $ setExtension "html"
     compile' $
       myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate myDefaultContext
@@ -308,8 +349,12 @@ listChildren recursive = do
       wild = if recursive then "**" else "*"
       pat =  (foldr1 (.||.) $ [fromGlob $ encodeString $ dir </> wild <.> e | e <- exts]
               ++ [ "articles/**.html" | dir == "articles/" ])
-               .&&. complement (fromList [ident] .||. hasVersion "pdf")
+               .&&. hasVersion "html" .&&. complement (fromList [ident] .||. nonHTMLVersion)
   loadAll pat >>= myRecentFirst
+
+nonHTMLVersion :: Pattern
+nonHTMLVersion =
+  foldr1 (.||.) $ map hasVersion [ "pdf" , "images" ,  "image-source" , "preprocess" ]
 
 data HTree a = HTree { label :: a, _chs :: [HTree a] } deriving (Read, Show, Eq, Ord)
 
