@@ -158,13 +158,13 @@ $(document).ready(function(){
 ではどうするのか……というと、[ありがたい事にこのページ](https://blog.hinaloe.net/2015/08/15/hatena-bookmark-api-on-ssl/)に書かれている **`https://b.hatena.ne.jp/entry.count` というエンドポイントを使えばよい**。
 というわけで上のコードが出来あがった。見てくれはこんな感じになる：
 
-<a href="../prog/never-understood-monad-tutorial.html"><img src="./imgs/hello-from-tls/new-badge-enabled.png" class="img-fluid img-thumbnail rounded mx-auto d-block"></a>
+<a href="../prog/never-understood-monad-tutorial.html"><img src="./imgs/hello-from-tls/new-badge-enabled.png" class="img-fluid img-thumbnail rounded mx-auto d-block" alt="+211 users"></a>
 
 はてブの横に "211 user(s) including..." とか書いてあるのがわかると思う。
 横に長すぎるきらいがあるが、ちゃんと「HTTP版のですよ」っていうエクスキュースは必要だし、まあ仕方ないと思おう[^3]。
 一方、悲しいことに元々一切はてブが付いていなかった場合は次のように省略されるようになっている：
 
-<a href="../math/geology-bukovsky-theorem.html"><img src="./imgs/hello-from-tls/new-badge-disabled.png" class="img-fluid img-thumbnail rounded mx-auto d-block"></a>
+<a href="../math/geology-bukovsky-theorem.html"><img src="./imgs/hello-from-tls/new-badge-disabled.png" class="img-fluid img-thumbnail rounded mx-auto d-block" alt="No users appear"></a>
 
 かなしいなあ。かなしい。かなしいので皆さんブクマしていってください。
 
