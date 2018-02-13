@@ -16,7 +16,8 @@ top-star: false
 
 <div class="row">
 <div class="col-sm-6">
-<h2 id="toc">Table Of Contents</h2>
+Table Of Contents {#toc}
+------------------------
 [プロフィール](/profile.html)
 :    私について。最近の活動記録など。
 
@@ -35,9 +36,8 @@ top-star: false
 
 <div class="col-sm-6">
 
-<h2 id="links">External Links</h2>
-
-
+External Links {#links}
+-----------------------
 [Twitter](https://twitter.com/mr_konn)
 :    主に日常のつぶやきなどはこちら。Twitter を始めてから情報発信を Twitter でしかしなくなった感じがする。
 
