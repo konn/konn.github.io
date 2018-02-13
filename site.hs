@@ -40,6 +40,7 @@ import           Data.Ord
 import           Data.String
 import qualified Data.Text                       as T
 import qualified Data.Text.Encoding              as T
+import qualified Data.Text.ICU.Normalize         as UNF
 import qualified Data.Text.Lazy                  as LT
 import           Data.Text.Lens                  (packed)
 import           Data.Time
@@ -519,6 +520,7 @@ applyDefaultTemplate addCtx item = do
     >>= MT.loadAndApplyMustache "templates/default.mustache" cxt
     >>= relativizeUrls
     >>= procKaTeX
+    >>= return . fmap (packed %~ UNF.normalize UNF.NFC)
   return i
 
 procKaTeX :: Item String -> Compiler (Item String)

@@ -79,6 +79,7 @@ executable site
                      , temporary
                      , texmath
                      , text
+                     , text-icu
                      , th-lift
                      , time
                      , unordered-containers

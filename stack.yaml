@@ -14,3 +14,8 @@ extra-deps:
 
 resolver: lts-10.2
 
+extra-include-dirs:
+- /usr/local/opt/icu4c/include
+
+extra-lib-dirs:
+- /usr/local/opt/icu4c/lib
