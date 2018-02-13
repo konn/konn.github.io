@@ -40,7 +40,7 @@ h3:before {
   }
 
   @if $clear {
-    .#{$counter}[name] {
+    .#{$counter}[data-theorem-name] {
       @extend .#{$counter}-plain;
       counter-increment: $counter 0, !important;
     }
@@ -67,23 +67,23 @@ h3:before {
     content: $label "．"
   } 
 
-  .#{$counter}-plain[name]:before {
+  .#{$counter}-plain[data-theorem-name]:before {
     font-weight: bold;
     display: inline;
     @if $clear {
-      content: attr(name) "．";
+      content: attr(data-theorem-name) "．";
     } @else {
-      content: $label "（" attr(name) "）．"
+      content: $label "（" attr(data-theorem-name) "）．"
     }
   }
 
-  .#{$counter}[name]:before {
+  .#{$counter}[data-theorem-name]:before {
     font-weight: bold;
     display: inline;
     @if $clear {
-      content: attr(name) "．";
+      content: attr(data-theorem-name) "．";
     } @else {
-      content: $label " " counter($counter) "（" attr(name) "）．";
+      content: $label " " counter($counter) "（" attr(data-theorem-name) "）．";
     }
   }
 
@@ -147,8 +147,8 @@ h3:before {
     padding-left: 15px;
 }
 
-.proof[name]:before{
-    content: attr(name) "．";
+.proof[data-theorem-name]:before{
+    content: attr(data-theorem-name) "．";
     display: inline;
     font-weight: bold;
 }

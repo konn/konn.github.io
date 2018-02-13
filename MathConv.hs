@@ -384,7 +384,7 @@ rewriteBeginEnv = concatMapM step
       , Just env <- lookupCustomEnv env0 envs = do
           let divStart
                   | null args = concat ["<div class=\"", env, "\">"]
-                  | otherwise = concat ["<div class=\"", env, "\" name=\""
+                  | otherwise = concat ["<div class=\"", env, "\" data-theorem-name=\""
                                        , unwords $ map texToEnvNamePlainString args, "\">"
                                        ]
           Pandoc _ myBody <- texToMarkdownM $ render body
