@@ -516,11 +516,12 @@ applyDefaultTemplate addCtx item = do
   unsafeCompiler $ do
     broken <- filterM isLinkBroken links
     forM_ broken $ \l -> hPutStrLn stderr $ "*** Link Broken: " ++ l
+  scms <- loadBody "config/schemes.yml"
   i <-  MT.applyAsMustache cxt item'
     >>= MT.loadAndApplyMustache "templates/default.mustache" cxt
     >>= relativizeUrls
     >>= procKaTeX
-    >>= return . fmap (packed %~ UNF.normalize UNF.NFC)
+    >>= return . fmap ((packed %~ UNF.normalize UNF.NFC) . addAmazonAssociateLink' "konn06-22" . procSchemesUrl scms)
   return i
 
 procKaTeX :: Item String -> Compiler (Item String)
@@ -586,6 +587,22 @@ deploy _config = handle h $ shelly $ do
 procSchemes :: Pandoc -> Compiler Pandoc
 procSchemes = bottomUpM procSchemes0
 
+procSchemesUrl :: Schemes -> String -> String
+procSchemesUrl (Schemes dic) =
+  withUrls $ \u ->
+  case parseURI u of
+    Just URI{..}
+      | Just Scheme{..} <- HM.lookup (T.pack $ P.init uriScheme) dic
+      -> let body = mconcat [ maybe "" uriAuthToString uriAuthority
+                            , uriPath
+                            , uriQuery
+                            , uriFragment
+                            ]
+         in T.unpack prefix ++ body ++ maybe "" T.unpack postfix
+    _  -> u
+
+uriAuthToString :: URIAuth -> String
+uriAuthToString (URIAuth a b c) = concat [a, b, c]
 procSchemes0 :: Inline -> Compiler Inline
 procSchemes0 inl =
   case inl ^? linkUrl of
@@ -602,6 +619,9 @@ procSchemes0 inl =
 
 addAmazonAssociateLink :: String -> Pandoc -> Pandoc
 addAmazonAssociateLink = bottomUp . procAmazon
+
+addAmazonAssociateLink' :: String -> String -> String
+addAmazonAssociateLink' tag = withUrls (attachTo tag)
 
 procAmazon :: String -> Inline -> Inline
 procAmazon tag (Link atts is (url, ttl))  = Link atts is (attachTo tag url, ttl)
