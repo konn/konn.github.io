@@ -59,7 +59,11 @@ server {
 こんな感じにしてやって `sudo systemctl reload nginx`{.sh} とでもすれば、これまで通りに `http://konn-san.com/math` にアクセスしても、自動的に `https://konn-san.com/math` に飛ばされるようになる。やったね！
 
 [2018/02/09 22:35追記]  
-Firefoxで開いたら「証明書不正だ」と怒られた。なんだと！Let's Encrypt だぞ！とキレていたが、[このQiita記事](https://qiita.com/Y-dash/items/f0008d8124c1622729f3)によれば、`cert.pem` ではなく`fullchain.pem`を指定する必要があるらしい。
+Firefoxで開いたら「証明書不正だ」と怒られた。なんだと！Let's Encrypt だぞ！とキレていたが、[このQiita記事](https://qiita.com/Y-dash/items/f0008d8124c1622729f3)
+
+[](https://qiita.com/Y-dash/items/f0008d8124c1622729f3)
+
+によれば、`cert.pem` ではなく`fullchain.pem`を指定する必要があるらしい。
 ということで上の設定ファイルも現時点ではそのように書き換えてある。  
 [/2018/02/09 22:35追記ここまで]
 
@@ -114,6 +118,9 @@ URLが変わるわけだから、ソーシャルブクマのデータも新し�
 
 ### 失敗する試み：`<iframe>`{.html} の書き換え
 色々と調べていると、[はてなブックマークのAPI](http://developer.hatena.ne.jp/ja/documents/bookmark/apis/getcount)が公開されている。
+
+[](http://developer.hatena.ne.jp/ja/documents/bookmark/apis/getcount)
+
 これを使って、はてブが自動で生成するボタンの内容を書き換えられないか？というのが自然に現れる。
 
 しかし、これは上手くいかない。なぜなら、**はてブボタンは外部URLへの `<iframe>`{.html} 要素として実現されている**からだ。
@@ -168,6 +175,7 @@ $(document).ready(function(){
 
 かなしいなあ。かなしい。かなしいので皆さんブクマしていってください。
 
+
 # まとめ
 まあとにかくこんな感じで、弊サイトはHTTPSに乗り換えました。
 ちゃんと乗り換えられたということがわかりたいので、みなさんも弊サイトにはてなスターとはてなブクマをやっていってください。
@@ -180,5 +188,4 @@ $(document).ready(function(){
 
 [^3]: スマホでみると縦に分割されてちょっと見苦しいのでなんとかしたいんだけどね……。
 
-[^4]: あとこれは本筋に関係ないんだけど、勘でJavaScriptを書いているので、特に何も考えず最初は jQuery の Slim 版を読み込んでいた。
-  こいつらは `jQuery.ajax`{.js} とかが省かれているが故の「スリム」版なので、最初は上のコードが通らずにウーン何故だ……と無駄に悩むことになった。
+[^4]: あとこれは本筋に関係ないんだけど、勘でJavaScriptを書いているので、特に何も考えず最初は jQuery の Slim 版を読み込んでいた。こいつらは `jQuery.ajax`{.js} とかが省かれているが故の「スリム」版なので、最初は上のコードが通らずにウーン何故だ……と無駄に悩むことになった。
