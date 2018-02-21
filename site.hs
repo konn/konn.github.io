@@ -12,27 +12,18 @@ import qualified MustacheTemplate as MT
 import           Settings
 import           Utils
 
-import Blaze.ByteString.Builder (toByteString)
-import Control.Applicative
-import Control.Exception        (IOException, handle)
-import Control.Lens             (makeLenses, rmapping, use, view, (%~), (.~),
-                                 (<<>=), (<>=), (<>=), (<>~), (?=), (^?), _1,
-                                 _2, _Unwrapping')
-
-
-
+import           Blaze.ByteString.Builder        (toByteString)
+import           Control.Applicative
+import           Control.Exception               (IOException, handle)
+import           Control.Lens                    (rmapping, (%~), (.~), (<>~),
+                                                  (^?), _2, _Unwrapping')
 import           Control.Lens                    (imap)
-import qualified Control.Lens                    as L
 import           Control.Monad                   hiding (mapM, sequence)
 import           Control.Monad.Error.Class       (throwError)
 import           Control.Monad.State
 import           Crypto.Hash.SHA256
-import           Data.Aeson                      as Aeson (Options, Result (..),
-                                                           ToJSON (..),
-                                                           defaultOptions,
-                                                           fieldLabelModifier,
-                                                           fromJSON,
-                                                           genericToJSON)
+import           Data.Aeson                      as Aeson (Result (..),
+                                                           fromJSON)
 import           Data.Binary
 import qualified Data.ByteString.Char8           as BS
 import qualified Data.ByteString.Lazy            as LBS
@@ -52,7 +43,6 @@ import qualified Data.Text                       as T
 import qualified Data.Text.Encoding              as T
 import qualified Data.Text.ICU.Normalize         as UNF
 import qualified Data.Text.Lazy                  as LT
-import qualified Data.Text.Lazy.Encoding         as LT
 import           Data.Text.Lens                  (packed)
 import           Data.Time
 import           Data.Yaml                       (object, toJSON, (.=))
@@ -61,7 +51,6 @@ import           Filesystem
 import           Filesystem.Path.CurrentOS       hiding (concat, empty, null,
                                                   (<.>), (</>))
 import qualified Filesystem.Path.CurrentOS       as Path
-import           GHC.Generics
 import           Hakyll                          hiding (fromFilePath,
                                                   toFilePath, writePandoc)
 import qualified Hakyll
@@ -72,7 +61,6 @@ import           Instances
 import           Language.Haskell.TH             (litE, runIO, stringL)
 import           Network.HTTP.Types
 import           Network.URI                     hiding (query)
-import qualified Network.Wreq                    as Wreq
 import           Prelude                         hiding (FilePath, div, mapM,
                                                   sequence, span)
 import qualified Prelude                         as P
@@ -106,17 +94,6 @@ import           Text.TeXMath
 
 default (T.Text)
 
-
-data Page = Page { _pageTitle       :: T.Text
-                 , _pageAuthor      :: T.Text
-                 , _pageType        :: T.Text
-                 , _pageImage       :: String
-                 , _pageUrl         :: String
-                 , _pageDescription :: Maybe T.Text
-                 }
-          deriving (Read, Show, Eq, Ord, Generic)
-
-makeLenses ''Page
 
 toFilePath :: Identifier -> FilePath
 toFilePath = decodeString . Hakyll.toFilePath
@@ -1023,55 +1000,5 @@ linkCard = bottomUpM $ \case
   where
     toCard url = do
       tmpl <- loadBody "templates/site-card.mustache"
-      page <- unsafeCompiler $ readPageMetadata url
       return $ LT.unpack $
-        Mus.renderMustache tmpl $ Y.toJSON page
-
-pageJSONConf :: Aeson.Options
-pageJSONConf = defaultOptions { fieldLabelModifier = map toLower . drop 5 }
-
-instance ToJSON Page where
-  toJSON = genericToJSON pageJSONConf
-
-readPageMetadata :: String -> IO Page
-readPageMetadata url = do
-  src <- parseTags . view Wreq.responseBody <$> Wreq.get url
-  let tags = takeWhile (~/= TagClose "head") src
-  snd <$> execStateT (mapM_ go tags)  (False, Page "" "" "" "" url Nothing)
-  where
-    go (TagOpen "title" _) = do
-      liftIO $ putStrLn "title there!"
-      t <- use $ _2.pageTitle
-      liftIO $ putStrLn $ "Current title: " ++ show t
-      when (T.null t) $ _1 L..= True
-    go (TagText lbs) = do
-      t <- use _1
-      when t $ _2.pageTitle <>= lbsToST lbs
-    go (TagClose "title") = _1 L..= False
-    go (TagOpen "meta" atts)
-      | Just "og:title" <- lookup "property" atts
-      , Just val <- lookup "content" atts
-      = _2.pageTitle L..= lbsToST val
-      | Just "og:author" <- lookup "property" atts
-      , Just val <- lookup "content" atts
-      = _2.pageAuthor L..= lbsToST  val
-      | Just "og:type" <- lookup "property" atts
-      , Just val <- lookup "content" atts
-      = _2.pageType L..= lbsToST  val
-      | Just "og:image" <- lookup "property" atts
-      , Just val <- lookup "content" atts
-      = _2.pageImage L..= lbsToString val
-      | Just "og:url" <- lookup "property" atts
-      , Just val <- lookup "content" atts
-      = _2.pageImage L..= lbsToString val
-      | Just "og:description" <- lookup "property" atts
-      , Just val <- lookup "content" atts
-      = _2.pageDescription ?= lbsToST val
-    go _ = return ()
-
-
-lbsToST :: LBS.ByteString -> T.Text
-lbsToST = LT.toStrict . LT.decodeUtf8
-
-lbsToString :: LBS.ByteString -> String
-lbsToString = LT.unpack . LT.decodeUtf8
+        Mus.renderMustache tmpl $ object [ "url" .= url ]
