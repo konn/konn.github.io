@@ -1,0 +1,9 @@
+asin:
+  template: |
+    <iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-fe.assoc-amazon.com/widgets/cm?t=konn06-22&o=9&l=as4&m=amazon&f=ifr&asins={{urlBody}}"></iframe>
+  gather: true
+
+"*": |
+  <iframe class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url={{url}}" scrolling="no" frameborder="0">
+  </iframe>
+

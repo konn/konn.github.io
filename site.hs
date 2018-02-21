@@ -1,8 +1,9 @@
-{-# LANGUAGE DeriveDataTypeable, DeriveGeneric, ExtendedDefaultRules     #-}
-{-# LANGUAGE FlexibleContexts, GADTs, LambdaCase, MultiParamTypeClasses  #-}
-{-# LANGUAGE OverloadedStrings, PatternGuards, QuasiQuotes, RankNTypes   #-}
-{-# LANGUAGE RecordWildCards, ScopedTypeVariables, TemplateHaskell       #-}
-{-# LANGUAGE TupleSections, TypeApplications, TypeFamilies, ViewPatterns #-}
+{-# LANGUAGE DeriveDataTypeable, DeriveGeneric, ExtendedDefaultRules       #-}
+{-# LANGUAGE FlexibleContexts, GADTs, LambdaCase, MultiParamTypeClasses    #-}
+{-# LANGUAGE NamedFieldPuns, OverloadedStrings, PatternGuards, QuasiQuotes #-}
+{-# LANGUAGE RankNTypes, RecordWildCards, ScopedTypeVariables              #-}
+{-# LANGUAGE TemplateHaskell, TupleSections, TypeApplications              #-}
+{-# LANGUAGE TypeFamilies, ViewPatterns                                    #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind -fno-warn-type-defaults         #-}
 module Main where
 import           Lenses
@@ -36,8 +37,9 @@ import qualified Data.HashMap.Strict             as HM
 import           Data.List                       hiding (stripPrefix)
 import qualified Data.List                       as L
 import           Data.Maybe
-import           Data.Monoid
+import           Data.Monoid                     hiding ((<>))
 import           Data.Ord
+import           Data.Semigroup                  ((<>))
 import           Data.String
 import qualified Data.Text                       as T
 import qualified Data.Text.Encoding              as T
@@ -83,11 +85,11 @@ import qualified Text.HTML.TagSoup               as TS
 import           Text.HTML.TagSoup.Match
 import           Text.LaTeX.Base                 (render)
 import           Text.LaTeX.Base.Parser
-import           Text.LaTeX.Base.Syntax
+import           Text.LaTeX.Base.Syntax          hiding ((<>))
 import qualified Text.Mustache                   as Mus
 import           Text.Pandoc                     hiding (runIO)
-import           Text.Pandoc.Builder             hiding (fromList)
-import qualified Text.Pandoc.Builder             as Pan
+import           Text.Pandoc.Builder             hiding (fromList, (<>))
+import qualified Text.Pandoc.Builder             as Pan hiding ((<>))
 import           Text.Pandoc.Shared              (stringify)
 import           Text.Pandoc.Walk
 import           Text.TeXMath
@@ -117,6 +119,7 @@ mustacheCompiler = cached "mustacheCompiler" $ do
 main :: IO ()
 main = hakyllWith config $ do
   setting "tree" (def :: SiteTree)
+  setting "cards" (def :: Cards)
   setting "schemes" (def :: Schemes)
   setting "navbar" (def :: NavBar)
   setting "macros" (HM.empty :: TeXMacros)
@@ -336,7 +339,7 @@ addRepo = do
 addPDFLink :: FilePath -> Pandoc -> Pandoc
 addPDFLink plink (Pandoc meta body) = Pandoc meta body'
   where
-    Pandoc _ body' = doc $ mconcat [ para $ "[" <> link (encodeString plink) "PDF版" "PDF版" <> "]"
+    Pandoc _ body' = doc $ mconcat [ para $ mconcat [ "[", link (encodeString plink) "PDF版" "PDF版", "]"]
                                    , Pan.fromList body
                                    ]
 
@@ -980,7 +983,7 @@ fromPure :: IsString a => PandocPure a -> a
 fromPure = either (const "") id . runPure
 
 myExts :: Extensions
-myExts = extensionsFromList exts <> pandocExtensions
+myExts = mconcat [extensionsFromList exts, pandocExtensions]
   where
     exts = [ Ext_backtick_code_blocks
            , Ext_definition_lists
@@ -992,13 +995,41 @@ myExts = extensionsFromList exts <> pandocExtensions
            , Ext_emoji
            ]
 
+protocol :: T.Text -> Maybe T.Text
+protocol url = do
+  T.pack . P.init . uriScheme <$> parseURI (T.unpack url)
+
 linkCard :: Pandoc -> Compiler Pandoc
 linkCard = bottomUpM $ \case
-  Para [Link _ [] (url, "")] -> RawBlock "html" <$> toCard url
-  Plain [Link _ [] (url, "")] -> RawBlock "html" <$> toCard url
+  Para  bs | Just us <- checkCard bs, not (null us) -> toCards us
+  Plain bs | Just us <- checkCard bs, not (null us) -> toCards us
   b -> return b
   where
-    toCard url = do
+    toCards us = do
       tmpl <- loadBody "templates/site-card.mustache"
-      return $ LT.unpack $
-        Mus.renderMustache tmpl $ object [ "url" .= url ]
+      (gaths, protos, frams) <- unzip3 <$> mapM toCard us
+      let gathered = and gaths && and (zipWith (==) protos (tail protos))
+      return $ RawBlock "html" $
+        LT.unpack $
+        Mus.renderMustache tmpl $
+          object [ "gather" .= gathered
+                 , "frames" .= frams
+                 ]
+    myStringify Link{} = "LINK"
+    myStringify l      = stringify l
+    checkCard = mapM isCard . filter (not . all isSpace . myStringify)
+    isCard (Link _ [] (url, "")) = Just url
+    isCard _                     = Nothing
+    toCard (T.pack -> origUrl) = do
+      Cards{..} <- loadBody "config/cards.yml"
+      let mproto = protocol origUrl
+          Card{template = tmpl,gather} =
+            fromMaybe defaultCard $ flip HM.lookup cardDic =<< mproto
+          urlBody = fromMaybe origUrl $
+                    flip T.stripPrefix origUrl . (`T.snoc` ':') =<< mproto
+          model = object [ "url" .= origUrl
+                         , "urlBody" .= urlBody
+                         , "gather" .= gather
+                         ]
+          body = Mus.renderMustache tmpl model
+      return (gather, fromMaybe "*" mproto, body)

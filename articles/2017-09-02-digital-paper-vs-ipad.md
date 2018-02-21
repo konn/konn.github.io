@@ -14,8 +14,8 @@ tag: 電子ペーパー,レビュー,電化製品,iPad Pro,SONY,DPT-RP1,自慢,I
 # 要旨
 科研費[^1]が使えるようになり、調子にのって SONY の電子ペーパーと iPad Pro とを買ったら予算がなくなった[^2]ので、自慢をする。
 
-<iframe class="embed-responsive" style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=konn06-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B072MXJZ6X&linkId=ff2cc56b82ece996923c7d8018106494"></iframe>
-<iframe class="embed-responsive" style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=konn06-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B073PWHKNT&linkId=4e1cef06fe347466b2022261809d2a0a"></iframe>
+[](asin:B072MXJZ6X)
+[](asin:B073PWHKNT)
 
 あ、長いので結論だけ読みたければ[結論](#conclusion)の節にどうぞ。
 
@@ -56,8 +56,9 @@ tag: 電子ペーパー,レビュー,電化製品,iPad Pro,SONY,DPT-RP1,自慢,I
 ハンドブックと呼ばれているのだが、たとえば私の分野の "Handbook of Set Theory" はハードカバーで全3巻、総勢2100ページに及び、いったい何処がハンドなのかというのは大変理解に苦しむところである[^5]。
 読む凶器として名高い京極夏彦『鉄鼠の檻』だって文庫で1300ページ程度である。
 
-<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=konn06-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=4062732475&linkId=87927d91c00562449ddbec79ec7f5194"></iframe>
-<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=konn06-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=1402048432&linkId=92f58eb47763040a2ab8477d76bca895"></iframe>
+[](asin:4062732475)
+[](asin:1402048432)
+
 勿論、こんなものを持ち歩く訳にもいかない。
 有り難いことに、2010年代も終盤に差し掛かり電子化の進んだ昨今にあっては、PDFやらEPUBやらがある。
 あるのだが、いちいち資料を読むためだけにMacBook Proを取り出していては牛刀だし、といってiPhoneの画面は数学書を読むのには狭すぎる。
@@ -227,7 +228,7 @@ PDFリーダとしては、数十ページ以上あるような**ブ厚い資料
 ### 周辺機器・アクセサリ ###
 以前自主ゼミで某氏がApple Pencilを使ってノートを取っているのを「1万円の鉛筆で数学のノートを取ってやるやつがいるぞ」とひどい嘲笑をしたのだが、ついでなので1万円の鉛筆も買った。
 
-<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=konn06-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B018MX3PNU&linkId=5f6ae5e16fe2de814f5dfc8bfc9d07ed"></iframe>
+[](asin:B018MX3PNU)
 
 ところで、Apple Pencilが出るときに早合点して「ジョブズは iPhone 出すときに "Who wants stylus?" つってたじゃんダブスタｗｗｗ」と嘲笑していた人々がいたが、そもそもApple Pencilは単なるスタイラスではなくて（単なるスタイラスに1万円払うのはそれこそ馬鹿だ）、プロのデザイナやイラストレータが絵を描くための高精度で繊細なポインティング・デバイスである。
 某氏を「数学のノートに使うの？」と嘲笑したのはそういう文脈があったのだが、私も買ってしまったので同罪である。
@@ -237,12 +238,13 @@ Apple Pencil は iPad Pro の Lightning 口に接続して急速充電するの�
 また、充電中はペン上部のカバーは外さないといけない。
 こいつらを失くしそうで不安だったので、合わせてそいつらを本体やUSBケーブルに繋ぎ止めとくやつも買った。
 
-<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=konn06-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B01J7NG1Z8&linkId=83874cd1e9c63209d59c05b7181da8ec"></iframe>
+[](asin:B01J7NG1Z8)
 
 ソフトウェアキーボードはどうも信用ならないので、Apple純正の iPad Pro 向け Bluetooth キーボード・Smart Keyboard も同時に購入した：
 
-<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=konn06-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B072MKYRHR&linkId=5ff740eda9696c89f718b58b44cbd024"></iframe>
-<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=konn06-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B072MF9642&linkId=2374b4556c486d2e76ed085e27de62ce"></iframe>
+[](asin:B072MKYRHR)
+[](asin:B072MF9642)
+
 
 このカバー一体型キーボードには Apple Pencil を収納する部分がついていないので、別途収納用のストラップ（？）も買った。
 これで一通り周辺機器は揃った感じだ。
@@ -284,7 +286,7 @@ Apple Pencilの筆圧検知機能にも対応していて、筆圧によって�
 先述のように私は筆圧が強い。すると、何もない状態の iPad の画面では、**ただただペン先がすべってしまってマトモに文字が書けない**。
 色々調べて、**エレコムのペーパーライク保護フィルム**を買って貼った結果、許容範囲の書き心地まで落ち着いた。
 
-<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=konn06-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins=B06XH5M4B4&linkId=33a37106e129183a7e1c53295626e18a"></iframe>
+[](asin:B06XH5M4B4)
 
 しかし、それでも堅い画面に文字を書こうとするとどうしても筆圧が強くなってしまって、ただでさえ下手な文字がもっと下手糞になってしまう。
 以下は、小栗虫太郎『黒死館殺人事件』をiPad Pro と電子ペーパーでそれぞれ書いてみた比較である。

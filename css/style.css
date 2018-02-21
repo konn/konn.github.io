@@ -259,3 +259,7 @@ footer {
 .card-title a:hover {
     text-decoration: underline;
 }
+
+.gather-card {
+    display: inline-block;
+}
