@@ -163,6 +163,9 @@ $(document).ready(function(){
 なぜか。それは `http://api.b.st-hatena.com/entry.count?url=...` というURLを見るとわかってそうこのエンドポイントはHTTPなのだ。
 だからこれまで散々述べてきた理由によって**HTTPSページからJS経由で叩くことができない**。
 ではどうするのか……というと、[ありがたい事にこのページ](https://blog.hinaloe.net/2015/08/15/hatena-bookmark-api-on-ssl/)に書かれている **`https://b.hatena.ne.jp/entry.count` というエンドポイントを使えばよい**。
+
+[](https://blog.hinaloe.net/2015/08/15/hatena-bookmark-api-on-ssl/)
+
 というわけで上のコードが出来あがった。見てくれはこんな感じになる：
 
 <a href="../prog/never-understood-monad-tutorial.html"><img src="./imgs/hello-from-tls/new-badge-enabled.png" class="img-fluid img-thumbnail rounded mx-auto d-block" alt="+211 users"></a>
