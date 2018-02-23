@@ -4,13 +4,13 @@
 {-# LANGUAGE TemplateHaskell, TypeFamilies, TypeSynonymInstances       #-}
 module Lenses where
 import Control.Lens
-import Hakyll.Core.Configuration
-import Language.Haskell.TH       hiding (Inline (..))
+import Language.Haskell.TH    hiding (Inline)
 import Text.HTML.TagSoup
 import Text.LaTeX.Base.Syntax
 import Text.Pandoc.Definition
+import Web.Sake.Conf
 
-flip makeLensesWith ''Configuration $
+flip makeLensesWith ''SakeConf $
   underscoreFields & lensField .~ \_ _ name -> [TopName $ mkName $ '_' : nameBase name]
 
 newtype MonoidFun a w = MonoidFun { runMonoidArr :: a -> w }

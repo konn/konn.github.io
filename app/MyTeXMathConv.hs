@@ -24,20 +24,18 @@ texMathToPandoc inp = inp `seq`
                              Just r   -> Right r
 
 expsToInlines :: [Exp] -> Maybe [Inline]
-expsToInlines xs = do
-  res <- mapM expToInlines xs
-  return (concat res)
+expsToInlines xs = concat <$> mapM expToInlines xs
 
 expToInlines :: Exp -> Maybe [Inline]
 expToInlines (ENumber s) = Just [Str s]
 expToInlines (EIdentifier s) = Just [Emph [Str s]]
 expToInlines (EMathOperator s) = Just [Str s]
 expToInlines (ESymbol t s) = Just $ addSpace t (Str s)
-  where addSpace Op x = [x, thinspace]
+  where addSpace Op x  = [x, thinspace]
         addSpace Bin x = [medspace, x, medspace]
         addSpace Rel x = [widespace, x, widespace]
         addSpace Pun x = [x, thinspace]
-        addSpace _ x = [x]
+        addSpace _ x   = [x]
         thinspace = Str "\x2006"
         medspace  = Str "\x2005"
         widespace = Str "\x2004"

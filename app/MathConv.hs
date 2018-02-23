@@ -16,40 +16,32 @@ import qualified MyTeXMathConv as MyT
 import           Utils
 
 import           Control.Arrow                   (left)
-import           Control.Lens                    hiding (op, rewrite, (<.>))
+import           Control.Lens                    hiding (rewrite, (<.>))
 import           Control.Lens.Extras             (is)
 import           Control.Monad.Identity
-import           Control.Monad.State.Strict      (MonadState, evalStateT, gets,
-                                                  modify, runState, runStateT)
-import           Control.Monad.State.Strict      (StateT)
-import           Control.Monad.Trans             (MonadIO)
+import           Control.Monad.State.Strict      (MonadState, StateT,
+                                                  evalStateT, gets, modify,
+                                                  runState, runStateT)
 import           Control.Monad.Writer.Strict     (runWriter, tell)
-import qualified Data.Binary                     as Bin
-import           Data.Char                       (isSpace)
-import           Data.Char                       (isAscii)
-import           Data.Char                       (isAlphaNum)
-import           Data.Char                       (isLatin1, isLower)
-import           Data.Char                       (isLetter, isUpper)
+import           Data.Char                       (isAlpha, isAlphaNum, isAscii,
+                                                  isLatin1, isLetter, isSpace)
 import           Data.Default
 import           Data.Foldable                   (toList)
 import qualified Data.HashMap.Strict             as HM
 import qualified Data.HashSet                    as HS
 import qualified Data.List                       as L
 import qualified Data.Map                        as M
-import           Data.Maybe                      (fromMaybe)
-import           Data.Maybe                      (listToMaybe)
-import           Data.Maybe                      (mapMaybe)
+import           Data.Maybe                      (fromMaybe, listToMaybe,
+                                                  mapMaybe)
 import           Data.Sequence                   (Seq)
 import qualified Data.Sequence                   as Seq
+import           Data.Store                      (Store)
 import qualified Data.Text                       as T
 import           Data.Typeable
-import qualified Debug.Trace                     as DT
-import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
-                                                  (</>))
+import           Development.Shake
 import           GHC.Generics                    (Generic)
-import           Hakyll.Core.Writable
-import           Prelude                         hiding (FilePath)
-import           Shelly                          hiding (get)
+import           System.Directory
+import           System.FilePath
 import           Text.Blaze.Html.Renderer.String (renderHtml)
 import           Text.Blaze.Html5                (img, object, toValue, (!))
 import           Text.Blaze.Html5.Attributes     (alt, class_, data_, src,
@@ -58,21 +50,19 @@ import           Text.LaTeX.Base                 hiding ((&))
 import           Text.LaTeX.Base.Class
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax
-import           Text.LaTeX.CrossRef             (procCrossRef)
-import           Text.LaTeX.CrossRef             (RefOptions (..))
-import           Text.LaTeX.CrossRef             (Numeral (Arabic))
-import           Text.LaTeX.CrossRef             (RefItem (Item))
-import           Text.LaTeX.CrossRef             (LabelFormat (ThisCounter))
+import           Text.LaTeX.CrossRef             (LabelFormat (ThisCounter),
+                                                  Numeral (Arabic),
+                                                  RefItem (Item),
+                                                  RefOptions (..), procCrossRef)
 import qualified Text.LaTeX.CrossRef             as R
 import           Text.Pandoc                     hiding (MathType, Writer)
-import           Text.Pandoc.Shared
+import           Text.Pandoc.Shared              hiding (withTempDir)
 import qualified Text.Parsec                     as P
-import           Text.Regex.Applicative          (psym, (<|>))
-import           Text.Regex.Applicative          (RE)
-import           Text.Regex.Applicative          (replace)
+import           Text.Regex.Applicative          (RE, psym, replace, (<|>))
 import           Text.TeXMath.Readers.TeX.Macros
+import           Web.Sake.Class                  hiding (copyFile', putNormal)
 
-default (T.Text , Integer)
+default (String, T.Text , Integer)
 
 data MachineState = MachineState { _macroDefs :: [Macro]
                                  , _imgPath   :: FilePath
@@ -84,10 +74,10 @@ data PreprocessedLaTeX =
   PreprocessedLaTeX { latexSource :: String
                     , images      :: Maybe (Int, Text)
                     }
-  deriving (Read, Show, Eq, Ord, Generic, Bin.Binary, Typeable)
+  deriving (Read, Show, Eq, Ord, Generic, Store, Typeable)
 
 instance Writable PreprocessedLaTeX where
-  write fp = write fp . fmap Bin.encode
+  writeTo_ fp = writeTo_ fp . Binary
 
 preprocessLaTeX :: TeXMacros -> String -> PreprocessedLaTeX
 preprocessLaTeX macs tsrc =
@@ -102,7 +92,7 @@ preprocessLaTeX macs tsrc =
           proc'd  = T.unpack $ render l
           diags = render $ buildTikzer preamble $ toList st
           imgs | Seq.null st = Nothing
-               | otherwise =  Just $ (Seq.length st, diags)
+               | otherwise = Just (Seq.length st, diags)
       in PreprocessedLaTeX proc'd imgs
     Left _  -> PreprocessedLaTeX tsrc Nothing
 
@@ -146,7 +136,7 @@ texToMarkdown fp src_ = do
             readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
   let ltree0 = view _Right $ parseTeX $ applyMacros macros src_
       initial = T.pack $ applyMacros macros $ T.unpack $ render $
-                rewriteEnvAndBrakets $ ltree0
+                rewriteEnvAndBrakets ltree0
       st0 = MachineState { _macroDefs = macros -- ++ lms
                          , _imgPath = dropExtension fp
                          }
@@ -164,31 +154,30 @@ texToMarkdown fp src_ = do
 
   return $ adjustJapaneseSpacing pan
 
-generateImages :: (MonadIO m) => FilePath -> Text -> m ()
-generateImages fp body = shelly $ silently $ do
-  pth <- canonic fp
-  master <- canonic $ dropExtension pth
-  mkdir_p master
-  -- let tmp = "tmp" in do
-  withTmpDir $ \tmp -> do
-    cp ".latexmkrc" tmp
-    cd tmp
-    writefile "image.tex" body
-    cmd "latexmk" "-pdflua" "image.tex"
-    cmd "tex2img" "--latex=luajittex --fmt=luajitlatex.fmt" "--with-text" "image.tex" "image.svg"
-    mv "image.svg" "image-0.svg"
+generateImages :: FilePath -> Text -> Action ()
+generateImages fp body = do
+  pth <- liftIO $ canonicalizePath fp
+  master <- liftIO $ canonicalizePath $ dropExtension pth
+  liftIO $ createDirectoryIfMissing True $ fromString master
+  withTempDir $ \tmp -> do
+    copyFile' ("data" </> ".latexmkrc") tmp
+    writeTextFile (tmp </> "image.tex") body
+    cmd_ (Cwd tmp) "latexmk" "-pdflua" "image.tex"
+    cmd_ (Cwd tmp) "tex2img"
+      "--latex=luajittex" "--fmt=luajitlatex.fmt"
+      "--with-text" "image.tex" "image.svg"
+    liftIO $ renameFile (tmp </> "image.svg") (tmp </> "image-0.svg")
     -- Generating PNGs
-    cmd "convert" "-density" "200" "image.pdf" "image-%d.png"
-    infos <- cmd "pdftk" "image.pdf" "dump_data_utf8"
+    cmd_ (Cwd tmp) "convert" "-density" "200" "image.pdf" "image-%d.png"
+    Stdout infos <- cmd (Cwd tmp) "pdftk" "image.pdf" "dump_data_utf8"
     let pages = fromMaybe (0 :: Integer) $ listToMaybe $ mapMaybe
-                 (readMaybe . T.unpack <=< T.stripPrefix "NumberOfPages: ")  (T.lines infos)
-    forM [1..pages - 1] $ \n -> do
-      let targ = fromString ("image-" <> show n) <.> "svg"
-      echo $ "generating " <> encode targ
-      mv (fromString ("image-" <> show (n + 1)) <.> "svg") targ
-    pngs <- findWhen (return . hasExt "png") "."
-    svgs <- findWhen (return . hasExt "svg") "."
-    mapM_ (flip cp master) (pngs ++ svgs)
+                 (readMaybe <=< L.stripPrefix "NumberOfPages: ")  (lines infos)
+    forM_ [1..pages - 1] $ \n -> do
+      let targ = tmp </> "image-" <> show n <.> "svg"
+      putNormal $ "generating " <> targ
+      liftIO $ renameFile ("image-" <> show (n + 1) <.> "svg") targ
+    imgs <- getDirectoryFiles  tmp ["*.png", "*.svg"]
+    mapM_ (`copyFileNoDep` master) imgs
 
 getMeta :: Pandoc -> Meta
 getMeta (Pandoc m _) = m
@@ -210,10 +199,10 @@ adjustJapaneseSpacing = bottomUp procMathBoundary . bottomUp procStr
                     . replace (insertBoundary ' ' japaneseLetter isAsciiAlphaNum)
 
 isAsciiAlphaNum :: Char -> Bool
-isAsciiAlphaNum c = (isAscii c && isAlphaNum c) || isLatin1 c || (isLower c || isUpper c)
+isAsciiAlphaNum c = (isAscii c && isAlphaNum c) || isLatin1 c || isAlpha c
 
 japaneseLetter :: Char -> Bool
-japaneseLetter c = not (isLatin1 c || isAscii c || isLower c || isUpper c) && isLetter c
+japaneseLetter c = not (isLatin1 c || isAscii c || isAlpha c) && isLetter c
 
 isStrStarting :: (Char -> Bool) -> Inline -> Bool
 isStrStarting p = maybe False p . preview (_Str . _head)
@@ -302,21 +291,20 @@ rewriteInlineCmd = fmap concat . mapM step
     rewrite (TeXComm "ruby" [FixArg rb, FixArg rt]) = do
       rubyBody <- concat <$> mapM step (inlineLaTeX (render rb))
       rubyText <- concat <$> mapM step (inlineLaTeX (render rt))
-      return $ [RawInline "html" $ "<ruby><rb>"]
+      return $ [RawInline "html" "<ruby><rb>"]
                ++ rubyBody
                ++
-               [RawInline "html" $ "</rb><rp>（</rp><rt>"]
+               [RawInline "html" "</rb><rp>（</rp><rt>"]
                ++ rubyText
                ++
-               [RawInline "html" $ "</rt><rp>）</rp><ruby>"]
+               [RawInline "html" "</rt><rp>）</rp><ruby>"]
     rewrite c@(TeXComm cm [FixArg arg0]) = do
       arg <- rewrite arg0
       case lookup cm commandDic of
-        Just (Right t) -> do
-          --- comBody <- concat <$> mapM step (inlineLaTeX (render arg))
+        Just (Right t) ->
           return $ [ RawInline "html" $ "<" ++ t ++ ">" ]
-                   ++ arg ++
-                   [ RawInline "html" $ "</" ++ t ++ ">" ]
+                 ++ arg ++
+                 [ RawInline "html" $ "</" ++ t ++ ">" ]
         Just (Left inl) -> return [inl arg]
         _ -> return $ inlineLaTeX $ render c
     rewrite c = return $ inlineLaTeX $ render c
@@ -354,8 +342,8 @@ getInlines (Table _b1 _b2 _b3 _b4 _b5) = []
 getInlines (Div b1 b2) = [Span b1 $ concatMap getInlines b2]
 getInlines Null = []
 
-traced :: Show a => String -> a -> a
-traced lab a = DT.trace (lab <> ": " <> show a) a
+-- traced :: Show a => String -> a -> a
+-- traced lab a = DT.trace (lab <> ": " <> show a) a
 
 pandocBody :: Pandoc -> [Block]
 pandocBody (Pandoc _ body) = body
@@ -405,8 +393,8 @@ procEnumerate args body = do
                                    render $ TeXEnv "enumerate" [] body
   return $ OrderedList (parseEnumOpts args) blcs
 
-tr :: Show a => String -> a -> a
-tr lab s = DT.trace (lab <> ": " <> show s) s
+-- tr :: Show a => String -> a -> a
+-- tr lab s = DT.trace (lab <> ": " <> show s) s
 
 splitLeftMostBrace :: LaTeX -> Maybe (LaTeX, LaTeX)
 splitLeftMostBrace = loop Nothing
@@ -475,10 +463,10 @@ buildTikzer tikzLibs tkzs = snd $ runIdentity $ runLaTeXT $ do
   document $ mapM_ textell tkzs
 
 extractTikZ :: MonadState (Seq LaTeX) m => LaTeX -> m LaTeX
-extractTikZ pan = bottomUpM step pan
+extractTikZ = bottomUpM step
   where
     step t@(TeXEnv "tikzpicture" _ _) = save t
-    step (TeXComm "tikz" args) = do
+    step (TeXComm "tikz" args) =
       case splitAt (length args - 1) args of
         (opts, ~[FixArg l]) -> save $ TeXEnv "tikzpicture" opts l
     step t = return t
@@ -492,26 +480,26 @@ generatedGraphicPlaceholder :: String
 generatedGraphicPlaceholder = "generatedgraphic"
 
 procTikz :: Pandoc -> Machine Pandoc
-procTikz pan = bottomUpM step pan
+procTikz = bottomUpM step
   where
     step (RawBlock "latex" src_)
-      | Right ts <- parseTeX src_ = do
-        liftM Plain $ forM [ nth
-                           | (TeXComm c [FixArg nth]) <- universe ts
-                           , c == generatedGraphicPlaceholder] $ \nth -> do
-          liftIO $ putStrLn $ "generated image: " ++ T.unpack (render nth)
-          let n = fromMaybe 0 $ readMaybe $ T.unpack $ render nth
-          fp <- use imgPath
-          let dest = toValue $ encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".svg")
-              alts = toValue $ encodeString $ ("/" :: String) </> fp </> ("image-"++show n++".png")
-          return $ Span ("", ["img-fluid"], [])
-                   [
-                    RawInline "html" $
-                    renderHtml $
-                    object ! class_ "img-thumbnail media-object"
-                           ! type_ "image/svg+xml" ! data_ dest $
-                      img ! src alts ! alt "Diagram"
-                   ]
+      | Right ts <- parseTeX src_ =
+        fmap Plain $ forM [ nth
+                       | (TeXComm c [FixArg nth]) <- universe ts
+                       , c == generatedGraphicPlaceholder] $ \nth -> do
+      liftIO $ putStrLn $ "generated image: " ++ T.unpack (render nth)
+      let n = fromMaybe 0 $ readMaybe $ T.unpack $ render nth
+      fp <- use imgPath
+      let dest = toValue $ ("/" :: String) </> fp </> ("image-"++show n++".svg")
+          alts = toValue $ ("/" :: String) </> fp </> ("image-"++show n++".png")
+      return $ Span ("", ["img-fluid"], [])
+               [
+                RawInline "html" $
+                renderHtml $
+                object ! class_ "img-thumbnail media-object"
+                       ! type_ "image/svg+xml" ! data_ dest $
+                  img ! src alts ! alt "Diagram"
+               ]
     step a = return a
 
 texToEnvNamePlainString :: TeXArg -> String
@@ -526,9 +514,9 @@ texToEnvNamePlainString str =
           MSymArg lats -> T.intercalate "," $ map render lats
           MParArg lats -> T.intercalate "," $ map render lats
   in either (const $ T.unpack $ render str) (stringify . bottomUp go) $
-     runPure $ readLaTeX myReaderOpts $ cated
+     runPure $ readLaTeX myReaderOpts cated
   where
     go :: Inline -> Inline
-    go = bottomUp $ \a -> case a of
+    go = bottomUp $ \case
       Math _ math ->  Str $ stringify $ MyT.readTeXMath  math
       t           -> t

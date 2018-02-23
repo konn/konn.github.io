@@ -1,44 +1,34 @@
-{-# LANGUAGE DeriveAnyClass, DeriveDataTypeable, DeriveGeneric     #-}
-{-# LANGUAGE DeriveTraversable, DerivingStrategies                 #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving, NoMonomorphismRestriction #-}
-{-# LANGUAGE OverloadedStrings, PatternGuards, QuasiQuotes         #-}
+{-# LANGUAGE DeriveAnyClass, DeriveDataTypeable, DeriveGeneric           #-}
+{-# LANGUAGE DerivingStrategies, GeneralizedNewtypeDeriving              #-}
+{-# LANGUAGE NoMonomorphismRestriction, OverloadedStrings, PatternGuards #-}
+{-# LANGUAGE QuasiQuotes                                                 #-}
 module Settings where
 
 import           Control.Applicative      (empty, (<|>))
 import           Control.Arrow            (first)
-import           Data.Binary              (Binary (..))
-import qualified Data.Binary              as B
-import qualified Data.ByteString.Lazy     as LBS
 import           Data.Default             (Default (..))
 import           Data.Foldable            (asum, toList)
 import           Data.HashMap.Strict      (HashMap)
 import qualified Data.HashMap.Strict      as HM
-import           Data.Maybe               (fromMaybe)
 import           Data.Monoid              ((<>))
-import           Data.String              (fromString)
+import           Data.Store               (Store)
 import qualified Data.Text                as T
 import           Data.Typeable            (Typeable)
 import           Data.Yaml
-import qualified Data.Yaml                as Y
 import           GHC.Generics             (Generic)
-import           Hakyll                   (cached)
-import           Hakyll                   (compile)
-import           Hakyll                   (match)
-import           Hakyll                   (getResourceLBS)
-import           Hakyll                   (Rules)
-import           Hakyll.Core.Writable     (Writable (..))
 import           Instances                ()
 import qualified Text.Megaparsec          as MP
 import qualified Text.Mustache            as Mus
 import           Text.Mustache.Compile.TH (mustache)
+import           Web.Sake
 
 data SiteTree = SiteTree { title    :: T.Text
                          , children :: HashMap FilePath SiteTree
-                         } deriving (Show, Eq, Generic, Typeable)
-instance Binary SiteTree
+                         } deriving stock    (Show, Eq, Generic, Typeable)
+                           deriving anyclass (Store)
 
-instance Writable SiteTree where
-  write fp = write fp . fmap B.encode
+instance Readable SiteTree where
+  readFrom_ = defaultYamlReadFrom_
 
 instance FromJSON SiteTree where
   parseJSON (String txt) = pure $ SiteTree txt HM.empty
@@ -60,53 +50,44 @@ walkTree (x : xs) (SiteTree t chs) = ("/", t) :
 
 data Scheme = Scheme { prefix  :: T.Text
                      , postfix :: Maybe T.Text
-                     } deriving (Typeable, Read, Show, Eq,
-                                 Ord, Generic)
+                     } deriving (Typeable, Read, Show, Eq, Ord, Generic)
+                       deriving anyclass (ToJSON, FromJSON, Store)
 
-instance FromJSON Scheme
-instance Binary Scheme
-instance ToJSON Scheme
 instance Writable Scheme where
-  write fp = write fp . fmap B.encode
+  writeTo_ = defaultYamlWriteTo_
 
 newtype Schemes  = Schemes { getSchemes :: HashMap T.Text Scheme
                            } deriving (Typeable, Show, Eq, Generic)
-                             deriving newtype (FromJSON, ToJSON, Binary)
+                             deriving newtype (FromJSON, ToJSON, Store)
 
 instance Default Schemes where
   def = Schemes HM.empty
 
-instance Writable Schemes where
-  write fp = write fp . fmap B.encode
-
-setting :: (Writable a, FromJSON a, Binary a, Typeable a)
-        => String -> a -> Rules ()
-setting name d = match (fromString $ "config/" <> name <> ".yml") $ compile $ cached name $ do
-  fmap (fromMaybe d . Y.decode . LBS.toStrict) <$> getResourceLBS
+instance Readable Schemes where
+  readFrom_ = defaultYamlReadFrom_
 
 newtype NavBar  = NavBar { runNavBar :: [(T.Text, String)] }
                   deriving (Typeable, Generic)
-                  deriving newtype (Binary)
+                  deriving newtype (Store)
 
-instance Writable NavBar where
-  write fp = write fp . fmap B.encode
+instance Readable NavBar where
+  readFrom_ = defaultYamlReadFrom_
 
 instance FromJSON NavBar where
-  parseJSON (Array vs) = NavBar <$> mapM p (toList vs)
+  parseJSON = withArray "nav array" $ \vs -> NavBar <$> mapM p (toList vs)
     where
       p (Object d) | [(k, v)] <- HM.toList d = (,) k <$> parseJSON v
       p _          = empty
-  parseJSON _ = empty
 
 instance Default NavBar where
   def = NavBar [("Home", "/")]
 
 data Card = Card { template :: Mus.Template
                  , gather   :: Bool
-                 } deriving (Show, Eq, Ord, Generic, Binary)
+                 } deriving (Show, Eq, Ord, Generic, Store)
 
 instance FromJSON Card where
-  parseJSON val = withText "Template String" (\v -> flip Card False <$> fromMus v) val
+  parseJSON val = withText "Template String" (fmap (flip Card False) . fromMus) val
               <|> withObject "Template Dict"
                   (\obj -> Card <$> (fromMus =<< obj .: "template")
                                 <*> obj .: "gather"
@@ -119,16 +100,16 @@ instance FromJSON Card where
 data Cards = Cards { cardDic     :: HashMap T.Text Card
                    , defaultCard :: Card
                    }
-           deriving (Show, Eq, Generic, Binary)
+           deriving (Show, Eq, Generic, Store)
 
 instance FromJSON Cards where
   parseJSON = withObject "Card dictionary" $ \dic0 -> do
     dic <- mapM parseJSON dic0
-    d <- asum $ fmap return $ HM.lookup "*" dic
+    d <- asum $ return <$> HM.lookup "*" dic
     return $ Cards (HM.delete "*" dic) d
 
-instance Writable Cards where
-  write fp = write fp . fmap B.encode
+instance Readable Cards where
+  readFrom_ = defaultYamlReadFrom_
 
 instance Default Cards where
   def = Cards mempty $ Card [mustache|//hatenablog-parts.com/embed?url={{url}}|] False

@@ -1,7 +1,6 @@
 {-# LANGUAGE DeriveAnyClass, DeriveDataTypeable, DeriveGeneric     #-}
 {-# LANGUAGE FlexibleInstances, OverloadedStrings, PatternSynonyms #-}
-{-# LANGUAGE QuasiQuotes, RecordWildCards, StandaloneDeriving      #-}
-{-# LANGUAGE TypeSynonymInstances, ViewPatterns                    #-}
+{-# LANGUAGE RecordWildCards, TypeSynonymInstances, ViewPatterns   #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Macro where
 import Instances ()
@@ -13,28 +12,27 @@ import           Control.Lens.Extras
 import           Control.Lens.Plated
 import           Control.Monad          (guard)
 import           Control.Monad.Writer
-import           Data.Binary            (Binary (..))
-import qualified Data.Binary            as B
 import           Data.Char
 import           Data.Data
 import           Data.HashMap.Strict    (HashMap)
 import qualified Data.HashMap.Strict    as HM
 import qualified Data.List              as L
 import           Data.Maybe
+import           Data.Store             (Store)
 import qualified Data.Text              as T
 import qualified Data.Vector            as V
 import           Data.Yaml.Aeson
 import           GHC.Generics
-import           Hakyll.Core.Writable
 import           Text.LaTeX             (render)
 import           Text.LaTeX.Base.Syntax
 import           Text.Regex.Applicative
+import           Web.Sake               hiding ((*>))
 
 data TeXMacro = TeXMacro { macroArgs    :: Int
                          , macroBody    :: LaTeX
                          , macroOptArgs :: [LaTeX]
                          }
-              deriving (Data, Typeable, Show, Eq, Generic, Binary)
+              deriving (Data, Typeable, Show, Eq, Generic, Store)
 
 instance FromJSON TeXMacro where
   parseJSON (String t) = TeXMacro 0 <$> parseJSON (String t)
@@ -54,7 +52,7 @@ instance FromJSON TeXMacro where
 type TeXMacros = HashMap String TeXMacro
 
 instance Writable TeXMacros where
-  write fp = write fp . fmap B.encode
+  writeTo_ fp = writeTo_ fp . Binary
 
 
 flattenOptArgs :: TeXArg -> Maybe LaTeX
@@ -75,9 +73,9 @@ applyTeXMacro dic = rewrite matcher
       in (lat : ropts, rargs)
     matchOptArgs ds args = (ds, args)
 
-    matcher (TeXCommS cmd) = matcher (TeXComm cmd [])
-    matcher (TeXComm cmd margs) = do
-      TeXMacro{..} <- HM.lookup cmd dic
+    matcher (TeXCommS tCmd) = matcher (TeXComm tCmd [])
+    matcher (TeXComm tCmd margs) = do
+      TeXMacro{..} <- HM.lookup tCmd dic
       let optCount = length macroOptArgs
           fixCount = macroArgs - optCount
           (opts, sargs) = matchOptArgs macroOptArgs margs
@@ -92,7 +90,7 @@ applyTeXMacro dic = rewrite matcher
 
     apply args (TeXRaw src) =
       fromMaybe (TeXRaw src) $
-      match (reFoldl Greedy (\a b -> TeXSeq a b) TeXEmpty $ pat args) $
+      match (reFoldl Greedy TeXSeq TeXEmpty $ pat args) $
       T.unpack src
     apply _ t = t
 

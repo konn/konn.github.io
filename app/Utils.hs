@@ -1,4 +1,5 @@
 module Utils where
+import Data.Aeson             (FromJSON, Result (..), Value, fromJSON)
 import Data.Text              (Text, pack)
 import Text.Pandoc.Definition (Block (..), Inline (..), MetaValue (..))
 
@@ -21,3 +22,11 @@ readMaybe str =
   case reads str of
     [(a, "")] -> Just a
     _         -> Nothing
+
+fromJSON' :: FromJSON a => Value -> Maybe a
+fromJSON' = maybeResult . fromJSON
+
+maybeResult :: Result a -> Maybe a
+maybeResult (Success a) = Just a
+maybeResult _           = Nothing
+
