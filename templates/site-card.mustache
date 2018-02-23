@@ -1,0 +1,14 @@
+{{# gather}}
+  <div class="embed w-100 my-4 justify-content-center row py-0">
+  {{# frames }}
+    {{& . }}
+  {{/ frames }}
+  </div>
+{{/ gather}}
+{{^ gather}}
+  {{# frames }}
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      {{& . }}
+    </div>
+  {{/ frames }}
+{{/gather}}
