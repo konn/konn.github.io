@@ -160,11 +160,11 @@ generateImages fp body = do
   master <- liftIO $ canonicalizePath $ dropExtension pth
   liftIO $ createDirectoryIfMissing True $ fromString master
   withTempDir $ \tmp -> do
-    copyFile' ("data" </> ".latexmkrc") tmp
+    copyFile' ("data" </> ".latexmkrc") (tmp </> ".latexmkrc")
     writeTextFile (tmp </> "image.tex") body
     cmd_ (Cwd tmp) "latexmk" "-pdflua" "image.tex"
     cmd_ (Cwd tmp) "tex2img"
-      "--latex=luajittex" "--fmt=luajitlatex.fmt"
+      ["--latex=luajittex --fmt=luajitlatex.fmt"]
       "--with-text" "image.tex" "image.svg"
     liftIO $ renameFile (tmp </> "image.svg") (tmp </> "image-0.svg")
     -- Generating PNGs
@@ -175,9 +175,9 @@ generateImages fp body = do
     forM_ [1..pages - 1] $ \n -> do
       let targ = tmp </> "image-" <> show n <.> "svg"
       putNormal $ "generating " <> targ
-      liftIO $ renameFile ("image-" <> show (n + 1) <.> "svg") targ
+      liftIO $ renameFile (tmp </> "image-" <> show (n + 1) <.> "svg") targ
     imgs <- getDirectoryFiles  tmp ["*.png", "*.svg"]
-    mapM_ (`copyFileNoDep` master) imgs
+    forM_ imgs $ \i -> copyFileNoDep (tmp </> i) (master </> i)
 
 getMeta :: Pandoc -> Meta
 getMeta (Pandoc m _) = m

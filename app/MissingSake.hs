@@ -1,7 +1,33 @@
-{-# LANGUAGE DeriveGeneric, NoMonomorphismRestriction, TypeApplications #-}
-module MissingSake where
-import GHC.Generics
-import Web.Sake
+{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies     #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving, NoMonomorphismRestriction #-}
+{-# LANGUAGE RecordWildCards                                       #-}
+module MissingSake
+       ( setItemBody, tryWithFile, PageInfo(..), ContentsIndex(..)
+       , Routing(..), itemPath
+       , Patterns, (.&&.), (.||.), complement, (?===), globDirectoryFiles
+       , replaceDir, routeRules, loadAllItemsAfter, loadOriginal, getSourcePath
+       , loadContentsIndex
+       ) where
+import           Control.Monad       (forM, (<=<))
+import           Data.HashMap.Strict (HashMap)
+import qualified Data.HashMap.Strict as HM
+import qualified Data.HashSet        as HS
+import           Data.Semigroup      (Semigroup, (<>))
+import           Data.Store          (Store)
+import           Data.String         (IsString (..))
+import           Data.Text           (Text)
+import           GHC.Generics        (Generic)
+import           Web.Sake            (Action, FilePattern, Item, MonadAction,
+                                      Readable, Rules, doesFileExist,
+                                      getDirectoryFiles, itemBody,
+                                      itemIdentifier, liftAction, loadItem,
+                                      makeRelative, need, readFromBinaryFile',
+                                      removeFilesAfter, runIdentifier,
+                                      writeBinaryFile, (</>), (?==), (~>))
+import           Web.Sake.Conf       (SakeConf (..))
+
+itemPath :: Item a -> FilePath
+itemPath = runIdentifier . itemIdentifier
 
 setItemBody :: a1 -> Item a2 -> Item a1
 setItemBody bdy i = i { itemBody = bdy }
@@ -12,3 +38,113 @@ tryWithFile fp act = do
   if ex
     then Just <$> act
     else return Nothing
+
+data Clause = Clause { _positives :: HS.HashSet FilePattern
+                     , _negatives :: HS.HashSet FilePattern
+                     }
+            deriving (Read, Show, Eq, Generic, Store)
+
+newtype Patterns = DNF [Clause]
+                   -- ^ Disjunction Normal Form (disjunction of conjunctions of literals)
+                 deriving (Read, Show, Eq, Generic)
+                 deriving newtype (Store)
+
+instance IsString Patterns where
+  fromString = DNF . pure . flip Clause HS.empty . HS.singleton . fromString
+
+
+instance Semigroup Clause
+
+instance Monoid Clause where
+  mempty = Clause HS.empty HS.empty
+  mappend (Clause ls rs) (Clause us ts) = Clause (ls <> us) (rs <> ts)
+
+infixr 2 .||.
+infixr 3 .&&.
+
+(.||.) :: Patterns -> Patterns -> Patterns
+DNF xs .||. DNF ys = DNF (xs ++ ys)
+
+(.&&.) :: Patterns -> Patterns -> Patterns
+DNF xs .&&. DNF ys =
+  removeRedundants $ DNF $ concatMap (\x -> map (x <>) ys) xs
+
+negateClause :: Clause -> Patterns
+negateClause (Clause ls rs) = DNF $ [ Clause HS.empty (HS.singleton f) | f <- HS.toList ls]
+                                 ++ [ Clause (HS.singleton g) HS.empty | g <- HS.toList rs]
+
+complement :: Patterns -> Patterns
+complement (DNF fs) = foldr1 (.&&.) $ map negateClause fs
+
+removeRedundants :: Patterns -> Patterns
+removeRedundants (DNF cs) = DNF $ filter (\(Clause ps ns) -> HS.null $ ps `HS.intersection` ns) cs
+
+clMatch :: Clause -> FilePath -> Bool
+clMatch (Clause ps ns) fp =
+  all (?== fp) ps && all (not . (?== fp)) ns
+
+(?===) :: Patterns -> FilePath -> Bool
+DNF cls ?=== fp = any (`clMatch` fp) cls
+
+data Routing = ModifyPath (FilePath -> FilePath)
+             | Copy
+             deriving (Generic)
+
+
+applyRouting :: Routing -> FilePath -> FilePath
+applyRouting Copy fp           = fp
+applyRouting (ModifyPath f) fp = f fp
+
+globDirectoryFiles :: FilePath -> Patterns -> Action [FilePath]
+globDirectoryFiles dir (DNF cs) = fmap concat $ forM cs $ \(Clause ps ns) ->
+  filter (\fp -> all (not . (?== fp)) ns) <$> getDirectoryFiles dir (HS.toList ps)
+
+newtype PageInfo = PageInfo { sourcePath :: FilePath }
+                 deriving (Read, Show, Eq, Ord, Generic)
+                 deriving anyclass (Store)
+
+newtype ContentsIndex =
+  ContentsIndex { runContentsInfo :: HashMap FilePath PageInfo }
+  deriving (Read, Show, Eq, Generic)
+  deriving anyclass (Store)
+
+pageListPath :: FilePath
+pageListPath = "pages.bin"
+
+-- | Creating routing and cleaning rules.
+routeRules :: SakeConf -> [(Patterns, Routing)] -> Rules ()
+routeRules SakeConf{..} rconfs = do
+  "site" ~> do
+    dic0 <- fmap concat $ forM (reverse rconfs) $ \ (pats, r) -> do
+      chs <- globDirectoryFiles sourceDir pats
+      forM chs $ \fp -> do
+        let path = destinationDir </> applyRouting r fp
+        return (path, PageInfo $ sourceDir </> fp)
+    let cInd = ContentsIndex $ HM.fromList dic0
+    writeBinaryFile (cacheDir </> pageListPath) cInd
+    need $ map fst dic0
+
+  "clean" ~> do
+    removeFilesAfter destinationDir ["//*"]
+    removeFilesAfter cacheDir ["//*"]
+
+loadAllItemsAfter :: FilePath -> Patterns -> Action [Item Text]
+loadAllItemsAfter fp pats =
+  mapM loadItem  =<< globDirectoryFiles fp pats
+
+
+replaceDir :: FilePath -> FilePath -> FilePath -> FilePath
+replaceDir from to pth = to </> makeRelative from pth
+
+loadOriginal :: Readable a => SakeConf -> FilePath -> Action (Item a)
+loadOriginal cnf = loadItem <=< getSourcePath cnf
+
+getSourcePath :: SakeConf -> FilePath -> Action FilePath
+getSourcePath SakeConf{..} fp = do
+  ContentsIndex dic <- readFromBinaryFile' (cacheDir </> pageListPath)
+  case HM.lookup fp dic of
+    Just PageInfo{..} -> return sourcePath
+    Nothing           -> return $ replaceDir destinationDir sourceDir fp
+
+loadContentsIndex :: SakeConf -> Action ContentsIndex
+loadContentsIndex SakeConf{..} = readFromBinaryFile' (cacheDir </> pageListPath)

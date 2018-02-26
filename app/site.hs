@@ -1,9 +1,9 @@
-{-# LANGUAGE DeriveDataTypeable, DeriveGeneric, ExtendedDefaultRules       #-}
-{-# LANGUAGE FlexibleContexts, GADTs, LambdaCase, MultiParamTypeClasses    #-}
-{-# LANGUAGE MultiWayIf, NamedFieldPuns, OverloadedStrings, PatternGuards  #-}
-{-# LANGUAGE QuasiQuotes, RankNTypes, RecordWildCards, ScopedTypeVariables #-}
-{-# LANGUAGE TemplateHaskell, TupleSections, TypeApplications              #-}
-{-# LANGUAGE TypeFamilies, ViewPatterns                                    #-}
+{-# LANGUAGE DeriveAnyClass, DeriveDataTypeable, DeriveGeneric           #-}
+{-# LANGUAGE ExtendedDefaultRules, FlexibleContexts, GADTs, LambdaCase   #-}
+{-# LANGUAGE MultiParamTypeClasses, MultiWayIf, NamedFieldPuns           #-}
+{-# LANGUAGE OverloadedStrings, PatternGuards, QuasiQuotes               #-}
+{-# LANGUAGE RecordWildCards, ScopedTypeVariables, TemplateHaskell       #-}
+{-# LANGUAGE TupleSections, TypeApplications, TypeFamilies, ViewPatterns #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind -fno-warn-type-defaults         #-}
 module Main where
 import Breadcrumb
@@ -15,6 +15,8 @@ import MissingSake
 import Settings
 import Utils
 
+import GHC.Stack
+
 import Blaze.ByteString.Builder (toByteString)
 import Control.Applicative      ((<|>))
 import Control.Lens             (imap, (%~), (.~), (^?), _2)
@@ -24,37 +26,38 @@ import Control.Monad       hiding (mapM)
 import Control.Monad.State
 import Data.Aeson          (FromJSON, fromJSON, toJSON)
 
-import qualified Data.ByteString.Char8           as BS
-import qualified Data.CaseInsensitive            as CI
-import           Data.Char                       hiding (Space)
-import           Data.Data                       (Data)
-import           Data.Foldable                   (asum)
+import qualified Data.ByteString.Char8   as BS
+import qualified Data.CaseInsensitive    as CI
+import           Data.Char               hiding (Space)
+import           Data.Data               (Data)
+import           Data.Foldable           (asum)
 import           Data.Function
-import qualified Data.HashMap.Strict             as HM
-import           Data.List                       hiding (stripPrefix)
-import qualified Data.List                       as L
-import qualified Data.List.Split                 as L
-import           Data.Maybe
-import           Data.Maybe                      (fromMaybe, isNothing)
-import           Data.Monoid                     ((<>))
-import           Data.Store                      (Store)
+import qualified Data.HashMap.Strict     as HM
+import           Data.List
+import qualified Data.List               as L
+import qualified Data.List.Split         as L
+import           Data.Maybe              (fromMaybe, isNothing, listToMaybe,
+                                          maybeToList)
+import           Data.Monoid             ((<>))
+import           Data.Store              (Store)
 import           Data.String
-import qualified Data.Text                       as T
-import qualified Data.Text.ICU.Normalize         as UNF
-import qualified Data.Text.Lazy                  as LT
-import           Data.Text.Lens                  (packed, unpacked)
+import qualified Data.Text               as T
+import qualified Data.Text.ICU.Normalize as UNF
+import qualified Data.Text.Lazy          as LT
+import           Data.Text.Lens          (packed, unpacked)
 import           Data.Time
-import           Data.Yaml                       (object, (.=))
-import           Language.Haskell.TH             (litE, runIO, stringL)
+import           Data.Yaml               (object, (.=))
+import           Language.Haskell.TH     (litE, runIO, stringL)
 import           Network.HTTP.Types
-import           Network.URI                     hiding (query)
-import           Prelude                         hiding (mapM)
-import qualified Prelude                         as P
-import           Skylighting                     hiding (Context (..), Style)
-import           System.Directory                (createDirectoryIfMissing,
-                                                  getCurrentDirectory,
-                                                  getHomeDirectory,
-                                                  getModificationTime)
+import           Network.URI
+import           Prelude                 hiding (mapM)
+import qualified Prelude                 as P
+import           Skylighting             hiding (Context (..), Style)
+import           System.Directory        (getCurrentDirectory, getHomeDirectory,
+                                          getModificationTime)
+
+
+
 import           System.FilePath.Posix
 import           Text.Blaze.Html.Renderer.String
 import           Text.Blaze.Html5                ((!))
@@ -74,11 +77,11 @@ import           Text.LaTeX.Base.Syntax          hiding ((<>))
 import qualified Text.Mustache                   as Mus
 import           Text.Pandoc                     hiding (getModificationTime,
                                                   runIO)
-import           Text.Pandoc.Builder             hiding (fromList, (<>))
-import qualified Text.Pandoc.Builder             as Pan hiding ((<>))
+import           Text.Pandoc.Builder             hiding ((<>))
+import qualified Text.Pandoc.Builder             as Pan
 import           Text.Pandoc.Shared              (stringify, trim)
-import           Text.TeXMath
-import           Web.Sake                        hiding (Env, writePandoc)
+import qualified Text.TeXMath                    as UM
+import           Web.Sake                        hiding (Env)
 import           Web.Sake.Conf
 import           Web.Sake.Html
 
@@ -89,13 +92,6 @@ home = $(litE . stringL =<< runIO getHomeDirectory)
 
 globalBib :: FilePath
 globalBib = home </> "Library/texmf/bibtex/bib/myreference.bib"
-
--- mustacheCompiler :: Compiler (Item Mus.Template)
--- mustacheCompiler = cached "mustacheCompiler" $ do
---   item <- getResourceString
---   file <- getResourceFilePath
---   either (throwError . lines . show) (return . Item (itemIdentifier item)) $
---     Mus.compileMustacheText (fromString file) . T.pack $ itemBody item
 
 myShakeOpts :: ShakeOptions
 myShakeOpts = shakeOptions { shakeThreads = 0 }
@@ -111,13 +107,11 @@ siteConf@SakeConf{destinationDir = destD
                  ,sourceDir = srcD
                  ,cacheDir = cacheD
                  } =
-  def{ destinationDir = "_site"
+  def{ destinationDir = "_site-new"
      , sourceDir = "site-src"
+     , cacheDir = "_cache-new"
      , ignoreFile = L.isSuffixOf "~"
      }
-
-replaceDir :: FilePath -> FilePath -> FilePath -> FilePath
-replaceDir from to pth = to </> makeRelative from pth
 
 destToSrc :: FilePath -> FilePath
 destToSrc = replaceDir (destinationDir siteConf) (sourceDir siteConf)
@@ -125,93 +119,48 @@ destToSrc = replaceDir (destinationDir siteConf) (sourceDir siteConf)
 articleList :: FilePath
 articleList = "_build" </> ".articles"
 
-data Patterns = Pattern FilePattern
-              | And [Patterns]
-              | Or  [Patterns]
-              | Neg Patterns
-              deriving (Read, Show, Eq, Ord)
-
-infixr 2 .||.
-infixr 3 .&&.
-
-complement :: Patterns -> Patterns
-complement = Neg
-(.&&.) :: Patterns -> Patterns -> Patterns
-And xs .&&. And ys = And (xs ++ ys)
-l .&&. r = And [l, r]
-
-(.||.) :: Patterns -> Patterns -> Patterns
-Or xs .||. Or ys = Or (xs ++ ys)
-l     .||. r     = Or [l, r]
-
-(?===) :: Patterns -> FilePath -> Bool
-Pattern pat ?=== fp = pat ?== fp
-Or yess ?=== fp = any (?=== fp) yess
-And yess ?=== fp = all (?=== fp) yess
-Neg nos  ?=== fp = not $ nos ?=== fp
-
-instance IsString Patterns where
-  fromString = Pattern . fromString
-
 main :: IO ()
 main = shakeArgs myShakeOpts $ do
   want ["site"]
 
-  "site" ~> do
-    liftIO $ createDirectoryIfMissing True destD
-    mds    <- getDirectoryFiles srcD ["//*.md"]
-    texs   <- getDirectoryFiles srcD ["//*.tex"]
-    htmls  <- getDirectoryFiles srcD ["//*.html"]
-    sasss  <- getDirectoryFiles srcD ["//*.sass", "//*.css"]
-    copies <- getDirectoryFiles srcD
-              [ "t//*", "js//*", ".well-known//*"
-              , "//*imgs//*", "//*img//*", "prog/automaton//*"
-              , "math//*.pdf", "prog/doc//*", "*.html"
-              , "prog/doc//*.html", "math//*.png", "math//*.svg"
-              , "katex//*"
-              ]
-    let genHtmls = map (-<.> "html") (mds ++ texs) ++ htmls
-        genPDFs  = map (-<.> "pdf") texs
-        csss     = map (-<.> "css") sasss
-    writeBinaryFile articleList $ texs ++ htmls ++ mds
-    need $ map (destD </>) $ genHtmls ++ genPDFs ++ csss ++ copies
+  let copies = foldr1 (.||.) ["t//*" ,  "js//*" ,  ".well-known//*", "//*imgs//*", "//*img//*"
+               ,"prog/automaton//*", "prog/doc//*", "math//*.pdf"
+               ,"katex//*"
+               ] .&&. complement "**/*~"
 
-  "clean" ~> do
-    removeFilesAfter destD  ["//*"]
-    removeFilesAfter cacheD ["//*"]
+  routeRules siteConf
+    [("//*.md" .||. "//*.html" .||. "//*.tex", ModifyPath (-<.> "html"))
+    ,("//*.tex", ModifyPath (-<.> "pdf"))
+    ,("//*.sass", ModifyPath (-<.> "css"))
+    ,(copies, Copy)
+    ]
 
   alternatives $ do
 
     "//*.css" %> \out -> do
-      let sassPath = destToSrc out -<.> "sass"
-      sassThere <- doesFileExist sassPath
-      if sassThere
-        then do
-        need [sassPath]
-        cmd_ "sassc" "-s" "-tcompressed" sassPath out
-        else do
-        let targ = destToSrc out
-        need [targ]
-        cmd_ "yuicompressor" targ "-o" out
+      origPath <- getSourcePath siteConf out
+      need [origPath]
+      if ".sass" `L.isSuffixOf` origPath
+        then cmd_ "sassc" "-s" "-tcompressed" origPath out
+        else cmd_ "yuicompressor" origPath "-o" out
 
     "math//*.pdf" %> \out -> do
-      let base = takeFileName out
-          texFileName = base -<.> "tex"
-          bibPath = destToSrc out -<.> "bib"
-      pdfThere <- doesFileExist (destToSrc out)
-      if pdfThere
-        then copyFile' (destToSrc out) out
+      srcPath <- getSourcePath siteConf out
+      let texFileName = takeFileName srcPath
+          bibPath = srcPath -<.> "bib"
+      if ".pdf" `L.isSuffixOf` srcPath
+        then copyFile' srcPath out
         else do
-        Item{..} <- loadItem (destToSrc out </> "tex")
+        Item{..} <- loadItem srcPath
         let opts = fromMaybe "-pdflua" $
                    maybeResult . fromJSON =<< HM.lookup "latexmk" itemMetadata
         withTempDir $ \tmp -> do
           writeTextFile (tmp </> texFileName) itemBody
           bibThere <- doesFileExist bibPath
-          when bibThere $ copyFile' bibPath tmp
-          copyFile' ("data" </> ".latexmkrc") tmp
+          when bibThere $ copyFile' bibPath (tmp </> takeFileName bibPath)
+          copyFile' ("data" </> ".latexmkrc") (tmp </> ".latexmkrc")
           cmd_ "latexmk" (Cwd tmp) opts texFileName
-          copyFileNoDep (tmp </> base) out
+          copyFileNoDep (tmp </> texFileName -<.> "pdf") out
 
     (destD </> "index.html") %> \out -> do
       (count, posts) <- postList (Just 5) subContentsWithoutIndex
@@ -219,24 +168,32 @@ main = shakeArgs myShakeOpts $ do
                         , constField "updates" posts
                         , myDefaultContext
                         ]
-      loadItem (srcD </> "index.md")
+      loadOriginal siteConf out
         >>= compilePandoc readerConf writerConf
         >>= applyDefaultTemplate out ctx {- tags -}
+        >>= writeTextFile out . itemBody
 
-      return ()
+    "//index.html" %> \out -> do
+      srcPath <- getSourcePath siteConf out
+      need [srcPath]
+      (count, chl) <- renderPostList =<< listChildren True out
+      let ctx = mconcat [ constField "child-count" (show count)
+                        , constField "children" chl
+                        , myDefaultContext
+                        ]
+      writeTextFile out . itemBody
+        =<< saveSnapshot "content"
+        =<< applyDefaultTemplate out ctx
+        =<< myPandocCompiler out
 
     "//*.html" %> \out -> do
-      let baseP   = dropExtension $ makeRelative destD out
-          srcHtml = destD </> baseP <.> "html"
-          srcMd   = srcHtml -<.> "md"
-          srcTeX  = srcHtml -<.> "tex"
-      [texThere, mdThere, htmlThere] <- mapM doesFileExist [srcHtml, srcMd, srcTeX]
-      if | texThere  -> texToHtml  baseP
-         | mdThere   -> mdToHtml   baseP
-         | htmlThere -> htmlToHtml baseP
-         | otherwise -> error $ "No source file found for: " ++ out
+      srcPath <- getSourcePath siteConf out
+      need [srcPath]
+      if | ".tex"  `L.isSuffixOf` srcPath -> texToHtml  out
+         | ".md"   `L.isSuffixOf` srcPath -> mdOrHtmlToHtml out
+         | ".html" `L.isSuffixOf` srcPath -> mdOrHtmlToHtml out
 
-    (cacheD </> "**.tex.preprocess") %> \out -> do
+    (cacheD <//> "*.tex.preprocess") %> \out -> do
       oldThere <- doesFileExist out
       old <- if oldThere
              then Just <$> readFromBinaryFileNoDep out
@@ -245,19 +202,24 @@ main = shakeArgs myShakeOpts $ do
       i@Item{..} <- loadItem (replaceDir cacheD srcD $ dropExtension out)
       let cmacs = itemMacros i
           ans   = preprocessLaTeX (cmacs <> macs) itemBody
-      writeBinaryFile out itemBody
+      writeBinaryFile out ans
       when ((images =<< old) /= images ans) $
         forM_ (images ans) $ \(_, src) ->
         unless (T.null src) $ generateImages out src
 
+    (destD <//> "*") %> \out -> do
+      orig <- getSourcePath siteConf out
+      copyFile' orig out
+
 texToHtml :: FilePath -> Action ()
 texToHtml out = do
-  i0 <- loadItem @T.Text (srcD </> out -<.> "tex")
-  PreprocessedLaTeX{..} <- itemBody <$> loadBinary (cacheD </> out <.> "preprocess")
+  i0 <- loadOriginal @T.Text siteConf out
+  PreprocessedLaTeX{..} <- readFromBinaryFile' (replaceDir srcD cacheD (itemPath i0) <.> "preprocess")
   forM_ images $ \(count, _) -> do
-    let mkBase i = destD </> dropExtension out </> "image-" ++ show i
-    needed [ mkBase i <.> ext | i <- [0..count-1], ext <- ["svg", "png"] ]
-  needed [ destD </> "katex" </> "katex.min.js" , destD </> out -<.> "pdf" ]
+    let mkBase i = dropExtension out </> "image-" ++ show i
+        imagePaths = [ mkBase i <.> ext | i <- [0..count-1], ext <- ["svg", "png"] ]
+    needed imagePaths
+  needed [ destD </> "katex" </> "katex.min.js" , out -<.> "pdf" ]
   (style, bibs) <- cslAndBib out
   ipan <-  linkCard . addPDFLink ("/" </> out -<.> "pdf")
          . addAmazonAssociateLink "konn06-22"
@@ -266,7 +228,7 @@ texToHtml out = do
   let html = "{{=<% %>=}}\n" <> fromPure (writeHtml5String writerConf ipan)
       panCtx = pandocContext $
                ipan & _Pandoc . _2 %~ (RawBlock "html" "{{=<% %>=}}\n":)
-  writeTextFile (destD </> out) . itemBody
+  writeTextFile out . itemBody
     =<< applyDefaultTemplate out panCtx . fmap ("{{=<% %>=}}\n" <>)
     =<< saveSnapshot "content"
     =<< applyAsMustache panCtx (setItemBody html i0)
@@ -277,12 +239,12 @@ saveSnapshot name i@Item{..} = do
   return i
 
 
-
-mdToHtml :: FilePath -> Action ()
-mdToHtml out = undefined
-
-htmlToHtml :: FilePath -> Action ()
-htmlToHtml out = undefined
+mdOrHtmlToHtml :: FilePath -> Action ()
+mdOrHtmlToHtml out =
+  myPandocCompiler out
+  >>= saveSnapshot "content"
+  >>= applyDefaultTemplate out myDefaultContext
+  >>= writeTextFile (destD </> out) . itemBody
 
 --   match "archive.md" $ do
 --     route $ setExtension "html"
@@ -308,21 +270,6 @@ htmlToHtml out = undefined
 --       drafts <- map snd <$> listDrafts
 --       let obj = object ["disallowed" .= map ('/':) drafts]
 --       makeItem $ LT.unpack $ Mus.renderMustache tmplt obj
-
---   match "*/index.md" $ do
---     route $ setExtension "html"
---     compile' $ do
---       chs <- listChildren True
---       (count, chl) <- postList Nothing (fromList $ map itemIdentifier chs)
---       let ctx = mconcat [ MT.constField "child-count" (show count)
---                         , MT.constField "children" chl
---                         , myDefaultContext
---                         ]
---       myPandocCompiler >>= applyDefaultTemplate ctx >>= saveSnapshot "content"
-
---   match ("t/**" .||. ".well-known/**") $ route idRoute >> compile' copyFileCompiler
-
---   match "prog/automaton/**" $ route idRoute >> compile' copyFileCompiler
 
 --   match "math/**.pdf" $ route idRoute >> compile' copyFileCompiler
 --   match "**.key" $ route idRoute >> compile' copyFileCompiler
@@ -413,16 +360,15 @@ addPDFLink plink (Pandoc meta body) = Pandoc meta body'
 -- appendBiblioSection (Pandoc meta bs) =
 --     Pandoc meta $ bs ++ [Div ("biblio", [], []) [Header 1 ("biblio", [], []) [Str "参考文献"]]]
 
--- listChildren :: Bool -> Compiler [Item String]
--- listChildren recursive = do
---   ident <- getUnderlying
---   let dir = directory $ toFilePath ident
---       exts = ["md", "tex"]
---       wild = if recursive then "**" else "*"
---       pat =  foldr1 (.||.) ([fromGlob $ encodeString $ dir </> wild <.> e | e <- exts]
---               ++ [ "articles/**.html" | dir == "articles/" ])
---                .&&. hasVersion "html" .&&. complement (fromList [ident] .||. nonHTMLVersion)
---   loadAll pat >>= myRecentFirst
+listChildren :: Bool -> FilePath -> Action [Item T.Text]
+listChildren recursive out = do
+  ContentsIndex dic <- loadContentsIndex siteConf
+  let dir = takeDirectory out
+      pat0 | recursive = dir <//> "*.html"
+           | otherwise = dir </> "*.html"
+      pat = fromString pat0 .&&. complement (fromString out)
+      chs = [ofp | (targ, ofp) <- HM.toList dic, pat ?=== targ]
+  mapM (loadItem . sourcePath) chs >>= myRecentFirst
 
 -- nonHTMLVersion :: Pattern
 -- nonHTMLVersion =
@@ -465,7 +411,7 @@ addPDFLink plink (Pandoc meta body) = Pandoc meta body'
 -- renderMeta ils = fromPure $ writeHtml5String def $ Pandoc nullMeta [Plain ils]
 
 subContentsWithoutIndex :: Patterns
-subContentsWithoutIndex = ("**.md" .||. "articles/**.html" .||. ("math/**.tex"))
+subContentsWithoutIndex = ("**.md" .||. "articles/**.html" .||. "math/**.tex")
                      .&&. complement ("index.md" .||. "**/index.md" .||. "archive.md")
 
 -- feedCxt :: MT.MusContext String
@@ -498,15 +444,14 @@ writerConf =
 readerConf :: ReaderOptions
 readerConf = def { readerExtensions = myExts }
 
--- myPandocCompiler :: Compiler (Item String)
--- myPandocCompiler = do
---   (csl, bib) <- cslAndBib
---   pandocCompilerWithTransformM
---     readerConf
---     writerConf
---     (    myProcCites csl bib
---      >=> procSchemes
---      >=> linkCard . addAmazonAssociateLink "konn06-22")
+myPandocCompiler :: FilePath -> Action (Item T.Text)
+myPandocCompiler out = do
+  (csl, bib) <- cslAndBib out
+  loadOriginal siteConf out
+    >>= readPandoc readerConf
+    >>= mapM (procSchemes . myProcCites csl bib
+              <=< linkCard . addAmazonAssociateLink "konn06-22")
+    >>= writePandoc writerConf
 
 -- readHtml' :: ReaderOptions -> T.Text -> Pandoc
 -- readHtml' opt = fromRight . runPure . readHtml opt
@@ -599,8 +544,10 @@ prerenderKaTeX :: String -> Action String
 prerenderKaTeX src = do
   nodePath <- getEnvWithDefault "" "NODE_PATH"
   wd <- liftIO getCurrentDirectory
-  let paths = L.intercalate ":" $ [wd </> "contrib", wd] ++ L.splitOn ":" nodePath
-  Stdout out <- cmd (Cwd "katex") "node" (AddEnv "NODE_PATH" paths) (Stdin src) "../data/prerender.js"
+  let katexD = wd </> srcD </> "katex"
+  let paths = L.intercalate ":" $ [katexD </> "contrib", katexD] ++ L.splitOn ":" nodePath
+  putNormal $ "NODE_PATH=" <> paths
+  Stdout out <- cmd (Cwd (srcD </> "katex")) "node" (AddEnv "NODE_PATH" paths) (Stdin src) "../../data/prerender.js"
   return out
 
 isExternal :: T.Text -> Bool
@@ -749,15 +696,15 @@ makeNavBar ident = do
 --     toTup (x:y:ys) = Just (y ++ unwords ys, x)
 --     toTup _        = Nothing
 
-loadAll :: (MonadSake m) => Patterns -> m [Item T.Text]
-loadAll pats =
-  mapM loadItem . filter (pats ?===)
-  =<< readFromBinaryFile' articleList
-
 postList :: Maybe Int -> Patterns -> Action (Int, T.Text)
-postList mcount pats = do
+postList mcount pats =
+  renderPostList
+  =<< fmap (maybe id take mcount) . myRecentFirst
+  =<< loadAllItemsAfter destD pats
+
+renderPostList :: [Item T.Text] -> Action (Int, T.Text)
+renderPostList posts = do
   postItemTpl <- readFromFile' "templates/update.mustache" :: Action Mustache
-  posts <- fmap (maybe id take mcount) . myRecentFirst =<< loadAll pats
   let myDateField = field "date" itemDateStr
       pdfField  = field "pdf" $ \Item{..} ->
         let fp = runIdentifier itemIdentifier
@@ -1004,9 +951,9 @@ removeTeXGomiStr = packed %~ T.replace "\\qed" ""
 
 unicodiseMath :: Inline -> Inline
 unicodiseMath m@(Math mode eqn) =
-  let mmode | InlineMath <- mode = DisplayInline
-            | otherwise = DisplayBlock
-      inls = either (const [m]) (fromMaybe [] . writePandoc mmode) $ readTeX eqn
+  let mmode | InlineMath <- mode = UM.DisplayInline
+            | otherwise = UM.DisplayBlock
+      inls = either (const [m]) (fromMaybe [] . UM.writePandoc mmode) $ UM.readTeX eqn
   in Span ("", ["math"], []) inls
 unicodiseMath i = i
 
