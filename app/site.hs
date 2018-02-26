@@ -18,6 +18,7 @@ import Utils
 import Blaze.ByteString.Builder (toByteString)
 import Control.Applicative      ((<|>))
 import Control.Lens             (imap, (%~), (.~), (^?), _2)
+import Data.Ord                 (comparing)
 
 import Control.Monad       hiding (mapM)
 import Control.Monad.State
@@ -66,6 +67,7 @@ import           Text.CSL.Pandoc
 import           Text.Hamlet
 import           Text.HTML.TagSoup
 import qualified Text.HTML.TagSoup               as TS
+import           Text.HTML.TagSoup.Match
 import           Text.LaTeX.Base                 (render)
 import           Text.LaTeX.Base.Parser
 import           Text.LaTeX.Base.Syntax          hiding ((<>))
@@ -122,6 +124,34 @@ destToSrc = replaceDir (destinationDir siteConf) (sourceDir siteConf)
 
 articleList :: FilePath
 articleList = "_build" </> ".articles"
+
+data Patterns = Pattern FilePattern
+              | And [Patterns]
+              | Or  [Patterns]
+              | Neg Patterns
+              deriving (Read, Show, Eq, Ord)
+
+infixr 2 .||.
+infixr 3 .&&.
+
+complement :: Patterns -> Patterns
+complement = Neg
+(.&&.) :: Patterns -> Patterns -> Patterns
+And xs .&&. And ys = And (xs ++ ys)
+l .&&. r = And [l, r]
+
+(.||.) :: Patterns -> Patterns -> Patterns
+Or xs .||. Or ys = Or (xs ++ ys)
+l     .||. r     = Or [l, r]
+
+(?===) :: Patterns -> FilePath -> Bool
+Pattern pat ?=== fp = pat ?== fp
+Or yess ?=== fp = any (?=== fp) yess
+And yess ?=== fp = all (?=== fp) yess
+Neg nos  ?=== fp = not $ nos ?=== fp
+
+instance IsString Patterns where
+  fromString = Pattern . fromString
 
 main :: IO ()
 main = shakeArgs myShakeOpts $ do
@@ -183,7 +213,16 @@ main = shakeArgs myShakeOpts $ do
           cmd_ "latexmk" (Cwd tmp) opts texFileName
           copyFileNoDep (tmp </> base) out
 
-    "index.html" %> \out -> do
+    (destD </> "index.html") %> \out -> do
+      (count, posts) <- postList (Just 5) subContentsWithoutIndex
+      let ctx = mconcat [ constField "child-count" (show count)
+                        , constField "updates" posts
+                        , myDefaultContext
+                        ]
+      loadItem (srcD </> "index.md")
+        >>= compilePandoc readerConf writerConf
+        >>= applyDefaultTemplate out ctx {- tags -}
+
       return ()
 
     "//*.html" %> \out -> do
@@ -244,17 +283,6 @@ mdToHtml out = undefined
 
 htmlToHtml :: FilePath -> Action ()
 htmlToHtml out = undefined
-
---   match "index.md" $ do
---     route $ setExtension "html"
---     compile' $ do
---       (count, posts) <- postList (Just 5) subContentsWithoutIndex
---       let ctx = mconcat [ MT.constField "child-count" (show count)
---                         , MT.constField "updates" posts
---                         , myDefaultContext
---                         ]
---       myPandocCompiler
---               >>= applyDefaultTemplate ctx {- tags -}
 
 --   match "archive.md" $ do
 --     route $ setExtension "html"
@@ -436,9 +464,9 @@ addPDFLink plink (Pandoc meta body) = Pandoc meta body'
 -- renderMeta :: [Inline] -> T.Text
 -- renderMeta ils = fromPure $ writeHtml5String def $ Pandoc nullMeta [Plain ils]
 
--- subContentsWithoutIndex :: Pattern
--- subContentsWithoutIndex = ("**.md" .||. "articles/**.html" .||. ("math/**.tex" .&&. hasVersion "html"))
---                      .&&. complement ("index.md" .||. "**/index.md" .||. "archive.md")
+subContentsWithoutIndex :: Patterns
+subContentsWithoutIndex = ("**.md" .||. "articles/**.html" .||. ("math/**.tex"))
+                     .&&. complement ("index.md" .||. "**/index.md" .||. "archive.md")
 
 -- feedCxt :: MT.MusContext String
 -- feedCxt =  mconcat [ MT.field "published" itemDateStr
@@ -447,8 +475,8 @@ addPDFLink plink (Pandoc meta body) = Pandoc meta body'
 --                    , MT.defaultMusContext
 --                    ]
 
-itemDateStr :: MonadSake m => Item a -> m String
-itemDateStr = fmap (formatTime defaultTimeLocale "%Y/%m/%d %X %Z") . itemDate
+itemDateStr :: MonadSake m => Item a -> m T.Text
+itemDateStr = fmap (T.pack . formatTime defaultTimeLocale "%Y/%m/%d %X %Z") . itemDate
 
 -- feedConf :: FeedConfiguration
 -- feedConf = FeedConfiguration { feedTitle = "konn-san.com 建設予定地"
@@ -514,7 +542,7 @@ applyDefaultTemplate targetPath addCtx item = do
                      ]
   let item' = demoteHeaders . withTags addRequiredClasses <$> item
   scms <- readFromYamlFile' "config/schemes.yml"
-  i'' <-  procKaTeX . fmap (relativizeUrlsTo targetPath)
+  i'' <-  mapM (procKaTeX . relativizeUrlsTo targetPath)
       =<< loadAndApplyMustache "templates/default.mustache" cxt
       =<< applyAsMustache cxt item'
 
@@ -564,11 +592,8 @@ useKaTeX :: Item a -> Bool
 useKaTeX item =
   fromMaybe True $ txtToBool =<< lookupMetadata "katex" item
 
-procKaTeX :: MonadAction m => Item T.Text -> m (Item T.Text)
-procKaTeX item =
-  if useKaTeX item
-     then liftAction $ mapM (fmap T.pack . prerenderKaTeX . T.unpack) item
-     else return item
+procKaTeX :: MonadAction m => T.Text -> m T.Text
+procKaTeX = liftAction . fmap T.pack . prerenderKaTeX . T.unpack
 
 prerenderKaTeX :: String -> Action String
 prerenderKaTeX src = do
@@ -724,33 +749,36 @@ makeNavBar ident = do
 --     toTup (x:y:ys) = Just (y ++ unwords ys, x)
 --     toTup _        = Nothing
 
--- postList :: Maybe Int -> [FilePattern] -> Action (Int, String)
--- postList mcount pat = do
---   postItemTpl <- readFromFile' "templates/update.mustache"
---   posts <- fmap (maybe id take mcount) . myRecentFirst =<< loadAll pat
---   let myDateField = field "date" itemDateStr
---       pdfField  = field "pdf" $ \item ->
---         let ident = itemIdentifier item in
---         if "**.tex" `matches` ident
---         then do
---           Just r <- getRoute ident
---           return $ Just $ encodeString $ "/" </> replaceExtension (decodeString r) "pdf"
---         else return Nothing
---       descField = field "description" $ \item -> do
---         let ident = itemIdentifier item
---         descr <- T.pack <$> getMetadataField' ident "description"
---         fp <- fromJust <$> getRoute ident
---         src <- loadBody $ itemIdentifier item
---         let refs = buildRefInfo src
---         let output = T.unpack $ fromPure $
---                      writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
---                      =<< readMarkdown readerConf descr
---         return output
---       iCtxs = (pdfField <> myDateField <> descField <> defaultMusContext) :: Context String
---       postsField = itemsFieldWithContext iCtxs "posts" posts
---   src <- procKaTeX
---          =<< applyMustache postItemTpl postsField =<< makeItem ()
---   return (length posts, itemBody src)
+loadAll :: (MonadSake m) => Patterns -> m [Item T.Text]
+loadAll pats =
+  mapM loadItem . filter (pats ?===)
+  =<< readFromBinaryFile' articleList
+
+postList :: Maybe Int -> Patterns -> Action (Int, T.Text)
+postList mcount pats = do
+  postItemTpl <- readFromFile' "templates/update.mustache" :: Action Mustache
+  posts <- fmap (maybe id take mcount) . myRecentFirst =<< loadAll pats
+  let myDateField = field "date" itemDateStr
+      pdfField  = field "pdf" $ \Item{..} ->
+        let fp = runIdentifier itemIdentifier
+            pdfVer = replaceDir srcD destD fp -<.> "pdf"
+        in if "//*.tex" ?== fp
+        then do
+             needed [pdfVer]
+             return $ Just $ T.pack pdfVer
+        else return Nothing
+      descField = field_ "description" $ \item ->
+        let ident = itemIdentifier item
+            descr = maybe "" T.pack $ lookupMetadata "description" item
+            refs = buildRefInfo $ itemBody item
+            fp = replaceDir srcD destD (runIdentifier ident) -<.> "html"
+        in fromPure $
+           writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
+           =<< readMarkdown readerConf descr
+      iCtxs = (pdfField  :: Context T.Text) <> (myDateField  :: Context T.Text)
+              <> (descField  :: Context T.Text) <> (defaultContext  :: Context T.Text)
+  src <- procKaTeX =<< applyTemplateList postItemTpl iCtxs posts
+  return (length posts, src)
 
 myDefaultContext :: Context T.Text
 myDefaultContext =
@@ -775,11 +803,11 @@ myDefaultContext =
 --                         , "]"]
 --     | otherwise                                           = return ""
 
--- myRecentFirst :: [Item a] -> Compiler [Item a]
--- myRecentFirst is0 = do
---   is <- filterM isPublished is0
---   ds <- mapM itemDate is
---   return $ map snd $ sortBy (flip $ comparing (zonedTimeToLocalTime . fst)) $ zip ds is
+myRecentFirst :: [Item a] -> Action [Item a]
+myRecentFirst is0 = do
+  let is = filter isPublished is0
+  ds <- mapM itemDate is
+  return $ map snd $ sortBy (flip $ comparing (zonedTimeToLocalTime . fst)) $ zip ds is
 
 lookupMetadata :: FromJSON b => T.Text -> Item a -> Maybe b
 lookupMetadata key Item{itemMetadata} =
@@ -927,38 +955,38 @@ linkLocalCite (Cite cs bdy) =
   Cite cs [Link ("", [], []) bdy ("#ref-" ++ citationId (head cs), "")]
 linkLocalCite i = i
 
--- remoteCiteLink :: String -> HM.HashMap String RefInfo -> Inline -> Inline
--- remoteCiteLink base refInfo (Cite cs _) =
---   let ctLinks = [ maybe
---                     (Strong [Str citationId])
---                     (\RefInfo{..} -> Link ("", [], []) [Str refLabel] (base ++ "#" ++ refAnchor, ""))
---                     mres
---                 | Citation{..} <- cs
---                 , let mres = HM.lookup citationId refInfo
---                 ]
---   in Span ("", ["citation"], [("data-cites", intercalate "," $ map citationId cs)]) $
---      concat [ [Str "["], ctLinks, [Str "]"]]
--- remoteCiteLink _ _ i                    = i
+remoteCiteLink :: String -> HM.HashMap T.Text RefInfo -> Inline -> Inline
+remoteCiteLink base refInfo (Cite cs _) =
+  let ctLinks = [ maybe
+                    (Strong [Str citationId])
+                    (\RefInfo{..} -> Link ("", [], []) [Str $ T.unpack refLabel] (base <> "#" <> T.unpack refAnchor, ""))
+                    mres
+                | Citation{..} <- cs
+                , let mres = HM.lookup (T.pack citationId) refInfo
+                ]
+  in Span ("", ["citation"], [("data-cites", intercalate "," $ map citationId cs)]) $
+     concat [ [Str "["], ctLinks, [Str "]"]]
+remoteCiteLink _ _ i                    = i
 
 isReference :: Block -> Bool
 isReference (Div (_, ["references"], _) _) = True
 isReference _                              = False
 
--- data RefInfo = RefInfo { refAnchor :: String, refLabel :: String }
---              deriving (Read, Show, Eq, Ord)
+data RefInfo = RefInfo { refAnchor :: T.Text, refLabel :: T.Text }
+             deriving (Read, Show, Eq, Ord)
 
--- buildRefInfo :: String -> HM.HashMap String RefInfo
--- buildRefInfo =
---   foldMap go
---   .
---   filter (tagOpen (== "li") (maybe False (elem "ref" . words) .  lookup "class"))
---   .
---   TS.parseTags
---   where
---     go ~(TagOpen _ atts) =
---       maybe HM.empty (\(r, lab) -> HM.singleton r (RefInfo ("ref-" ++ r) lab)) $
---         (,) <$> (L.stripPrefix "ref-" =<< lookup "id" atts)
---             <*> lookup "data-ref-label" atts
+buildRefInfo :: T.Text -> HM.HashMap T.Text RefInfo
+buildRefInfo =
+  foldMap go
+  .
+  filter (tagOpen (== "li") (maybe False (elem "ref" . T.words) .  lookup "class"))
+  .
+  TS.parseTags
+  where
+    go ~(TagOpen _ atts) =
+      maybe HM.empty (\(r, lab) -> HM.singleton r (RefInfo ("ref-" <> r) lab)) $
+        (,) <$> (T.stripPrefix "ref-" =<< lookup "id" atts)
+            <*> lookup "data-ref-label" atts
 
 unbracket :: String -> String
 unbracket ('[':l)
