@@ -6,7 +6,7 @@
 {-# LANGUAGE TypeOperators, ViewPatterns                                  #-}
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 module MathConv
-       (generateImages, preprocessLaTeX,
+       (preprocessLaTeX,
         texToMarkdown, PreprocessedLaTeX(..)
        ) where
 import           Instances     ()
@@ -153,31 +153,6 @@ texToMarkdown fp src_ = do
         return $ Pandoc (Meta $ M.insert "abstract" (MetaBlocks abbs) $ unMeta meta0)  bdy
 
   return $ adjustJapaneseSpacing pan
-
-generateImages :: FilePath -> Text -> Action ()
-generateImages fp body = do
-  pth <- liftIO $ canonicalizePath fp
-  master <- liftIO $ canonicalizePath $ dropExtension pth
-  liftIO $ createDirectoryIfMissing True $ fromString master
-  withTempDir $ \tmp -> do
-    copyFile' ("data" </> ".latexmkrc") (tmp </> ".latexmkrc")
-    writeTextFile (tmp </> "image.tex") body
-    cmd_ (Cwd tmp) "latexmk" "-pdflua" "image.tex"
-    cmd_ (Cwd tmp) "tex2img"
-      ["--latex=luajittex --fmt=luajitlatex.fmt"]
-      "--with-text" "image.tex" "image.svg"
-    liftIO $ renameFile (tmp </> "image.svg") (tmp </> "image-0.svg")
-    -- Generating PNGs
-    cmd_ (Cwd tmp) "convert" "-density" "200" "image.pdf" "image-%d.png"
-    Stdout infos <- cmd (Cwd tmp) "pdftk" "image.pdf" "dump_data_utf8"
-    let pages = fromMaybe (0 :: Integer) $ listToMaybe $ mapMaybe
-                 (readMaybe <=< L.stripPrefix "NumberOfPages: ")  (lines infos)
-    forM_ [1..pages - 1] $ \n -> do
-      let targ = tmp </> "image-" <> show n <.> "svg"
-      putNormal $ "generating " <> targ
-      liftIO $ renameFile (tmp </> "image-" <> show (n + 1) <.> "svg") targ
-    imgs <- getDirectoryFiles  tmp ["*.png", "*.svg"]
-    forM_ imgs $ \i -> copyFileNoDep (tmp </> i) (master </> i)
 
 getMeta :: Pandoc -> Meta
 getMeta (Pandoc m _) = m

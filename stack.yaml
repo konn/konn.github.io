@@ -15,7 +15,7 @@ extra-deps:
   commit: 2934925deecb0c080dfc026bec6127ea4a37525c
 
 - git: git@github.com:konn/sake.git
-  commit: 06b86d7a95c255cc6bfd32746486d232472bc323
+  commit: cab8df2eca62cc62351112a43c1c3246f07f6ac1
 
 
 resolver: lts-10.5

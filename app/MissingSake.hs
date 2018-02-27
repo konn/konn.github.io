@@ -6,7 +6,7 @@ module MissingSake
        , Routing(..), itemPath
        , Patterns, (.&&.), (.||.), complement
        , (?===), conjoin, disjoin, globDirectoryFiles
-       , replaceDir, routeRules, loadAllItemsAfter, loadOriginal, getSourcePath
+       , replaceDir, withRouteRules, loadAllItemsAfter, loadOriginal, getSourcePath
        , loadContentsIndex, Snapshot, saveSnapshot, loadSnapshot, loadAllSnapshots
        ) where
 import           Control.Monad       (forM, (<=<))
@@ -20,13 +20,13 @@ import           Data.Text           (Text)
 import           GHC.Generics        (Generic)
 import           Web.Sake            (Action, FilePattern, Item (..),
                                       MonadAction, MonadSake, Readable, Rules,
-                                      copyFile', doesFileExist,
+                                      alternatives, copyFile', doesFileExist,
                                       getDirectoryFiles, itemBody,
                                       itemIdentifier, liftAction, loadItem,
-                                      makeRelative, need, readFromBinaryFile',
-                                      removeFilesAfter, runBinary,
-                                      runIdentifier, writeBinaryFile, (</>),
-                                      (?==), (?>), (~>))
+                                      makeRelative, need, priority, putNormal,
+                                      readFromBinaryFile', removeFilesAfter,
+                                      runBinary, runIdentifier, writeBinaryFile,
+                                      (</>), (?==), (?>), (~>))
 import           Web.Sake.Conf       (SakeConf (..))
 
 itemPath :: Item a -> FilePath
@@ -123,11 +123,11 @@ pageListPath :: FilePath
 pageListPath = "pages.bin"
 
 -- | Creating routing and cleaning rules.
-routeRules :: SakeConf -> [(Patterns, Routing)] -> Rules ()
-routeRules SakeConf{..} rconfs = do
+withRouteRules :: SakeConf -> [(Patterns, Routing)] -> Rules () -> Rules ()
+withRouteRules SakeConf{..} rconfs rules = alternatives $ do
   "site" ~> do
-    dic0 <- fmap concat $ forM (reverse rconfs) $ \ (pats, r) -> do
-      chs <- globDirectoryFiles sourceDir pats
+    dic0 <- fmap (concat . reverse) $ forM rconfs $ \ (pats, r) -> do
+      chs <- filter (not . ignoreFile) <$> globDirectoryFiles sourceDir pats
       forM chs $ \fp -> do
         let path = destinationDir </> applyRouting r fp
         return (path, PageInfo $ sourceDir </> fp)
@@ -139,9 +139,14 @@ routeRules SakeConf{..} rconfs = do
     removeFilesAfter destinationDir ["//*"]
     removeFilesAfter cacheDir ["//*"]
 
-  let copyPats = conjoin $ map fst $ filter ((\case {Copy -> True; _ -> False}) . snd) rconfs
-  return ()
-  (copyPats ?===) ?> \out ->
+  rules
+
+  let copyPats = disjoin $ map fst $
+                 filter ((\case {Copy -> True; _ -> False}) . snd) rconfs
+
+  (\fp -> not (ignoreFile fp) &&
+          (copyPats ?=== makeRelative destinationDir fp)) ?> \out -> do
+    putNormal $ "Falling back to copy rule " ++ out
     copyFile' (replaceDir destinationDir sourceDir out) out
 
 loadAllItemsAfter :: FilePath -> Patterns -> Action [Item Text]
