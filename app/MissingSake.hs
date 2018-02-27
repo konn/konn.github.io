@@ -135,6 +135,11 @@ routeRules SakeConf{..} rconfs = do
     removeFilesAfter destinationDir ["//*"]
     removeFilesAfter cacheDir ["//*"]
 
+  let copyPats = conjoin $ map fst $ filter ((\case {Copy -> True; _ -> False}) . snd) rconfs
+  return ()
+  (copyPats ?===) ?> \out ->
+    copyFile' (replaceDir destinationDir sourceDir out) out
+
 loadAllItemsAfter :: FilePath -> Patterns -> Action [Item Text]
 loadAllItemsAfter fp pats =
   mapM loadItem  =<< globDirectoryFiles fp pats
