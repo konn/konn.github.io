@@ -1,13 +1,13 @@
-{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies     #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving, NoMonomorphismRestriction #-}
-{-# LANGUAGE RecordWildCards                                       #-}
+{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving, LambdaCase            #-}
+{-# LANGUAGE NoMonomorphismRestriction, RecordWildCards        #-}
 module MissingSake
        ( setItemBody, tryWithFile, PageInfo(..), ContentsIndex(..)
        , Routing(..), itemPath
        , Patterns, (.&&.), (.||.), complement
        , (?===), conjoin, disjoin, globDirectoryFiles
        , replaceDir, routeRules, loadAllItemsAfter, loadOriginal, getSourcePath
-       , loadContentsIndex
+       , loadContentsIndex, Snapshot, saveSnapshot, loadSnapshot, loadAllSnapshots
        ) where
 import           Control.Monad       (forM, (<=<))
 import           Data.HashMap.Strict (HashMap)
@@ -139,6 +139,20 @@ loadAllItemsAfter :: FilePath -> Patterns -> Action [Item Text]
 loadAllItemsAfter fp pats =
   mapM loadItem  =<< globDirectoryFiles fp pats
 
+type Snapshot = String
+
+saveSnapshot :: (Store a) => SakeConf -> Snapshot -> Item a -> Action (Item a)
+saveSnapshot SakeConf{..} name i@Item{..} = do
+  writeBinaryFile (replaceDir sourceDir (cacheDir </> name) (itemPath i)) itemBody
+  return i
+
+loadSnapshot :: (MonadSake m, Store a) => SakeConf -> Snapshot -> FilePath -> m (Item a)
+loadSnapshot SakeConf{..} name fp =
+  fmap runBinary <$> loadItem (cacheDir </> name </> fp)
+
+loadAllSnapshots :: (Store a) => SakeConf -> Patterns -> Snapshot -> Action [Item a]
+loadAllSnapshots SakeConf{..} pts name =
+  mapM (fmap (fmap runBinary) . loadItem) =<< globDirectoryFiles (cacheDir </> name) pts
 
 replaceDir :: FilePath -> FilePath -> FilePath -> FilePath
 replaceDir from to pth = to </> makeRelative from pth

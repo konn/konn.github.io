@@ -182,7 +182,7 @@ main = shakeArgs myShakeOpts $ do
                         , myDefaultContext
                         ]
       writeTextFile out . itemBody
-        =<< saveSnapshot "content"
+        =<< saveSnapshot siteConf "content"
         =<< applyDefaultTemplate out ctx
         =<< myPandocCompiler out
 
@@ -230,19 +230,13 @@ texToHtml out = do
                ipan & _Pandoc . _2 %~ (RawBlock "html" "{{=<% %>=}}\n":)
   writeTextFile out . itemBody
     =<< applyDefaultTemplate out panCtx . fmap ("{{=<% %>=}}\n" <>)
-    =<< saveSnapshot "content"
+    =<< saveSnapshot siteConf "content"
     =<< applyAsMustache panCtx (setItemBody html i0)
-
-saveSnapshot :: (Store a) => String -> Item a -> Action (Item a)
-saveSnapshot name i@Item{..} = do
-  writeBinaryFile ("_snapshots"  </> runIdentifier itemIdentifier </> name) itemBody
-  return i
-
 
 mdOrHtmlToHtml :: FilePath -> Action ()
 mdOrHtmlToHtml out =
   myPandocCompiler out
-  >>= saveSnapshot "content"
+  >>= saveSnapshot siteConf "content"
   >>= applyDefaultTemplate out myDefaultContext
   >>= writeTextFile (destD </> out) . itemBody
 
@@ -488,7 +482,9 @@ applyDefaultTemplate targetPath addCtx item = do
   let item' = demoteHeaders . withTags addRequiredClasses <$> item
   scms <- readFromYamlFile' "config/schemes.yml"
   i'' <-  mapM (procKaTeX . relativizeUrlsTo targetPath)
+      =<< saveSnapshot siteConf "prekatex"
       =<< loadAndApplyMustache "templates/default.mustache" cxt
+      =<< saveSnapshot siteConf "premus"
       =<< applyAsMustache cxt item'
 
   return $ UNF.normalize UNF.NFC . addAmazonAssociateLink' "konn06-22" . procSchemesUrl scms <$> i''
