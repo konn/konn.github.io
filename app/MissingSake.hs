@@ -18,13 +18,15 @@ import           Data.Store          (Store)
 import           Data.String         (IsString (..))
 import           Data.Text           (Text)
 import           GHC.Generics        (Generic)
-import           Web.Sake            (Action, FilePattern, Item, MonadAction,
-                                      Readable, Rules, doesFileExist,
+import           Web.Sake            (Action, FilePattern, Item (..),
+                                      MonadAction, MonadSake, Readable, Rules,
+                                      copyFile', doesFileExist,
                                       getDirectoryFiles, itemBody,
                                       itemIdentifier, liftAction, loadItem,
                                       makeRelative, need, readFromBinaryFile',
-                                      removeFilesAfter, runIdentifier,
-                                      writeBinaryFile, (</>), (?==), (~>))
+                                      removeFilesAfter, runBinary,
+                                      runIdentifier, writeBinaryFile, (</>),
+                                      (?==), (?>), (~>))
 import           Web.Sake.Conf       (SakeConf (..))
 
 itemPath :: Item a -> FilePath
@@ -95,11 +97,13 @@ DNF cls ?=== fp = any (`clMatch` fp) cls
 
 data Routing = ModifyPath (FilePath -> FilePath)
              | Copy
+             | Create
              deriving (Generic)
 
 
 applyRouting :: Routing -> FilePath -> FilePath
-applyRouting Copy fp           = fp
+applyRouting Copy           fp = fp
+applyRouting Create         fp = fp
 applyRouting (ModifyPath f) fp = f fp
 
 globDirectoryFiles :: FilePath -> Patterns -> Action [FilePath]
