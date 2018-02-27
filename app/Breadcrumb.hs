@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Breadcrumb (makeBreadcrumb, Breadcrumb(..), breadcrumbContext) where
-import Instances ()
+import Instances   ()
+import MissingSake
 import Settings
 import Utils
 
@@ -11,16 +12,20 @@ import qualified Data.Text           as T
 import qualified Data.Text.Lazy      as LT
 import           Text.Mustache       (renderMustache)
 import           Web.Sake            (Context, MonadSake, field, loadTemplate,
-                                      readFromYamlFile', runIdentifier,
-                                      splitDirectories, takeDirectory,
-                                      takeFileName)
-
-
+                                      putNormal, readFromYamlFile',
+                                      runIdentifier, splitDirectories,
+                                      takeDirectory, takeFileName)
 
 import Web.Sake.Item (Item (..))
 
 makeBreadcrumb :: MonadSake m => Item Text -> m Text
 makeBreadcrumb item = do
+  putNormal $
+    unwords [ "Making breadcrumb for"
+            , itemPath item
+            , "with"
+            , show $ itemMetadata item
+            ]
   let ident = itemIdentifier item
       Just mytitle = fromJSON' =<< HM.lookup "title" (itemMetadata item)
   st <- readFromYamlFile' "config/tree.yml"
