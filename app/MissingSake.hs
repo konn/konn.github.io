@@ -4,7 +4,8 @@
 module MissingSake
        ( setItemBody, tryWithFile, PageInfo(..), ContentsIndex(..)
        , Routing(..), itemPath
-       , Patterns, (.&&.), (.||.), complement, (?===), globDirectoryFiles
+       , Patterns, (.&&.), (.||.), complement
+       , (?===), conjoin, disjoin, globDirectoryFiles
        , replaceDir, routeRules, loadAllItemsAfter, loadOriginal, getSourcePath
        , loadContentsIndex
        ) where
@@ -82,6 +83,12 @@ removeRedundants (DNF cs) = DNF $ filter (\(Clause ps ns) -> HS.null $ ps `HS.in
 clMatch :: Clause -> FilePath -> Bool
 clMatch (Clause ps ns) fp =
   all (?== fp) ps && all (not . (?== fp)) ns
+
+conjoin :: Foldable t => t Patterns -> Patterns
+conjoin = foldr1 (.&&.)
+
+disjoin :: Foldable t => t Patterns -> Patterns
+disjoin = foldr1 (.||.)
 
 (?===) :: Patterns -> FilePath -> Bool
 DNF cls ?=== fp = any (`clMatch` fp) cls
