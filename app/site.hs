@@ -241,10 +241,11 @@ main = shakeArgs myShakeOpts $ do
         old <- SHA.hash <$> readBinaryFileNoDep out
         when (SHA.hash (S.encode ans) /= old) go
 
-    (destD </> "feed.xml") %> \out ->
+    (destD </> "feed.xml") %> \out -> do
+      putNormal "Generating feed."
       loadAllSnapshots siteConf subContentsWithoutIndex "content"
         >>= myRecentFirst
-        >>= renderAtom feedConf feedCxt . take 10 . filter ((("index.md" .||. complement "**/index.md") ?===) . itemPath)
+        >>= renderAtom feedConf feedCxt . take 10 . filter ((complement ("//index.md" .||. "//archive.md") ?===) . itemPath)
         >>= writeTextFile out
 
     serialPngOrSvg ?> \out -> do
