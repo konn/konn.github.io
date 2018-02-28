@@ -782,10 +782,6 @@ myRecentFirst is0 = do
   ds <- mapM itemDate is
   return $ map snd $ sortBy (flip $ comparing (zonedTimeToLocalTime . fst)) $ zip ds is
 
-lookupMetadata :: FromJSON b => T.Text -> Item a -> Maybe b
-lookupMetadata key Item{itemMetadata} =
-  fromJSON' =<< HM.lookup key itemMetadata
-
 isPublished :: Item a -> Bool
 isPublished item =
   let pub   = lookupMetadata "published" item

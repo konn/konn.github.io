@@ -210,3 +210,11 @@ infixr 5 </?>
 dir </?> DNF cls = fromString (dir ++ "//*") .&&. DNF (map go cls)
   where
     go (Clause ps ns) = Clause (HS.map (dir </>) ps) (HS.map (dir </>) ns)
+
+lookupMetadata :: FromJSON b => Text -> Item a -> Maybe b
+lookupMetadata key Item{itemMetadata} =
+  maybeResult . fromJSON =<< HM.lookup key itemMetadata
+
+maybeResult :: Result a -> Maybe a
+maybeResult (Success a) = Just a
+maybeResult _           = Nothing
