@@ -8,12 +8,12 @@
   <div class="collapse navbar-collapse" id="Navbar">
     <ul class="navbar-nav mr-auto">
      {{#.}}
-      {{#active}}
-        <li class="nav-item active"><a class="nav-link" href="{{path}}">{{category}}</a></li>
-      {{/active}}
-      {{^active}}
-        <li class="nav-item"><a class="nav-link" href="{{path}}">{{category}}</a></li>
-      {{/active}}
+     {{#active}}
+     <li class="nav-item active"><a class="nav-link" href="{{path}}">{{category}}</a></li>
+     {{/active}}
+     {{^active}}
+     <li class="nav-item"><a class="nav-link" href="{{path}}">{{category}}</a></li>
+     {{/active}}
      {{/.}}
     </ul>
     <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
