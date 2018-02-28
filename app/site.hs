@@ -16,15 +16,14 @@ import Settings
 import Utils
 import Web.Sake.Feed
 
-import Blaze.ByteString.Builder (toByteString)
-import Control.Applicative      ((<|>))
-import Control.Lens             (imap, (%~), (.~), (^?), _2)
-import Data.Ord                 (comparing)
-
-import Control.Monad       hiding (mapM)
-import Control.Monad.State
-import Data.Aeson          (FromJSON, fromJSON, toJSON)
-
+import           Blaze.ByteString.Builder        (toByteString)
+import           Control.Applicative             ((<|>))
+import           Control.Arrow                   (second)
+import           Control.Lens                    (imap, (%~), (.~), (^?), _2)
+import           Control.Monad                   hiding (mapM)
+import           Control.Monad.State
+import qualified Crypto.Hash.SHA256              as SHA
+import           Data.Aeson                      (fromJSON, toJSON)
 import qualified Data.ByteString.Char8           as BS
 import qualified Data.CaseInsensitive            as CI
 import           Data.Char                       hiding (Space)
@@ -35,10 +34,12 @@ import qualified Data.HashMap.Strict             as HM
 import           Data.List
 import qualified Data.List                       as L
 import qualified Data.List.Split                 as L
-import           Data.Maybe                      (fromMaybe, isNothing,
+import           Data.Maybe                      (fromMaybe, isJust, isNothing,
                                                   listToMaybe, mapMaybe,
                                                   maybeToList)
 import           Data.Monoid                     ((<>))
+import           Data.Ord                        (comparing)
+import qualified Data.Store                      as S
 import           Data.String
 import qualified Data.Text                       as T
 import qualified Data.Text.ICU.Normalize         as UNF
