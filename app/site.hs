@@ -515,7 +515,12 @@ prerenderKaTeX src = do
   let katexD = wd </> srcD </> "katex"
   let paths = L.intercalate ":" $ [katexD </> "contrib", katexD] ++ L.splitOn ":" nodePath
   putNormal $ "NODE_PATH=" <> paths
-  Stdout out <- cmd (Cwd "data") "node" (AddEnv "NODE_PATH" paths) (Stdin src) "prerender.js"
+  Stdout out <-
+    cmd (Cwd "data") "node"
+        (EchoStdout False) (WithStdout True)
+        (AddEnv "NODE_PATH" paths)
+        (Stdin src)
+        "prerender.js"
   return out
 
 isExternal :: T.Text -> Bool
