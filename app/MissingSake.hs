@@ -200,7 +200,7 @@ getSourcePath SakeConf{..} fp = do
   ContentsIndex dic <- readFromBinaryFile' (cacheDir </> pageListPath)
   case HM.lookup fp dic of
     Just PageInfo{..} -> return sourcePath
-    Nothing           -> return $ replaceDir destinationDir sourceDir fp
+    Nothing           -> error $ "No Source Path found: " ++ fp
 
 loadContentsIndex :: SakeConf -> Action ContentsIndex
 loadContentsIndex SakeConf{..} = readFromBinaryFile' (cacheDir </> pageListPath)
