@@ -202,6 +202,19 @@ getSourcePath SakeConf{..} fp = do
     Just PageInfo{..} -> return sourcePath
     Nothing           -> error $ "No Source Path found: " ++ fp
 
+ifChanged :: (FilePath -> a -> Action ()) -> FilePath -> a -> Action ()
+ifChanged write fp bdy = do
+  exist <- doesFileExist fp
+  if not exist
+    then write fp bdy
+    else withTempFile $ \tmp -> do
+    write tmp bdy
+    b <- liftIO $ withFile tmp ReadMode $ \htmp -> withFile fp ReadMode $ \h -> do
+      stmp <- BS.hGetContents htmp
+      src <- BS.hGetContents h
+      return (hash src /= hash stmp)
+    when b $ write fp bdy
+
 loadContentsIndex :: SakeConf -> Action ContentsIndex
 loadContentsIndex SakeConf{..} = readFromBinaryFile' (cacheDir </> pageListPath)
 
