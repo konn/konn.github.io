@@ -165,8 +165,13 @@ loadSnapshot SakeConf{..} name fp =
   fmap runBinary <$> loadItem (cacheDir </> name </> fp)
 
 loadAllSnapshots :: (Store a) => SakeConf -> Patterns -> Snapshot -> Action [Item a]
-loadAllSnapshots SakeConf{..} pts name =
-  mapM (fmap (fmap runBinary) . loadItem) =<< globDirectoryFiles (cacheDir </> name) pts
+loadAllSnapshots SakeConf{..} pts name = do
+  let snapD = cacheDir </> name
+  mapM (fmap (fmap runBinary) . loadItem . (snapD </>)) =<< globDirectoryFiles snapD pts
+
+hasSnapshot :: SakeConf -> Snapshot -> Item a -> Action Bool
+hasSnapshot SakeConf{..} snap i =
+  doesFileExist $ replaceDir sourceDir (cacheDir </> snap) (itemPath i)
 
 replaceDir :: FilePath -> FilePath -> FilePath -> FilePath
 replaceDir from to pth = to </> makeRelative from pth
