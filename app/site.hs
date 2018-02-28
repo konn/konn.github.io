@@ -624,13 +624,13 @@ amazons = "www.amazon.com":"amazon.com":concatMap (\cc -> [T.concat [www,"amazon
 ccTLDs :: [T.Text]
 ccTLDs = ["jp"]
 
-getActive :: [(T.Text, String)] -> Identifier -> String
+getActive :: [(T.Text, String)] -> FilePath -> String
 getActive _ "archive.md" = "/archive.html"
 getActive _ "profile.md" = "/profile.html"
 getActive cDic ident = fromMaybe "/" $ listToMaybe $ filter p $ map snd cDic
   where
     p "/"       = False
-    p ('/':inp) = fromString (inp++"//*") ?== runIdentifier ident
+    p ('/':inp) = fromString (inp++"//*") ?== ident
     p _         = False
 
 makeNavBar :: Identifier -> Action String
@@ -638,7 +638,7 @@ makeNavBar ident = do
   NavBar cDic <- readFromYamlFile' "config/navbar.yml"
   let cats = toJSON [object ["path" .= pth
                             ,"category" .= cat
-                            ,"active" .= (getActive cDic ident == pth)
+                            ,"active" .= (getActive cDic (dropDirectory1 $ runIdentifier ident) == pth)
                             ]
                     | (cat, pth) <- cDic
                     ]
