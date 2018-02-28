@@ -677,8 +677,8 @@ renderPostList posts = do
         in fromPure $
            writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
            =<< readMarkdown readerConf descr
-      iCtxs = (pdfField  :: Context T.Text) <> (myDateField  :: Context T.Text)
-              <> (descField  :: Context T.Text) <> (defaultContext  :: Context T.Text)
+      iCtxs = pdfField <> myDateField <> urlField
+              <> descField  <> defaultContext
   src <- procKaTeX =<< applyTemplateList postItemTpl iCtxs posts
   return (length posts, src)
 
