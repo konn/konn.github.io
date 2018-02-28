@@ -472,10 +472,10 @@ shortDescrCtx = field_ "short_description" $ \i ->
      writePlain def . bottomUp unicodiseMath =<< readMarkdown readerConf descr
 
 noTopStar :: Context b
-noTopStar = field "no-top-star" $ \i ->
+noTopStar = field_ "no-top-star" $ \i ->
   case lookupMetadata "top-star" i of
-    Just t | Just False <- txtToBool t  -> return True
-    _      -> return False
+    Just False -> True
+    _          -> False
 
 metaTags :: Context a
 metaTags = field "meta" $ \i -> do
@@ -492,7 +492,7 @@ metaTags = field "meta" $ \i -> do
 
 useKaTeX :: Item a -> Bool
 useKaTeX item =
-  fromMaybe True $ txtToBool =<< lookupMetadata "katex" item
+  fromMaybe True $ lookupMetadata "katex" item
 
 procKaTeX :: MonadAction m => T.Text -> m T.Text
 procKaTeX = liftAction . fmap T.pack . prerenderKaTeX . T.unpack
@@ -687,19 +687,12 @@ isPublished :: Item a -> Bool
 isPublished item =
   let pub   = lookupMetadata "published" item
       dra   = lookupMetadata "draft"     item
-  in fromMaybe True $ (txtToBool =<< pub)
-                       <|> not <$> (txtToBool =<< dra)
+  in fromMaybe True $ pub <|> (not <$> dra)
 
 itemMacros :: Item a -> TeXMacros
 itemMacros Item{..} =
   fromMaybe HM.empty $
   maybeResult . fromJSON =<< HM.lookup "macros" itemMetadata
-
-txtToBool :: String -> Maybe Bool
-txtToBool txt =
-  case txt & capitalise & packed %~ T.strip & reads of
-    [(b, "")] -> Just b
-    _         -> Nothing
 
 capitalise :: String -> String
 capitalise ""      = ""
