@@ -189,7 +189,7 @@ main = shakeArgs myShakeOpts $ do
           bibThere <- doesFileExist bibPath
           when bibThere $ copyFile' bibPath (tmp </> takeFileName bibPath)
           copyFile' ("data" </> ".latexmkrc") (tmp </> ".latexmkrc")
-          cmd_ "latexmk" (Cwd tmp) opts texFileName
+          cmd_ "latexmk" (EchoStdout False) (WithStdout True) (Cwd tmp) opts texFileName
           copyFileNoDep (tmp </> texFileName -<.> "pdf") out
 
     (destD </> "index.html") %> \out -> do
