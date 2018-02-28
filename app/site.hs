@@ -264,43 +264,6 @@ mdOrHtmlToHtml out =
   >>= applyDefaultTemplate out myDefaultContext
   >>= writeTextFile out . itemBody
 
---   match "archive.md" $ do
---     route $ setExtension "html"
---     compile' $ do
---       (count, posts) <- postList Nothing subContentsWithoutIndex
---       let ctx = mconcat [ MT.constField "child-count" (show count)
---                         , MT.constField "children" posts
---                         , myDefaultContext
---                         ]
---       myPandocCompiler
---               >>= applyDefaultTemplate ctx {- tags -}
-
---   match "robots.txt" $ do
---     route idRoute
---     compile $ do
---       tmplt <- itemBody <$> mustacheCompiler
---       drafts <- map snd <$> listDrafts
---       let obj = object ["disallowed" .= map ('/':) drafts]
---       makeItem $ LT.unpack $ Mus.renderMustache tmplt obj
-
---   match "math/**.pdf" $ route idRoute >> compile' copyFileCompiler
---   match "**.key" $ route idRoute >> compile' copyFileCompiler
-
---   match "prog/doc/*/**" $
---     route idRoute >> compile' copyFileCompiler
---   match ("**.html" .&&. complement ("articles/**.html" .||. "prog/doc/**.html" .||. "templates/**")) $
---     route idRoute >> compile' copyFileCompiler
---   match "**.csl" $ compile' cslCompiler
---   match "**.bib" $ compile' (fmap biblioToBibTeX <$> biblioCompiler)
-
---   match ("math/**.png" .||. "math/**.jpg" .||. "math/**.svg") $
---     route idRoute >> compile' copyFileCompiler
-
---   match (("articles/**.md" .||. "articles/**.html" .||. "profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ version "html" $ do
---     route $ setExtension "html"
---     compile' $
---       myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate myDefaultContext
-
 --   create ["sitemap.xml"] $ do
 --     route idRoute
 --     compile $ do
@@ -340,17 +303,6 @@ pandocContext (Pandoc meta _)
 -- listDrafts =
 --   map (second itemPath) . filter (fmap not . isPublished . snd) <$> listChildren True subContentsWithoutIndex
 
--- compile' :: (Typeable a, Writable a, Binary a) => Compiler (Item a) -> Rules ()
--- compile' = compile
-
--- addRepo :: Compiler ()
--- addRepo = do
---   item <- getResourceBody
---   let ident = itemIdentifier item
---   published <- isPublished item
---   when published $ do
---     let pth = toFilePath ident
---     unsafeCompiler $ shelly $ silently $ void $ cmd "git" "add" pth
 
 addPDFLink :: FilePath -> Pandoc -> Pandoc
 addPDFLink plink (Pandoc meta body) = Pandoc meta body'
@@ -358,10 +310,6 @@ addPDFLink plink (Pandoc meta body) = Pandoc meta body'
     Pandoc _ body' = doc $ mconcat [ para $ mconcat [ "[", link plink "PDF版" "PDF版", "]"]
                                    , Pan.fromList body
                                    ]
-
--- appendBiblioSection :: Pandoc -> Pandoc
--- appendBiblioSection (Pandoc meta bs) =
---     Pandoc meta $ bs ++ [Div ("biblio", [], []) [Header 1 ("biblio", [], []) [Str "参考文献"]]]
 
 listChildren :: Bool -> FilePath -> Action [(FilePath, Item T.Text)]
 listChildren recursive out = do
@@ -375,42 +323,6 @@ listChildren recursive out = do
             , (srcD </?> subContentsWithoutIndex) ?=== sourcePath ofp
             ]
   mapM (\(targ, ofp) -> (targ,) <$> loadItem (sourcePath ofp)) chs
-
--- data HTree a = HTree { label :: a, _chs :: [HTree a] } deriving (Read, Show, Eq, Ord)
-
--- headerTree :: [Block] -> [HTree Block]
--- headerTree [] = []
--- headerTree (b:bs) =
---   case span ((> getLevel b).getLevel) bs of
---     (lows, dohai) -> HTree b (headerTree lows) : headerTree dohai
---   where
---     getLevel (Header n _ _) = n
---     getLevel _ = error "You promissed this consists of only Headers!"
-
--- buildTOC :: Pandoc -> String
--- buildTOC pan =
---   renderHtml $
---   H5.nav ! H5.class_ "navbar navbar-light bg-light flex-column" ! H5.id "side-toc" $ do
---     H5.a ! H5.class_ "navbar-brand" ! H5.href "#" $ "TOC"
---     build $ headerTree $ extractHeaders pan
---   where
---     build ts =
---      H5.nav ! H5.class_ "nav nav-pills flex-column" $
---      forM_ ts $ \(HTree (Header _ (ident, _, _) is) cs) -> do
---        H5.a ! H5.class_ "nav-link ml-3 my-1"
---             ! H5.href (H5.toValue $ '#' : ident)
---             $ H5.toMarkup $ stringify is
---        unless (null cs) $ build cs
-
--- extractHeaders :: Pandoc -> [Block]
--- extractHeaders = query ext
---   where
---     ext h@Header {} = [h]
---     ext _           = []
-
-
--- renderMeta :: [Inline] -> T.Text
--- renderMeta ils = fromPure $ writeHtml5String def $ Pandoc nullMeta [Plain ils]
 
 subContentsWithoutIndex :: Patterns
 subContentsWithoutIndex = ("**.md" .||. "articles/**.html" .||. "math/**.tex")
@@ -454,9 +366,6 @@ myPandocCompiler out = do
     >>= mapM (procSchemes . myProcCites csl bib
               <=< linkCard . addAmazonAssociateLink "konn06-22")
     >>= writePandoc writerConf
-
--- readHtml' :: ReaderOptions -> T.Text -> Pandoc
--- readHtml' opt = fromRight . runPure . readHtml opt
 
 resolveRelatives :: FilePath -> FilePath -> FilePath
 resolveRelatives rt pth =
@@ -594,28 +503,10 @@ extractLocalImages ts =
    , T.takeEnd 4 src /= ".svg"
    ]
 
--- isLinkBroken :: String -> IO Bool
--- isLinkBroken _url = return False
-
--- myGetTags :: (Functor m, MonadMetadata m) => Identifier -> m [String]
--- myGetTags ident =
---   maybe [] (map (T.unpack . T.strip) . T.splitOn "," . T.pack) <$> getMetadataField ident "tag"
-
 addRequiredClasses :: Tag T.Text -> Tag T.Text
 addRequiredClasses (TagOpen "table" attr) = TagOpen "table" (("class", "table"):attr)
 addRequiredClasses (TagOpen "blockquote" attr) = TagOpen "blockquote" (("class", "blockquote"):attr)
 addRequiredClasses t = t
-
--- config :: Configuration
--- config = defaultConfiguration
---          & _deploySite .~ deploy
---          & _ignoreFile.rmapping (_Unwrapping' Any)._Unwrapping' MonoidFun
---            <>~ MonoidFun (Any . (== (".ignore" :: String)))
-
--- parseIgnorance :: T.Text -> (T.Text, T.Text)
--- parseIgnorance txt =
---   let (a, T.drop 1 -> b) = T.breakOn "\t" txt
---   in (a, if T.null b then a else b)
 
 -- deploy :: t -> IO ExitCode
 -- deploy _config = handle h $ shelly $ do
@@ -767,18 +658,6 @@ myDefaultContext =
           enabled = fromMaybe True $ lookupMetadata "disqus" item
       in return $ not banned && enabled
 
--- itemPDFLink :: Item a -> Compiler String
--- itemPDFLink item
---     | "**.tex" `matches` itemIdentifier item = do
---         Just r <- getRoute $ itemIdentifier item
---         return $ concat [" [", "<a href=\""
---                         , encodeString $ "/" </> replaceExtension (decodeString r) "pdf"
---                         , "\">"
---                         , "PDF版"
---                         , "</a>"
---                         , "]"]
---     | otherwise                                           = return ""
-
 myRecentFirst :: [Item a] -> Action [Item a]
 myRecentFirst is0 = do
   let is = filter isPublished is0
@@ -824,46 +703,6 @@ extractCites = queryWith collect
   where
     collect (Cite t _) = [t]
     collect _          = []
-
--- appendTOC :: Pandoc -> Pandoc
--- appendTOC d@(Pandoc meta bdy) =
---   let toc = generateTOC d
---   in Pandoc meta
---      [ Div ("", ["container-fluid"], [])
---        [ Div ("", ["row"], [])
---        [ RawBlock "html" $ T.unpack toc
---        , Div ("", ["col-md-8"], [])
---          bdy
---        ] ]
---      ]
-
--- generateTOC :: Pandoc -> T.Text
--- generateTOC pan =
---   let src = parseTags $ fromPure $ writeHtml5String
---             writerConf { writerTableOfContents = True
---                        , writerTemplate = Just "$toc$"
---                        , writerTOCDepth = 4
---                        }
---             pan
---       topAtts = [("class", "col-md-4 hidden-xs-down bg-light sidebar")
---                 ,("id", "side-toc")
---                 ]
---   in TS.renderTags $
---      [ TagOpen "nav" topAtts
---      , TagOpen "a" [("class","navbar-brand")]
---      , TagText "TOC"
---      , TagClose "a"
---      ] ++ mapMaybe rewriter src
---      ++ [TagClose "nav"]
---   where
---     rewriter (TagOpen "ul"  atts) =
---       Just $ TagOpen "nav" $ ("class", "nav nav-pills flex-column") : atts
---     rewriter (TagClose "ul") = Just $ TagClose "nav"
---     rewriter (TagOpen "a"  atts) =
---       Just $ TagOpen "a" $ ("class", "nav-link") : atts
---     rewriter (TagOpen "li" _) = Nothing
---     rewriter (TagClose "li" ) = Nothing
---     rewriter t = Just t
 
 
 extractNoCites :: Data c => c -> [[Citation]]
@@ -912,10 +751,6 @@ refBlockToList
                 Pandoc nullMeta [Plain $ dropWhile (== Space) dv]
     listise _ = ""
 refBlockToList d = d
-
--- paraToPlain :: Block -> Block
--- paraToPlain (Para bs) = Plain bs
--- paraToPlain b         = b
 
 applyAtts :: Attributable b => [(String, String)] -> b -> b
 applyAtts ats elt =
