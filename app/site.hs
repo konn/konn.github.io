@@ -653,14 +653,17 @@ makeNavBar ident = do
 
 postList :: Maybe Int -> Patterns -> Action (Int, T.Text)
 postList mcount pats =
-  renderPostList
-  =<< fmap (maybe id take mcount) . myRecentFirst
-  =<< loadAllItemsAfter destD pats
+  renderPostList . maybe id take mcount
+  =<< myRecentFirst . filter isPublished
+  =<< filterM (hasSnapshot siteConf "content")
+  =<< loadAllItemsAfter srcD pats
 
 renderPostList :: [Item T.Text] -> Action (Int, T.Text)
 renderPostList posts = do
   postItemTpl <- readFromFile' "templates/update.mustache" :: Action Mustache
   let myDateField = field "date" itemDateStr
+      urlField = field_ "url" $ \item ->
+        replaceDir srcD "/" (itemPath item) -<.> "html"
       pdfField  = field "pdf" $ \Item{..} ->
         let fp = runIdentifier itemIdentifier
             pdfVer = replaceDir srcD destD fp -<.> "pdf"
