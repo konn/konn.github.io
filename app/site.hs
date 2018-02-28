@@ -132,13 +132,16 @@ main = shakeArgs myShakeOpts $ do
 
   let copies = ["t//*" ,  "js//*" ,  ".well-known//*", "//*imgs//*", "//*img//*"
                ,"prog/automaton//*", "prog/doc//*", "math//*.pdf"
+               , "css//*.css", "css//*.map", "//*.key"
                ,"katex//*"
                ]
       routing = [("//*.md" .||. "//*.html" .||. "//*.tex", ModifyPath (-<.> "html"))
                 ,("//*.tex", ModifyPath (-<.> "pdf"))
                 ,("//*.sass", ModifyPath (-<.> "css"))
                 ] ++ map ( , Copy) copies ++
-                [ ("feed.xml", Create) ]
+                [ ("feed.xml", Create)
+                , ("robots.txt", ModifyPath id)
+                ]
 
 
   withRouteRules siteConf routing $ do
@@ -152,6 +155,22 @@ main = shakeArgs myShakeOpts $ do
       if ".sass" `L.isSuffixOf` origPath
         then cmd_ "sassc" "-s" "-tcompressed" origPath out
         else cmd_ "yuicompressor" origPath "-o" out
+    (destD </> "robots.txt") %> \out -> do
+      tmpl <- itemBody <$> loadOriginal siteConf out
+      drafts <- map snd <$> listDrafts out
+      let obj = object ["disallowed" .= map ('/':) drafts]
+      writeLazyTextFile out $ Mus.renderMustache tmpl obj
+
+    (destD </> "archive.html") %> \out -> do
+      (count, posts) <- postList Nothing subContentsWithoutIndex
+      let ctx = mconcat [ constField "child-count" (show count)
+                        , constField "children" posts
+                        , myDefaultContext
+                        ]
+      loadOriginal siteConf out
+        >>= compilePandoc readerConf writerConf
+        >>= applyDefaultTemplate out ctx {- tags -}
+        >>= writeTextFile out . itemBody
 
     (destD </> "math//*.pdf") %> \out -> do
       srcPath <- getSourcePath siteConf out
