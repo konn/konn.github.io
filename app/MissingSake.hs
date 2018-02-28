@@ -92,8 +92,14 @@ conjoin = foldr1 (.&&.)
 disjoin :: Foldable t => t Patterns -> Patterns
 disjoin = foldr1 (.||.)
 
+infix 4 ?===
 (?===) :: Patterns -> FilePath -> Bool
 DNF cls ?=== fp = any (`clMatch` fp) cls
+
+infix 1 %%>
+
+(%%>) :: Patterns -> (FilePath -> Action ()) -> Rules ()
+pats %%> act = (pats ?===) ?> act
 
 data Routing = ModifyPath (FilePath -> FilePath)
              | Copy
@@ -188,3 +194,9 @@ getSourcePath SakeConf{..} fp = do
 
 loadContentsIndex :: SakeConf -> Action ContentsIndex
 loadContentsIndex SakeConf{..} = readFromBinaryFile' (cacheDir </> pageListPath)
+
+infixr 5 </?>
+(</?>) :: FilePath -> Patterns -> Patterns
+dir </?> DNF cls = fromString (dir ++ "//*") .&&. DNF (map go cls)
+  where
+    go (Clause ps ns) = Clause (HS.map (dir </>) ps) (HS.map (dir </>) ns)
