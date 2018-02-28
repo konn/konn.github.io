@@ -181,8 +181,7 @@ main = shakeArgs myShakeOpts $ do
       if ".pdf" `L.isSuffixOf` srcPath
         then copyFile' srcPath out
         else do
-        i@Item{..} <- loadItem srcPath
-        putNormal $ "Compiling to PDF: " ++ show i
+        Item{..} <- loadItem srcPath
         let opts = fromMaybe "-pdflua" $
                    maybeResult . fromJSON =<< HM.lookup "latexmk" itemMetadata
         withTempDir $ \tmp -> do
