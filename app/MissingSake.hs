@@ -157,12 +157,13 @@ withRouteRules SakeConf{..} rconfs rules = alternatives $ do
   rules
 
   let copyPats = disjoin $ map fst $
-                 filter ((\case {Copy -> True; _ -> False}) . snd) rconfs
+                 filter ((\case {Copy -> True; Create -> True; _ -> False}) . snd) rconfs
 
   (\fp -> not (ignoreFile fp) &&
-          (copyPats ?=== makeRelative destinationDir fp)) ?> \out -> do
-    putNormal $ "Falling back to copy rule " ++ out
-    copyFile' (replaceDir destinationDir sourceDir out) out
+          maybe False (copyPats ?===) (stripDirectory destinationDir fp)) ?> \out -> do
+    let orig = replaceDir destinationDir sourceDir out
+    putNormal $ "Falling back to copy rule: " ++ out ++ "; copied from: " ++ orig
+    copyFile' orig out
 
 loadAllItemsAfter :: FilePath -> Patterns -> Action [Item Text]
 loadAllItemsAfter fp pats =
