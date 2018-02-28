@@ -128,6 +128,11 @@ newtype ContentsIndex =
 pageListPath :: FilePath
 pageListPath = "pages.bin"
 
+stripDirectory :: FilePath -> FilePath -> Maybe FilePath
+stripDirectory parent target
+  | parent `L.isPrefixOf` target = Just $ makeRelative parent target
+  | otherwise = Nothing
+
 -- | Creating routing and cleaning rules.
 withRouteRules :: SakeConf -> [(Patterns, Routing)] -> Rules () -> Rules ()
 withRouteRules SakeConf{..} rconfs rules = alternatives $ do
