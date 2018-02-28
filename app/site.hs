@@ -94,7 +94,10 @@ globalBib :: FilePath
 globalBib = home </> "Library/texmf/bibtex/bib/myreference.bib"
 
 myShakeOpts :: ShakeOptions
-myShakeOpts = shakeOptions { shakeThreads = 0 }
+myShakeOpts = shakeOptions { shakeThreads = 0
+                           , shakeProgress = progressSimple
+                           , shakeChange = ChangeDigest
+                           }
 
 templateDir :: T.Text
 templateDir = "templae"
