@@ -1,32 +1,38 @@
-{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving, LambdaCase            #-}
-{-# LANGUAGE NoMonomorphismRestriction, RecordWildCards        #-}
+{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies      #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving, LambdaCase, NamedFieldPuns #-}
+{-# LANGUAGE NoMonomorphismRestriction, RecordWildCards             #-}
 module MissingSake
        ( setItemBody, tryWithFile, PageInfo(..), ContentsIndex(..)
-       , Routing(..), itemPath
-       , Patterns, (.&&.), (.||.), complement
-       , (?===), conjoin, disjoin, globDirectoryFiles
+       , Routing(..), itemPath, lookupMetadata, (</?>), hasSnapshot
+       , Patterns, (.&&.), (.||.), complement, stripDirectory
+       , (?===), (%%>), conjoin, disjoin, globDirectoryFiles, ifChanged
        , replaceDir, withRouteRules, loadAllItemsAfter, loadOriginal, getSourcePath
        , loadContentsIndex, Snapshot, saveSnapshot, loadSnapshot, loadAllSnapshots
        ) where
-import           Control.Monad       (forM, (<=<))
+import           Control.Monad       (forM, when, (<=<))
+import           Crypto.Hash.SHA256  (hash)
+import           Data.Aeson          (FromJSON, Result (..), fromJSON)
+import qualified Data.ByteString     as BS
 import           Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HM
 import qualified Data.HashSet        as HS
+import qualified Data.List           as L
 import           Data.Semigroup      (Semigroup, (<>))
 import           Data.Store          (Store)
 import           Data.String         (IsString (..))
 import           Data.Text           (Text)
 import           GHC.Generics        (Generic)
+import           System.IO           (IOMode (..), withFile)
 import           Web.Sake            (Action, FilePattern, Item (..),
                                       MonadAction, MonadSake, Readable, Rules,
                                       alternatives, copyFile', doesFileExist,
                                       getDirectoryFiles, itemBody,
-                                      itemIdentifier, liftAction, loadItem,
-                                      makeRelative, need, priority, putNormal,
+                                      itemIdentifier, liftAction, liftIO,
+                                      loadItem, makeRelative, need, putNormal,
                                       readFromBinaryFile', removeFilesAfter,
-                                      runBinary, runIdentifier, writeBinaryFile,
-                                      (</>), (?==), (?>), (~>))
+                                      runBinary, runIdentifier, withTempFile,
+                                      writeBinaryFile, (%>), (</>), (?==), (?>),
+                                      (~>))
 import           Web.Sake.Conf       (SakeConf (..))
 
 itemPath :: Item a -> FilePath
