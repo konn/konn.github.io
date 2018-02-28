@@ -137,14 +137,18 @@ stripDirectory parent target
 withRouteRules :: SakeConf -> [(Patterns, Routing)] -> Rules () -> Rules ()
 withRouteRules SakeConf{..} rconfs rules = alternatives $ do
   "site" ~> do
+    ContentsIndex dic0 <- readFromBinaryFile' (cacheDir </> pageListPath)
+    need $ map fst $ HM.toList dic0
+
+  cacheDir </> pageListPath %> \out -> do
     dic0 <- fmap (concat . reverse) $ forM rconfs $ \ (pats, r) -> do
       chs <- filter (not . ignoreFile) <$> globDirectoryFiles sourceDir pats
       forM chs $ \fp -> do
         let path = destinationDir </> applyRouting r fp
         return (path, PageInfo $ sourceDir </> fp)
     let cInd = ContentsIndex $ HM.fromList dic0
-    writeBinaryFile (cacheDir </> pageListPath) cInd
-    need $ map fst dic0
+    writeBinaryFile out cInd
+
 
   "clean" ~> do
     removeFilesAfter destinationDir ["//*"]
