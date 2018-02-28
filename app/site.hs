@@ -427,22 +427,27 @@ applyDefaultTemplate targetPath addCtx item = do
       =<< loadAndApplyMustache "templates/default.mustache" cxt
       =<< saveSnapshot siteConf "premus"
       =<< applyAsMustache cxt item'
+  saveSnapshot siteConf "katexed" i''
   return $ UNF.normalize UNF.NFC . addAmazonAssociateLink' "konn06-22" . procSchemesUrl scms <$> i''
 
 generateImages :: FilePath -> T.Text -> Action ()
 generateImages fp body = do
-  master <- liftIO $ canonicalizePath $ replaceDir cacheD destD $ dropExtension $ dropExtension fp
+  master <- liftIO $ canonicalizePath $ takeDirectory fp
   liftIO $ createDirectoryIfMissing True $ fromString master
   withTempDir $ \tmp -> do
     copyFile' ("data" </> ".latexmkrc") (tmp </> ".latexmkrc")
     writeTextFile (tmp </> "image.tex") body
-    cmd_ (Cwd tmp) "latexmk" "-pdflua" "image.tex"
-    cmd_ (Cwd tmp) "tex2img"
+    cmd_ (Cwd tmp) "latexmk" (EchoStdout False) (WithStdout True) "-pdflua" "image.tex"
+    cmd_ (Cwd tmp) "tex2img" (EchoStdout False) (WithStdout True)
       ["--latex=luajittex --fmt=luajitlatex.fmt"]
       "--with-text" "image.tex" "image.svg"
     -- Generating PNGs
-    cmd_ (Cwd tmp) "convert" "-density" "200" "image.pdf" "image-%d.png"
-    Stdout infos <- cmd (Cwd tmp) "pdftk" "image.pdf" "dump_data_utf8"
+    cmd_ (Cwd tmp) (EchoStdout False) (WithStdout True)
+          "convert" "-density" "200" "image.pdf" "image-%d.png"
+    Stdout infos <-
+      cmd (Cwd tmp) "pdftk"
+          (EchoStdout False) (WithStdout True)
+          "image.pdf" "dump_data_utf8"
     let pages = fromMaybe (0 :: Integer) $ listToMaybe $ mapMaybe
                  (readMaybe <=< L.stripPrefix "NumberOfPages: ")  (lines infos)
     forM_ [1..pages - 1] $ \n -> do
