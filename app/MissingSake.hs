@@ -167,7 +167,7 @@ withRouteRules SakeConf{..} rconfs rules = alternatives $ do
 
 loadAllItemsAfter :: FilePath -> Patterns -> Action [Item Text]
 loadAllItemsAfter fp pats =
-  mapM loadItem  =<< globDirectoryFiles fp pats
+  mapM (loadItem . (fp </>)) =<< globDirectoryFiles fp pats
 
 type Snapshot = String
 

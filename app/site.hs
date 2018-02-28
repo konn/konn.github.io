@@ -139,8 +139,11 @@ main = shakeArgs myShakeOpts $ do
 
 
   withRouteRules siteConf routing $ do
+    map (destD </>) ["prog/automaton", "prog/doc//*", "prog/ruby//*"] |%> \out -> do
+      orig <- getSourcePath siteConf out
+      copyFile' orig out
 
-    "//*.css" %> \out -> do
+    (destD <//> "*.css") %> \out -> do
       origPath <- getSourcePath siteConf out
       need [origPath]
       if ".sass" `L.isSuffixOf` origPath
@@ -364,7 +367,10 @@ listChildren recursive out = do
       pat0 | recursive = dir <//> "*.html"
            | otherwise = dir </> "*.html"
       pat = fromString pat0 .&&. complement (fromString out)
-      chs = [(targ, ofp) | (targ, ofp) <- HM.toList dic, pat ?=== targ]
+      chs = [ (targ, ofp)
+            | (targ, ofp) <- HM.toList dic, pat ?=== targ
+            , (srcD </?> subContentsWithoutIndex) ?=== sourcePath ofp
+            ]
   mapM (\(targ, ofp) -> (targ,) <$> loadItem (sourcePath ofp)) chs
 
 -- data HTree a = HTree { label :: a, _chs :: [HTree a] } deriving (Read, Show, Eq, Ord)
