@@ -192,7 +192,7 @@ main = shakeArgs myShakeOpts $ do
           cmd_ "latexmk" (EchoStdout False) (WithStdout True) (Cwd tmp) opts texFileName
           copyFileNoDep (tmp </> texFileName -<.> "pdf") out
 
-    (destD </> "index.html") %> \out -> do
+    (destD </?> "index.html") .&&. complement (disjoin copies) %%> \out -> do
       (count, posts) <- postList (Just 5) subContentsWithoutIndex
       let ctx = mconcat [ constField "child-count" (show count)
                         , constField "updates" posts
@@ -203,9 +203,7 @@ main = shakeArgs myShakeOpts $ do
         >>= applyDefaultTemplate out ctx {- tags -}
         >>= writeTextFile out . itemBody
 
-    "//index.html" %> \out -> do
-      srcPath <- getSourcePath siteConf out
-      need [srcPath]
+    fromString (destD <//> "index.html") .&&. complement (disjoin copies) %%> \out -> do
       (count, chl) <- renderPostList
                       =<< myRecentFirst . map snd
                       =<< listChildren True out
@@ -218,12 +216,15 @@ main = shakeArgs myShakeOpts $ do
         =<< applyDefaultTemplate out ctx
         =<< myPandocCompiler out
 
-    "//*.html" %> \out -> do
+    fromString (destD <//> "*.html") .&&. complement (disjoin copies) %%> \out -> do
       srcPath <- getSourcePath siteConf out
       need [srcPath]
       if | ".tex"  `L.isSuffixOf` srcPath -> texToHtml  out
          | ".md"   `L.isSuffixOf` srcPath -> mdOrHtmlToHtml out
-         | ".html" `L.isSuffixOf` srcPath -> mdOrHtmlToHtml out
+         | ".html" `L.isSuffixOf` srcPath ->
+           if (destD </> "articles") `L.isPrefixOf` out
+           then mdOrHtmlToHtml out
+           else copyFile' srcPath out
 
     (cacheD <//> "*.tex.preprocess") %> \out -> do
       oldThere <- doesFileExist out
@@ -345,8 +346,11 @@ listChildren recursive out = do
   mapM (\(targ, ofp) -> (targ,) <$> loadItem (sourcePath ofp)) chs
 
 subContentsWithoutIndex :: Patterns
-subContentsWithoutIndex = ("**.md" .||. "articles/**.html" .||. "math/**.tex")
-                     .&&. complement ("index.md" .||. "**/index.md" .||. "archive.md")
+subContentsWithoutIndex =
+  ("//*.md" .||. "*//*.html" .||. "//*.tex")
+  .&&. complement (     "//index.md" .||. "archive.md"
+                   .||. "prog/doc//*" .||. "prog/ruby//*" .||. "prog/automaton//*"
+                  )
 
 feedCxt :: Context T.Text
 feedCxt =  mconcat [ field "published" itemDateStr
