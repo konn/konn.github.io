@@ -226,26 +226,20 @@ main = shakeArgs myShakeOpts $ do
            else copyFile' srcPath out
 
     (cacheD <//> "*.tex.preprocess") %> \out -> do
-      oldThere <- doesFileExist out
-      old <- if oldThere
-             then Just <$> readFromBinaryFileNoDep out
-             else return Nothing
       macs <- readFromYamlFile' "config/macros.yml"
       i@Item{..} <- loadItem (replaceDir cacheD srcD $ dropExtension out)
       let cmacs = itemMacros i
           ans   = preprocessLaTeX (cmacs <> macs) itemBody
-      when ((images =<< old) /= images ans) $
-        forM_ (images ans) $ \(_, src) ->
-        unless (T.null src) $ generateImages out src
-      writeBinaryFile out ans
-
-    [destD </> "math" <//> "image-*.svg", destD </> "math" <//> "image-*.png"] |%> \out -> do
-      putNormal $ "Preprocessing for " <> out
-      need [replaceDir destD cacheD $ takeDirectory out <.> "tex" <.> "preprocess"  ]
-
-    -- (destD <//> "*") %> \out -> do
-    --   orig <- getSourcePath siteConf out
-    --   copyFile' orig out
+          go    = do
+            forM_ (images ans) $ \(_, src) ->
+              unless (T.null src) $ generateImages out src
+            writeBinaryFile out ans
+      b <- doesFileExist out
+      if not b
+        then go
+        else do
+        old <- SHA.hash <$> readBinaryFileNoDep out
+        when (SHA.hash (S.encode ans) /= old) go
 
     (destD </> "feed.xml") %> \out ->
       loadAllSnapshots siteConf subContentsWithoutIndex "content"
@@ -253,16 +247,26 @@ main = shakeArgs myShakeOpts $ do
         >>= renderAtom feedConf feedCxt . take 10 . filter ((("index.md" .||. complement "**/index.md") ?===) . itemPath)
         >>= writeTextFile out
 
+    serialPngOrSvg ?> \out -> do
+      putNormal $ "Preprocessing for " <> out
+      let prepro = replaceDir destD cacheD $ takeDirectory out <.> "tex" <.> "preprocess"
+      need [prepro]
 
+serialPngOrSvg :: FilePath -> Bool
+serialPngOrSvg fp =
+  (fromString (destD </> "math//*.svg") .||. fromString (destD </> "math//*.png")) ?=== fp
+  && isJust (takeImageNumber fp)
+
+takeImageNumber :: FilePath -> Maybe Int
+takeImageNumber fp = do
+  let fname = takeFileName fp
+  l0  <- L.stripPrefix "image-" fname
+  readMaybe $ dropExtension l0
 
 texToHtml :: FilePath -> Action ()
 texToHtml out = do
   i0 <- loadOriginal @T.Text siteConf out
   PreprocessedLaTeX{..} <- readFromBinaryFile' (replaceDir srcD cacheD (itemPath i0) <.> "preprocess")
-  forM_ images $ \(count, _) -> do
-    let mkBase i = dropExtension out </> "image-" ++ show i
-        imagePaths = [ mkBase i <.> ext | i <- [0..count-1], ext <- ["svg", "png"] ]
-    needed imagePaths
   needed [ destD </> "katex" </> "katex.min.js" , out -<.> "pdf" ]
   (style, bibs) <- cslAndBib out
   ipan <-  linkCard . addPDFLink ("/" </> out -<.> "pdf")
