@@ -456,7 +456,8 @@ generateImages fp body = do
     liftIO $ renameFile (tmp </> "image.svg") (tmp </> "image-0.svg")
     imgs <- getDirectoryFiles  tmp ["*.png", "*.svg"]
     forM_ imgs $ \i ->
-      copyFileNoDep (tmp </> i) (master </> i)
+      traced (unwords ["Copying", tmp </> i, "to", master </> i])  $
+        copyFileNoDep (tmp </> i) (master </> i)
     putNormal . unwords . ("generated:" :) =<< getDirectoryFiles tmp ["*.png", "*.svg"]
 
 
