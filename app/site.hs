@@ -154,8 +154,9 @@ main = shakeArgs myShakeOpts $ do
       origPath <- getSourcePath siteConf out
       need [origPath]
       if ".sass" `L.isSuffixOf` origPath
-        then cmd_ "sassc" "-s" "-tcompressed" origPath out
-        else cmd_ "yuicompressor" origPath "-o" out
+        then cmd_ (EchoStdout False) (WithStdout True) "sassc" "-tcompressed" (FileStdin origPath) (FileStdout out)
+        else cmd_ (EchoStdout False) (WithStdout True) "yuicompressor" origPath "-o" out
+
     (destD </> "robots.txt") %> \out -> do
       tmpl <- itemBody <$> loadOriginal siteConf out
       drafts <- map snd <$> listDrafts out
