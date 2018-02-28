@@ -22,32 +22,6 @@ import qualified Text.Mustache            as Mus
 import           Text.Mustache.Compile.TH (mustache)
 import           Web.Sake
 
-data SiteTree = SiteTree { title    :: T.Text
-                         , children :: HashMap FilePath SiteTree
-                         } deriving stock    (Show, Eq, Generic, Typeable)
-                           deriving anyclass (Store)
-
-instance Readable SiteTree where
-  readFrom_ = defaultYamlReadFrom_
-
-instance FromJSON SiteTree where
-  parseJSON (String txt) = pure $ SiteTree txt HM.empty
-  parseJSON (Object dic)
-    | [(name, chs)] <- HM.toList dic = SiteTree <$> pure name <*> HM.unions <$> parseJSON chs
-  parseJSON _ = empty
-
-instance Default SiteTree where
-  def = SiteTree "konn-san.com 建設予定地" HM.empty
-
-walkTree :: [FilePath] -> SiteTree -> [(FilePath, T.Text)]
-walkTree [] (SiteTree t _) = [("/", t)]
-walkTree (x : xs) (SiteTree t chs) = ("/", t) :
-  case HM.lookup (dropSlash x) chs of
-    Nothing  -> []
-    Just st' -> map (first (("/" <> dropSlash x) <> )) (walkTree xs st')
-  where
-    dropSlash = flip maybe T.unpack <*> T.stripSuffix "/" . T.pack
-
 data Scheme = Scheme { prefix  :: T.Text
                      , postfix :: Maybe T.Text
                      } deriving (Typeable, Read, Show, Eq, Ord, Generic)
