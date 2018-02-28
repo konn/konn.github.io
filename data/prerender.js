@@ -10,7 +10,6 @@ try {
         {left: "\\[", right: "\\]", display: true }
       ]
   });
-  process.stdout.write(dom.serialize());
 } finally {
   process.stdout.write(dom.serialize());
 }
