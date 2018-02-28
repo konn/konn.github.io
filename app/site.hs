@@ -321,10 +321,9 @@ pandocContext (Pandoc meta _)
         writeHtml5String writerConf $ Pandoc meta (mvToBlocks abst)
   | otherwise = mempty
 
--- listDrafts :: Action [(Identifier, P.FilePath)]
--- listDrafts =
---   map (second itemPath) . filter (fmap not . isPublished . snd) <$> listChildren True subContentsWithoutIndex
-
+listDrafts :: FilePath -> Action [(FilePath, P.FilePath)]
+listDrafts fp =
+  map (second itemPath) . filter (not . isPublished . snd) <$> listChildren True fp
 
 addPDFLink :: FilePath -> Pandoc -> Pandoc
 addPDFLink plink (Pandoc meta body) = Pandoc meta body'
