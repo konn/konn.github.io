@@ -1,45 +1,49 @@
-{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies      #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving, LambdaCase, NamedFieldPuns #-}
-{-# LANGUAGE NoMonomorphismRestriction, RecordWildCards             #-}
+{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies          #-}
+{-# LANGUAGE FlexibleInstances, GeneralizedNewtypeDeriving, LambdaCase  #-}
+{-# LANGUAGE NamedFieldPuns, NoMonomorphismRestriction, RecordWildCards #-}
+{-# LANGUAGE StandaloneDeriving                                         #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 module MissingSake
-       ( setItemBody, tryWithFile, PageInfo(..), ContentsIndex(..)
-       , Routing(..), itemPath, lookupMetadata, (</?>), hasSnapshot
+       ( tryWithFile, PageInfo(..), ContentsIndex(..)
+       , Routing(..), (</?>), hasSnapshot
        , Patterns, (.&&.), (.||.), complement, stripDirectory
        , (?===), (%%>), conjoin, disjoin, globDirectoryFiles, ifChanged
        , replaceDir, withRouteRules, loadAllItemsAfter, loadOriginal, getSourcePath
        , loadContentsIndex, Snapshot, saveSnapshot, loadSnapshot, loadAllSnapshots
        ) where
-import           Control.Monad       (forM, when, (<=<))
-import           Crypto.Hash.SHA256  (hash)
-import           Data.Aeson          (FromJSON, Result (..), fromJSON)
-import qualified Data.ByteString     as BS
-import           Data.HashMap.Strict (HashMap)
-import qualified Data.HashMap.Strict as HM
-import qualified Data.HashSet        as HS
-import qualified Data.List           as L
-import           Data.Semigroup      (Semigroup, (<>))
-import           Data.Store          (Store)
-import           Data.String         (IsString (..))
-import           Data.Text           (Text)
-import           GHC.Generics        (Generic)
-import           System.IO           (IOMode (..), withFile)
-import           Web.Sake            (Action, FilePattern, Item (..),
-                                      MonadAction, MonadSake, Readable, Rules,
-                                      alternatives, copyFile', doesFileExist,
-                                      getDirectoryFiles, itemBody,
-                                      itemIdentifier, liftAction, liftIO,
-                                      loadItem, makeRelative, need, putNormal,
-                                      readFromBinaryFile', removeFilesAfter,
-                                      runBinary, runIdentifier, withTempFile,
-                                      writeBinaryFile, (%>), (</>), (?==), (?>),
-                                      (~>))
-import           Web.Sake.Conf       (SakeConf (..))
-
-itemPath :: Item a -> FilePath
-itemPath = runIdentifier . itemIdentifier
-
-setItemBody :: a1 -> Item a2 -> Item a1
-setItemBody bdy i = i { itemBody = bdy }
+import           Control.Monad              (forM, when, (<=<))
+import           Crypto.Hash.SHA256         (hash)
+import           Data.Aeson                 (Value)
+import qualified Data.Binary                as Bin
+import qualified Data.ByteString            as BS
+import           Data.Functor.Contravariant (Contravariant (..))
+import           Data.HashMap.Strict        (HashMap)
+import qualified Data.HashMap.Strict        as HM
+import qualified Data.HashSet               as HS
+import qualified Data.List                  as L
+import           Data.Scientific            (Scientific (..))
+import           Data.Semigroup             (Semigroup, (<>))
+import           Data.Store                 (Store (..))
+import           Data.String                (IsString (..))
+import           Data.Text                  (Text)
+import           GHC.Generics               (Generic)
+import           System.Directory           (createDirectoryIfMissing)
+import           System.IO                  (IOMode (..), withFile)
+import           Web.Sake                   (Action, FilePattern,
+                                             Identifier (..), Item (..),
+                                             Metadata, MonadAction, MonadSake,
+                                             Readable, Rules, alternatives,
+                                             copyFile', doesFileExist,
+                                             filePattern, getDirectoryFiles,
+                                             itemBody, itemIdentifier, itemPath,
+                                             liftAction, liftIO, loadItem,
+                                             makeRelative, need, putNormal,
+                                             readFromBinaryFile',
+                                             removeFilesAfter, runIdentifier,
+                                             withTempFile, writeBinaryFile,
+                                             (%>), (<//>), (</>), (?==), (?>),
+                                             (~>))
+import           Web.Sake.Conf              (SakeConf (..))
 
 tryWithFile :: MonadAction m => FilePath -> m a -> m (Maybe a)
 tryWithFile fp act = do
@@ -107,22 +111,23 @@ infix 1 %%>
 (%%>) :: Patterns -> (FilePath -> Action ()) -> Rules ()
 pats %%> act = (pats ?===) ?> act
 
-data Routing = ModifyPath (FilePath -> FilePath)
-             | Copy
-             | Create
+data Routing = Convert Patterns (FilePath -> FilePath)
+             | Copy Patterns
+             | Create FilePath
              deriving (Generic)
 
-
-applyRouting :: Routing -> FilePath -> FilePath
-applyRouting Copy           fp = fp
-applyRouting Create         fp = fp
-applyRouting (ModifyPath f) fp = f fp
+generatePageInfo :: SakeConf -> Patterns -> (FilePath -> FilePath) -> Action [(FilePath, PageInfo)]
+generatePageInfo SakeConf{..} pats f = do
+  chs <- filter (not . ignoreFile) <$> globDirectoryFiles sourceDir pats
+  forM chs $ \fp -> do
+    let path = destinationDir </> f fp
+    return (path, PageInfo $ Just $ sourceDir </> fp)
 
 globDirectoryFiles :: FilePath -> Patterns -> Action [FilePath]
 globDirectoryFiles dir (DNF cs) = fmap concat $ forM cs $ \(Clause ps ns) ->
   filter (\fp -> all (not . (?== fp)) ns) <$> getDirectoryFiles dir (HS.toList ps)
 
-newtype PageInfo = PageInfo { sourcePath :: FilePath }
+newtype PageInfo = PageInfo { sourcePath :: Maybe FilePath }
                  deriving (Read, Show, Eq, Ord, Generic)
                  deriving anyclass (Store)
 
@@ -140,30 +145,37 @@ stripDirectory parent target
   | otherwise = Nothing
 
 -- | Creating routing and cleaning rules.
-withRouteRules :: SakeConf -> [(Patterns, Routing)] -> Rules () -> Rules ()
-withRouteRules SakeConf{..} rconfs rules = alternatives $ do
+withRouteRules :: SakeConf -> [Routing] -> Rules () -> Rules ()
+withRouteRules sakeConf@SakeConf{..} rconfs rules = alternatives $ do
   "site" ~> do
+    liftIO $ do
+      createDirectoryIfMissing True destinationDir
+      createDirectoryIfMissing True sourceDir
+      createDirectoryIfMissing True snapshotDir
     ContentsIndex dic0 <- readFromBinaryFile' (cacheDir </> pageListPath)
+    putNormal $ "needing: " ++ show (map fst $ HM.toList dic0)
     need $ map fst $ HM.toList dic0
 
   cacheDir </> pageListPath %> \out -> do
-    dic0 <- fmap (concat . reverse) $ forM rconfs $ \ (pats, r) -> do
-      chs <- filter (not . ignoreFile) <$> globDirectoryFiles sourceDir pats
-      forM chs $ \fp -> do
-        let path = destinationDir </> applyRouting r fp
-        return (path, PageInfo $ sourceDir </> fp)
-    let cInd = ContentsIndex $ HM.fromList dic0
-    writeBinaryFile out cInd
+    dic0 <- fmap (concat . reverse) $ forM rconfs $ \case
+      Convert pats f -> generatePageInfo sakeConf pats f
+      Copy pats -> generatePageInfo sakeConf pats id
+      Create fp -> return [(destinationDir </> fp, PageInfo Nothing)]
+    writeBinaryFile out $ ContentsIndex $ HM.fromList dic0
 
+  snapshotDir </> "*" <//> "*" %> \out -> do
+    let Just [_, rest, fname] = filePattern (snapshotDir </> "*" <//> "*") out
+    need [sourceDir </> rest </> fname]
 
   "clean" ~> do
     removeFilesAfter destinationDir ["//*"]
     removeFilesAfter cacheDir ["//*"]
+    removeFilesAfter snapshotDir ["//*"]
 
   rules
 
-  let copyPats = disjoin $ map fst $
-                 filter ((\case {Copy -> True; Create -> True; _ -> False}) . snd) rconfs
+  let copyPats = disjoin $
+                 foldMap (\case {Copy pat -> [pat]; Create fp -> [fromString fp]; _ -> []}) rconfs
 
   (\fp -> not (ignoreFile fp) &&
           maybe False (copyPats ?===) (stripDirectory destinationDir fp)) ?> \out -> do
@@ -177,23 +189,47 @@ loadAllItemsAfter fp pats =
 
 type Snapshot = String
 
+instance Store Scientific where
+  size = contramap Bin.encode size
+  peek = Bin.decode <$> peek
+  poke = poke . Bin.encode
+
+deriving instance Store Value
+
+data Snapshotted a = Snapshotted { snapBody       :: a
+                                 , snapIdentifier :: FilePath
+                                 , snapMetadata   :: Metadata
+                                 }
+                   deriving (Read, Show, Eq, Generic, Store)
+
 saveSnapshot :: (Store a) => SakeConf -> Snapshot -> Item a -> Action (Item a)
 saveSnapshot SakeConf{..} name i@Item{..} = do
-  writeBinaryFile (replaceDir sourceDir (cacheDir </> name) (itemPath i)) itemBody
+  writeBinaryFile (replaceDir sourceDir (snapshotDir </> name) (itemPath i))
+    Snapshotted { snapBody = itemBody
+                , snapIdentifier = runIdentifier itemIdentifier
+                , snapMetadata = itemMetadata
+                }
   return i
+
+snapToItem :: Snapshotted a -> Item a
+snapToItem Snapshotted{..} =
+  Item { itemIdentifier = Identifier snapIdentifier
+       , itemBody       = snapBody
+       , itemMetadata   = snapMetadata
+       }
 
 loadSnapshot :: (MonadSake m, Store a) => SakeConf -> Snapshot -> FilePath -> m (Item a)
 loadSnapshot SakeConf{..} name fp =
-  fmap runBinary <$> loadItem (cacheDir </> name </> fp)
+  snapToItem <$> readFromBinaryFile' (snapshotDir </> name </> fp)
 
 loadAllSnapshots :: (Store a) => SakeConf -> Patterns -> Snapshot -> Action [Item a]
 loadAllSnapshots SakeConf{..} pts name = do
-  let snapD = cacheDir </> name
-  mapM (fmap (fmap runBinary) . loadItem . (snapD </>)) =<< globDirectoryFiles snapD pts
+  let snapD = snapshotDir </> name
+  mapM (fmap snapToItem . readFromBinaryFile' . (snapD </>)) =<< globDirectoryFiles snapD pts
 
 hasSnapshot :: SakeConf -> Snapshot -> Item a -> Action Bool
 hasSnapshot SakeConf{..} snap i =
-  doesFileExist $ replaceDir sourceDir (cacheDir </> snap) (itemPath i)
+  doesFileExist $ replaceDir sourceDir (snapshotDir </> snap) (itemPath i)
 
 replaceDir :: FilePath -> FilePath -> FilePath -> FilePath
 replaceDir from to pth = to </> makeRelative from pth
@@ -205,8 +241,8 @@ getSourcePath :: SakeConf -> FilePath -> Action FilePath
 getSourcePath SakeConf{..} fp = do
   ContentsIndex dic <- readFromBinaryFile' (cacheDir </> pageListPath)
   case HM.lookup fp dic of
-    Just PageInfo{..} -> return sourcePath
-    Nothing           -> error $ "No Source Path found: " ++ fp
+    Just PageInfo{ sourcePath = Just pth } -> return pth
+    _           -> error $ "No Source Path found: " ++ fp
 
 ifChanged :: (FilePath -> a -> Action ()) -> FilePath -> a -> Action ()
 ifChanged write fp bdy = do
@@ -229,11 +265,3 @@ infixr 5 </?>
 dir </?> DNF cls = fromString (dir ++ "//*") .&&. DNF (map go cls)
   where
     go (Clause ps ns) = Clause (HS.map (dir </>) ps) (HS.map (dir </>) ns)
-
-lookupMetadata :: FromJSON b => Text -> Item a -> Maybe b
-lookupMetadata key Item{itemMetadata} =
-  maybeResult . fromJSON =<< HM.lookup key itemMetadata
-
-maybeResult :: Result a -> Maybe a
-maybeResult (Success a) = Just a
-maybeResult _           = Nothing

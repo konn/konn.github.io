@@ -3,8 +3,7 @@
 module Breadcrumb (makeBreadcrumb, makeBreadcrumbM,
                    SiteTree(..), Breadcrumb(..),
                    breadcrumbContext) where
-import Instances   ()
-import MissingSake
+import Instances ()
 
 import           Control.Applicative (empty)
 import           Control.Arrow       (first)
@@ -26,7 +25,7 @@ import           Web.Sake            (Context, MonadSake, Mustache, Readable,
                                       splitDirectories, takeDirectory,
                                       takeFileName)
 import           Web.Sake.Class      (Readable (..))
-import           Web.Sake.Item       (Item (..))
+import           Web.Sake.Item       (Item (..), itemPath, lookupMetadata)
 
 data SiteTree = SiteTree { title    :: T.Text
                          , children :: HM.HashMap FilePath SiteTree

@@ -45,15 +45,6 @@ newtype BibTeX = BibTeX { runBibTeX :: [Reference] }
 instance Writable BibTeX where
   writeTo_ fp = writeTo_ fp . Binary
 
--- instance Writable BibTeX where
---   write fp = write fp . fmap Bin.encode
-
--- biblioToBibTeX :: Biblio -> BibTeX
--- biblioToBibTeX (Biblio rs) = BibTeX rs
-
--- bibTeXToBiblio :: BibTeX -> Biblio
--- bibTeXToBiblio = Biblio . runBibTeX
-
 deriving instance Typeable Measure
 deriving instance Store Measure
 deriving instance Typeable TeXArg

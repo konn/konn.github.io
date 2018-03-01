@@ -15,24 +15,23 @@ import           Macro
 import qualified MyTeXMathConv as MyT
 import           Utils
 
-import           Control.Arrow                   (left)
-import           Control.Lens                    hiding (rewrite, (<.>))
-import           Control.Lens.Extras             (is)
+import           Control.Arrow               (left)
+import           Control.Lens                hiding (rewrite)
+import           Control.Lens.Extras         (is)
 import           Control.Monad.Identity
-import           Control.Monad.State.Strict      (MonadState, StateT,
-                                                  evalStateT, gets, modify,
-                                                  runState, runStateT)
-import           Control.Monad.Writer.Strict     (runWriter, tell)
-import           Data.Char                       (isAlpha, isAlphaNum, isAscii,
-                                                  isLatin1, isLetter, isSpace)
+import           Control.Monad.State.Strict  (MonadState, StateT, evalStateT,
+                                              gets, modify, runState, runStateT)
+import           Control.Monad.Writer.Strict (runWriter, tell)
+import           Data.Char                   (isAlpha, isAlphaNum, isAscii,
+                                              isLatin1, isLetter, isSpace)
 import           Data.Default
-import           Data.Foldable                   (toList)
-import qualified Data.HashMap.Strict             as HM
-import qualified Data.HashSet                    as HS
-import qualified Data.List                       as L
-import qualified Data.Map                        as M
-import           Data.Maybe                      (fromMaybe, listToMaybe,
-                                                  mapMaybe)
+import           Data.Foldable               (toList)
+import qualified Data.HashMap.Strict         as HM
+import qualified Data.HashSet                as HS
+import qualified Data.List                   as L
+import qualified Data.Map                    as M
+import           Data.Maybe                  (fromMaybe, listToMaybe)
+
 import           Data.Sequence                   (Seq)
 import qualified Data.Sequence                   as Seq
 import           Data.Store                      (Store)
@@ -40,7 +39,6 @@ import qualified Data.Text                       as T
 import           Data.Typeable
 import           Development.Shake
 import           GHC.Generics                    (Generic)
-import           System.Directory
 import           System.FilePath
 import           Text.Blaze.Html.Renderer.String (renderHtml)
 import           Text.Blaze.Html5                (img, object, toValue, (!))
@@ -56,11 +54,11 @@ import           Text.LaTeX.CrossRef             (LabelFormat (ThisCounter),
                                                   RefOptions (..), procCrossRef)
 import qualified Text.LaTeX.CrossRef             as R
 import           Text.Pandoc                     hiding (MathType, Writer)
-import           Text.Pandoc.Shared              hiding (withTempDir)
+import           Text.Pandoc.Shared
 import qualified Text.Parsec                     as P
 import           Text.Regex.Applicative          (RE, psym, replace, (<|>))
 import           Text.TeXMath.Readers.TeX.Macros
-import           Web.Sake.Class                  hiding (copyFile', putNormal)
+import           Web.Sake.Class
 
 default (String, T.Text , Integer)
 
