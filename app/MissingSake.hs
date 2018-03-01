@@ -219,12 +219,14 @@ snapToItem Snapshotted{..} =
        }
 
 loadSnapshot :: (MonadSake m, Store a) => SakeConf -> Snapshot -> FilePath -> m (Item a)
-loadSnapshot SakeConf{..} name fp =
+loadSnapshot SakeConf{..} name fp = do
+  liftIO $ createDirectoryIfMissing True (snapshotDir </> name)
   snapToItem <$> readFromBinaryFile' (snapshotDir </> name </> fp)
 
 loadAllSnapshots :: (Store a) => SakeConf -> Patterns -> Snapshot -> Action [Item a]
 loadAllSnapshots SakeConf{..} pts name = do
   let snapD = snapshotDir </> name
+  liftIO $ createDirectoryIfMissing True snapD
   mapM (fmap snapToItem . readFromBinaryFile' . (snapD </>)) =<< globDirectoryFiles snapD pts
 
 hasSnapshot :: SakeConf -> Snapshot -> Item a -> Action Bool
