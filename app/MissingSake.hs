@@ -1,17 +1,17 @@
-{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies          #-}
-{-# LANGUAGE FlexibleInstances, GeneralizedNewtypeDeriving, LambdaCase  #-}
-{-# LANGUAGE NamedFieldPuns, NoMonomorphismRestriction, RecordWildCards #-}
-{-# LANGUAGE StandaloneDeriving                                         #-}
+{-# LANGUAGE DeriveAnyClass, DeriveGeneric, DerivingStrategies            #-}
+{-# LANGUAGE FlexibleInstances, GeneralizedNewtypeDeriving, LambdaCase    #-}
+{-# LANGUAGE NamedFieldPuns, NoMonomorphismRestriction, OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards, StandaloneDeriving, ViewPatterns            #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 module MissingSake
        ( tryWithFile, PageInfo(..), ContentsIndex(..)
-       , Routing(..), (</?>), hasSnapshot
+       , Routing(..), (</?>), hasSnapshot, writeItem, Snapshot(..), SnapshotName
        , Patterns, (.&&.), (.||.), complement, stripDirectory
        , (?===), (%%>), conjoin, disjoin, globDirectoryFiles, ifChanged
        , replaceDir, withRouteRules, loadAllItemsAfter, loadOriginal, getSourcePath
-       , loadContentsIndex, Snapshot, saveSnapshot, loadSnapshot, loadAllSnapshots
+       , loadContentsIndex, saveSnapshot, loadSnapshot, loadAllSnapshots
        ) where
-import           Control.Monad              (forM, when, (<=<))
+import           Control.Monad              (forM, when)
 import           Crypto.Hash.SHA256         (hash)
 import           Data.Aeson                 (Value)
 import qualified Data.Binary                as Bin
@@ -26,23 +26,23 @@ import           Data.Semigroup             (Semigroup, (<>))
 import           Data.Store                 (Store (..))
 import           Data.String                (IsString (..))
 import           Data.Text                  (Text)
+import qualified Data.Text                  as T
 import           GHC.Generics               (Generic)
 import           System.Directory           (createDirectoryIfMissing)
 import           System.IO                  (IOMode (..), withFile)
 import           Web.Sake                   (Action, FilePattern,
                                              Identifier (..), Item (..),
-                                             Metadata, MonadAction, MonadSake,
-                                             Readable, Rules, alternatives,
-                                             copyFile', doesFileExist,
-                                             filePattern, getDirectoryFiles,
-                                             itemBody, itemIdentifier, itemPath,
+                                             Metadata, MonadAction, Readable,
+                                             Rules, alternatives, copyFile',
+                                             doesFileExist, filePattern,
+                                             getDirectoryFiles, itemBody,
+                                             itemIdentifier, itemPath,
                                              liftAction, liftIO, loadItem,
                                              makeRelative, need, putNormal,
                                              readFromBinaryFile',
-                                             removeFilesAfter, runIdentifier,
-                                             withTempFile, writeBinaryFile,
-                                             (%>), (<//>), (</>), (?==), (?>),
-                                             (~>))
+                                             removeFilesAfter, withTempFile,
+                                             writeBinaryFile, writeToFile, (%>),
+                                             (<//>), (</>), (?==), (?>), (~>))
 import           Web.Sake.Conf              (SakeConf (..))
 
 tryWithFile :: MonadAction m => FilePath -> m a -> m (Maybe a)
@@ -62,9 +62,50 @@ newtype Patterns = DNF [Clause]
                  deriving (Read, Show, Eq, Generic)
                  deriving newtype (Store)
 
+data Snapshot = Snapshot { snapshotName   :: String
+                         , snapshotTarget :: Patterns
+                         , snapshotSource :: Patterns
+                         }
+              deriving (Read, Show, Eq, Generic, Store)
+
+-- | Pattern syntax is @[[sourcePattern "|" |]targetPattern#]snapshot_name@ and you can escape @|@, @#@ and @\\@ by prefixing @\\@.
+--   Forexample, @"content"@ is equivalent to @'Snapshot' { snapshotName = "content", snapshotSource = "//*", snapshotTarget = "//*"}@,
+-- @"//*.html#content"@ to @'Snapshot' { snapshotName = "content", snapshotSource = "//*", snapshotTarget = "//*.html"}@, and
+-- @"//source-\\#*.md|//index-\\|*.html#content"@ to @'Snapshot' { snapshotName = "content", snapshotSource = "//source-#*.md", snapshotTarget = "//index-|*.html"}@.
+
+instance IsString Snapshot where
+  fromString = parseSnapshot . T.pack
+
+parseSnapshot :: Text -> Snapshot
+parseSnapshot src =
+  case breakOnEscaped '#' src of
+    (snap, "") -> defSnap { snapshotName = fromString $ T.unpack snap }
+    (pths, t)  ->
+      let snapshotName = T.unpack $ T.tail t
+      in case breakOnEscaped '|' pths of
+        (targ, "")  -> defSnap { snapshotName, snapshotTarget = fromString $ T.unpack targ }
+        (srcPat, targ) ->
+          let snapshotTarget = fromString $ T.unpack $ T.tail targ
+              snapshotSource = fromString $ T.unpack srcPat
+          in Snapshot {..}
+  where
+    defSnap = Snapshot "" "//*" "//*"
+
+breakOnEscaped :: Char -> Text -> (Text, Text)
+breakOnEscaped c = breakEscaped' ""
+  where
+    breakEscaped' acc str =
+      case T.break (`elem` [c, '\\']) str of
+        (left, T.uncons -> Just ('\\', T.uncons -> Just ('\\', r)))
+          -> breakEscaped' (acc <> left <> "\\") r
+        (left, T.uncons -> Just ('\\', T.uncons -> Just (d, r)))
+          | d == c -> breakEscaped' (acc <> left `T.snoc` c) r
+          | otherwise -> breakEscaped' (acc <> left `T.snoc` '\\' `T.snoc` d) r
+        (left, r0@(T.uncons -> Just (_, _))) -> (acc <> left, r0)
+        (l, r) -> (acc <> l, r)
+
 instance IsString Patterns where
   fromString = DNF . pure . flip Clause HS.empty . HS.singleton . fromString
-
 
 instance Semigroup Clause
 
@@ -79,6 +120,7 @@ infixr 3 .&&.
 DNF xs .||. DNF ys = DNF (xs ++ ys)
 
 (.&&.) :: Patterns -> Patterns -> Patterns
+DNF [xs] .&&. DNF [ys] = DNF [xs <> ys]
 DNF xs .&&. DNF ys =
   removeRedundants $ DNF $ concatMap (\x -> map (x <>) ys) xs
 
@@ -113,14 +155,15 @@ pats %%> act = (pats ?===) ?> act
 
 data Routing = Convert Patterns (FilePath -> FilePath)
              | Copy Patterns
+             | Cached Patterns (FilePath -> FilePath)
              | Create FilePath
              deriving (Generic)
 
-generatePageInfo :: SakeConf -> Patterns -> (FilePath -> FilePath) -> Action [(FilePath, PageInfo)]
-generatePageInfo SakeConf{..} pats f = do
+generatePageInfo :: SakeConf -> Patterns -> FilePath -> (FilePath -> FilePath) -> Action [(FilePath, PageInfo)]
+generatePageInfo SakeConf{..} pats toD f = do
   chs <- filter (not . ignoreFile) <$> globDirectoryFiles sourceDir pats
   forM chs $ \fp -> do
-    let path = destinationDir </> f fp
+    let path = toD </> f fp
     return (path, PageInfo $ Just $ sourceDir </> fp)
 
 globDirectoryFiles :: FilePath -> Patterns -> Action [FilePath]
@@ -136,8 +179,8 @@ newtype ContentsIndex =
   deriving (Read, Show, Eq, Generic)
   deriving anyclass (Store)
 
-pageListPath :: FilePath
-pageListPath = "pages.bin"
+pageListName :: FilePath
+pageListName = "pages.bin"
 
 stripDirectory :: FilePath -> FilePath -> Maybe FilePath
 stripDirectory parent target
@@ -152,20 +195,21 @@ withRouteRules sakeConf@SakeConf{..} rconfs rules = alternatives $ do
       createDirectoryIfMissing True destinationDir
       createDirectoryIfMissing True sourceDir
       createDirectoryIfMissing True snapshotDir
-    ContentsIndex dic0 <- readFromBinaryFile' (cacheDir </> pageListPath)
-    putNormal $ "needing: " ++ show (map fst $ HM.toList dic0)
+    ContentsIndex dic0 <- readFromBinaryFile' (cacheDir </> pageListName)
     need $ map fst $ HM.toList dic0
 
-  cacheDir </> pageListPath %> \out -> do
+  cacheDir </> pageListName %> \out -> do
     dic0 <- fmap (concat . reverse) $ forM rconfs $ \case
-      Convert pats f -> generatePageInfo sakeConf pats f
-      Copy pats -> generatePageInfo sakeConf pats id
+      Convert pats f -> generatePageInfo sakeConf pats destinationDir f
+      Copy pats -> generatePageInfo sakeConf pats destinationDir id
+      Cached pats f -> generatePageInfo sakeConf pats cacheDir f
       Create fp -> return [(destinationDir </> fp, PageInfo Nothing)]
     writeBinaryFile out $ ContentsIndex $ HM.fromList dic0
 
   snapshotDir </> "*" <//> "*" %> \out -> do
     let Just [_, rest, fname] = filePattern (snapshotDir </> "*" <//> "*") out
-    need [sourceDir </> rest </> fname]
+        orig = destinationDir </> rest </> fname
+    need [orig]
 
   "clean" ~> do
     removeFilesAfter destinationDir ["//*"]
@@ -187,8 +231,6 @@ loadAllItemsAfter :: FilePath -> Patterns -> Action [Item Text]
 loadAllItemsAfter fp pats =
   mapM (loadItem . (fp </>)) =<< globDirectoryFiles fp pats
 
-type Snapshot = String
-
 instance Store Scientific where
   size = contramap Bin.encode size
   peek = Bin.decode <$> peek
@@ -198,53 +240,75 @@ deriving instance Store Value
 
 data Snapshotted a = Snapshotted { snapBody       :: a
                                  , snapIdentifier :: FilePath
+                                 , snapTarget     :: FilePath
                                  , snapMetadata   :: Metadata
                                  }
-                   deriving (Read, Show, Eq, Generic, Store)
-
-saveSnapshot :: (Store a) => SakeConf -> Snapshot -> Item a -> Action (Item a)
-saveSnapshot SakeConf{..} name i@Item{..} = do
-  writeBinaryFile (replaceDir sourceDir (snapshotDir </> name) (itemPath i))
-    Snapshotted { snapBody = itemBody
-                , snapIdentifier = runIdentifier itemIdentifier
-                , snapMetadata = itemMetadata
-                }
-  return i
+                      deriving (Read, Show, Eq, Generic, Store)
 
 snapToItem :: Snapshotted a -> Item a
-snapToItem Snapshotted{..} =
-  Item { itemIdentifier = Identifier snapIdentifier
-       , itemBody       = snapBody
-       , itemMetadata   = snapMetadata
-       }
+snapToItem
+  Snapshotted { snapBody = itemBody
+              , snapIdentifier = (Identifier -> itemIdentifier)
+              , snapTarget = itemTarget
+              , snapMetadata = itemMetadata
+              } = Item{..}
 
-loadSnapshot :: (MonadSake m, Store a) => SakeConf -> Snapshot -> FilePath -> m (Item a)
-loadSnapshot SakeConf{..} name fp = do
-  liftIO $ createDirectoryIfMissing True (snapshotDir </> name)
-  snapToItem <$> readFromBinaryFile' (snapshotDir </> name </> fp)
+itemToSnap :: Item a -> Snapshotted a
+itemToSnap
+  Item{ itemBody = snapBody
+      , itemIdentifier = Identifier snapIdentifier
+      , itemTarget = snapTarget
+      , itemMetadata = snapMetadata
+      } = Snapshotted{..}
 
-loadAllSnapshots :: (Store a) => SakeConf -> Patterns -> Snapshot -> Action [Item a]
-loadAllSnapshots SakeConf{..} pts name = do
-  let snapD = snapshotDir </> name
-  liftIO $ createDirectoryIfMissing True snapD
-  mapM (fmap snapToItem . readFromBinaryFile' . (snapD </>)) =<< globDirectoryFiles snapD pts
+type SnapshotName = String
 
-hasSnapshot :: SakeConf -> Snapshot -> Item a -> Action Bool
+
+saveSnapshot :: (Store a) => SakeConf -> SnapshotName -> Item a -> Action (Item a)
+saveSnapshot SakeConf{..} name i@Item{..} = do
+  writeBinaryFile (replaceDir destinationDir (snapshotDir </> name) itemTarget) $
+    itemToSnap i
+  return i
+
+loadSnapshot :: (Store a) => SakeConf -> SnapshotName -> FilePath -> Action (Item a)
+loadSnapshot cnf name pat =
+  head <$> loadAllSnapshots cnf (fromString name) { snapshotTarget = fromString pat }
+
+loadAllSnapshots :: (Store a) => SakeConf -> Snapshot -> Action [Item a]
+loadAllSnapshots SakeConf{..} sn@Snapshot{..} = do
+  ContentsIndex dic <- readFromBinaryFile' (cacheDir </> pageListName)
+  let targs = [ fp
+              | (fp, pinfo) <- HM.toList dic
+              , maybe False (snapshotTarget ?===) $
+                stripDirectory destinationDir fp
+              , maybe False (snapshotSource ?===) $
+                stripDirectory sourceDir =<< sourcePath pinfo
+              ]
+  forM targs $ \fp ->
+    snapToItem <$> readFromBinaryFile' (replaceDir destinationDir (snapshotDir </> snapshotName) fp)
+
+hasSnapshot :: SakeConf -> SnapshotName -> Item a -> Action Bool
 hasSnapshot SakeConf{..} snap i =
-  doesFileExist $ replaceDir sourceDir (snapshotDir </> snap) (itemPath i)
+  doesFileExist $ replaceDir sourceDir (snapshotDir </> snap) (itemTarget i)
 
 replaceDir :: FilePath -> FilePath -> FilePath -> FilePath
 replaceDir from to pth = to </> makeRelative from pth
 
 loadOriginal :: Readable a => SakeConf -> FilePath -> Action (Item a)
-loadOriginal cnf = loadItem <=< getSourcePath cnf
+loadOriginal cnf fp = do
+  i <- loadItem =<< getSourcePath cnf fp
+  return i { itemTarget = fp }
 
 getSourcePath :: SakeConf -> FilePath -> Action FilePath
 getSourcePath SakeConf{..} fp = do
-  ContentsIndex dic <- readFromBinaryFile' (cacheDir </> pageListPath)
+  ContentsIndex dic <- readFromBinaryFile' (cacheDir </> pageListName)
   case HM.lookup fp dic of
     Just PageInfo{ sourcePath = Just pth } -> return pth
     _           -> error $ "No Source Path found: " ++ fp
+
+writeItem :: SakeConf -> Item Text -> Action ()
+writeItem c@SakeConf{..} i@Item{itemTarget} =
+  writeToFile itemTarget . itemBody =<< saveSnapshot c "_final" i
 
 ifChanged :: (FilePath -> a -> Action ()) -> FilePath -> a -> Action ()
 ifChanged write fp bdy = do
@@ -260,7 +324,7 @@ ifChanged write fp bdy = do
     when b $ write fp bdy
 
 loadContentsIndex :: SakeConf -> Action ContentsIndex
-loadContentsIndex SakeConf{..} = readFromBinaryFile' (cacheDir </> pageListPath)
+loadContentsIndex SakeConf{..} = readFromBinaryFile' (cacheDir </> pageListName)
 
 infixr 5 </?>
 (</?>) :: FilePath -> Patterns -> Patterns

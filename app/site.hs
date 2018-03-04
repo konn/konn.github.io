@@ -18,7 +18,6 @@ import Web.Sake.Feed
 
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative             ((<|>))
-import           Control.Arrow                   (second)
 import           Control.Lens                    (imap, (%~), (.~), (^?), _2)
 import           Control.Monad                   hiding (mapM)
 import           Control.Monad.State
@@ -136,14 +135,13 @@ main = shakeArgs myShakeOpts $ do
                , "css//*.css", "css//*.map", "//*.key"
                ,"katex//*"
                ]
-      routing = [("//*.md" .||. "//*.html" .||. "//*.tex", ModifyPath (-<.> "html"))
-                ,("//*.tex", ModifyPath (-<.> "pdf"))
-                ,("//*.sass", ModifyPath (-<.> "css"))
-                ] ++ map ( , Copy) copies ++
-                [ ("feed.xml", Create)
-                , ("robots.txt", ModifyPath id)
-                ]
-
+      routing = [ Convert ("//*.md" .||. "//*.html" .||. "//*.tex") (-<.> "html")
+                , Convert "//*.tex" (-<.> "pdf")
+                , Convert "//*.sass" (-<.> "css")
+                , Convert "robots.txt" id
+                , Cached  "//*.tex" (<.> "preprocess")
+                ] ++ map Copy copies ++
+                [ Create "feed.xml", Create "sitemap.xml" ]
 
   withRouteRules siteConf routing $ do
     map (destD </>) ["prog/automaton", "prog/doc//*", "prog/ruby//*"] |%> \out -> do
@@ -159,19 +157,30 @@ main = shakeArgs myShakeOpts $ do
 
     (destD </> "robots.txt") %> \out -> do
       tmpl <- itemBody <$> loadOriginal siteConf out
-      drafts <- map snd <$> listDrafts out
+      drafts <- mapMaybe (stripDirectory destD . itemTarget) <$> listDrafts out
       let obj = object ["disallowed" .= map ('/':) drafts]
       writeLazyTextFile out $ Mus.renderMustache tmpl obj
 
+    (destD </> "sitemap.xml") %> \out -> do
+      items <- filter isPublished <$> listChildren True out
+      let itemsCtx = urlField <> updatedDateField "date" "%Y-%m-%d" <> defaultContext
+          ctx = mconcat [ defaultContext
+                        , listField "items"
+                            itemsCtx
+                            items
+                        ]
+      writeTextFile out . itemBody =<< applyAsMustache ctx
+        =<< loadItem "templates/sitemap.mustache"
+
     (destD </> "archive.html") %> \out -> do
-      (count, posts) <- postList Nothing subContentsWithoutIndex
+      (count, posts) <- postList Nothing
       let ctx = mconcat [ constField "child-count" (show count)
                         , constField "children" posts
                         , myDefaultContext
                         ]
       loadOriginal siteConf out
         >>= compilePandoc readerConf writerConf
-        >>= applyDefaultTemplate out ctx {- tags -}
+        >>= applyDefaultTemplate ctx {- tags -}
         >>= writeTextFile out . itemBody
 
     (destD </> "math//*.pdf") %> \out -> do
@@ -181,7 +190,7 @@ main = shakeArgs myShakeOpts $ do
       if ".pdf" `L.isSuffixOf` srcPath
         then copyFile' srcPath out
         else do
-        Item{..} <- loadItem srcPath
+        Item{..} <- loadOriginal siteConf out
         let opts = fromMaybe "-pdflua" $
                    maybeResult . fromJSON =<< HM.lookup "latexmk" itemMetadata
         withTempDir $ \tmp -> do
@@ -193,26 +202,28 @@ main = shakeArgs myShakeOpts $ do
           copyFileNoDep (tmp </> texFileName -<.> "pdf") out
 
     (destD </?> "index.html") .&&. complement (disjoin copies) %%> \out -> do
-      (count, posts) <- postList (Just 5) subContentsWithoutIndex
+      (count, posts) <- renderPostList . take 5
+                        =<< myRecentFirst
+                        =<< listChildren False out
       let ctx = mconcat [ constField "child-count" (show count)
                         , constField "updates" posts
                         , myDefaultContext
                         ]
       loadOriginal siteConf out
         >>= compilePandoc readerConf writerConf
-        >>= applyDefaultTemplate out ctx {- tags -}
+        >>= applyDefaultTemplate ctx {- tags -}
         >>= writeTextFile out . itemBody
 
     fromString (destD <//> "index.html") .&&. complement (disjoin copies) %%> \out -> do
       (count, chl) <- renderPostList
-                      =<< myRecentFirst . map snd
-                      =<< listChildren True out
+                      =<< myRecentFirst
+                      =<< listChildren False out
       let ctx = mconcat [ constField "child-count" (show count)
                         , constField "children" chl
                         , myDefaultContext
                         ]
       writeTextFile out . itemBody
-        =<< applyDefaultTemplate out ctx
+        =<< applyDefaultTemplate ctx
         =<< myPandocCompiler out
 
     fromString (destD <//> "*.html") .&&. complement (disjoin copies) %%> \out -> do
@@ -227,7 +238,7 @@ main = shakeArgs myShakeOpts $ do
 
     (cacheD <//> "*.tex.preprocess") %> \out -> do
       macs <- readFromYamlFile' "config/macros.yml"
-      i@Item{..} <- loadItem (replaceDir cacheD srcD $ dropExtension out)
+      i@Item{..} <- loadOriginal siteConf out
       let cmacs = itemMacros i
           ans   = preprocessLaTeX (cmacs <> macs) itemBody
           go    = do
@@ -243,9 +254,14 @@ main = shakeArgs myShakeOpts $ do
 
     (destD </> "feed.xml") %> \out -> do
       putNormal "Generating feed."
-      loadAllSnapshots siteConf subContentsWithoutIndex "content"
+      loadAllSnapshots siteConf "content" { snapshotSource = "//*.md" .||. "//*.html" .||. "//*.tex"
+                                          , snapshotTarget = subContentsWithoutIndex
+                                          }
         >>= myRecentFirst
-        >>= renderAtom feedConf feedCxt . take 10 . filter ((complement ("//index.md" .||. "//archive.md") ?===) . itemPath)
+        >>= renderAtom feedConf feedCxt
+          . map (fmap normaliseFeed)
+          . take 10
+          . filter ((complement ("//index.md" .||. "//archive.md") ?===) . itemPath)
         >>= writeTextFile out
 
     serialPngOrSvg ?> \out -> do
@@ -278,27 +294,14 @@ texToHtml out = do
       panCtx = pandocContext $
                ipan & _Pandoc . _2 %~ (RawBlock "html" "{{=<% %>=}}\n":)
   writeTextFile out . itemBody
-    =<< applyDefaultTemplate out panCtx . fmap ("{{=<% %>=}}\n" <>)
+    =<< applyDefaultTemplate panCtx . fmap ("{{=<% %>=}}\n" <>)
     =<< applyAsMustache panCtx (setItemBody html i0)
 
 mdOrHtmlToHtml :: FilePath -> Action ()
 mdOrHtmlToHtml out =
   myPandocCompiler out
-  >>= applyDefaultTemplate out myDefaultContext
+  >>= applyDefaultTemplate myDefaultContext
   >>= writeTextFile out . itemBody
-
---   create ["sitemap.xml"] $ do
---     route idRoute
---     compile $ do
---       items <- filterM isPublished
---                =<< loadAll  (("**.md" .||. ("math/**.tex" .&&. hasVersion "html")) .&&. complement ("t/**" .||. "templates/**"))
---       let ctx = mconcat [ MT.defaultMusContext
---                         , MT.itemsFieldWithContext
---                             (MT.defaultMusContext <> MT.modificationTimeField "date" "%Y-%m-%d")
---                             "items" (items :: [Item String])
---                         ]
---       MT.loadAndApplyMustache "templates/sitemap.mustache" ctx
---         =<< makeItem ()
 
 cslAndBib :: FilePath -> Action (Style, [Reference])
 cslAndBib fp = do
@@ -322,9 +325,9 @@ pandocContext (Pandoc meta _)
         writeHtml5String writerConf $ Pandoc meta (mvToBlocks abst)
   | otherwise = mempty
 
-listDrafts :: FilePath -> Action [(FilePath, P.FilePath)]
+listDrafts :: FilePath -> Action [Item T.Text]
 listDrafts fp =
-  map (second itemPath) . filter (not . isPublished . snd) <$> listChildren True fp
+  filter (not . isPublished) <$> listChildren False fp
 
 addPDFLink :: FilePath -> Pandoc -> Pandoc
 addPDFLink plink (Pandoc meta body) = Pandoc meta body'
@@ -333,32 +336,52 @@ addPDFLink plink (Pandoc meta body) = Pandoc meta body'
                                    , Pan.fromList body
                                    ]
 
-listChildren :: Bool -> FilePath -> Action [(FilePath, Item T.Text)]
-listChildren recursive out = do
+listChildren :: Bool -> FilePath -> Action [Item T.Text]
+listChildren includeIndices out = do
   ContentsIndex dic <- loadContentsIndex siteConf
   let dir = takeDirectory out
-      pat0 | recursive = dir <//> "*.html"
-           | otherwise = dir </> "*.html"
-      pat = fromString pat0 .&&. complement (fromString out)
+      pat0 = dir <//> "*.html"
+      excludes = fromString out :
+                 concat [["//index.html","archive.html", "archive.md", "//index.md"] | not includeIndices]
+      includes = fromString pat0 :
+                 concat [["//index.html", "archive.html", "index.md", "archive.md"] | includeIndices ]
+      pat = disjoin includes .&&. complement (disjoin excludes)
       chs = [ (targ, ofp)
             | (targ, ofp) <- HM.toList dic, pat ?=== targ
-            , (srcD </?> subContentsWithoutIndex) ?=== sourcePath ofp
+            , maybe False ((srcD </?> subContentsWithoutIndex) ?===) $ sourcePath ofp
             ]
-  mapM (\(targ, ofp) -> (targ,) <$> loadItem (sourcePath ofp)) chs
+  mapM (\(targ, _) -> loadOriginal siteConf targ) chs
 
 subContentsWithoutIndex :: Patterns
 subContentsWithoutIndex =
-  ("//*.md" .||. "*//*.html" .||. "//*.tex")
-  .&&. complement (     "//index.md" .||. "archive.md"
-                   .||. "prog/doc//*" .||. "prog/ruby//*" .||. "prog/automaton//*"
-                  )
+  ("*//*.html" .||. "//*.md" .||. "//*.tex")
+  .&&. complement (disjoin [ "prog/doc//*", "prog/ruby//*", "prog/automaton//*"
+                           , "math/cellular-automaton//*"
+                           , "t//*"
+                           , "math/computational-algebra-seminar//*"
+                           ])
 
 feedCxt :: Context T.Text
-feedCxt =  mconcat [ field "published" itemDateStr
-                   , field "updated" itemDateStr
+feedCxt =  mconcat [ field "published" itemDateFeedStr
+                   , urlField
+                   , field "updated" itemDateFeedStr
                    , bodyField "description"
                    , defaultContext
                    ]
+
+normaliseFeed :: T.Text -> T.Text
+normaliseFeed = concatMapTags $ \case
+  TagOpen "iframe" _ -> []
+  TagClose "iframe" -> []
+  TagOpen op atts  -> [TagOpen op $ filter (not . T.isPrefixOf "data-" . fst) atts]
+  t -> [t]
+
+itemDateFeedStr :: MonadSake m => Item a -> m T.Text
+itemDateFeedStr = fmap (insertColon . T.pack . formatTime defaultTimeLocale "%Y-%m-%dT%H:%M:%S%z") . itemDate
+  where
+    insertColon txt =
+      let (bh, ah) = T.splitAt (T.length txt - 2) txt
+      in bh <> ":" <> ah
 
 itemDateStr :: MonadSake m => Item a -> m T.Text
 itemDateStr = fmap (T.pack . formatTime defaultTimeLocale "%Y/%m/%d %X %Z") . itemDate
@@ -367,8 +390,9 @@ feedConf :: FeedConf
 feedConf =
   FeedConf { feedTitle       = "konn-san.com 建設予定地"
            , feedDescription = "数理論理学を中心に数学、Haskell、推理小説、評論など。"
-           , feedAuthor      = FeedAuthor { authorName = "Hiromi ISHII", authorEmail = "" }
+           , feedAuthor      = FeedAuthor { authorName = "Hiromi ISHII", authorEmail = "konn.jinro_at_gmail.com" }
            , feedRoot        = "https://konn-san.com"
+           , feedUrl         = "/feed.xml"
            }
 
 
@@ -404,12 +428,12 @@ resolveRelatives rt pth =
     go rs       (fp  : rest)   = go (fp : rs) rest
     go fps      []             = joinPath $ reverse fps
 
-applyDefaultTemplate :: FilePath -> Context T.Text -> Item T.Text -> Action (Item T.Text)
-applyDefaultTemplate targetPath addCtx item = do
-  nav <- makeNavBar $ itemIdentifier item
-  let r     = makeRelative destD $ runIdentifier $ itemIdentifier item
+applyDefaultTemplate :: Context T.Text -> Item T.Text -> Action (Item T.Text)
+applyDefaultTemplate addCtx item@Item{..} = do
+  nav <- makeNavBar itemIdentifier
+  let r     = makeRelative destD $ itemPath item
       imgs   = map (("https://konn-san.com/" <>) . resolveRelatives (takeDirectory r) . T.unpack) $
-               extractLocalImages $ TS.parseTags $ itemBody item
+               extractLocalImages $ TS.parseTags itemBody
       navbar = constField "navbar" nav
       thumb  = constField "thumbnail" $
                fromMaybe "https://konn-san.com/img/myface_mosaic.jpg" $
@@ -423,10 +447,9 @@ applyDefaultTemplate targetPath addCtx item = do
                      ]
   let item' = demoteHeaders . withTags addRequiredClasses <$> item
   scms <- readFromYamlFile' "config/schemes.yml"
-  i'' <-  mapM (procKaTeX . relativizeUrlsTo targetPath)
-      =<< saveSnapshot siteConf "content"
+  i'' <-  mapM (procKaTeX . relativizeUrlsTo (dropDirectory1 itemTarget))
       =<< loadAndApplyMustache "templates/default.mustache" cxt
-      =<< saveSnapshot siteConf "premus"
+      =<< saveSnapshot siteConf "content"
       =<< applyAsMustache cxt item'
   saveSnapshot siteConf "katexed" i''
   return $ UNF.normalize UNF.NFC . addAmazonAssociateLink' "konn06-22" . procSchemesUrl scms <$> i''
@@ -652,19 +675,21 @@ makeNavBar ident = do
 --     toTup (x:y:ys) = Just (y ++ unwords ys, x)
 --     toTup _        = Nothing
 
-postList :: Maybe Int -> Patterns -> Action (Int, T.Text)
-postList mcount pats =
+postList :: Maybe Int -> Action (Int, T.Text)
+postList mcount =
   renderPostList . maybe id take mcount
   =<< myRecentFirst . filter isPublished
   =<< filterM (hasSnapshot siteConf "content")
-  =<< loadAllItemsAfter srcD pats
+  =<< listChildren False destD
+
+urlField :: Context a
+urlField = field_ "url" $ \item ->
+  replaceDir destD "/" (itemTarget item) -<.> "html"
 
 renderPostList :: [Item T.Text] -> Action (Int, T.Text)
 renderPostList posts = do
   postItemTpl <- readFromFile' "templates/update.mustache" :: Action Mustache
   let myDateField = field "date" itemDateStr
-      urlField = field_ "url" $ \item ->
-        replaceDir srcD "/" (itemPath item) -<.> "html"
       pdfField  = field "pdf" $ \Item{..} ->
         let fp = runIdentifier itemIdentifier
             pdfVer = replaceDir srcD destD fp -<.> "pdf"

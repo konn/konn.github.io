@@ -5,12 +5,10 @@
 module Settings where
 
 import           Control.Applicative      (empty, (<|>))
-import           Control.Arrow            (first)
 import           Data.Default             (Default (..))
 import           Data.Foldable            (asum, toList)
 import           Data.HashMap.Strict      (HashMap)
 import qualified Data.HashMap.Strict      as HM
-import           Data.Monoid              ((<>))
 import           Data.Store               (Store)
 import qualified Data.Text                as T
 import           Data.Typeable            (Typeable)
