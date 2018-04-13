@@ -32,6 +32,9 @@ Table Of Contents {#toc}
 
 [Blog](/articles)
 :    その他の雑多な雉や旧ブログ記事の保管庫です。
+
+[Logs](/logs)
+:    ブログ未満の日常の破片。
 </div>
 
 <div class="col-sm-6">

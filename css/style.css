@@ -263,3 +263,13 @@ footer {
 .gather-card {
     display: inline-block;
 }
+
+
+.log {
+    border-bottom: solid 2pt black;
+}
+
+
+.log-body {
+    border-top: solid 1pt gray;
+}

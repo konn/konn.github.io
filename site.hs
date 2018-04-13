@@ -16,15 +16,20 @@ import           Utils
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
 import           Control.Exception               (IOException, handle)
-import           Control.Lens                    (rmapping, (%~), (.~), (<>~),
-                                                  (^?), _2, _Unwrapping')
+import           Control.Lens                    (rmapping, (%~), (.~), (<&>),
+                                                  (<>~), (^?), _2, _Unwrapping')
 import           Control.Lens                    (imap)
-import           Control.Monad                   hiding (mapM, sequence)
+import           Control.Monad                   hiding (mapM)
 import           Control.Monad.Error.Class       (throwError)
 import           Control.Monad.State
 import           Crypto.Hash.SHA256
 import           Data.Aeson                      as Aeson (Result (..),
+                                                           ToJSON (..),
                                                            fromJSON)
+import qualified Data.Aeson                      as Ae
+import           Data.Aeson.Types                (camelTo2, defaultOptions,
+                                                  fieldLabelModifier,
+                                                  genericToJSON)
 import           Data.Binary
 import qualified Data.ByteString.Char8           as BS
 import qualified Data.ByteString.Lazy            as LBS
@@ -45,7 +50,7 @@ import qualified Data.Text                       as T
 import qualified Data.Text.Encoding              as T
 import qualified Data.Text.ICU.Normalize         as UNF
 import qualified Data.Text.Lazy                  as LT
-import           Data.Text.Lens                  (packed)
+import           Data.Text.Lens                  (packed, unpacked)
 import           Data.Time
 import           Data.Yaml                       (object, toJSON, (.=))
 import qualified Data.Yaml                       as Y
@@ -53,6 +58,7 @@ import           Filesystem
 import           Filesystem.Path.CurrentOS       hiding (concat, empty, null,
                                                   (<.>), (</>))
 import qualified Filesystem.Path.CurrentOS       as Path
+import           GHC.Generics
 import           Hakyll                          hiding (fromFilePath,
                                                   toFilePath, writePandoc)
 import qualified Hakyll
@@ -181,7 +187,16 @@ main = hakyllWith config $ do
       let obj = object ["disallowed" .= map ('/':) drafts]
       makeItem $ LT.unpack $ Mus.renderMustache tmplt obj
 
-  match "*/index.md" $ do
+  match "logs/index.md" $ do
+    route $ setExtension "html"
+    compile' $ do
+      chs <- mapM toLog =<< myRecentFirst =<< loadAllSnapshots ("logs/*.md" .&&. complement "logs/index.md") "content"
+      let ctx = mconcat [ MT.constField "logs" $ map itemBody chs
+                        , myDefaultContext
+                        ]
+      myPandocCompiler >>= applyDefaultTemplate ctx >>= saveSnapshot "content"
+
+  match ("*/index.md" .&&. complement "logs/index.md") $ do
     route $ setExtension "html"
     compile' $ do
       chs <- listChildren True
@@ -272,8 +287,13 @@ main = hakyllWith config $ do
 
   match ("math/**.png" .||. "math/**.jpg" .||. "math/**.svg") $
     route idRoute >> compile' copyFileCompiler
+  match ("logs/*.md" .&&. complement "logs/index.md") $ version "html" $ do
+    route $ setExtension "html"
+    compile' $
+      myPandocCompiler >>= saveSnapshot "content"
+      >>= applyDefaultTemplate (myDefaultContext <> MT.bodyField "description")
 
-  match (("articles/**.md" .||. "articles/**.html" .||. "profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("index.md" .||. "**/index.md")) $ version "html" $ do
+  match (("articles/**.md" .||. "articles/**.html" .||. "profile.md" .||. "math/**.md" .||. "prog/**.md" .||. "writing/**.md") .&&. complement ("logs/**.md" .||. "index.md" .||. "**/index.md")) $ version "html" $ do
     route $ setExtension "html"
     compile' $
       myPandocCompiler >>= saveSnapshot "content" >>= applyDefaultTemplate myDefaultContext
@@ -717,7 +737,7 @@ postList mcount pat = do
         else return Nothing
       descField = MT.field "description" $ \item -> do
         let ident = itemIdentifier item
-        descr <- T.pack <$> getMetadataField' ident "description"
+        descr <- maybe "" T.pack <$> (getMetadataField ident "description" <|> getMetadataField ident "body")
         fp <- fromJust <$> getRoute ident
         src <- loadBody $ itemIdentifier item
         let refs = buildRefInfo src
@@ -996,8 +1016,7 @@ myExts = mconcat [extensionsFromList exts, pandocExtensions]
            ]
 
 protocol :: T.Text -> Maybe T.Text
-protocol url = do
-  T.pack . P.init . uriScheme <$> parseURI (T.unpack url)
+protocol url = T.pack . P.init . uriScheme <$> parseURI (T.unpack url)
 
 linkCard :: Pandoc -> Compiler Pandoc
 linkCard = bottomUpM $ \case
@@ -1033,3 +1052,25 @@ linkCard = bottomUpM $ \case
                          ]
           body = Mus.renderMustache tmpl model
       return (gather, fromMaybe "*" mproto, body)
+
+data Log = Log { logLog   :: T.Text
+               , logTitle :: String
+               , logDate  :: String
+               , logIdent :: String
+               }
+  deriving (Generic)
+
+logConf :: Ae.Options
+logConf = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 3 }
+
+toLog :: Item String -> Compiler (Item Log)
+toLog i0 = do
+  i <- readPandoc i0
+  let logIdent = PFP.takeBaseName $ Hakyll.toFilePath $ itemIdentifier i
+      Right logLog = runPure (writeHtml5String writerConf $ itemBody i) <&> unpacked %~ demoteHeaders
+  logTitle <- getMetadataField' (itemIdentifier i) "title"
+  logDate <-  getMetadataField' (itemIdentifier i) "date"
+  return $ const Log{..} <$> i
+
+instance ToJSON Log where
+  toJSON = genericToJSON logConf
