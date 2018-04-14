@@ -16,9 +16,8 @@ import           Utils
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative
 import           Control.Exception               (IOException, handle)
-import           Control.Lens                    (rmapping, (%~), (.~), (<&>),
+import           Control.Lens                    (imap, rmapping, (%~), (.~),
                                                   (<>~), (^?), _2, _Unwrapping')
-import           Control.Lens                    (imap)
 import           Control.Monad                   hiding (mapM)
 import           Control.Monad.Error.Class       (throwError)
 import           Control.Monad.State
@@ -39,7 +38,7 @@ import           Data.Data
 import           Data.Foldable                   (asum)
 import           Data.Function
 import qualified Data.HashMap.Strict             as HM
-import           Data.List                       hiding (stripPrefix)
+import           Data.List
 import qualified Data.List                       as L
 import           Data.Maybe
 import           Data.Monoid                     hiding ((<>))
@@ -50,13 +49,13 @@ import qualified Data.Text                       as T
 import qualified Data.Text.Encoding              as T
 import qualified Data.Text.ICU.Normalize         as UNF
 import qualified Data.Text.Lazy                  as LT
-import           Data.Text.Lens                  (packed, unpacked)
+import           Data.Text.Lens                  (packed)
 import           Data.Time
 import           Data.Yaml                       (object, toJSON, (.=))
 import qualified Data.Yaml                       as Y
 import           Filesystem
-import           Filesystem.Path.CurrentOS       hiding (concat, empty, null,
-                                                  (<.>), (</>))
+import           Filesystem.Path.CurrentOS       hiding (concat, null, (<.>),
+                                                  (</>))
 import qualified Filesystem.Path.CurrentOS       as Path
 import           GHC.Generics
 import           Hakyll                          hiding (fromFilePath,
@@ -69,8 +68,7 @@ import           Instances
 import           Language.Haskell.TH             (litE, runIO, stringL)
 import           Network.HTTP.Types
 import           Network.URI                     hiding (query)
-import           Prelude                         hiding (FilePath, div, mapM,
-                                                  sequence, span)
+import           Prelude                         hiding (FilePath, mapM, span)
 import qualified Prelude                         as P
 import           Shelly                          hiding (tag)
 import           Skylighting                     hiding (Context (..), Style)
@@ -95,7 +93,7 @@ import           Text.LaTeX.Base.Syntax          hiding ((<>))
 import qualified Text.Mustache                   as Mus
 import           Text.Pandoc                     hiding (runIO)
 import           Text.Pandoc.Builder             hiding (fromList, (<>))
-import qualified Text.Pandoc.Builder             as Pan hiding ((<>))
+import qualified Text.Pandoc.Builder             as Pan
 import           Text.Pandoc.Shared              (stringify)
 import           Text.Pandoc.Walk
 import           Text.TeXMath
@@ -131,9 +129,9 @@ main = hakyllWith config $ do
   setting "macros" (HM.empty :: TeXMacros)
 
   match "data/katex.min.js" $ compile $ cached "katex" $
-    fmap (LBS.toStrict) <$> getResourceLBS
+    fmap LBS.toStrict <$> getResourceLBS
 
-  match "config/schemes.yml" $ compile $ cached "schemes" $ do
+  match "config/schemes.yml" $ compile $ cached "schemes" $
     fmap (fromMaybe (Schemes HM.empty) . Y.decode . LBS.toStrict) <$> getResourceLBS
 
   match "*.css" $ route idRoute >> compile' compressCssCompiler
@@ -149,7 +147,7 @@ main = hakyllWith config $ do
     compile $ getResourceString >>= withItemBody (unixFilter "sassc" ["-s", "-tcompressed"])
 
   match ("templates/**" .&&. complement "**.mustache") $ compile' templateCompiler
-  match ("templates/**.mustache") $ compile' mustacheCompiler
+  match "templates/**.mustache" $ compile' mustacheCompiler
 
   match "index.md" $ do
     route $ setExtension "html"
@@ -244,7 +242,7 @@ main = hakyllWith config $ do
             unsafeCompiler $ generateImages fp src
             makeItem $ hash $ T.encodeUtf8 src
     provider <- compilerProvider <$> compilerAsk
-    if (resourceModified provider imgSrcId)
+    if resourceModified provider imgSrcId
       then rebuildImages
       else do
         compilerTellCacheHits 1
@@ -339,13 +337,13 @@ pandocContext (Pandoc meta _)
   | otherwise = mempty
 
 listDrafts :: Compiler [(Identifier, P.FilePath)]
-listDrafts = do
+listDrafts =
   mapM (\i -> let ident = itemIdentifier i in (ident,) . fromMaybe (Hakyll.toFilePath ident) <$> getRoute ident)
-    =<< filterM (liftM not . isPublished)
+    =<< filterM (fmap not . isPublished)
     =<< (loadAll subContentsWithoutIndex :: Compiler [Item String])
 
 compile' :: (Typeable a, Writable a, Binary a) => Compiler (Item a) -> Rules ()
-compile' d = compile $ d
+compile' = compile
 
 addRepo :: Compiler ()
 addRepo = do
@@ -673,7 +671,7 @@ ccTLDs = ["jp"]
 getActive :: [(T.Text, String)] -> Identifier -> String
 getActive _ "archive.md" = "/archive.html"
 getActive _ "profile.md" = "/profile.html"
-getActive cDic ident = do
+getActive cDic ident =
   fromMaybe "/" $ listToMaybe $ filter p $ map snd cDic
   where
     p "/"       = False
@@ -726,7 +724,14 @@ readHierarchy = mapMaybe (toTup . words) . lines
 postList :: Maybe Int -> Pattern -> Compiler (Int, String)
 postList mcount pat = do
   postItemTpl <- loadBody "templates/update.mustache"
-  posts <- fmap (maybe id take mcount) . myRecentFirst =<< loadAll pat
+  allPosts <- myRecentFirst =<< loadAll pat
+  let posts = maybe id take mcount $
+        case break (matches "logs/*.md" . itemIdentifier) allPosts of
+          (ps, a : qs) | isJust mcount ->
+            let rest = filter (not . matches "logs/*.md" . itemIdentifier ) qs
+            in ps ++ a : rest
+          (ps, qs)     -> ps ++ qs
+  logDescr <- getMetadataField' "logs/index.md" "description"
   let myDateField = MT.field "date" itemDateStr
       pdfField  = MT.field "pdf" $ \item ->
         let ident = itemIdentifier item in
@@ -735,20 +740,35 @@ postList mcount pat = do
           Just r <- getRoute ident
           return $ Just $ encodeString $ "/" </> replaceExtension (decodeString r) "pdf"
         else return Nothing
+      tField = MT.field "title" $ \item -> do
+        let ident = itemIdentifier item
+        if "logs/*.md" `matches` ident
+          then getMetadataField' "logs/index.md" "title"
+          else getMetadataField' ident "title"
+      uField = MT.field "url" $ \item -> do
+        let ident = itemIdentifier item
+            anc   = '#' : PFP.takeBaseName (Hakyll.toFilePath ident)
+        if "logs/*.md" `matches` ident
+          then maybe mempty ((++ anc) . toUrl) <$> getRoute "logs/index.md"
+          else maybe mempty toUrl <$> getRoute ident
+
       descField = MT.field "description" $ \item -> do
         let ident = itemIdentifier item
-        descr <- maybe "" T.pack <$> (getMetadataField ident "description" <|> getMetadataField ident "body")
-        fp <- fromJust <$> getRoute ident
-        src <- loadBody $ itemIdentifier item
-        let refs = buildRefInfo src
-        let output = T.unpack $ fromPure $
-                     writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
-                     =<< readMarkdown readerConf descr
-        return $ output
-      iCtxs = (pdfField <> myDateField <> descField <> MT.defaultMusContext) :: MT.MusContext String
+        if "logs/*.md" `matches` ident
+          then return $ logDescr ++ "（更新：" ++  PFP.takeBaseName (Hakyll.toFilePath ident) ++ "）"
+          else do
+          descr <- maybe "" T.pack <$> (getMetadataField ident "description" <|> getMetadataField ident "body")
+          fp <- fromJust <$> getRoute ident
+          src <- loadBody $ itemIdentifier item
+          let refs = buildRefInfo src
+              output = T.unpack $ fromPure $
+                       writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
+                       =<< readMarkdown readerConf descr
+          return output
+      iCtxs = (uField <> tField <> pdfField <> myDateField <> descField <> MT.defaultMusContext) :: MT.MusContext String
       postsField = MT.itemsFieldWithContext iCtxs "posts" posts
   src <- procKaTeX
-         =<< MT.applyMustache postItemTpl postsField =<< (makeItem ())
+         =<< MT.applyMustache postItemTpl postsField =<< makeItem ()
   return (length posts, itemBody src)
 
 myDefaultContext :: MT.MusContext String
@@ -832,7 +852,7 @@ extractCites = queryWith collect
 appendTOC :: Pandoc -> Pandoc
 appendTOC d@(Pandoc meta bdy) =
   let toc = generateTOC d
-  in Pandoc meta $
+  in Pandoc meta
      [ Div ("", ["container-fluid"], [])
        [ Div ("", ["row"], [])
        [ RawBlock "html" $ T.unpack toc
@@ -876,7 +896,7 @@ extractNoCites = queryWith collect
     collect (RawInline "latex" src) =
       case parseLaTeX $ T.pack src of
         Left _ -> []
-        Right t -> flip queryWith t $ \a -> case a of
+        Right t -> flip queryWith t $ \case
           TeXComm "nocite" [cs] -> [[ Citation (trim $ T.unpack w) [] [] NormalCitation 0 0
                                    | w <- T.splitOn "," $ T.init $ T.tail $ render cs]]
           _ -> []
@@ -1064,10 +1084,9 @@ logConf :: Ae.Options
 logConf = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 3 }
 
 toLog :: Item String -> Compiler (Item Log)
-toLog i0 = do
-  i <- readPandoc i0
+toLog i = do
   let logIdent = PFP.takeBaseName $ Hakyll.toFilePath $ itemIdentifier i
-      Right logLog = runPure (writeHtml5String writerConf $ itemBody i) <&> unpacked %~ demoteHeaders
+      logLog = T.pack $ demoteHeaders $ itemBody i
   logTitle <- getMetadataField' (itemIdentifier i) "title"
   logDate <-  getMetadataField' (itemIdentifier i) "date"
   return $ const Log{..} <$> i
