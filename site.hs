@@ -742,19 +742,19 @@ postList mcount pat = do
         else return Nothing
       tField = MT.field "title" $ \item -> do
         let ident = itemIdentifier item
-        if "logs/*.md" `matches` ident
+        if "logs/*.md" `matches` ident && isJust mcount
           then getMetadataField' "logs/index.md" "title"
           else getMetadataField' ident "title"
       uField = MT.field "url" $ \item -> do
         let ident = itemIdentifier item
             anc   = '#' : PFP.takeBaseName (Hakyll.toFilePath ident)
-        if "logs/*.md" `matches` ident
+        if "logs/*.md" `matches` ident && isJust mcount
           then maybe mempty ((++ anc) . toUrl) <$> getRoute "logs/index.md"
           else maybe mempty toUrl <$> getRoute ident
 
       descField = MT.field "description" $ \item -> do
         let ident = itemIdentifier item
-        if "logs/*.md" `matches` ident
+        if "logs/*.md" `matches` ident && isJust mcount
           then return $ logDescr ++ "（更新：" ++  PFP.takeBaseName (Hakyll.toFilePath ident) ++ "）"
           else do
           descr <- maybe "" T.pack <$> (getMetadataField ident "description" <|> getMetadataField ident "body")
@@ -1086,7 +1086,7 @@ logConf = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 3 }
 toLog :: Item String -> Compiler (Item Log)
 toLog i = do
   let logIdent = PFP.takeBaseName $ Hakyll.toFilePath $ itemIdentifier i
-      logLog = T.pack $ demoteHeaders $ itemBody i
+      logLog = T.pack $ demoteHeaders $ demoteHeaders $ itemBody i
   logTitle <- getMetadataField' (itemIdentifier i) "title"
   logDate <-  getMetadataField' (itemIdentifier i) "date"
   return $ const Log{..} <$> i
