@@ -40,6 +40,7 @@ import           Data.Function
 import qualified Data.HashMap.Strict             as HM
 import           Data.List
 import qualified Data.List                       as L
+import qualified Data.List                       as L
 import           Data.Maybe
 import           Data.Monoid                     hiding ((<>))
 import           Data.Ord
@@ -1086,10 +1087,20 @@ logConf = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 3 }
 toLog :: Item String -> Compiler (Item Log)
 toLog i = do
   let logIdent = PFP.takeBaseName $ Hakyll.toFilePath $ itemIdentifier i
-      logLog = T.pack $ demoteHeaders $ demoteHeaders $ itemBody i
+      logLog = T.pack $ withTags (rewriteIDs logIdent) $
+               demoteHeaders $ demoteHeaders $ itemBody i
   logTitle <- getMetadataField' (itemIdentifier i) "title"
   logDate <-  getMetadataField' (itemIdentifier i) "date"
   return $ const Log{..} <$> i
+
+rewriteIDs :: String -> Tag String -> Tag String
+rewriteIDs ident (TagOpen "a" atts)
+  | Just ('#':rest) <- lookup "href" atts =
+      TagOpen "a" $ ("href", '#':ident++'-':rest) : filter ((/="href") . fst) atts
+rewriteIDs ident (TagOpen t atts)
+  | Just name <- lookup "id" atts =
+      TagOpen t $ ("id", ident++'-':name) : filter ((/="id") . fst) atts
+rewriteIDs _ t = t
 
 instance ToJSON Log where
   toJSON = genericToJSON logConf
