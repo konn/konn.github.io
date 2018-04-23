@@ -210,18 +210,13 @@ main = shakeArgs myShakeOpts $ do
     (destD </> "logs" </> "index.html") %> \out -> do
       chs <- mapM toLog
              =<< myRecentFirst
-             =<< loadAllSnapshots siteConf
-                 "content" { snapshotSource = "//*.md" .||. "//*.html" .||. "//*.tex"
-                           , snapshotTarget = subContentsWithoutIndex
-                           }
+             =<< listChildren False out
       let ctx = mconcat [ constField "logs" $ map itemBody chs
                         , myDefaultContext
                         ]
-      loadOriginal siteConf out
-        >>= compilePandoc readerConf writerConf
-        >>= applyDefaultTemplate ctx {- tags -}
-        >>= writeTextFile out . itemBody
-
+      writeTextFile out . itemBody
+        =<< applyDefaultTemplate ctx
+        =<< myPandocCompiler out
 
     -- (destD </> "logs" </> "*.html") %> \out -> do
     -- route $ setExtension "html"
@@ -966,27 +961,29 @@ linkCard = bottomUpM $ \case
 
 data Log = Log { logLog   :: T.Text
                , logTitle :: String
-               , logDate  :: String
-               , logIdent :: String
+               , logDate  :: T.Text
+               , logIdent :: T.Text
                }
   deriving (Generic)
 
-toLog :: Item String -> Action (Item Log)
+toLog :: Item T.Text -> Action (Item Log)
 toLog i = do
-  let logIdent = takeBaseName $ itemPath i
-      logLog = T.pack $ withTags (rewriteIDs logIdent) $
-               demoteHeaders $ demoteHeaders $ itemBody i
+  let logIdent = T.pack $ takeBaseName $ itemPath i
+      logLog = withTags (rewriteIDs logIdent) $
+               demoteHeaders $ demoteHeaders $
+               either (const $ itemBody i) id $
+               runPure $ writeHtml5String writerConf =<< readMarkdown readerConf (itemBody i)
       Just logTitle = lookupMetadata "title" i
-      Just logDate  = lookupMetadata "date" i
+  logDate <- itemDateStr i
   return $ const Log{..} <$> i
 
-rewriteIDs :: String -> Tag String -> Tag String
+rewriteIDs :: T.Text -> Tag T.Text -> Tag T.Text
 rewriteIDs ident (TagOpen "a" atts)
-  | Just ('#':rest) <- lookup "href" atts =
-      TagOpen "a" $ ("href", '#':ident++'-':rest) : filter ((/="href") . fst) atts
+  | Just rest <- T.stripPrefix "#" =<< lookup "href" atts =
+      TagOpen "a" $ ("href", mconcat ["#", ident, "-", rest]) : filter ((/="href") . fst) atts
 rewriteIDs ident (TagOpen t atts)
   | Just name <- lookup "id" atts =
-      TagOpen t $ ("id", ident++'-':name) : filter ((/="id") . fst) atts
+      TagOpen t $ ("id", mconcat [ident,"-",name]) : filter ((/="id") . fst) atts
 rewriteIDs _ t = t
 
 logConf :: Options
