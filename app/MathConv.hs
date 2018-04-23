@@ -31,6 +31,7 @@ import qualified Data.HashSet                as HS
 import qualified Data.List                   as L
 import qualified Data.Map                    as M
 import           Data.Maybe                  (fromMaybe, listToMaybe)
+import           Web.Sake                    (dropDirectory1)
 
 import           Data.Sequence                   (Seq)
 import qualified Data.Sequence                   as Seq
@@ -136,7 +137,7 @@ texToMarkdown fp src_ = do
       initial = T.pack $ applyMacros macros $ T.unpack $ render $
                 rewriteEnvAndBrakets ltree0
       st0 = MachineState { _macroDefs = macros -- ++ lms
-                         , _imgPath = dropExtension fp
+                         , _imgPath = dropDirectory1 $ dropExtension fp
                          }
       mabs = either (const Nothing) ((^? _MetaBlocks) <=< M.lookup "abstract" . unMeta . getMeta) $
              runPure $ readLaTeX myReaderOpts initial
