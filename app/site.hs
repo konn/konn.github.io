@@ -173,9 +173,11 @@ main = shakeArgs myShakeOpts $ do
         =<< loadItem "templates/sitemap.mustache"
 
     (destD </> "archive.html") %> \out -> do
-      (count, posts) <- postList Nothing
-      let ctx = mconcat [ constField "child-count" (show count)
-                        , constField "children" posts
+      (count, items) <- renderPostList
+                        =<< myRecentFirst
+                        =<< listChildren False out
+      let ctx = mconcat [ constField "child-count" count
+                        , constField "children" items
                         , myDefaultContext
                         ]
       loadOriginal siteConf out
