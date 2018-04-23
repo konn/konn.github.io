@@ -296,5 +296,7 @@ pythontex-files-*/
 *.fff
 
 
-_cache-new _site-new
+_cache-new
+_site-new
 _*-new
+_snapshots
