@@ -22,7 +22,10 @@ import           Control.Lens                    (imap, (%~), (.~), (^?), _2)
 import           Control.Monad                   hiding (mapM)
 import           Control.Monad.State
 import qualified Crypto.Hash.SHA256              as SHA
-import           Data.Aeson                      (fromJSON, toJSON)
+import           Data.Aeson                      (Options, ToJSON (..),
+                                                  camelTo2, defaultOptions,
+                                                  fieldLabelModifier, fromJSON,
+                                                  genericToJSON, toJSON)
 import qualified Data.ByteString.Char8           as BS
 import qualified Data.CaseInsensitive            as CI
 import           Data.Char                       hiding (Space)
@@ -46,6 +49,7 @@ import qualified Data.Text.Lazy                  as LT
 import           Data.Text.Lens                  (packed, unpacked)
 import           Data.Time
 import           Data.Yaml                       (object, (.=))
+import           GHC.Generics
 import           Language.Haskell.TH             (litE, runIO, stringL)
 import           Network.HTTP.Types
 import           Network.URI
@@ -202,6 +206,29 @@ main = shakeArgs myShakeOpts $ do
           copyFile' ("data" </> ".latexmkrc") (tmp </> ".latexmkrc")
           cmd_ "latexmk" (EchoStdout False) (WithStdout True) (Cwd tmp) opts texFileName
           copyFileNoDep (tmp </> texFileName -<.> "pdf") out
+
+    (destD </> "logs" </> "index.html") %> \out -> do
+      chs <- mapM toLog
+             =<< myRecentFirst
+             =<< loadAllSnapshots siteConf
+                 "content" { snapshotSource = "//*.md" .||. "//*.html" .||. "//*.tex"
+                           , snapshotTarget = subContentsWithoutIndex
+                           }
+      let ctx = mconcat [ constField "logs" $ map itemBody chs
+                        , myDefaultContext
+                        ]
+      loadOriginal siteConf out
+        >>= compilePandoc readerConf writerConf
+        >>= applyDefaultTemplate ctx {- tags -}
+        >>= writeTextFile out . itemBody
+
+
+    -- (destD </> "logs" </> "*.html") %> \out -> do
+    -- route $ setExtension "html"
+    -- compile' $
+    --   myPandocCompiler >>= saveSnapshot "content"
+    --   >>= applyDefaultTemplate (myDefaultContext <> bodyField "description")
+
 
     (destD </?> "index.html") .&&. complement (disjoin copies) %%> \out -> do
       (count, posts) <- renderPostList . take 5
@@ -936,3 +963,34 @@ linkCard = bottomUpM $ \case
                          ]
           body = Mus.renderMustache tmpl model
       return (gather, fromMaybe "*" mproto, body)
+
+data Log = Log { logLog   :: T.Text
+               , logTitle :: String
+               , logDate  :: String
+               , logIdent :: String
+               }
+  deriving (Generic)
+
+toLog :: Item String -> Action (Item Log)
+toLog i = do
+  let logIdent = takeBaseName $ itemPath i
+      logLog = T.pack $ withTags (rewriteIDs logIdent) $
+               demoteHeaders $ demoteHeaders $ itemBody i
+      Just logTitle = lookupMetadata "title" i
+      Just logDate  = lookupMetadata "date" i
+  return $ const Log{..} <$> i
+
+rewriteIDs :: String -> Tag String -> Tag String
+rewriteIDs ident (TagOpen "a" atts)
+  | Just ('#':rest) <- lookup "href" atts =
+      TagOpen "a" $ ("href", '#':ident++'-':rest) : filter ((/="href") . fst) atts
+rewriteIDs ident (TagOpen t atts)
+  | Just name <- lookup "id" atts =
+      TagOpen t $ ("id", ident++'-':name) : filter ((/="id") . fst) atts
+rewriteIDs _ t = t
+
+logConf :: Options
+logConf = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 3 }
+
+instance ToJSON Log where
+  toJSON = genericToJSON logConf
