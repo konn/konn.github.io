@@ -284,7 +284,14 @@ texToHtml :: FilePath -> Action ()
 texToHtml out = do
   i0 <- loadOriginal @T.Text siteConf out
   PreprocessedLaTeX{..} <- readFromBinaryFile' (replaceDir srcD cacheD (itemPath i0) <.> "preprocess")
-  needed [ destD </> "katex" </> "katex.min.js" , out -<.> "pdf" ]
+  let imgs = maybe [] (\(j, _) -> concat
+                                  [ [base <.> "png", base <.> "svg"]
+                                  | i <- [0..j-1]
+                                  , let base = dropExtension out  </> "image-" ++ show i
+                                  ])
+             images
+  needed $ [ destD </> "katex" </> "katex.min.js" , out -<.> "pdf" ]
+        ++ imgs
   (style, bibs) <- cslAndBib out
   ipan <-  linkCard . addPDFLink ("/" </> out -<.> "pdf")
          . addAmazonAssociateLink "konn06-22"
@@ -456,7 +463,7 @@ applyDefaultTemplate addCtx item@Item{..} = do
 
 generateImages :: FilePath -> T.Text -> Action ()
 generateImages fp body = do
-  master <- liftIO $ canonicalizePath $ takeDirectory fp
+  master <- liftIO $ canonicalizePath $ replaceDir cacheD destD $ dropExtensions fp
   liftIO $ createDirectoryIfMissing True $ fromString master
   withTempDir $ \tmp -> do
     copyFile' ("data" </> ".latexmkrc") (tmp </> ".latexmkrc")
@@ -491,7 +498,7 @@ relativizeUrlsTo targ = withUrls $ unpacked %~ makeRelative targ
 headElemsCtx :: Context a
 headElemsCtx = field_ "head" $ \i ->
   let fp = runIdentifier $ itemIdentifier i
-  in if "math//*" ?== fp && "math/index.md" /= fp
+  in if "//math//*" ?== fp
      then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
      else ""
 
