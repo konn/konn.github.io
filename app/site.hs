@@ -115,9 +115,9 @@ siteConf@SakeConf{destinationDir = destD
                  ,sourceDir = srcD
                  ,cacheDir = cacheD
                  } =
-  def{ destinationDir = "_site-new"
+  def{ destinationDir = "_site"
      , sourceDir = "site-src"
-     , cacheDir = "_cache-new"
+     , cacheDir = "_cache"
      , ignoreFile = \fp ->
          or [ "~" `L.isSuffixOf` fp
             , "#" `L.isSuffixOf` fp && "#" `L.isPrefixOf` fp
@@ -146,12 +146,26 @@ main = shakeArgs myShakeOpts $ do
                 , Convert "robots.txt" id
                 , Cached  "//*.tex" (<.> "preprocess")
                 ] ++ map Copy copies ++
-                [ Create "feed.xml", Create "sitemap.xml" ]
+                [ Create "feed.xml", Create "sitemap.xml", Create ".ignore" ]
+
+  "deploy" ~> do
+    ign <- T.lines <$> readTextFile' (destD </> ".ignore")
+    () <- cmd_ "rsync" "--delete-excluded" "--checksum" "-av" (map (T.unpack . ("--exclude=" <>)) ign)
+                 "_site/"
+                 "sakura-vps:~/mighttpd/public_html/"
+    () <- cmd_ "git" "add" "templates" "config" "site-src" "app"
+    () <- cmd_ "git" "commit" "-amupdated"
+    cmd_ "git" "push" "origin" "master"
+
 
   withRouteRules siteConf routing $ do
     map (destD </>) ["prog/automaton", "prog/doc//*", "prog/ruby//*"] |%> \out -> do
       orig <- getSourcePath siteConf out
       copyFile' orig out
+
+    (destD </> ".ignore") %> \out -> do
+       drafts <- listDrafts destD
+       writeFile' out $ unlines $ ".ignore" : mapMaybe (stripPrefix destD . itemTarget) drafts
 
     (destD <//> "*.css") %> \out -> do
       origPath <- getSourcePath siteConf out
@@ -212,6 +226,7 @@ main = shakeArgs myShakeOpts $ do
       chs <- mapM toLog
              =<< myRecentFirst
              =<< listChildren False out
+      let pages = undefined
       let ctx = mconcat [ constField "logs" $ map itemBody chs
                         , myDefaultContext
                         ]
