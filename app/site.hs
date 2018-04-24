@@ -18,6 +18,9 @@ import Web.Sake.Feed
 
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative             ((<|>))
+import           Control.Concurrent              (newChan, readChan,
+                                                  threadDelay)
+import           Control.Concurrent.Async        (concurrently_)
 import           Control.Lens                    (iforM_, imap, ix, (%~), (.~),
                                                   (^?), _2)
 import           Control.Monad                   hiding (mapM)
@@ -55,6 +58,9 @@ import           GHC.Generics
 import           Language.Haskell.TH             (litE, runIO, stringL)
 import           Network.HTTP.Types
 import           Network.URI
+import           Network.Wai.Application.Static  (defaultWebAppSettings,
+                                                  ssIndices, staticApp)
+import           Network.Wai.Handler.Warp        (run)
 import           Prelude                         hiding (mapM)
 import qualified Prelude                         as P
 import           Skylighting                     hiding (Context (..), Style)
@@ -64,7 +70,9 @@ import           System.Directory                (canonicalizePath,
                                                   getHomeDirectory,
                                                   getModificationTime,
                                                   renameFile)
+import           System.Environment
 import           System.FilePath.Posix
+import           System.FSNotify                 (watchTreeChan, withManager)
 import           Text.Blaze.Html.Renderer.String
 import           Text.Blaze.Html5                ((!))
 import qualified Text.Blaze.Html5                as H5
@@ -87,6 +95,7 @@ import           Text.Pandoc.Builder             hiding ((<>))
 import qualified Text.Pandoc.Builder             as Pan
 import           Text.Pandoc.Shared              (stringify, trim)
 import qualified Text.TeXMath                    as UM
+import           WaiAppStatic.Types              (unsafeToPiece)
 import           Web.Sake                        hiding (Env)
 import           Web.Sake.Conf
 import           Web.Sake.Html
@@ -133,7 +142,29 @@ articleList :: FilePath
 articleList = "_build" </> ".articles"
 
 main :: IO ()
-main = shakeArgs myShakeOpts $ do
+main = getArgs >>= \case
+  "watch" : args -> watch args
+  args -> withArgs args runShake
+
+watch :: [String] -> IO ()
+watch args = do
+  chan <- newChan
+  server `concurrently_` watcher chan `concurrently_` builder chan
+  where
+  server = run 8000 $ staticApp $ (defaultWebAppSettings destD) { ssIndices = [unsafeToPiece "index.html"]
+                                                                }
+  builder chan = forever $ do
+    _ <- readChan chan
+    putStrLn "Changed!"
+    withArgs args runShake
+    putStrLn "Compilation Finished."
+  watcher chan = withManager $ \man -> do
+    src <- canonicalizePath srcD
+    watchTreeChan man src (const True) chan
+    forever $ threadDelay maxBound
+
+runShake :: IO ()
+runShake = shakeArgs myShakeOpts $ do
   want ["site"]
 
   let copies = ["t//*" ,  "js//*" ,  ".well-known//*", "//*imgs//*", "//*img//*"
@@ -148,6 +179,8 @@ main = shakeArgs myShakeOpts $ do
                 , Cached  "//*.tex" (<.> "preprocess")
                 ] ++ map Copy copies ++
                 [ Create "feed.xml", Create "sitemap.xml", Create ".ignore" ]
+
+  "build" ~> need ["site"]
 
   "deploy" ~> do
     ign <- T.lines <$> readTextFile' (destD </> ".ignore")
@@ -171,8 +204,10 @@ main = shakeArgs myShakeOpts $ do
       origPath <- getSourcePath siteConf out
       need [origPath]
       if ".sass" `L.isSuffixOf` origPath
-        then cmd_ (EchoStdout False) (WithStdout True) "sassc" "-tcompressed" (FileStdin origPath) (FileStdout out)
-        else cmd_ (EchoStdout False) (WithStdout True) "yuicompressor" origPath "-o" out
+        then cmd_ (EchoStdout False) (WithStdout True)
+                  "sassc" "-tcompressed" (FileStdin origPath) (FileStdout out)
+        else cmd_ (EchoStdout False) (WithStdout True)
+                  "yuicompressor" origPath "-o" out
 
     (destD </> "robots.txt") %> \out -> do
       tmpl <- itemBody <$> loadOriginal siteConf out
