@@ -18,7 +18,8 @@ import Web.Sake.Feed
 
 import           Blaze.ByteString.Builder        (toByteString)
 import           Control.Applicative             ((<|>))
-import           Control.Lens                    (imap, (%~), (.~), (^?), _2)
+import           Control.Lens                    (iforM_, imap, ix, (%~), (.~),
+                                                  (^?), _2)
 import           Control.Monad                   hiding (mapM)
 import           Control.Monad.State
 import qualified Crypto.Hash.SHA256              as SHA
@@ -157,7 +158,6 @@ main = shakeArgs myShakeOpts $ do
     () <- cmd_ "git" "commit" "-amupdated"
     cmd_ "git" "push" "origin" "master"
 
-
   withRouteRules siteConf routing $ do
     map (destD </>) ["prog/automaton", "prog/doc//*", "prog/ruby//*"] |%> \out -> do
       orig <- getSourcePath siteConf out
@@ -223,16 +223,14 @@ main = shakeArgs myShakeOpts $ do
           copyFileNoDep (tmp </> texFileName -<.> "pdf") out
 
     (destD </> "logs" </> "index.html") %> \out -> do
-      chs <- mapM toLog
+      logs <- mapM toLog
              =<< myRecentFirst
              =<< listChildren False out
-      let pages = undefined
-      let ctx = mconcat [ constField "logs" $ map itemBody chs
-                        , myDefaultContext
-                        ]
-      writeTextFile out . itemBody
-        =<< applyDefaultTemplate ctx
-        =<< myPandocCompiler out
+      let pages = L.chunksOf 3 logs
+          toName 0 = out
+          toName n = dropExtension out ++ "-" ++ show n <.> "html"
+      tmpl <- myPandocCompiler out
+      makePagination mempty tmpl toName pages
 
     (destD </?> "index.html") .&&. complement (disjoin copies) %%> \out -> do
       (count, posts) <- renderPostList . take 5
@@ -532,10 +530,10 @@ relativizeUrlsTo targ = withUrls $ unpacked %~ makeRelative targ
 headElemsCtx :: Context a
 headElemsCtx = field_ "head" $ \i ->
   let fp = runIdentifier $ itemIdentifier i
-  in if "//math//*" ?== fp
-     then renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
-     else ""
-
+      m | "//math//*" ?== fp = renderHtml [shamlet|<link rel="stylesheet" href="/css/math.css">|]
+           | otherwise = ""
+      h = fromMaybe "" $ lookupMetadata "head" i
+  in unlines [m, h]
 
 descriptionField :: String -> Context a
 descriptionField key =
@@ -709,6 +707,59 @@ makeNavBar ident = do
                     ]
   src <- readFromFile' "templates/navbar.mustache"
   return $ LT.unpack $ Mus.renderMustache src cats
+
+data Pagination = Pagination { paginationPrev  :: Maybe Page
+                             , paginationNext  :: Maybe Page
+                             , paginationPages :: [Page]
+                             }
+  deriving (Read, Show, Eq, Ord, Generic)
+
+paginationConf :: Options
+paginationConf = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 10 }
+
+data Page = Page { pageLink   :: String
+                 , pageNumber :: Int
+                 , pageActive :: Bool
+                 }
+  deriving (Read, Show, Eq, Ord, Generic)
+
+pageConf :: Options
+pageConf = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 4 }
+
+instance ToJSON Page where
+  toJSON = genericToJSON pageConf
+
+instance ToJSON Pagination where
+  toJSON = genericToJSON paginationConf
+
+makePagination :: (ToJSON [a])
+               => Context T.Text
+               -> Item T.Text        -- ^ page template
+               -> (Int -> FilePath)  -- ^ File name generator
+               -> [[Item a]]         -- ^ items to be paginated (each list is accesible in field "items")
+               -> Action ()
+makePagination ctx0 page toName iss = do
+  tmpl <- readFromFile' "templates/pagination.mustache"
+  let ps = map (\i -> Page (replaceDir destD "/" $ toName i) i False) [0..length iss-1]
+      pag i = Pagination { paginationPages = ps & ix i %~ \p -> p { pageActive = True }
+                         , paginationPrev  =
+                             if i > 0
+                             then Just (ps !! (i - 1))
+                             else Nothing
+                         , paginationNext =
+                             if i < length ps-1
+                             then Just (ps !! (i + 1))
+                             else Nothing
+                         }
+  iforM_ iss $ \i is -> do
+    let pagNav = Mus.renderMustache tmpl (toJSON $ pag i)
+        ctx = mconcat [ constField "items" (map itemBody is)
+                      , constField "pagination" pagNav
+                      , ctx0
+                      , myDefaultContext
+                      ]
+    writeTextFile (toName i) . itemBody
+      =<< applyDefaultTemplate ctx page { itemTarget = toName i }
 
 logPat :: Patterns
 logPat = destD </?> "logs/*.html"

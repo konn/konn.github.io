@@ -48,40 +48,40 @@ body {
     line-height: 1.5;
 }
 
-ul#socials {
+ul[id^="socials"] {
     text-align: left;
     display: inline;
     padding-left: 7px;
 }
 
-ul#socials > li {
+ul[id^="socials"] > li {
     display: inline-block;
     vertical-align: middle;
     margin: 0 7px;
 }
 
-ul#socials > li#facebook {
+ul[id^="socials"] > li[id^="facebook"] {
     margin-top: -10px;
 }
 
-ul#socials > li#hatena-star {
+ul[id^="socials"] > li[id^="hatena-star"] {
     margin-top: -10px;
 }
 
-ul#socials > li:first-child {
+ul[id^="socials"] > li:first-child {
     margin-left: 0;
 }
 
-ul#socials > li:last-child {
+ul[id^="socials"] > li:last-child {
     margin-right: 0;
 }
 
-ul#socials iframe {
+ul[id^="socials"] iframe {
     margin: 0 !important;
 }
 
 @media screen and (max-width: 780px){
-    ul#socials > li{
+    ul[id^="socials"] > li{
 	width: 80px !important;
 	margin: 0 7px 10px 0;
     }
