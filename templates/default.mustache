@@ -14,7 +14,7 @@
   <meta name="robots" content="noindex,nofollow">
   {{/unpublished}}
   <meta name="viewport" content="width=device-width">
-  <link rel="canonical" href="https://konn-san.com{{url}}" />
+  <link rel="canonical" href="https://konn-san.com{{canonic}}" />
   <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
   <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" >
@@ -25,6 +25,7 @@
   </script>
   <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  {{^no-top-star}}
   <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
   <script>
   Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
@@ -38,10 +39,11 @@
     }
   };
   </script>
+  {{/no-top-star}}
   <!-- Twitter Card -->
   <meta property="twitter:card" content="summary">
   <meta property="twitter:site" content="@mr_konn">
-  <meta property="og:url" content="https://konn-san.com{{url}}">
+  <meta property="og:url" content="https://konn-san.com{{canonic}}">
   <meta property="og:title" content="{{title}}">
   <meta property="og:description" content="{{short_description}}">
   <meta property="og:image" content="{{thumbnail}}">
@@ -68,16 +70,18 @@
       <i class="fa fa-bookmark" aria-hidden="true"></i>
       <ul id="socials">
       <li id="facebook">
-      <div class="fb-like" data-href="https://konn-san.com{{url}}" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      <div class="fb-like" data-href="https://konn-san.com{{canonic}}" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
       <li id="hatena-bookmarks">
-        <a href="//b.hatena.ne.jp/entry/https://konn-san.com{{url}}" class="hatena-bookmark-button" data-hatena-bookmark-title="{{title}} - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com{{canonic}}" class="hatena-bookmark-button" data-hatena-bookmark-title="{{title}} - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
       <li>
       <script src="//apis.google.com/js/plusone.js"></script>
       <div class="g-plusone" data-size="standard" data-count="true"></div>
       <li>
       <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      {{^no-top-star}}
       <li id="hatena-star">
+      {{/no-top-star}}
       </ul>
     </div>
     <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on {{date}}</div>
@@ -99,8 +103,8 @@
           <div id="disqus_thread"></div>
           <script>
           var disqus_config = function () {
-          this.page.url = "https://konn-san.com{{url}}";
-          this.page.identifier = "{{url}}";
+          this.page.url = "https://konn-san.com{{canonic}}";
+          this.page.identifier = "{{canonic}}";
           };
           (function() { // DON'T EDIT BELOW THIS LINE
           var d = document, s = d.createElement('script');
@@ -117,7 +121,7 @@
       </div>
   <footer>
       <p>
-        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com{{url}}">
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com{{canonic}}">
           <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
 	</a>
 	<br>

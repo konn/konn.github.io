@@ -1,0 +1,106 @@
+------
+title: How wonderful to be (statically) typed 〜（静的に）型がつくって素晴しい〜
+author: 石井大海
+date: 2012/04/12 22:19:08 JST
+description: Haskellの型システムの強力さとその工学的な応用例についての発表。
+tags: Haskell,発表資料,型理論,形式手法
+------
+
+<h1 id="発表内容の紹介">発表内容の紹介</h1>
+<p>PFI の全体セミナーで「How wonderful to be (statically) typed 〜（静的に）型が付くってスバラシイ〜」と云うタイトルの発表を行いました。</p>
+<p>内容としては、Haskell に限らず、強力な型システムと型推論によってもたらされる記述力と、それを応用した実用的な技術についての解説……の予定でしたが、時間が足らずにHaskell の布教だけで終わってしまいました orz</p>
+<p>発表で言及した <sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup> 応用例の一覧は下の通りです。</p>
+<ul>
+<li>型クラスによるデータ操作の抽象化<sup>★</sup></li>
+<li>静的で型安全なキャスト用クラス<sup>★</sup></li>
+<li>キーの型ごとに最適なデータ構造を自動的に選択<sup>★</sup></li>
+<li>型エラーが出ないことが静的に保証されている抽象構文木<sup>★</sup></li>
+<li>高速かつ純粋な破壊的代入を実現する方法<sup>★</sup></li>
+<li>効率的で外部へのリソース漏れがないことが静的に保証されるリソース制御<sup>★</sup></li>
+<li>リージョン推論によるメモリ確保・解放の自動推論</li>
+<li>整合性が静的に保証されたスレッド/ネットワーク通信<sup>☆</sup></li>
+<li>範囲外アクセスを静的に防止するための長さ付きリスト<sup>★</sup></li>
+<li>msgpack の serialize/ deserialize の実装がそれぞれ逆演算になっていることの静的な証明</li>
+<li>挿入が順序を保つ証明から、挿入ソート函数を自動抽出する手法</li>
+</ul>
+<p>これらの技術を説明するために紹介したのが、以下の型機能です。</p>
+<ol type="1">
+<li>型とは何か？──型付け、型推論、型安全</li>
+<li>強力で wonderful な型システムの紹介
+<ul>
+<li>型クラス</li>
+<li>型族（関連型）</li>
+<li>幽霊型とランク2多相</li>
+<li>Data Type Promotion</li>
+</ul></li>
+<li>依存型（存在の紹介のみに留まりました……）</li>
+</ol>
+<p>本来ならば、依存型と定理証明の辺りももうちょっと詳しく言及して、「Haskell の布教だけじゃなかったでしょ？（ﾄﾞﾔｧ」って云いたかったんですが、いかんせん準備時間がたりませんでした……ぐぬぬ。</p>
+<h2 id="スライドおよび発表の模様">スライドおよび発表の模様</h2>
+<p>以下が発表スライドです。<a href="http://www.ustream.tv/recorded/21781769">Ustream で発表時の映像も公開</a> されていますので、観てやろうと云う奇異な方はどうぞ。</p>
+<div style="width:425px" id="__ss_12513613"> 
+<strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/konn/how-wonderful-to-be-statically-typed" title="How wonderful to be (statically) typed 〜型が付くってスバラシイ〜" target="_blank">How wonderful to be (statically) typed 〜型が付くってスバラシイ〜</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/12513613" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> 
+View more <a href="http://www.slideshare.net/" target="_blank">presentations</a> from <a href="http://www.slideshare.net/konn" target="_blank">Hiromi Ishii</a>
+</div> </div>
+
+<h1 id="反省">反省</h1>
+<ul>
+<li>もうちょっと応用に的を絞って、理論背景の説明は省いてもよかった</li>
+<li>Haskell 以外の話題をもう少し入れるべき
+<ul>
+<li>Haskell とか知らない人向けで書いたつもりが、知らないとけっこう難しかったかもしれない……。</li>
+<li>「こんなことができます！」と応用を紹介してから理論背景の説明に入ると盛り上がったかもしれない。</li>
+</ul></li>
+<li>C++ とか全然わからないのに言及してごめんなさいゆるして……。</li>
+</ul>
+<h1 id="参考文献">参考文献</h1>
+<p>発表スライドにも載っていますが、参考にした文献を以下に挙げます。</p>
+<ol type="1">
+<li>&quot;<a href="http://research.microsoft.com/en-us/um/people/simonpj/papers/assoc-types/fun-with-type-funs/typefun.pdf">Fun with type functions</a>&quot;, Oleg Kiselyov, Simon Peyton Jones and Chung-chieh Shan, 2010
+<ul>
+<li>開発者向けの型族や関連型の機能紹介と例が豊富に載っています。型族の例の殆んどはこちらから引きました。</li>
+</ul></li>
+<li>“<a href="http://research.microsoft.com/en-us/people/dimitris/fc-kind-poly.pdf">Giving Haskell a Promotion</a>”,B. A. Yorgey, S. Weirich, J. Cretin, Simon Peyton Jones and D. Vytiniotis, 2011
+<ul>
+<li>データ型の、型レベルへの持ち上げ機能（Data Kinds）の紹介論文です。</li>
+</ul></li>
+<li>“<a href="http://okmij.org/ftp/Computation/resource-aware-prog/region-io.pdf">Lightweight Monadic Regions</a>”, Oleg Kiselyov, Chung-chieh Shan, 2008
+<ul>
+<li>リージョンによるリソース管理を、phantom type と type-class の機能により実現する話です。例もこちらからひきました。</li>
+</ul></li>
+<li>“<a href="http://okmij.org/ftp/Haskell/regions.html">Region-based resource management</a>”, Oleg Kiselyov, 2011
+<ul>
+<li>上のリージョンの実装以外にも、幾つか Haskell の型と Region に関する話題が載っています。Heavy weightな実装とか、動的な演算をトラックするリージョンの話題など。</li>
+</ul></li>
+<li>“<a href="http://www.iis.sinica.edu.tw/~scm/pub/aopa.pdf">Algebra of Programming in Agda</a>”, Shin-Cheng Mu, Hsiang-Shang Ko, Patrik Jansson, 2009
+<ul>
+<li>依存型の機能を使って、証明からアルゴリズムを抽出する話などが載っている、らしいです。らしい、と云うのは読めなかったからで、従って全然紹介出来ませんでした。</li>
+</ul></li>
+<li>“<a href="http://www.yesodweb.com/">Yesod Web Framework for Haskell</a>”
+<ul>
+<li>型族の機能をふんだんに用いたモダンなWebフレームワーク Yesod のページです。例が細かくなってしまうので、今回は紹介も説明も出来ませんでした。</li>
+</ul></li>
+<li>“<a href="http://ja.wikipedia.org/wiki/%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B">データ型 - Wikipedia</a>”, Wikipedia</li>
+<li>“<a href="http://en.wikipedia.org/wiki/Type_safety">Type safety - Wikipedia</a>”, Wikipedia
+<ul>
+<li>うぃきぺ先生はなんでもしってるなー。</li>
+</ul></li>
+<li>“<a href="http://www.haskell.org/haskellwiki/Phantom_type">Phantom type - HaskellWiki</a>”, HaskellWiki
+<ul>
+<li>幽霊型の定義を確認するのに使いました。あってた。よかった。応用例とか色々載ってます。GADTs の話は載ってませんが。</li>
+</ul></li>
+<li>“<a href="http://d.hatena.ne.jp/keigoi/20091125/1259167967">full-sessions-0.6.1</a>”, id:keigoi
+<ul>
+<li>作者である keigoi さんによる、セッション型ライブラリの解説です。セッション型、と云うのは、チャンネルを介したスレッドやネットワーク通信が整合的に行われていることを、型で静的に保証する手法です。</li>
+</ul></li>
+<li>“<a href="http://www.iij-ii.co.jp/lab/techdoc/coqt/">プログラミングCoq</a>”, 池渕未来
+<ul>
+<li>当初は定理証明についても幾つか言及しようと思っていたので、Coq での証明駆動開発の日本語入門文献として挙げておきました。結果的には殆んど何も云えなかったんですが……。</li>
+</ul></li>
+</ol>
+<section class="footnotes">
+<hr>
+<ol>
+<li id="fn1"><p>解説とか採り上げた、ではなくあくまで言及した、です。物によっては名前出しただけですね……。ちゃんと解説したものには★を付けてあります。軽く説明したものは☆です。名前だけ出した、ものは何も付いてません。<a href="#fnref1">↩</a></p></li>
+</ol>

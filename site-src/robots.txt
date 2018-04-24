@@ -1,0 +1,10 @@
+# robotstxt.org/
+
+User-agent: *
+Disallow: /t/
+
+{{#disallowed}}
+Disallow: {{.}}
+{{/disallowed}}
+
+Sitemap: /sitemap.xml

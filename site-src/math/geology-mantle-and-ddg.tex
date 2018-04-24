@@ -1,0 +1,251 @@
+---
+title: 集合論の地質学2：マントルの構造と下方有向性原理
+author: 石井大海
+description: 集合論の地質学に関する記事の第二回目．今回は地質学の基本定理である下方有向性原理の紹介と，そこから得られるマントル$\mathbb{M}$に関する帰結を紹介します．[前回はこちら](/math/geology-ground-definability.html)．
+latexmk: -pdflua
+tag: Boole値モデル,無矛盾性証明,強制法,公理的集合論,集合論,生成多元宇宙,集合論の地質学
+date: 2017/11/29 23:39:39 JST
+macros:
+  NBG: '\mathord{\mathrm{NBG}}'
+---
+\documentclass[a4j,leqno]{ltjsarticle}
+\usepackage[hiragino-pron]{luatexja-preset}
+\usepackage{mystyle}
+\usepackage{luatexja-otf}
+\usepackage{dsfont}
+\DeclareMathAlphabet{\mathrsfs}{U}{rsfso}{m}{n}
+\renewcommand{\mathscr}[1]{\mathup{\mathrsfs{#1}}}
+\usepackage{fixme}
+\usepackage[super]{nth}
+\usepackage[bookmarksnumbered,pdfproducer={LuaLaTeX},%
+            luatex,psdextra,pdfusetitle,pdfencoding=auto]{hyperref}
+\usepackage[backend=biber, style=math-numeric]{biblatex}
+\addbibresource{myreference.bib}
+\renewcommand{\emph}[1]{\textgt{\textsf{#1}}}
+\usetikzlibrary{shapes,shapes.geometric}
+
+\title{集合論の地質学2：マントルの構造と下方有向性原理}
+\newcommand{\mantle}{\mathbb{M}}
+\newcommand{\M}{\mantle}
+\newcommand{\gM}{g\mathbb{M}}
+\newcommand{\gmantle}{\gM}
+\newcommand{\DDG}{\mathord{\mathrm{DDG}}}
+\newcommand{\sDDG}{\mathord{\mathrm{sDDG}}}
+\author{石井大海}
+
+\usepackage{amssymb}	% required for `\mathbb' (yatex added)
+\begin{document}
+\maketitle
+
+\begin{abstract}
+ 本稿は集合論の地質学に関する記事の第二回目です：
+ \begin{enumerate}[label={\arabic*.}]
+  \item \href{https://konn-san.com/math/geology-ground-definability.html}{概観と基礎モデルの定義可能性}
+  \item マントルの構造と下方有向性原理（今回）
+  \item \href{https://konn-san.com/math/geology-bukovsky-theorem.html}{Bukovsk\'{y}の定理──強制拡大の特徴付け}
+  \item \href{https://konn-san.com/math/geology-proof-of-ddg.html}{下方有向性原理の証明}
+ \end{enumerate} 
+ \emph{集合論の地質学}は，与えられた集合論の宇宙$V$の内部モデルがいかなる生成拡大になっているかを考える集合論の分野ですが，今回は地質学の基本定理である\emph{下方有向性原理}の紹介と，そこから得られる\emph{マントル}$\mathbb{M}$に関する帰結，特に$\ZFC$のモデルとなる事や生成多宇宙の構造に関する結果などを紹介します．
+\end{abstract}
+
+\section{マントルおよび生成マントルと下方有向性原理}
+\href{https://konn-san.com/math/geology-ground-definability.html}{前回}はFuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}による次の定理を示した：
+\begin{theorem}[Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}]
+ $\ZFC$を満たす基礎モデルは一様に定義可能．
+ 即ち，次を満たすような一階の論理式$\varphi(x, y)$が存在する：
+ \begin{enumerate}
+  \item 任意の$r \in V$に対し$W_r \defeq \Set{ x \in V | \varphi(x, r)}$は$r \in W_r$なる$V$の$\ZFC$を満たす内部モデルであり，ある$\mathbb{P} \in W$と$(W, \mathbb{P})$-生成フィルター$G \in V$が存在して$V = W[G]$となる．
+  \item 逆に$W$が$V = W[G]$を満たす$V$の$\ZFC$を満たす内部モデルであれば，$r \in W$で$W = W_r$となるものが存在する．
+ \end{enumerate}
+\end{theorem}
+
+これにより，\emph{マントル}及び\emph{生成マントル}という自然な内部モデルが定義できる．
+
+\begin{definition}
+ \begin{itemize}
+  \item 全ての基礎モデルの共通部分を\emph{マントル}と呼び，$\M$で表す．
+        即ち$\M \defeq \bigcap_{r \in V} W_r$.
+  \item 全ての強制拡大の基礎モデルの共通部分を\emph{生成マントル}と呼び，$\gM$で表す．
+        即ち，$\gM \defeq \Set{ x \in V | \forall \mathbb{P} \: {} \Vdash_{\mathbb{P}} \quoted{\check{x} \in \dot{\M}}}$.
+ \end{itemize}
+\end{definition}
+
+\subsection{生成マントルの構造論}
+まず，Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}では生成マントル$\gM$が$\ZF$のモデルであり，強制法で不変となる事が示されている：
+\begin{theorem}[F--H--R]\label{thm:gM-inv-ZF}
+ \begin{enumerate}
+  \item\label{item:gM-inv} $\gM$は強制法で不変なクラスである．
+  \item $\gM$は$\ZF$を満たす内部モデル．
+ \end{enumerate}
+\end{theorem}
+\begin{proof}
+ \begin{enumerate}
+  \item $\mathbb{P} \in V$を強制概念，$G$を$(V, \mathbb{P})$-生成フィルターとして$\gM^V = \gM^{V[G]}$となることを示す．
+        特に$V[G]$の強制拡大は$V$の強制拡大でもあるので，$\gM^{V} \subseteq \gM^{V[G]}$は明らか．
+        逆の包含関係を示そう．
+        そこで$x \in \gM^{V[G]} \setminus \gM^V$なる$x$があったとして矛盾を導く（\emph{背理法}）．
+        $x \in \gM^{V[G]} \subseteq \M^{V[G]} \subseteq V$より$x \in V$となる事に注意する．
+        $x \notin \gM^V$なので，ある$\mathbb{Q} \in V$，$q \in \mathbb{Q}$および$\dot{r} \in V^{\mathbb{Q}}$があって，$q \Vdash_{\mathbb{Q}} \check{x} \notin W_{\dot{r}}$となる．
+        そこで$r \in H$なる$(V[G], \mathbb{Q})$-生成フィルター$H$を取れば，$V[G][H] \models x \notin W_{r}^{H}$.
+        特に，$V[G][H]$の基礎モデル$W$で$x \notin W$となるものが取れる．
+        しかし，仮定と定義より$x \in \gM^{V[G]} \subseteq W$なのでこれは非合理．
+  \item $\gM$がG\"{o}del演算で閉じ，概宇宙的である事が示せればよい．
+        しかし，$\gM$は$\ZF(\mathrm{C})$のモデルの共通部分なので，G\"{o}del演算で閉じている事は自明．
+
+        よって後は概宇宙的であること，即ち任意の$x \subseteq \gM$に対し$z \in \gM$で$x \subseteq z$を満たすものが取れることを示せばよい．
+        特に，各$\alpha$に対し$\gM \cap V_\alpha \in \gM$が言えれば十分である．
+        まず次を示す：
+        \begin{claim}
+         $\ZFC \vdash \gM \cap V_\alpha \in \M$.
+        \end{claim}
+        \begin{proof}
+         上の~\ref{item:gM-inv}より，$V$の任意の基礎モデル$W$に対して$\gM^W = \gM^V$であり，他方ランク関数の絶対性より$V_\alpha^W \subseteq V_\alpha^V$なので，$\gM \cap V_\alpha = \gM^W \cap V_\alpha = (\gM \cap V_\alpha)^W \in W$.
+         $W$は$V$の任意の基礎モデルだったから，$\gM \cap V_\alpha \in\M $. \qed
+        \end{proof}
+        さて，再び~\ref{item:gM-inv}より今度は$\gM \cap V_\alpha$は$V$の任意の強制拡大$V[G]$でも不変である：$\gM \cap V_\alpha = (\gM \cap V_\alpha)^{V[G]}$.
+        すると，上の主張から$V[G] \models \gM^{V[G]} \cap V[G]_\alpha \in \M^{V[G]}$となる．
+        いま$V[G]$は任意に取っていたので，結局$\gM \cap V_\alpha \in \gM$となる． \qed
+ \end{enumerate}
+\end{proof}
+
+\subsection{下方有向性原理とマントルの構造論}
+一方，$\M$については，$\gM$と一致するのか，そもそも$\ZF$を満たすのか，強制法で不変なのか？という事はわかっていなかった．
+例えば，下図のように$V$と「両立」しない基礎モデル$W$を持つような$V[G]$があれば，$\M^{V[G]} \subsetneq \M^V$となることはわかる．
+\begin{center}
+ \begin{tikzpicture}
+  \matrix[matrix of math nodes, column sep=.5cm, row sep=1cm] {
+           & |(VG)| V[G] =  W[H] \\
+   |(V)| V &             & |(W)| W\\
+  };
+  \draw (V) -- (VG) -- (W);
+  \node[regular polygon,regular polygon sides=3,draw=black,below of=V,minimum height=1cm] {};
+  \node[regular polygon,regular polygon sides=3,draw=black,below of=W,minimum height=1cm] {};
+ \end{tikzpicture}
+\end{center}
+逆に，このような$V[G]$がなければ，特に，どんな二つの基礎モデルも共通の基礎モデルを持つなら，上$\M$は$\gM$と一致してくれる事がわかる．
+こうした事を念頭に定式化されたのが，次の\emph{下方有向性原理}である：
+\begin{definition}
+ \begin{itemize}
+  \item \emph{下方有向性原理}（\emph{Downward Directed Grounds}, $\DDG$）とは次の言明である：
+
+        任意の基礎モデル$W, W' \subseteq V$に対し，共通の基礎モデル$U \subseteq W \cap W'$が存在する．
+  \item \emph{強い下方有向性原理}（\emph{strong Downward Directed Grounds}, $\sDDG$）とは次の言明である：
+
+        任意の集合$X$に対し，$\Set{ W_r | r \in X }$の共通の基礎モデルが存在する．
+ \end{itemize}
+\end{definition}
+
+\begin{theorem}[F--H--R]
+ \begin{enumerate}
+  \item\label{item:M=gM} $\ZFC \vdash \DDG$なら$\M = \gM$で，$\M$は強制法で不変な最大のクラス．
+  \item\label{item:M|=ZFC} $\ZFC \vdash \sDDG$なら$\M \models \ZFC$.
+ \end{enumerate}
+\end{theorem}
+\begin{proof}
+ \begin{enumerate}
+  \item 定義から強制拡大で不変なクラスは明らかに$\gM$の部分集合になり，上の補題\ref{thm:gM-inv-ZF}より$\gM$は強制法で不変なので，あとは$\M = \gM$だけ示せればよい．
+
+        ほぼ上の注意通り．
+        $\gM \subseteq \M$は明らかなので，$\M \subseteq \gM$を示せばよい．
+        もし$x \notin \gM$ならある強制拡大$V[G] \supseteq V$で$x \notin \M^{V[G]}$を満たすものが取れる．
+        特にマントルの定義から，$W \subseteq V[G]$で$x \notin W$を満たすものが取れる．
+        すると，$\ZFC \vdash \DDG$より特に$V[G] \models \DDG$なので，$V$と$W$の共通の基礎モデル$U \subseteq W \cap V$が取れ，$x \notin W$となる．
+        よって$x \notin \M$.
+  \item 補題~\ref{thm:gM-inv-ZF}と上の~\ref{item:M=gM}より$\M \models \ZF$は良い．
+        あとは$\M \models \AC$だけ示せればよい．特に，$\M$で整列可能定理が成り立つことを示そう．
+        任意に$x \in \M$を取り$x$の整列順序が少なくともひとつ$\M$に属していることが言えればよい．
+        そこで$\mathcal{W} \defeq \Set{ {\vartriangle} : \text{well-order on } x | {\vartriangle} \notin \M}$とおく．
+        $x$が集合なので，明らかに$\mathcal{W}$は集合である．
+        マントルの定義より，各${\vartriangle} \in \mathcal{W}$に対し${\vartriangle} \notin W_{r_{\vartriangle}}$となるような$r_{\vartriangle}$が定まる．
+        すると，$\sDDG$より$\Set{W_{r_{\vartriangle}} | {\vartriangle} \in \mathcal{W}}$の共通の基礎モデル$U$が取れる．
+        すると，$\mathcal{W}$や$r_{\vartriangle}$の取り方から，$\M$に属さない$x$の整列順序は$U$にも属さないようになっている．
+        対偶を取れば，$U$に属する$x$の整列順序は$\M$にも属するということである．
+        いま，$U$自体は$\ZFC$のモデルなので$x$の整列順序を持つので，望み通り$\M$も$x$の整列順序を持つ． \qed
+ \end{enumerate} 
+\end{proof}
+
+$\DDG$や$\sDDG$は自然だがちょっと強すぎるようにも思える．
+しかし，薄葉~\cite{Usuba:2017fp}はなんと$\sDDG$が$\ZFC$の定理である事を示した．
+\begin{theorem}[Usuba \cite{Usuba:2017fp}]
+ $\ZFC \vdash \sDDG$.
+\end{theorem}
+よって系として次が得られる：
+
+\begin{theorem}[Usuba]
+ $\M$は強制法で不変な最大のクラスで，$\ZFC$を満たす．
+\end{theorem}
+
+他にも「$V$は極小・最小の基礎モデルを持つか？」というような基本的な疑問にも$\sDDG$は解を与える．
+
+\begin{theorem}[Usuba]
+ $\ZFC$のモデルは高々一つしか極小な基礎モデルを持たない．
+\end{theorem}
+\begin{proof}
+ 原論文~\cite{Usuba:2017fp}か\href{https://konn-san.com/math/geology-ground-definability.html\#thm:conseq-of-ddg}{前回の記事}~\cite{ISHII:2017jx}の定理4を参照． \qed
+\end{proof}
+
+\subsection{$\DDG$と生成多宇宙の構造論}
+集合論の地質学では，ある宇宙$V$が与えられた時にその基礎モデル全体を考えた．
+一方，基礎モデルだけではなく，その生成拡大，生成拡大の基礎モデル……という風に「強制法で閉じた」モデル全体を考えることがあり，これを$V$の\emph{生成的多宇宙}（\emph{generic multiverse}）あるいは\emph{集合論的多宇宙}（\emph{set-theoretic multiverse}）と呼ぶ．
+可算推移的モデル全体を考えても良いし，「本物」の生成多宇宙を取り扱うための形式体系も幾つか提案されている（例えばFriedman--Fuchino--Sakai~\cite{Friedman:2016lr}，Woodin~\cite{Woodin:2011ve}などを参照）．
+
+とりあえず本稿では，ラフに次のインフォーマルな定義を使う\footnote{$\ZFC$でも$\NBG$でも一般的な（定義可能とは限らない）クラスの集まり（！）などというものをオフィシャルに扱う方法はない，という意味でこれはインフォーマルな定義である}：
+\begin{definition}
+ $V$の\emph{生成多宇宙}$\mathcal{M}_V$とは$V$から基礎モデルと生成拡大を取る操作で閉じた$\ZFC$のモデルの最小の集まりである．
+\end{definition}
+
+\begin{remark}
+ \begin{itemize}
+  \item 任意の$W, U \in \mathcal{M}_V$に対し，$W$から始めて基礎モデルと生成拡大を取る操作を有限回繰り返して$U$に到達出来る．
+        これを$W$から$U$へのpathと呼ぼう．
+  \item 生成多宇宙のpathにおいて$W_{k}$から$W_{k+1}$が生成拡大を取ることで得られる時$W_k \nearrow W_{k+1}$，基礎モデルを取ることで得られる時$W_k \searrow W_{k+1}$と表す．
+        また，pathにおいて$\leadsto$は$\nearrow$か$\searrow$のいずれかを表すものとする．
+  \item 有限反復強制法を使えば，複数回の基礎モデル・生成拡大を取る操作を一回に纏められる．
+        従って，$W$から$U$へのpathには基礎モデルを取る操作と生成拡大を取る操作が一回ずつ交互に現れるとしてよい．
+ \end{itemize}
+\end{remark}
+
+こうした概念が定義された当初，以下のような未解決問題があった：
+\begin{question}
+ \begin{enumerate}
+  \item $\mathcal{M}_V$は下に有向か？つまり，どんな$W, U \in \mathcal{M}_V$に対しても共通の基礎モデルが取れるか\footnote{上に有向でないことは，例えば$\ZFC$のモデル$M$に対して，Cohen実数$x,y$で$x,y$両方の情報があると$M$の順序数を可算に潰してしまうようなものが存在するのでわかる．}？
+  \item $\mathcal{M}_V$における包含関係$W \subseteq U$と「$W$は$U$の基礎モデルである」という関係は一致するか？
+ \end{enumerate}
+\end{question}
+
+$\DDG$はこれらに対し，どちらも肯定的な解を与える．
+
+\begin{lemma}
+ \begin{enumerate}
+  \item \label{item:multiverse-down-dir}$\mathcal{M}_V$は下に有向である．
+  \item $\mathcal{M}_V$において包含関係と基礎モデル関係は一致する．
+ \end{enumerate}
+\end{lemma}
+\begin{proof}
+ \begin{enumerate}
+  \item $W, U \in \mathcal{M}_V$とし，$W$から$U$に至るpathの長さに関する帰納法で示す．
+        $W = W_0 \leadsto W_1 \leadsto \dots \leadsto W_{n-1} = U$を$W$から$U$に至るpathとする．
+        $n \leq 2$の場合は明らか．
+
+        そこで長さ$n$のpathで繋がれた任意の二つのモデルに下界が取れるとし，$(n+1)$でも成り立つことを示す．
+        $W_n \nearrow W_{n+1} = U$が強制拡大によって得られている場合は，帰納法の仮定によって$W_0$と$W_n$の下界$W'$をとってくれば，$W'$は$W_0$の基礎モデルであると同時に$W_{n+1}$の基礎モデルになっている．
+
+        $W_n \searrow W_{n+1}$が基礎モデルを取る操作で得られる場合を考えよう．
+        このときは，まず$W'$を$W_0$と$W_n$の共通の下界とする．
+        状況を整理すると$W_0 \searrow W' \nearrow W_n \searrow W_{n+1}$で，$W'$と$W_{n+1}$は$W_n$の基礎モデルとなっているから，$\DDG$により共通の下界$W' \searrow W'' \nearrow W_{n+1}$が取れる．
+        このとき$W''$は$W_0$と$W_{n+1}$の共通の下界である．
+  \item $W \subseteq U$とする．
+        このときより上の\ref{item:multiverse-down-dir}より$U, W$共通の基礎モデル$W' \subseteq U \cap W$が取れる．
+        すると$W' \subseteq W \subseteq U$となるが，$U$が$W'$の生成拡大であることから，前回使った\href{https://konn-san.com/math/geology-ground-definability.html\#lem:interm-ext}{中間拡大補題}から$W$は$W'$の生成拡大であり，なおかつ$U$は$W$の生成拡大となる．
+        これが言いたかったことである． \qed
+ \end{enumerate}
+\end{proof}
+
+\section*{次回予告}
+\href{https://konn-san.com/math/geology-bukovsky-theorem.html}{次回}はBukovsk\'{y}による生成拡大の組合せ論的特徴付けの現代的な証明を紹介します．
+この定理は$\sDDG$の証明の中で重要な役割を果し，また$\kappa$-c.c.\ 生成拡大に関するある種の一意性定理が従います．
+
+\nocite{Fuchs:2014fj,Usuba:2017fp,Reitz:2007af}
+\nocite{Friedman:2016lr,Hamkins:2015uq}
+\printbibliography[title=参考文献]
+\end{document}

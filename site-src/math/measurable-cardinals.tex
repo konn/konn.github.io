@@ -1,0 +1,400 @@
+---
+title: Measure Problem と可測基数
+author: 石井 大海
+tag: 数学,数理論理学,集合論,無限組合せ論,測度論,可測基数
+date: 2013/10/04 15:23:18 JST
+latexmk: -lualatex
+description: 選択公理の下で Lebesgue 可測でないような R の部分集合が存在することは広く知られた事実である．本稿では，測度の条件を幾らか緩めることで，Rの全ての部分集合が可測になるように出来ないだろうか？という問題と，そこから派生した集合論・測度論的な話題について紹介する．
+---
+
+\documentclass[a4j]{ltjsarticle}
+\usepackage[hiragino-pron]{luatexja-preset}
+\usepackage{amsmath,amssymb}
+\usepackage{mystyle}
+\usepackage{epstopdf}
+\usepackage{graphicx}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\bibliographystyle{jplain}
+\usepackage{bm}
+\usepackage{epstopdf}
+\usepackage{cases}
+\usepackage{hyperref}
+
+\title{Measure Problem と可測基数}
+\author{石井大海}
+
+\newcommand{\Ord}{\mathrm{Ord}}
+
+\begin{document}
+\maketitle
+
+本稿は，2013年度の確率論の講義のレポートとして提出したものを加筆修正したものだが，内容は特に確率論とは関係ない．
+
+\section{Measure Problem}
+確率論は，全空間が測度 $1$ を持ち，$\sigma$-加法的であるような測度空間を研究する分野であると云える．そのような{\bfseries 確率測度}の基本的な例の一つに，単位区間 $[0, 1]$ 上の Lebesgue 測度がある．
+
+Lebesgue は当初，$\R$ の部分集合は全て Lebesgue 可測であろうと考えていた．より厳密に，Lebesgue 測度は平行移動不変性を保ったまま，$\Pow(\R)$ 上に拡張出来るだろうと考えていた．しかし，選択公理を仮定すると Lebesgue 可測でない実数の集合が存在することが，Vitali により示された．
+
+では，平行移動不変性の条件を緩めることで $[0, 1]$ の任意の部分集合が可測となるような Lebesgue 測度の拡張を定義出来ないだろうか？この問題を一般化した物が Banach の Measure Problem である：
+
+\begin{problem}[Measure Problem]
+ 次を満たすような $\Pow(S)$ 上の確率測度 $\mu$ が定義出来るような無限集合 $S$ は存在するか？
+ \begin{enumerate}[label=(\roman*)]
+  \item $\mu(\emptyset) = 0, \mu(S) = 1$
+  \item $X \subseteq Y \Rightarrow \mu(X) \leq \mu(Y)$
+  \item {\bfseries 非自明性}．$(\forall x \in S)\, \mu(\{x\}) = 0$
+  \item {\bfseries $\sigma$-加法性}．$X_n \, (n < \omega)$ が互いに交わらないなら，
+	\[
+	 \mu\left(\bigcup_{n < \omega} X_n\right) = \sum_{n < \omega} \mu(X_n).
+	\]
+ \end{enumerate}
+\end{problem}
+
+以下で測度と云った場合，上の条件のうちで非自明性以外は全て満たしているものとする．また，集合 $S$ について $\Pow(S)$ 上で定義された測度の事を単に $S$ 上の測度と呼ぶ．
+
+このレポートでは，上の Measure Problem から派生した集合論の問題について簡単に紹介を行う．
+
+\subsection{集合論に関する予備知識}
+以下，順序数はギリシア文字 $\alpha, \beta, \gamma, \dots$ などで表す．また，集合の濃度を表す基数は $\kappa, \lambda$ などで表し，$\kappa$ の後続基数を $\kappa^+$ と書くことにする．$\alpha$ 番目の無限基数を $\aleph_\alpha = \omega_\alpha$ と書く．任意の無限基数について $\kappa^+ = 2^\kappa$ が成立するという主張を{\bfseries 一般連続体仮説}（GCH）と呼ぶ．特に，$\kappa = \aleph_0$ の時を{\bfseries 連続体仮説}（CH）と呼ぶ．GCH や CH は集合論の公理系から独立であることが知られている．
+
+基数 $\kappa$ がそれより濃度の小さな集合の $\kappa$ 未満の和で書けないとき，すなわち $\kappa = \bigcup \Set{ A_\alpha | \alpha < \gamma }$ならば $\gamma \geq \kappa$ であるかある $\alpha < \gamma$ について $|A_\alpha| = \kappa$ となる時，$\kappa$ は{\bfseries 正則}であるという．正則でない基数を{\bfseries 特異基数}と云う．$\omega$ や後続基数は正則基数である．また$\aleph_\omega = \bigcup \Set{ \aleph_\alpha | \alpha < \omega }$ より $\aleph_\omega$ は正則基数でない．$f: \alpha \rightarrow \beta$ が共終写像であるとは，$f$ の像が $\beta$ で共終となること，つまり $(\forall \gamma < \beta)(\exists \xi < \alpha)\, \gamma \leq f(\xi)$ となることである．$\beta$ への共終写像 $h: \alpha \rightarrow \beta$ が存在するような最小の順序数 $\alpha$ のことを {\bfseries $\beta$ の共終数}とよび，$\cf(\beta)$ で表す．明らかに $\cf(\kappa) \leq \kappa$ である．この時，$\kappa$ が正則であることと，$\cf(\kappa) = \kappa$ であることは同値である．$\cf(\kappa)$ から $\kappa$ への共終写像は，常に狭義単調増加となるように取ることが出来る．
+
+$\kappa > \omega$ が{\bfseries 弱到達不能基数}であるとは，正則な極限基数であることである． $\cf(\aleph_\alpha) = \cf(\alpha)$ であるので，$\kappa$ が弱到達不能基数ならば $\aleph_\kappa = \kappa$ となるから，これはとても大きな基数である．更に，$\kappa > \omega$ が{\bfseries 到達不能基数}であるとは，正則であり $\forall \alpha < \kappa\, (2^\alpha < \kappa)$ が成立することである．到達不能基数ならば弱到達不能基数である．（弱）到達不能基数が存在すれば，それを用いて ZFC のモデルを構成出来る．よって，もし ZFC から到達不能基数の存在が証明出来れば，ZFC の公理系を用いて自身の無矛盾性が証明出来ることになる．しかし，G\"{o}del の不完全性定理によりそのような事はあり得ないので，ZFC の公理系から到達不能基数の存在は証明出来ない．
+
+\section{到達不能基数と可測基数}
+Measure Problem の強さを表す結果が次である：
+
+\begin{theorem}[Ulam]\label{Thm:Ulam}
+ もし集合 $S$ 上の非自明な測度が存在するなら，次のいずれかが成立する：
+ \begin{enumerate}[label=(\arabic*)]
+  \item $S$ 上の二値測度が存在し，$|S|$ は最小の到達不能基数以上となる．
+	\label{cond:two-value-exists}
+  \item $2^{\aleph_0}$ 上のアトムを持たない測度が存在し，$2^{\aleph_0}$ は最小の弱到達不能基数以上となる．
+ \end{enumerate}
+\end{theorem}
+
+到達不能基数の存在は ZFC からは示せないので，Measure Problem も ZFC から証明する事は出来ない．
+ここで，幾つか補助的な定義をしておく．
+
+\begin{definition}
+ \begin{itemize}
+  \item 
+  $A$ が測度 $\mu$ の{\bfseries アトム}$\defs \mu(A) > 0 \wedge \forall X \subseteq A (\mu(X) = \mu(A) \text{ or } 0)$
+  \item $\mu$ が{\bfseries 二値測度} $\Leftrightarrow \forall X \subseteq S, \mu(X) \in \{0, 1\}$
+
+  \item $|I| \geq \aleph_0, r_i \in \R \,(i\in I)$ のとき
+	\[
+	 \sum_{i \in I} r_i = \sup \Set{ \sum_{i \in E} r_i | E \subseteq I \wedge |E| < \aleph_0}
+	\]
+  \item 測度 $\mu$ が {\bfseries $\kappa$-加法的}
+	$\defs$ 任意の $\gamma < \kappa$ に対し， $A_\alpha \, (\alpha < \gamma)$ が互いに交わらないなら，
+	\[
+	 \mu\left(\bigcup_{\alpha < \gamma} A_\alpha\right) = \sum_{\alpha < \gamma} \mu(A_\alpha)
+	\]
+ \end{itemize}
+\end{definition}
+上の命題の証明は，$\mu$ がアトムを持つ場合と持たない場合とに分けて行われる．
+
+\subsection{二値測度とアトム}
+
+まずはアトムを持つ場合について考える．まずはアトムと密接に関わる二値測度について考察する．
+
+$\mu$ が二値測度の時， $U = \Set{ X \subseteq S | \mu(X) = 1}$ はウルトラフィルターとなる．今，$\mu$ が $\kappa$-加法的ならば，$S$ は $\kappa$ 個未満の零集合の和で書けないので，この時 $U$ は $\kappa$-完備となる事（$\kappa$ 個{\bfseries 未満}の交わりで閉じている事）がわかる．よって，$\mu$ が二値測度ならば，測度 $1$ の集合全体は $\sigma$-完備なウルトラフィルターとなる．また，更に $\mu$ が非自明なら $U$ は単項フィルターではない（一点集合を元に持たない）．
+
+逆に $U$ を $S$ 上の $\sigma$-完備ウルトラフィルターとすると，次の $\mu$ は $S$ 上の二値測度となる：
+\[
+ \mu(X) = \begin{cases}
+	   1 & X \in U\\
+	   0 & X \notin U
+	  \end{cases}
+\]
+つまり，二値測度と $\sigma$-完備ウルトラフィルターは本質的に同じものなのである．
+
+そこで，非自明な二値測度を持つ最小の基数 $\kappa$ について考える．上の議論から，$\kappa$ は非単項 $\sigma$-完備ウルトラフィルターを持ち，更に $\mu$ が非自明で $\sigma$-加法的なので $\kappa$ は非可算となる．このウルトラフィルターの完備性は更に強めることが出来る：
+
+\begin{lemma}
+ \label{Lem:01}
+ $\kappa$ を非単項な $\sigma$-完備ウルトラフィルターを持つ最小の基数とする．すると，そのウルトラフィルター $U$ は $\kappa$-完備となる．
+\end{lemma}
+\begin{proof}
+もし $U$ が $\kappa$-完備でないとすると，$\kappa$ は $\gamma < \kappa$ 個の零集合 $X_\alpha\,(\alpha < \gamma)$に分割出来る．$f(x) = \alpha \Leftrightarrow x \in X_\alpha$ により全射 $f: \kappa \to \gamma$ を定義し，$D = \Set{Z \subseteq \gamma | f^{-1}[Z] \in U}$ とすれば，$U$ の完備性から $D$ は $\sigma$-完備ウルトラフィルターとなる．また， $\{\alpha\} \in D$ とすると，$X_\alpha = f^{-1}[\{\alpha\}] \in U$ となり矛盾．従って $D$ は非単項である．
+
+ よって，$U$ が $\kappa$-完備でないとすると，非単項な$\sigma$-完備ウルトラフィルターを持つ基数で $\kappa$ 未満のものが存在する．これは $\kappa$ の最小性に反する．\qed
+\end{proof}
+
+以上を踏まえて，次のように可測基数を定義する．
+
+\begin{definition}
+ $\kappa > \omega$ が{\bfseries 可測基数} $\defs \kappa$ 上の非単項な $\kappa$-完備ウルトラフィルターが存在する．
+\end{definition}
+非自明な二値測度を持つ最小の基数は可測基数となる事がわかる．また，$\kappa$-完備性と非単項性から，ウルトラフィルターの各元の濃度は $\kappa$ でなくてはならない．同様に，$\kappa$ が $\kappa$ 個未満の小さな集合の和で書けるとすると，これも非単項性に反するので，$\kappa$ は正則基数である．更に，次の命題が成立する．
+
+\begin{lemma}\label{Lem:measurable-is-inaccessible}
+ 可測基数は到達不能基数である．
+\end{lemma}
+\begin{proof}
+ $\kappa$：可測として，もし $2^\lambda \geq \kappa$ となるような $\lambda < \kappa$ が存在すると矛盾する事を示す．仮定より $|S| = \kappa$ となる $S \subseteq {}^\lambda 2$ が取れる．そこで，$U$ を $S$ 上の非単項$\kappa$-完備ウルトラフィルターとすると各 $\alpha < \lambda$ について $\Set{ f \in S | f(\alpha) = 0 }$ か $\Set{ f \in S | f(\alpha) = 1 }$ のどちらか一方は $U$ に属すので，それを $X_\alpha$ とする．今，$U$ は $\kappa$-完備なので $X = \bigcap \Set{X_\alpha | \alpha < \lambda} \in U$ となる．しかし，$X$ は高々一つしか元を持たず，非単項性に矛盾する．\qed{}
+\end{proof}
+
+最後にアトムと二値測度の関係を述べる．集合 $S$ 上の非自明な測度 $\mu$ が存在したとする．もし $\mu$ がアトム $A$ を持つならば， $\nu(X) = \mu(X \cap A)/\mu(A)$ により $S$ 上の非自明な二値測度 $\nu$ が定義される．よって定理 $1$ の $\mu$ がアトムを持つ場合，$S$ は非自明な二値測度 $\nu$ を持ち，対応する $\sigma$-完備非単項ウルトラフィルター $U$ が得られる．補題 $1$ より，こうしたウルトラフィルターを持つ最小の基数 $\kappa$ は可測基数であり，特に到達不能である．$\kappa \leq |S|$ であるので，定理の (i) が成立する．
+
+\subsection{実数値可測基数}
+そこで，今度はアトムを持たないような実数値の測度 $\mu$ について考えよう．
+
+二値測度の場合は，測度 $1$ の集合の成すウルトラフィルターが重要な役割を果していた．実数値測度の場合にその役割をするのが，{\bfseries 零集合}全体の成すイデアル $I_\mu$ である：
+\[
+ I_\mu \defeq \Set{X \subseteq S | \mu(X) = 0}
+\]
+$I_\mu$ は非単項な $\sigma$-完備イデアルとなり，更に次の性質を持つ：
+
+\begin{enumerate}[label=(\roman*)]
+ \item 各 $x \in S$ に対し $\{x\} \in I_\mu$
+       \label{Def:saturate:non-principal}
+ \item $I_\mu$ に属さない互いに交わらない集合 $X \subseteq S$ から成る族は高々可算である．
+       \label{Def:saturate:disj}
+\end{enumerate}
+
+上のような性質を持つイデアルのことを，{\bfseries $\sigma$-飽和イデアル}と呼ぶ．(i) は非自明性より明らか．(ii) については，$n > 0$ に対し測度が $\frac{1}{n}$ 以上となるような集合は高々 $n$ 個しか存在しないことからわかる．
+
+このイデアル $I_\mu$ についても，二値測度の際の $U$ のような性質が成立する．
+
+\begin{lemma}
+ \begin{enumerate}[label=(\roman*)]
+  \item $\kappa$ を非自明な測度を持つ最小の基数とする．この時，零集合の成すイデアル $I_\mu$ は $\kappa$-完備となる．
+  \item $\kappa$ を $\sigma$-完備 $\sigma$-飽和イデアルを持つ最小の基数とする．そのイデアルを $I$ とすると，$I$ は $\kappa$-完備である．
+ \end{enumerate}
+\end{lemma}
+\begin{proof}[証明の概略]
+ $I_\mu$ が $\kappa$-完備でないとすると，$S$ の互いに交わらない零集合の族 $\Set{X_\alpha | \alpha < \gamma}\,(\gamma < \kappa)$ で，$X = \bigcup \Set{X_\alpha | \alpha < \gamma}$ が正の測度を持つような物が存在する．そこで，
+ $f(x) = \alpha \Leftrightarrow x \in X_\alpha$
+ により $X$ から $\gamma$ への全射 $f$ を定める．この時 $\nu(Z) = \mu(f^{-1}[Z])/\mu(X)$ により $\gamma$ 上の測度 $\nu$ を定義すれば，これは $\sigma$-完備で非自明である．$\gamma < \kappa$ であるので，これは $\kappa$ の最小性に反する．\qed
+\end{proof}
+
+ウルトラフィルターの場合と同様，$\mu$ が $\kappa$-加法的なら，$I_\mu$ は $\kappa$-完備になる．逆も同様である：
+
+\begin{lemma}
+ $I_\mu:S$ 上の測度 $\mu$ の零集合イデアル
+ 
+ $I_\mu$ が$\kappa$-完備 $ \Rightarrow \mu$ は $\kappa$-加法的．
+\end{lemma}
+\begin{proof}[証明の概略]
+ $I_\mu$ は $\sigma$-飽和なので，$\gamma < \kappa$ のとき $X_\alpha \subseteq S \, (\alpha < \gamma)$ が互いに交わらないなら，その中で正の測度を持つものは高々可算個しかない．そこで $X_\alpha$ を正の測度を持つものと零集合に分ければ，$\mu(\bigcup_{\alpha < \gamma} X_\alpha) = \sum_{\alpha < \gamma} \mu(X_\alpha)$は直ちに従う．\qed
+\end{proof}
+
+\begin{corollary}\label{cor:least-nontrivial-additivity}
+ $\kappa$ を非自明な測度 $\mu$ を持つ最小の基数とする．このとき，$\mu$ は $\kappa$-加法的である．
+\end{corollary}
+
+\begin{definition}
+ $\kappa > \omega$ が{\bfseries 実数値可測基数} $\defs \kappa$ 上の非自明な $\kappa$-加法的測度が存在．
+\end{definition}
+
+定義より可測基数は実数値可測基数である．また，非自明な測度を持つ最小の基数は実数値可測である．非自明性と$\kappa$-加法性より濃度 $\kappa$ 未満の集合は零集合となるので，$\kappa$ は正則である．更に，実は $\kappa$ は弱到達不能となっている．
+
+これを示す前に，可測基数でない実数値可測基数が存在すれば，それは $2^\omega$ 以下であることを示そう．
+
+\begin{lemma}
+ \label{Lem:atomless-nontrivial}
+ アトムを持たない非自明な測度が存在するなら，ある $\kappa \leq 2^\omega$ 上の非自明な測度でアトムを持たない物が存在する．
+\end{lemma}
+\begin{proof}[証明の概略]
+ $S = \coprod \Set{ Z_\alpha | \alpha < \kappa} \, (\kappa < 2^\omega)$ かつ $\mu(Z_\alpha) = 0$ となる分割を取り，全射 $f(x) = \alpha \Leftrightarrow x \in Z_\alpha \, (\alpha < \kappa)$ を定める． $\nu(Z) = \mu(f^{-1}[Z])$ により $\kappa$ 上に非自明な測度が定まる．また，$\nu$ がアトム $A$ を持つとすると，$\kappa$ 上の非単項 $\sigma$-完備ウルトラフィルターが存在する．そのようなウルトラフィルターが存在する最小の基数 を $\lambda$ とすると， $\lambda \leq 2^\omega$ である．補題 $2$ より $\lambda$ は到達不能基数となるが，到達不能基数は $2^\omega$ 以下ではありえず，矛盾．
+
+ このような分割を得るには，$S$ から始めて次々と二つの測度正の集合に分割していく木を作ればよい．そのような木の高さは高々 $\omega_1$ であり，分岐の本数は高々 $2^\omega$ となる事がわかる．各分岐ごとにその共通部分を取った物が，上で求める $Z_\alpha$ となる \qed
+\end{proof}
+
+上の証明より，$\mu$ がアトムを持たないならば，$S$ を $2^{\aleph_0}$ 個の零集合に分割出来る．よって，$\mu$ は $(2^{\aleph_0})^+$-加法的ではない．よって，次の系を得る：
+
+\begin{corollary}
+ $\kappa$ が実数値可測ならば，$\kappa$ は可測基数であるか $\kappa \leq 2^{\aleph_0}$ のどちらか一方が成立する．
+\end{corollary}
+
+次から実数値可測基数の弱到達不能性が従う．
+
+\begin{lemma}
+ $\kappa = \lambda^+$ ならば，$\kappa$ 上の $\kappa$-完備 $\sigma$-飽和イデアルは存在しない．
+\end{lemma}
+
+この補題の証明の為に，{\bfseries Ulam 行列}という物を定義する．
+
+\begin{definition}[Ulam 行列]
+ 無限基数 $\kappa$ について，次を満たす $\Braket{A_{\alpha, \beta} \subseteq \kappa^+ | \alpha < \kappa^+, \beta < \kappa }$ を {\bfseries $\kappa$-Ulam 行列} と呼ぶ：
+ \begin{enumerate}[label=(\roman*)]
+ \item 任意の $\gamma < \kappa$ について，$\alpha \neq \beta \Rightarrow A_{\alpha,\gamma} \cap A_{\beta, \gamma} = \emptyset$
+ \item 任意の $\alpha < \kappa^+$ に対し，$\left|\kappa^+ \setminus \bigcup\Set{A_{\alpha, \beta} | \beta < \kappa}\right| < \kappa^+$
+ \end{enumerate}
+\end{definition}
+
+即ち，Ulam 行列とは，$\kappa^+$ の部分集合を成分にもつ $\kappa^+$-行 $\kappa$-列の行列であり，
+\begin{enumerate}[label=(\roman*)]
+ \item 各列の成分が互いに交わらず，
+ \item 行ごとに和を取れば，高々 $\kappa$ 個を除いて $\kappa^+$ の元を全て含んでいる
+\end{enumerate}
+ようなもののことである．任意の基数 $\kappa$ に対し，$\kappa$-Ulam 行列は常に存在する事が証明出来る：
+\begin{lemma}\label{lem:Ulam-matrix-exists}
+ Ulam 行列は存在する．
+\end{lemma}
+\begin{proof}
+ 各 $\xi < \kappa^+$ に対し，$\kappa$ 上の函数 $f_\xi$ を，$\xi \subseteq \Rng(f_\xi)$ となっているように取る（$\xi < \kappa^+$ なら $\xi \leq \kappa$ なので，このような函数は常に取れる）．$\alpha < \kappa^+, \beta < \kappa$ に対し，$A_{\alpha, \beta}$ を，
+ \[
+  A_{\alpha, \beta} = \Set{\xi < \kappa^+ | f_\xi(\beta) = \alpha }
+ \]
+ により定める．各 $\beta < \kappa, \xi < \kappa^+$ に対し，$f_\xi$ が函数であることから，$\xi \in A_{\alpha, \beta}$ となるような $\alpha$ は唯一つだけ存在する．よって条件の (i) は成立することがわかる．
+
+ $\xi \subseteq \Rng(f_\xi)$ より，任意の $\alpha < \kappa^+, \xi > \alpha$ に対し，$f_\xi(\beta) = \alpha$ となるような $\beta < \kappa$ が少なくとも一つ存在するので，$\xi > \alpha$ ならば $\xi \in A_{\alpha, \beta}$ となる．よって，
+ \begin{gather*}
+  \kappa^+ \setminus \alpha \subseteq \bigcup\Set{ A_{\alpha, \beta} | \beta < \kappa}\\
+  \therefore \kappa^+ \setminus \Set{ A_{\alpha, \beta} | \beta < \kappa}
+  \subseteq \kappa^+ \cap \alpha = \alpha < \kappa^+
+ \end{gather*}
+ よって，(ii) も成立する．\qed
+\end{proof}
+
+以上を踏まえて，補題 $6$ が証明出来る．
+\begin{proof}[補題 6 の証明]
+ $\kappa$-完備な$\sigma$-飽和イデアル $I$ が存在したとする．Ulam 行列の条件 (ii) より，$|\kappa \setminus \bigcup_{\beta < \lambda} A_{\alpha, \beta}| < \kappa$ なので，$I$ の $\sigma$-飽和性の (i) および $\kappa$-完備性より $\kappa \setminus \bigcup_{\beta < \lambda} A_{\alpha, \beta} \in I$ となる．よって，各 $\alpha < \lambda^+$ に対し $A_{\alpha, \beta} \notin I$ となるような$\beta_\alpha$ が存在する．$\kappa = \lambda^+$ の正則性より $\lambda^+$ の濃度 $\lambda^+$ の部分集合で，対応する $\beta_\alpha$ がみな同じに取れるような物が取れる．これらは皆 $I$ に属さず互いに交わらない集合となるが，$I$ は $\sigma$-飽和であったので高々可算個でなくてはならず矛盾． \qed
+\end{proof}
+
+$\kappa$ が実数値可測基数なら$\kappa$-完備$\sigma$-飽和イデアルを持つので，$\kappa$ は後続基数ではない．よって実数値可測基数は極限基数であり，正則基数であることは既に示していたので，次の系を得る．
+
+\begin{corollary}
+ 実数値可測基数は弱到達不能である．
+\end{corollary}
+
+よって，定理 $1$ で $\mu$ がアトムを持たないなら，補題 $5$ より $\kappa \leq 2^\omega$ でアトムを持たない非自明な測度を持つものが取れる．よって，最小の実数値可測基数は $\kappa$ 以下であるので，(ii) が成立する．
+
+\section{Lebesgue 測度の拡張と連続体仮説}
+今までの議論と Lebesgue 測度の関係を述べたのが次の定理である：
+
+\begin{theorem}[Ulam]
+ アトムを持たない非自明な測度が存在するなら，Lebesgue 測度の拡張となるような $[0, 1]$ 上の測度が存在する．
+\end{theorem}
+\begin{proof}
+ 補題 $5$ より $\kappa \leq 2^\omega$ 上のアトムを持たない非自明な測度 $\mu$が存在し，特にその最小の物を取れば，補題 $1$ より $\mu$ は $\kappa$-加法的であるとしてよい．
+ 
+ アトムなしなので $0, 1$ の有限列 $s \in \power{<\omega}{2}$ に対し，
+ \begin{gather*}
+  X_\emptyset = \kappa \qquad
+  X_s = X_{s \concat 0} \sqcup X_{s \concat 1} \\ \mu(X_{s \concat 0}) = \mu(X_{s \concat 1}) = \frac{1}{2} \mu(X_s)
+ \end{gather*}
+ となるように $X_s$ を定められる（但し $s \concat t$ は $s$ と $t$ の連接）．これにより $f \in \power{\omega}{2}$ に対し $X_f = \bigcap \Set{X_{f \restr n} | n < \omega}$ と定義する．そこで，
+ \[
+  \nu_1(Z) = \mu\left( \bigcup\Set{X_f | f \in Z}\right)
+ \]
+ により$2^\omega$ 上の測度を定める．すると，$\mu$ の$\sigma$-加法性から $\nu_1(\{f\}) = \mu(\cap_n X_{f\restr n}) = 0$となるので，$\nu_1$ は非自明でアトムを持たない測度となる．
+
+ そこで，
+ $F(f) = \sum_{n = 0}^{\infty} {f(n)}/{2^{n+1}}$
+ により定まる全射 $F: \power{\omega}{2} \rightarrow [0, 1]$ を考える．これにより，$[0, 1]$ 上に$\nu(X) = \nu_1(F^{-1}[X])$
+ により測度を入れる．これも $\nu_1$ の性質から非自明でアトムを持たない．後は，Lebesgue 可測集合上でこの $\nu$ が Lebesgue 測度 $m_L$ と一致することを示せば良い．
+
+ まず，Lebesgue 測度に関する Borel 集合族は $[0, 1]$ は $A^\ell_n = [\frac{\ell}{2^n}, \frac{\ell+1}{2^n}]$ の形の区間全体から生成されるので，$\nu$ と $m_L$ の値がこの上で一致すればそれぞれの測度の $\sigma$-加法性より両者は任意の Borel 集合上で一致することになる．
+
+今，定義より，$X_f = \bigcup \Set{ X_{s \concat f} | f \in \power{\omega}{2}}$ である．$n < \omega, 0 \leq \ell \leq 2^n$ を固定する．$\ell$ は $n$ 桁の二進表現を持つのでそれを $s$ とすると，
+ \[
+  f^\ell_n = s \concat (0, 0, \dots), \quad f^{\ell+1}_n = s \concat (1, 1, \dots)
+ \]
+ は $F(f^\ell_n) = \frac{\ell}{2^n}, F(f^{\ell+1}_n) = \frac{\ell + 1}{2^n}$ を満たす．すると，$F^{-1}[A^\ell_n] \supseteq \bigcup \Set{ X_{s\concat f} | f \in \power{\omega}{2}} = X_s$ である．二進展開は高々二通りあるが，その違いが現れるのは端点のみで有限の差として無視出来る．よって，
+ \[
+  \nu(A^\ell_n) = \nu_1(X_s) = \frac{1}{2^n} = m_L(A^\ell_n) .
+ \]
+
+ 以上より，$\nu $ と $m_L$ のボレル集合族 $\mathcal{B}[[0,1]]$ 上での値は一致する．
+ また，$N$ を $m_L$-零集合とすると，$m_L(M) = 0$ となるような $N \subseteq M \in \mathcal{B}[[0,1]]$ が存在する．よって，$m_L(N) = m_L(M) = \nu(M) = 0$ となるので，$m_L$-零集合は $\nu$-零集合である．
+
+ 任意の Lebesgue 可測集合 $X$ は $X = E \cup N, E \in \mathcal{B}[[0,1]], m_L(N) = 0$ の形に分解出来るのであった．特に，$M = E \cap N$ とおけば，$X = (E \setminus M) \cup N$ の形に書ける．$\nu$ と $m_L$ は Borel 集合上や零集合上で一致するので，任意の Lebesgue 可測集合上で $\nu$ と $m_L$ の値は一致する．よって $\nu$ は Lebesgue 測度の$[0,1]$ 上への拡張となる．\qed
+\end{proof}
+
+Lebesgue 測度の拡張の存在は，非可測な実数値可測基数の存在と同値である．非可測な実数値可測基数 $\kappa$ が存在すれば，系 $2$ より $\kappa \leq 2^{\aleph_0}$ となり，上の証明から Lebesgue 測度の $[0, 1]$ 上への拡張が存在することになる．逆に，$[0,1]$ 上の Lebesgue 測度の拡張があれば，それは $2^\omega$ 上のアトムを持たない非自明な測度となっている．よって，そのような測度を持つ最小の基数 $\kappa$ は $2^\omega$ 以下であり，補題 $3$ よりその測度は $\kappa$-完備となるので，$\kappa$ は実数値可測である．特に，$\kappa \leq 2^\omega$ であるので，$\kappa$ は可測基数ではない．この事から，Lebesgue 測度の $[0, 1]$ 上への拡張の存在は，ZFC から証明出来ないことがわかる．
+
+ところで，Banach と Kuratowski は連続体仮説を仮定すると，$[0, 1]$ 上への拡張は取れない事を示している．
+冒頭でも述べたように連続体仮説は ZFC から独立であり，$[0,1]$上の Lebesgue 測度の存在も ZFC から存在を証明することは出来ない命題なので，これは矛盾ではない．ZFC に新たな公理として付け加えようと思ったときに，実数値可測基数の存在と連続体仮説を同時に仮定する事は出来ないと云う事である．
+
+Banach-Kuratowski の結果を，より一般化して証明しよう．まず，$\omega$ から $\omega$ への函数全体 $\power{\omega}{\omega}$ に，次のようにして順序を定める：
+\[
+ f <^* g \defs (\exists n < \omega)(\forall m \geq n)\, f(m) < g(m)
+\]
+つまり，有限個を除いて $g$ の取る値が $f$ より常に大きいときに $f <^* g$ と定めるのである．この順序は全順序ではなく，また反対称律（$f \leq^* g \wedge g \leq^* f \longrightarrow f = g$）も満たさないので，擬順序であることに注意しよう．
+この順序を使って，$\kappa$-scale の概念を定義する．
+\begin{definition}[scale]
+ $\power{\omega}{\omega}$ の列 $\Braket{f_\alpha | \alpha < \kappa}$ は，次の二つの条件を満たすとき {\bfseries $\kappa$-scale} であると云う：
+ \begin{itemize}
+  \item 狭義増加列である：$\alpha < \beta \Rightarrow f_\alpha <^* f_\beta$
+  \item $\power{\omega}{\omega}$ で共終である：$(\forall g \in \power{\omega}{\omega})(\exists \alpha < \kappa)\, g <^* f_\alpha$
+ \end{itemize}
+\end{definition}
+$\kappa$-scale は常に存在するとは限らない．しかし，CH の下では $\aleph_1 = 2^{\aleph_0}$-scale が存在する：
+\begin{lemma}\label{lem:scale-exists-under-CH}
+ 連続体仮説の下で，$2^{\aleph_0}$-scale が存在する．
+\end{lemma}
+\begin{proof}
+ $\Set{g_\alpha | \alpha < \omega_1}$ を $\power{\omega}{\omega}$ の列挙とする．これを用いて，$f_\alpha <^* f_\beta\, (\alpha < \beta < \omega_1)$ を $g_\alpha <^* f_\beta\,(\alpha < \beta)$ となるように定めたい．
+
+ $f_0(n) = n$ とする．後続順序数のときは，$f_{\alpha + 1}(n) = \max\{g_\alpha(n), f_\alpha(n)\} + 1$ とすれば，上の条件を満たすように取れる．
+
+ $\alpha$ が極限順序数 $\gamma$ の時を考える．特に，$\gamma < \omega_1$ なので，$\cf(\gamma) = \omega$ であるから，狭義単調増加な共終写像 $h: \omega \rightarrow \gamma$ が取れる．そこで，
+ \[
+  f_{\gamma}(n) = f_{h(n)}(n)
+ \]
+ と置く．$h$ の共終性より，$\beta < \gamma$ に対し，$\beta < h(n) < \gamma$ となるような $n < \omega$ が取れ，帰納法の仮定より $f_\beta <^* f_{h(n)}$ となる．すると，ある $\ell < \omega$ があって，$k \geq \ell \longrightarrow f_\beta(k) <^* f_{h(n)}(k)$ となる．そこで，$m \geq \max\{\ell, n\}$ とすると，
+ \[
+  f_\beta(m) < f_{h(n)}(m) \leq f_{h(m)}(m) = f_\gamma(m)
+ \]
+ よって $f_\beta <^* f_\gamma$ となる．また，帰納法の仮定から $g_\beta <^* f_{\beta + 1} <^* f_{\gamma}$ となるので二番目の条件もOK．
+
+ 取り方より，こうして作られた $\Set{f_\alpha | \alpha < \omega_1}$ は $2^{\aleph_0}$-scale となる．\qed
+\end{proof}
+
+次の命題が，Banach-Kuratowski の一般化になっている：
+
+\begin{lemma}
+ $\kappa$-scale が存在するなら，$\kappa$ は実数値可測基数ではない．
+\end{lemma}
+\begin{proof}
+ $\Braket{f_\alpha | \alpha < \kappa}$ を $\kappa$-sclae とする．$\kappa$ の部分集合を成分とする $(\aleph_0, \aleph_0)$-行列を次で定義する：
+ \[
+  A_{n, k} = \Set{ \alpha < \kappa | f_\alpha(n) = k}
+ \]
+ 定義より，各 $n < \omega$ に対し $\bigcup \Set{A_{n, k} | k < \omega} = \kappa$ が成立している．$\mu$ を $\kappa$ 上の非自明な $\kappa$-加法的測度とする．各 $n$ に対し，
+ \[
+  \mu(A_{n, 0} \cup \dots \cup A_{n, k_n}) \geq 1 - \frac{1}{2^{n+1}}
+ \]
+ となるように $k_n < \omega$ を定め，$B_n = A_{n, 0} \cup \dots \cup A_{n, k_n}$ とおく．ここで $B = \bigcap_{n < \omega} B_n$ とおけば，明らかに $\mu(B) \geq \frac{1}{2}$ である．
+
+ そこで，$g: \omega \rightarrow \omega$ を $g(n) = k_n$ により定める．$B$ および $A_{n, k}$ の定義より，任意の $\alpha \in B$ に対し $f_\alpha \leq^* g$ が成立する．ここで，$B$ の測度は正なので $|B| = \kappa$ であるから，共終的に多くの $\alpha < \kappa$ に対し $f_\alpha \leq^* g$ が成立することになる．しかし，このことは $\Braket{f_\alpha | \alpha < \kappa}$ が $\kappa$-scale であることに反する．よって $\kappa$ 上の非自明な $\kappa$-完備測度は存在しないので，$\kappa$ は実数値可測基数ではない．\qed
+\end{proof}
+
+上の二つを組み合わせて，直ちに次の結論を得る．
+\begin{theorem}[Banach-Kuratowski]
+ CH の下で，$2^{\aleph_0}$ は実数値可測ではない．特に Lebesgue 測度の $[0,1]$ 上への拡張は存在しない．
+\end{theorem}
+ここで，CH の下では $\aleph_1 = 2^{\aleph_0}$ であり，$\aleph_1$ 上に Lebesgue 測度の拡張が存在すれば，$\aleph_1$ は必然的に非自明な測度を持つ最小の基数となり，系 $1$ より実数値可測基数となることに注意しよう．
+
+以上の結果を連続体仮説に否定的な命題と見るのか，Measure Problem に否定的な命題と見るのかは個人によるだろう．しかし，近年の集合論研究によれば，自然な仮定の下で $2^{\aleph_0} = \aleph_2$ となるという結果が幾つか知られており，その意味で（ZFC からは真偽を決定出来ないが）連続体仮説は偽であろうと考える研究者もいる．そうした観点からは，この結果は連続体仮説に否定的な印象を与えるものであると云える．
+
+\section*{参考文献}
+
+\begin{enumerate}
+ \item 
+ Thomas Jech.
+ \href{http://www.amazon.co.jp/dp/3642078990/}{\em Set Theory: The Third Millennium Edition, revised and expanded}.
+ \newblock Springer Monographs in Mathematics. Springer, 2002.
+       
+ \item 
+ Akihiro Kanamori.
+ \href{http://www.amazon.co.jp/dp/3540003843/}{\em The Higher Infinite: Large Cardinals in Set Theory from Their
+  Beginnings}.
+  Springer Monographs in Mathematics. Springer, 2009.
+
+ \item 
+ Kenneth Kunen.
+  \href{http://www.amazon.co.jp/dp/1848900503/}{\em Set Theory}, Vol.~34 of {\em Mathematical Logic and
+  Foundations}.
+  College Publications, 2011.
+
+ \item 
+ 竹内外史.
+  \href{http://www.amazon.co.jp/dp/4062573326/}{\em 新装版 集合とはなにか}.
+  講談社ブルーバックス, 2001.
+\end{enumerate}
+\end{document}

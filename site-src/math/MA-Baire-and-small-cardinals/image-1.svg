@@ -1,0 +1,11 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="2.046111cm" height="2.046111cm" viewBox="0 0 58 58">
+<clipPath id="cp0">
+<path transform="matrix(1,0,0,-1,-72,778)" d="M 0 0 L 612 0 L 612 792 L 0 792 Z "/>
+</clipPath>
+<g clip-path="url(#cp0)">
+<path transform="matrix(1,0,0,-1,28.545998,29.45398)" stroke-width=".3985" stroke-linecap="butt" stroke-dasharray="2.98883,2.98883" stroke-miterlimit="10" stroke-linejoin="miter" fill="none" stroke="rgb(255,0,0)" d="M 28.3468 0 C 28.3468 15.6557 15.6557 28.3468 0 28.3468 C -15.6557 28.3468 -28.3468 15.6557 -28.3468 0 C -28.3468 -15.6557 -15.6557 -28.3468 0 -28.3468 C 15.6557 -28.3468 28.3468 -15.6557 28.3468 0 Z M 0 0 "/>
+<path transform="matrix(1,0,0,-1,28.545998,29.45398)" stroke-width=".3985" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="miter" fill="none" stroke="rgb(0,0,255)" d="M 26.95966 8.75974 L -26.95966 8.75974 L 16.66179 -22.93315 L 0 28.3468 L -16.66179 -22.93315 L 26.95966 8.75974 Z "/>
+</g>
+</svg>

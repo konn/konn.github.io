@@ -1,0 +1,52 @@
+https://keybase.io/konn
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://konn-san.com
+  * I am konn (https://keybase.io/konn) on keybase.
+  * I have a public key ASDRb1LhMSoubR5WEev0eXG9btLUDtwHZ7jKGxOBB-XMawo
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "010165f8d84f64c9a41821d81ecfc21fb304b2529de546655e6542655dd77fa2707a0a",
+      "host": "keybase.io",
+      "kid": "0120d16f52e1312a2e6d1e5611ebf47971bd6ed2d40edc0767b8ca1b138107e5cc6b0a",
+      "uid": "840fca6c1f136c83d0efb2c4fdab2c00",
+      "username": "konn"
+    },
+    "merkle_root": {
+      "ctime": 1510220623,
+      "hash": "37fd86bb94c99a2cddf979b7732b843e228769bb1ced52b9f7f00f634520560e788a9b8e060c11870b3d14b8b987aaf20309c49fc354d5e5d73d5c4f6d2ff502",
+      "hash_meta": "a8811bd3ee1bc479b1f8b7f10db753786d5ae290595fdb36cbcd7d542747d4c5",
+      "seqno": 1684545
+    },
+    "service": {
+      "hostname": "konn-san.com",
+      "protocol": "http:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "1.0.34"
+  },
+  "ctime": 1510220658,
+  "expire_in": 504576000,
+  "prev": "4670ae14d702333936667be2a47a30e4538706bdb4af539eae4e80cf3b40eb9c",
+  "seqno": 22,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEg0W9S4TEqLm0eVhHr9HlxvW7S1A7cB2e4yhsTgQflzGsKp3BheWxvYWTFA0B7ImJvZHkiOnsia2V5Ijp7ImVsZGVzdF9raWQiOiIwMTAxNjVmOGQ4NGY2NGM5YTQxODIxZDgxZWNmYzIxZmIzMDRiMjUyOWRlNTQ2NjU1ZTY1NDI2NTVkZDc3ZmEyNzA3YTBhIiwiaG9zdCI6ImtleWJhc2UuaW8iLCJraWQiOiIwMTIwZDE2ZjUyZTEzMTJhMmU2ZDFlNTYxMWViZjQ3OTcxYmQ2ZWQyZDQwZWRjMDc2N2I4Y2ExYjEzODEwN2U1Y2M2YjBhIiwidWlkIjoiODQwZmNhNmMxZjEzNmM4M2QwZWZiMmM0ZmRhYjJjMDAiLCJ1c2VybmFtZSI6Imtvbm4ifSwibWVya2xlX3Jvb3QiOnsiY3RpbWUiOjE1MTAyMjA2MjMsImhhc2giOiIzN2ZkODZiYjk0Yzk5YTJjZGRmOTc5Yjc3MzJiODQzZTIyODc2OWJiMWNlZDUyYjlmN2YwMGY2MzQ1MjA1NjBlNzg4YTliOGUwNjBjMTE4NzBiM2QxNGI4Yjk4N2FhZjIwMzA5YzQ5ZmMzNTRkNWU1ZDczZDVjNGY2ZDJmZjUwMiIsImhhc2hfbWV0YSI6ImE4ODExYmQzZWUxYmM0NzliMWY4YjdmMTBkYjc1Mzc4NmQ1YWUyOTA1OTVmZGIzNmNiY2Q3ZDU0Mjc0N2Q0YzUiLCJzZXFubyI6MTY4NDU0NX0sInNlcnZpY2UiOnsiaG9zdG5hbWUiOiJrb25uLXNhbi5jb20iLCJwcm90b2NvbCI6Imh0dHA6In0sInR5cGUiOiJ3ZWJfc2VydmljZV9iaW5kaW5nIiwidmVyc2lvbiI6MX0sImNsaWVudCI6eyJuYW1lIjoia2V5YmFzZS5pbyBnbyBjbGllbnQiLCJ2ZXJzaW9uIjoiMS4wLjM0In0sImN0aW1lIjoxNTEwMjIwNjU4LCJleHBpcmVfaW4iOjUwNDU3NjAwMCwicHJldiI6IjQ2NzBhZTE0ZDcwMjMzMzkzNjY2N2JlMmE0N2EzMGU0NTM4NzA2YmRiNGFmNTM5ZWFlNGU4MGNmM2I0MGViOWMiLCJzZXFubyI6MjIsInRhZyI6InNpZ25hdHVyZSJ9o3NpZ8RA4jpLzceUmb1pDbhC/+sIzg/NmCEtla/sLmkD7Xibz1QT6ZDI+YKX5/qorTYQUwh0DSVrUmuPTjgLofoI7t8OAKhzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIEaDyMSaszfLxP/xOJmJvYyMsz5FGjnwCd2Wt7OBzPQNo3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/konn

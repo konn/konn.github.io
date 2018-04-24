@@ -1,0 +1,67 @@
+name: konn-san-dot-com
+version: '0.1.0.0'
+synopsis: My homepage
+category: Web
+author: Hiromi ISHII
+maintainer: konn.jinro_at_gmail.com
+license: BSD3
+homepage: https://konn-san.com
+
+other-extensions:
+- DeriveDataTypeable
+- TemplateHaskell
+
+ghc-options:
+- -O2
+- -threaded
+- -Wall
+
+dependencies:
+- HaTeX
+- aeson
+- base >=4 && <5
+- binary
+- blaze-builder
+- blaze-html
+- blaze-markup
+- bytestring
+- case-insensitive
+- containers
+- contravariant
+- cryptohash-sha256
+- data-default
+- directory
+- filepath
+- http-types
+- latex-crossref
+- lens
+- megaparsec
+- mtl
+- network-uri
+- pandoc
+- pandoc-citeproc
+- pandoc-types
+- parsec
+- regex-applicative
+- sake
+- scientific
+- shake
+- shakespeare
+- skylighting
+- split
+- stache
+- store
+- tagsoup
+- template-haskell
+- texmath
+- text
+- text-icu
+- time
+- unordered-containers
+- vector
+- yaml
+
+executables:
+  site:
+    main: site.hs
+    source-dirs: app

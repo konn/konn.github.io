@@ -1,0 +1,433 @@
+---
+title: 集合論の地質学1：概観と基礎モデルの定義可能性
+author: 石井大海
+description: |
+  集合論の宇宙$V$は何らかの内部モデルの強制拡大になっているか？そもそもそういった基礎モデルは幾つあるのか？——こうした問題を考えるのが**集合論の地質学**（*Set-theoretic geology*）です．本稿では，その入門的な部分の解説を行います．  
+  [次回はこちら](https://konn-san.com/math/geology-mantle-and-ddg.html)．
+latexmk: -lualatex
+tag: Boole値モデル,無矛盾性証明,強制法,公理的集合論,集合論,生成多元宇宙,集合論の地質学
+date: 2017/11/09 20:05:31 JST
+macros:
+  M: '\mathbb{M}'
+---
+\documentclass[a4j,leqno]{ltjsarticle}
+\usepackage[hiragino-pron]{luatexja-preset}
+\usepackage{mystyle}
+\usepackage{luatexja-otf}
+\usepackage{dsfont}
+\DeclareMathAlphabet{\mathrsfs}{U}{rsfso}{m}{n}
+\renewcommand{\emph}[1]{\textgt{\textsf{#1}}}
+\renewcommand{\mathscr}[1]{\mathup{\mathrsfs{#1}}}
+\usepackage{fixme}
+\usepackage[super]{nth}
+\usepackage[bookmarksnumbered,pdfproducer={LuaLaTeX},%
+            luatex,psdextra,pdfusetitle,pdfencoding=auto]{hyperref}
+\usepackage[backend=biber, style=math-numeric]{biblatex}
+\addbibresource{myreference.bib}
+\newcommand{\GA}{\mathreg{GA}}
+\newcommand{\DDG}{\mathreg{DDG}}
+\newcommand{\sDDG}{\mathreg{sDDG}}
+\newcommand{\M}{\mathbb{M}}
+\newcommand{\cc}{c.c.\ }
+\newcommand{\gM}{g\mathbb{M}}
+\theoremstyle{nonumberplain}
+\theoremsymbol{}
+\title{集合論の地質学1：概観と基礎モデルの定義可能性}
+\author{石井大海}
+\usepackage{amssymb}	% required for `\mathbb' (yatex added)
+\usepackage{amsmath}	% required for `\align*' (yatex added)
+\begin{document}
+\maketitle
+\begin{abstract}
+ \emph{強制法}は集合論において様々な命題の無矛盾性を示すのに用いられる強力なツールです．
+ 近年では強制法によってどんな宇宙を創り出せるのか？という\emph{集合論的多宇宙}（\emph{set-theoretic multiverse}）や，逆に与えられた宇宙が，何らかの内部モデルの強制拡大になっているかを調べる\emph{集合論の地質学}(\emph{set-theoretic geology})の研究が盛んになってきています．
+
+ このシリーズでは，後者の分野について基本定理を二つ紹介します．一つはLaver, Woodinらによって独立に証明され，Hamkinsら\cite{Fuchs:2014fj}が強化した\emph{基礎モデルの定義可能性定理}であり，もう一つはつい最近薄葉さん~\cite{Usuba:2017fp}によって証明された\emph{基礎モデルの下方有向性原理}です．
+
+ シリーズ一覧はこちら：
+  \begin{enumerate}[label={\arabic*.}]
+  \item 概観と基礎モデルの定義可能性（今回）
+  \item \href{https://konn-san.com/math/geology-mantle-and-ddg.html}{マントルの構造と下方有向性原理}
+  \item \href{https://konn-san.com/math/geology-bukovsky-theorem.html}{Bukovsk\'{y}の定理──強制拡大の特徴付け}
+  \item \href{https://konn-san.com/math/geology-proof-of-ddg.html}{下方有向性原理の証明}
+ \end{enumerate} 
+\end{abstract}
+
+\section{概観・集合論の地質学}
+Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}で提案された\emph{集合論の地質学}（\emph{set-theoretic geology}）は，与えられた集合論の宇宙$V$がどんな内部モデルの強制拡大として得られるかを研究する分野である．
+標語的ないいかたをすれば，
+\begin{quote}
+ 集合論の宇宙$V$の基礎モデル全体は，強制拡大についてどんな順序構造を持ち得るか？
+\end{quote}
+を研究するのが集合論の地質学である．
+強制法の基礎については後ほど軽く復習するが，一応「基礎モデル」の定義を与えておく：
+\begin{definition}
+ $V$を$\ZF$の推移的モデルとする．
+ \begin{itemize}
+  \item $M \subseteq V$が$V$の\emph{内部モデル}$\defs$ $M$は$V$の順序数を全て含む推移的モデルで$M \models \ZF$.
+  \item $M \subseteq V$が$V$の\emph{基礎モデル}$\defs$ $M$は$V$の内部モデルで，擬順序$\mathbb{P} \in M$と$(M, \mathbb{P})$-生成フィルター$G \in V$が存在して$V = M[G]$となる．
+        このとき$V = M[G]$と書き，$V$を\emph{$M$の$G$による強制拡大}と呼ぶ．
+ \end{itemize}
+\end{definition}
+直感的にいえば，$M$が$V$の基礎モデルである，あるいは$V$が$M$の強制拡大である，といのは，$V$が$\mathbb{P} \in M$が近似している$M$上の超越的なオブジェクト$G$を持ち$V$を含む最小の推移的モデルになっている事を意味する．
+無矛盾性証明においては$V$を外側に拡張していく事を考えるが，集合論の地質学においては，「この宇宙はどんな基礎モデルの強制拡大になっているのか？」という問題から$V$そのもの性質を探っていくことになる．
+
+この問題を探るに当たり，最初に考えなくてはならないのは，\emph{基礎モデルは定義可能か？}という事である．
+実際，集合論の地質学の出発点となったのは，LaverとWoodinによって独立に示された次の定理である：
+\begin{theorem}[Laver and Woodin, independently]
+ $V$を$\ZFC$の推移的モデル，$\mathbb{P} \in V$を擬順序，$G$を$(V, \mathbb{P})$-生成フィルターとする．
+ この時，$V[G]$において$V$に属するパラメータを使って$V$は一階の論理式で定義可能．
+ 即ち，次を満たす論理式$\varphi(x, y)$と$r \in V$が存在：
+ \[
+  V[G] \models V = \Set{x | \varphi(x, r)}.
+ \]
+\end{theorem}
+この結果は単に一つの強制拡大について述べているだけだが，後にFuchs--Hamkins--Reitzらによって全ての基礎モデルが一様に定義出来ることが明らかにされた：
+\begin{theorem}[基礎モデルの一様定義可能性, Fuchs--Hamkins--Reitz~\cite{Fuchs:2014fj}]
+ $V$を$\ZFC$のモデルとする．
+ 次を満たす一階論理式$\varphi(x, v)$が存在する：
+ \begin{enumerate}
+  \item 任意の$r \in V$の対し，$W_r \defeq \Set{x \in V | \varphi(x, r)}$は$\ZFC$を満たす$V$の基礎モデルで$r \in W_r$．
+  \item 任意の$\ZFC$を満たす基礎モデル$W \subseteq V$に対し，$r \in W$で$W = W_r$となる物が存在．
+  \item ``$V$は$\mathbb{P} \in W_r$なる$(\mathbb{P}, W_r)$-生成フィルター$G$による強制拡大$W_r[G]$である''は$(r, \mathbb{P}, G)$をパラメータとして定義可能．
+  \item $W_r$の定義は下方絶対的：$W_r \subseteq U \subseteq V$なる推移的モデル$U \models \ZFC$に対し，$W_r^U = W_r^V$.
+  \item $W_r$の定義は上方絶対的：$r \in V \subseteq V[G]$に対し，$s \in V$で$W_r = W_s^V = W_s^{V[G]}$となる物が存在．
+ \end{enumerate}
+\end{theorem}
+これによって，「$V$はいくつ基礎モデルを持つか？」といったような問題が考えられるようになる．
+分析上自然に持ち上がる概念を次に定義する：
+\begin{definition}
+ \begin{enumerate}
+  \item $W \subseteq V$が\emph{岩盤}(\emph{bedrock}) $\defs$ $W$は$V$の極小基礎モデル．
+  \item $W \subseteq V$が\emph{堅い岩盤}(\emph{solid bedrock}) $\defs$ $W$は$V$の最小の基礎モデル．
+  \item $V$の基礎モデル全体の共通部分を$V$の\emph{マントル}(\emph{mantle})と呼び$\M$で表す：
+        \[
+         \M \defeq \bigcap_r W_r.
+        \]
+  \item $V$の全ての強制拡大の基礎モデルの共通部分$\gM$を$V$の\emph{生成マントル}(\emph{generic mantle})と呼ぶ：
+        \[
+         x \in \gM \defs \forall \mathbb{P} \in V \: \mathds{1}_{\mathbb{P}} \Vdash\quoted{\check{x} \in \dot{\M}^{V[G]}}.
+        \]
+  \item $V$は\emph{集合個しか基礎モデルを持たない}$\defs$ ある集合$X$があって，任意の$r \in V$に対し$r' \in X$で$W_r = W_{r'}$となるものが存在する．
+  \item $V$は\emph{真クラス個の基礎モデルを持つ}$\defs$ 上が不成立．
+ \end{enumerate}
+\end{definition}
+
+極端な仮説として次の公理を考えることが出来る：
+\begin{definition}[基礎モデル公理, $\GA$]
+ 基礎モデル公理$\GA$は次の主張である：
+ \begin{quote}
+  $V$は真の基礎モデルを持たない．即ち，任意の$r \in V$に対し$W_r = V$．
+ \end{quote}
+ 特に$\GA \iff \mathopen{\text{``}}V$は$V$の（堅い）岩盤'' $\iff V = \M$．
+\end{definition}
+直感的には，基礎モデル公理は，$V$が極端に小さいか極端に大きいかのどちらかであることを意味している．
+例えば，$L$を最小の$\ZF(\mathrm{C})$のモデルとすれば，当然$L \models \GA$ が成り立つ．
+しかし，宇宙の構造は豊かであればあるほどよい，という立場に立てば，$V$は$L$から離れているほどよく，$\GA$はむしろ「$V$は内部モデルから強制法で到達出来ないほど極端に離れている」という事を意図したものだと思える．
+たとえば，$L$の情報をコードした$0^\sharp$という集合の存在を仮定すると，$L[0^\sharp]$は$\GA$を満たすモデルになっている．
+これは直感的には，$0^\sharp$の持つ情報が$L$からの強制拡大では得られないほど超越的なものであることによる．
+
+上記で色々な定義をしたが，幾つか自然と湧き上がってくる疑問がある．
+\begin{problem}
+ マントル$\M$は$\ZF$ないし$\ZFC$のモデルになるか？
+\end{problem}
+\begin{problem}
+ 生成マントル$\gM$とマントル$\M$は一致するか？
+\end{problem}
+\begin{problem}
+ $V$は複数の岩盤を持ち得るか？
+\end{problem}
+こうした問題は，次に掲げる\emph{基礎モデルの下方有向性仮説}$\DDG$および強い有向性仮説から解決出来ることはHamkinsら\cite{Fuchs:2014fj}によって指摘されていた：
+\begin{definition}
+ $V$を$\ZFC$のモデルとする．
+ \begin{enumerate}
+  \item \emph{基礎モデルの下方有向性仮説}（\emph{The Downward Directed Grounds hypothesis}, $\DDG$）は次の主張：
+        \begin{quote}
+         任意の基礎モデル$W, W' \subset V$に対し，$U \subseteq W \cap W'$となる基礎モデル$U \subseteq V$が存在する．
+        \end{quote}
+  \item \emph{強い下方有向性仮説}（strong $\DDG$, $\sDDG$）とは次の主張である：
+        \begin{quote}
+         任意の集合$X$に対し，$\Set{ W_r | r \in X }$の共通の基礎モデルが存在する．
+        \end{quote}
+ \end{enumerate}
+\end{definition}
+\begin{lemma}[FHR \cite{Fuchs:2014fj}, Theorem 22 and 51]\label{lem:DDG-conseq}
+ \begin{enumerate}
+  \item $\DDG$が成り立つなら$\M \models \ZF$.
+        $\sDDG$が成り立つなら$\M \models \ZFC$.
+  \item $\gM$は強制法で不変のクラス．
+  \item $V$の全ての強制拡大で$\DDG$が成り立つなら$\M = \gM$. 
+ \end{enumerate}
+\end{lemma}
+知られている内部モデルは$\DDG$を満たすらしい事はFHRで指摘されていたが，流石に$\ZFC$では証明出来ないだろうと考えられ，反例のモデルの研究がされていた．
+しかし，薄葉\cite{Usuba:2017fp}は強い$\DDG$は$\ZFC$の定理であることを示した：
+\begin{theorem}[下方有向性原理, Usuba 2016 \cite{Usuba:2017fp}]
+ $\ZFC \vdash \sDDG$.
+\end{theorem}
+これが集合論の地質学における二つめの基本定理である．
+この事から，上に掲げた問題は次のようにして解決されることになる：
+\begin{theorem}[Usuba 2016 \cite{Usuba:2017fp}, Corollary 5.5]\label{thm:conseq-of-ddg}
+ \begin{enumerate}
+  \item\label{item:M-zfc-gM=M} $\M \models \ZFC$, $\gM = \M$.
+  \item\label{item:M-invariant} $\M$は強制法で不変のクラス．
+  \item\label{item:bedrocks} $V$は高々一つの岩盤しか持たない．
+        より詳しく，次は全て同値になる：
+  \begin{enumerate}
+   \item\label{item:gen-set-many-grounds} $V$の任意の強制拡大$V[G]$に対し，$V[G]$の基礎モデルは「集合個」しかない．
+   \item\label{item:set-many-grounds} $V$は集合個しか基礎モデルを持たない．
+   \item\label{item:gen-M-solid-ground} $\M$は$V$の任意の強制拡大の堅い岩盤．
+   \item\label{item:M-solid-ground} $\M$は$V$の堅い岩盤．
+   \item\label{item:M-is-ground} $\M$は$V$の基礎モデル．
+   \item\label{item:V-has-bedrock} $V$は岩盤を持つ．
+  \end{enumerate}
+ \end{enumerate}
+\end{theorem}
+次の補題が必要になる：
+\begin{fact}\label{lem:interm-ext}
+ $G$を$V$上の$\mathbb{B}$-生成フィルター，$W \models \ZFC$を推移的モデル，$V \subseteq W \subseteq V[G]$とする．
+ このとき$\mathbb{B}$の完備部分Boole代数$\mathbb{B}_0$で$W = V[G \cap \mathbb{B}_0]$となる物が存在し，更に$V[G]$は$W$の生成拡大となる．
+\end{fact}
+
+\begin{proof}
+ \ref{item:M-zfc-gM=M}, \ref{item:M-invariant}: 補題~\ref{lem:DDG-conseq}より．
+
+ \ref{item:bedrocks}: $\ref{item:gen-set-many-grounds} \implies \ref{item:set-many-grounds}$は明らか．
+ $\ref{item:set-many-grounds} \implies \ref{item:gen-M-solid-ground}$:
+ $V$が集合個しか基礎モデルを持たないなら，$\sDDG$より$\M$は$V$の岩盤となる．
+ このとき$V \subseteq V[G]$を$V$の強制拡大とすると，~\ref{item:M-zfc-gM=M}より$\M^V = \gM \subseteq V \subseteq V[G]$は強制拡大なので,$\M$は$V[G]$の基礎モデルである．
+ 特に$\gM$の定義から$\M = \gM$は$V[G]$の全ての基礎モデルの共通部分に含まれているから，特に$\gM$は$V[G]$の堅い岩盤となる．
+ $\ref{item:gen-M-solid-ground} \implies \ref{item:M-solid-ground} \implies \ref{item:M-is-ground} \implies \ref{item:V-has-bedrock}$は明らか．
+
+ $\ref{item:V-has-bedrock} \implies \ref{item:M-is-ground}$：$W \subseteq V$を$V$の岩盤とする．
+ この時$\M = W$となる事を示せばよい．
+ $\M \subseteq W$は明らかなので$W \subseteq \M$を示す．
+ もし$\M \subsetneq W$なら，$\M$の定義から基礎モデル$W' \subseteq V$と$x \in W \setminus W'$となるものが取れる．
+ $\DDG$より$W, W'$の共通の基礎モデル$\bar{W} \subseteq W \cap W'$が取れるが，$W$の極小性より$\bar{W} = W$となり，$x \in W = \bar{W} \subseteq W'$を得るが，これは$x \notin W'$に反する．
+
+ $\ref{item:M-is-ground} \implies \ref{item:gen-M-solid-ground}$: $\M$が$V$の基礎モデルだとする．
+ この時$V \subseteq V[G]$を任意の強制拡大とすれば，$\M^V \subseteq V[G]$は$V[G]$の基礎モデルとなっている．
+ ここで任意に基礎モデル$W \subseteq V[G]$を取って$\M \subseteq W$となる事が言えればよい．
+ いま$V[G]$で$\DDG$が成り立つので，$\bar{W} \subseteq W \cap \M$となる基礎モデルが取れる．
+ このとき$\bar{W} \subseteq \M \subseteq V$だから，特に$\bar{W}$は$V$の基礎モデルである．
+ すると$\M^V$の定義から$\M \subseteq \bar{W} \subseteq W$を得る．
+
+ $\ref{item:gen-M-solid-ground} \implies \ref{item:gen-set-many-grounds}$：$V = \M[H]$となる$\mathbb{Q} \in \M$と$(\M, \mathbb{Q})$-生成フィルター$H$を固定しておく．
+ 任意に$\mathbb{P} \in V$による強制拡大$V \subseteq V[G]$を取れば，$\M$は$V[G]$の堅い岩盤になっているので，任意の基礎モデル$W \subseteq V[G]$について$\M \subseteq W \subseteq V[G]$が成り立つ．
+ 特に$V[G] = \M[H \ast G]$となっているから，$\M \subseteq W \subseteq \M[H \ast G]$より事実~\ref{lem:interm-ext}から$W = \M[(H \ast G) \cap \mathbb{B}_0]$となるような$\mathbb{B} = \mathbb{B}(\mathbb{Q} \ast \mathbb{P})$の完備部分代数$\mathbb{B}_0$が存在する．
+ 特に，このような$\mathbb{B}_0$は高々$2^{2^{\left|\mathbb{Q} \ast\mathbb{P}\right|}}$-個しか存在しないので，$V[G]$の基礎モデルは高々集合個しか存在しない． \qed
+\end{proof}
+
+次回以降，最初の定義可能性の議論と$\sDDG$の証明を追い掛けていくことにする．
+
+\section{予備知識：5分でわかる強制法}
+5分ではわからない．わからないので，詳しくはKunen\cite{Kunen:2011}などの教科書か，拙稿「\href{https://konn-san.com/math/boolean-valued-model-and-forcing.html}{Boole値モデルと強制法}」参照のこと．
+\begin{definition}
+ \begin{itemize}
+  \item $\mathcal{A} \subseteq \mathbb{P}$が\emph{反鎖}$\defs$任意の$a, b \in \mathcal{A}$について，$p \leq a, b$となる$p \in \mathbb{P}$が存在しない．
+  \item 擬順序$\mathbb{P}$が\emph{$\kappa$-c.c.}を満たす$\defs$任意の反鎖$\mathcal{A} \subseteq \mathbb{P}$の濃度は$\kappa$未満．
+ \end{itemize}
+\end{definition}
+\begin{lemma}\label{lem:card-pres}
+ 擬順序$\mathbb{P}$が$\kappa$-c.c.\ を持つなら，$\mathbb{P}$は$\kappa$以上の基数を保つ．
+ 特に$\mathbb{P}$は$|\mathbb{P}|^+$以上の基数を全て保つ．
+\end{lemma}
+
+\begin{lemma}\label{lem:cc-to-cov}
+ $\mathbb{P}$が$\kappa$-c.c.\ を満たすなら，任意の$A \in [\On]^{<\kappa} \cap V[G]$に対し，$B \in [\On]^{<\kappa} \cap V$で$A \subseteq B$を満たすものが存在する．
+\end{lemma}
+
+\begin{lemma}\label{lem:interm-ext}
+ $\mathbb{P} \in V$, $G$: $(V, \mathbb{P})$-生成的，$V \subseteq U \subseteq V[G]$, $V, U \models \ZFC$とする．
+ このとき$\mathbb{B}$の完備部分代数$\mathbb{B}_0 \lessdot \mathbb{B}$で$U = V[G \cap \mathbb{B}_0]$となり，更に$V[G]$が$U$の強制拡大となる物が存在する．
+\end{lemma}
+
+\section{基礎モデルの定義可能性}
+本節では前掲の定義可能性定理を示す：
+\begin{theorem}[基礎モデルの一様定義可能性]
+ $V$を$\ZFC$のモデルとする．
+ 次を満たす一階論理式$\varphi(x, v)$が存在する：
+ \begin{enumerate}
+  \item\label{item:Wr-defines-ground} 任意の$r \in V$の対し，$W_r \defeq \Set{x \in V | \varphi(x, r)}$は$\ZFC$を満たす$V$の基礎モデルで$r \in W_r$．
+  \item\label{item:W-enum-grounds} 任意の$\ZFC$を満たす基礎モデル$W \subseteq V$に対し，$r \in W$で$W = W_r$となる物が存在．
+  \item\label{item:V-is-W[G]-defble} ``$V$は$\mathbb{P} \in W_r$なる$(\mathbb{P}, W_r)$-生成フィルター$G$による強制拡大$W_r[G]$である''は$(r, \mathbb{P}, G)$をパラメータとして定義可能．
+  \item\label{item:Wr-dwnwd-abs} $W_r$の定義は下方絶対的：$W_r \subseteq U \subseteq V$なる推移的モデル$U \models \ZFC$に対し，$W_r^U = W_r^V$.
+  \item\label{item:Wr-upwd-abs} $W_r$の定義は上方絶対的：$r \in V \subseteq V[G]$に対し，$s \in V$で$W_r = W_s^V = W_s^{V[G]}$となる物が存在．
+ \end{enumerate}
+\end{theorem}
+これは次のような戦略で示される：
+\begin{enumerate}
+ \item $V \subseteq V[G]$が強制拡大の時，$V$は$V[G]$に対して「良い性質」を持つ内部モデルとなる．
+ \item 「良い性質」を持つ内部モデルには或る種の一意性が成り立つ．
+ \item その一意性を使って「良い性質」を持つ内部モデルを列挙する．
+ \item その中から$\ZFC$を満たし基礎モデルになっている物だけを取り出す．
+ \item 余ったパラメータで定義される$W_r$は$V$を返すようにしておく．
+\end{enumerate}
+その「良い性質」は次で与えられる：
+\begin{definition}
+ 以下$W \subseteq V$を推移的モデル，$\kappa$を$V$における正則基数とする．
+ \begin{enumerate}
+  \item $W \subseteq V$が\emph{$\kappa$-被覆性質}（\emph{$\kappa$-covering property}; $\kappa$-CP）を満たす$\defs$任意の$x \in [W]^{<\kappa} \cap V$に対し，$y \in [W]^{<\kappa} \cap W$で$x \subseteq y$を満たすものが取れる．
+  \item $W \subseteq V$が\emph{$\kappa$-近似性質}（\emph{$\kappa$-approximation property}; $\kappa$-AP）を満たす$\defs$任意の$x \in \Pow(W) \cap V$に対し，$x \cap y \in W$が任意の$y \in [W]^{<\kappa} \cap W$について成り立つなら，$x \in W$.
+  \item 正則基数$\delta \in V$に対し，$W$が$V$の$\delta$-\emph{擬基礎モデル}(\emph{pseudoground}) $\defs$ $(\delta^+)^V = (\delta^+)^W$かつ$W \subseteq V$が$\delta$-被覆性質および$\delta$-近似性質を持つ．
+  \item $W$が$V$の\emph{擬基礎モデル}$\defs$ある$V$の正則基数$\delta \in V$があって$W$は$V$の$\delta$-擬基礎モデル．
+ \end{enumerate}
+\end{definition}
+\begin{remark}
+ 次の補題より，$\kappa$-被覆性質と$\kappa$-近似性質は順序数だけ考えればよい：
+ \begin{enumerate}
+  \item $V \subseteq W$が$\kappa$-被覆性質を持つ$\defs$任意の$x \in [\On]^{<\kappa} \cap V$に対し，$y \in [\On]^{<\kappa} \cap W$で$x \subseteq y$を満たすものが存在．
+  \item $V \subseteq W$が$\kappa$-近似性質を持つ$\defs$任意の$x \in \Pow^V(\On)$に対し，もし$x \cap y \in W$が任意の$y \in [\On]^{<\kappa} \cap W$について成り立つなら，$x \in W$.
+ \end{enumerate}
+\end{remark}
+基礎モデルは擬基礎モデルになっている事は次の定理によってわかる\footnote{実際にはより一般に戦略閉性という性質を持つ順序との反復が$\delta^+$-擬基礎モデルになることが示せる．詳細はHamkins--Johston~\cite[Lemma 2.10]{Hamkins:2010uq}の証明を参照．}：
+\begin{lemma}\label{lem:ground-is-pseudoground}
+ $\mathbb{P}$を擬順序，$G$を$(V, \mathbb{P})$-生成フィルター，$|\mathbb{P}| \leq \delta$とする．
+ この時$V$は$V[G]$の擬基礎モデルとなる．
+ 特に$(\delta^{++})^V = (\delta^{++})^W$であり，$V \subseteq W$は$\delta^+$-被覆性質および$\delta^+$-近似性質を満たす．
+\end{lemma}
+\begin{proof}
+ $|\mathbb{P}| \leq \delta$より補題~\ref{lem:card-pres}から$\mathbb{P}$は$\delta^+$以上の基数を全て保ち，特に$(\delta^{++})^V = (\delta^{++})^W$となる．
+ また，補題~\ref{lem:cc-to-cov}より$V \subseteq V[G]$が$\delta^+$-被覆性質を持つのも明らかである．
+
+ よって後は$\delta^+$-近似性質を示せばよい．
+ 対偶を取れば，$A \in \Pow(\On) \cap V[G]$で$A \notin V$を満たすものを取って，$h \in [\On]^{\leq \delta} \cap V$で$A \cap h \notin V$となるものを探せばよい．
+ そこで$\Vdash \quoted{\dot{A} \in \Pow(\On) \setminus V}$かつ$\dot{A}^G = A$となる$\dot{A} \in V^{\mathbb{P}}$を固定する．
+ $|\mathbb{P}| \leq \delta$なので$\mathbb{P} = \Set{p_\xi | \xi < \delta}$により$\mathbb{P}$を列挙する．
+ すると，各$\xi$に対して$p_\alpha \Vdash \dot{A} \notin \check{V}$より$p_\xi^0, p_\xi^1 \leq p_\xi$と$\alpha_\xi \in \On$で$p_\xi^0 \Vdash\quoted{ \check{\alpha}_\xi \notin \dot{A}}$かつ$p_\xi^1 \Vdash \quoted{\check{\alpha}_\xi \in \dot{A}}$を満たすものが取れる．
+ もしなければ，$p_\xi$が任意の$\alpha$に対し$\alpha \in \dot{A}$の真偽を決定してしまうので，$A' \defeq \Set{ \alpha | p_\xi \Vdash \quoted{\check{\alpha} \in \dot{A}}}$とおけば$p_\xi \Vdash \quoted{\dot{A} = \check{A}' \in \check{V}}$となり，$\dot{A}$の取り方に反する．
+
+ そこで$h \defeq \Set{\alpha_\xi | \xi < \delta}$とおけば，$h \in V \cap [\On]^{\leq \delta}$である．
+ ここで，もし$h \cap A \in V$とすると，$p_\xi \in G$と$z \in V$で$p_\xi \Vdash \quoted{\check{h} \cap \dot{A} = \check{z}}$となるものが取れる．
+ しかし，取り方から$p_\xi^0, p_\xi^1 \leq p_\xi$と$\alpha_\xi$で$p_\xi^0 \Vdash \alpha_\xi \notin \dot{A}$かつ$p_\xi^1 \Vdash \alpha_\xi \in \dot{A}$を満たすものが必ずあり，この時$h$の定義から$p_\xi^1 \Vdash \quoted{\check{\alpha}_\xi \in \check{z}}$かつ$p_\xi^0 \Vdash \quoted{\check{\alpha}_\xi \notin \check{z}}$となる．
+ すると$\Delta_0$-絶対性より$\alpha_\xi \in z$かつ$\alpha_\xi \notin z$となるが，これは矛盾．
+\end{proof}
+続いてこうした擬基礎モデルがきちんと定義出来ることを見よう．
+上で宣言した通り，擬基礎モデルは一つのパラメータで完全に決定することが出来る．
+そのための議論に十分な$\ZFC$の部分理論$\ZFC_\delta^{\leq \kappa}$を定義する．
+\begin{definition}[$\ZFC_\delta^{\leq\kappa}$]
+ $\ZFC_\delta^*$の言語は述語記号$\in$に加え定数記号$\delta, \lambda$を持ち，公理は以下で与えられる．
+ \begin{enumerate}
+  \item $\mathrm{ZC}-\mathrm{Power}$：内包，対，和集合，無限，基礎，整列定理，
+  \item 「$\delta$は正則基数」，
+  \item ${\leq}\delta$-置換公理：任意の$f: \delta \to V$と集合$A$に対し像$f[A]$が存在．
+  \item ${\leq}\kappa$-冪集合公理：任意の集合$A$に対し濃度$\delta$以下の部分集合全体からなる集合$[A]^{\leq\kappa}$が存在．
+  \item $\Pow(\power{<\kappa}{2})$が存在する．
+  \item 順序数コード公理：任意の集合$A$は順序数$\alpha$とその上の二項関係$E$により$\braket{\trcl(\set{A}), {\in}} \simeq \braket{\alpha, E}$の形でコード出来る．
+ \end{enumerate}
+ また，$\ZFC^{\leq\kappa} \deffml \quoted{\ZFC^{\leq\kappa}_\kappa + \text{無制限の置換公理}}$，$\ZFC_\delta \deffml \quoted{\ZFC_\delta^{\leq\delta} + \text{冪集合公理}}$と略記する．
+\end{definition}
+\begin{remark}
+ \begin{enumerate}
+  \item 「推移的\emph{集合}$M$は$\ZFC^{\leq\kappa}_\delta$（または$\ZFC^{\leq\kappa}$や$\ZFC_\delta$）を満たす」は一つの論理式で記述可能．
+  \item $\chi$が$\chi > 2^{<\delta}$を満たす強極限基数で$\theta \defeq \chi^+$なら$H_\chi \models \ZFC_{\delta}$かつ$H_\theta \models \ZFC^{\leq\delta}$.
+  \item 順序数コード公理が与える$(\alpha, E)$さえあれば，どの推移的モデルにおいても$X$は最大限として一意に復元される．
+ \end{enumerate}
+\end{remark}
+$\ZFC$ではなくその部分体系$\ZFC_\delta^{\leq\kappa}$を考えるのは，次の一意性定理が$\ZFC$で証明出来るからである：
+\begin{theorem}\label{thm:2-d-determ-pg}
+ $\kappa > \delta$, $W, W', V$を$\ZFC_\delta^{\leq\delta}$の推移的モデルとし，$W, W' \subseteq V$とする．
+ $W \subseteq V$, $W' \subseteq V$がそれぞれ$\delta$-擬基礎モデルで$(\power{<\delta}{2})^W = (\power{<\delta}{2})^{W'}$が成り立つなら，$W = W'$.
+ 
+ 特に，$\ZFC_\delta^*$の$\delta$-擬基礎モデルは$(\power{<\delta}{2})$の値によって一意に決定される．
+\end{theorem}
+\begin{proof}
+ まず最初に，$\delta$-近似性質から，$\Pow^W(\delta) = \Pow^{W'}(\delta)$が成り立つことに注意する．
+ また，擬基礎モデルの定義より$(\delta^+)^W = (\delta^+)^V =  (\delta^+)^{W'}$となるので，「$|A| < \delta$」という論理式には（$A$を点として持っていれば）曖昧性はない．
+ 更に，$\delta$-被覆性質より$|A| = \delta$という表現も曖昧性を持たない．
+
+ 上の注意より，$W$と$W'$が同じ順序数の部分集合を持つことがわかれば良い．
+ 特に，$W$と$W'$が共に$\delta$-近似性質を満たすことから，$[\On]^{<\delta} \cap W = [\On]^{<\delta} \cap W'$が示せれば良い．
+ 
+ まず，$W, W'$両方で通用するような弱い被覆性質が成り立つ：
+ \begin{claim}
+  $A \in [\On]^{<\delta} \cap V \implies \exists B \in [\On]^{\leq \delta} \cap W \cap W'\: A \subseteq B$.
+ \end{claim}
+ \begin{subproof}
+  $A \subseteq \alpha$とし，$W, W' \subseteq V$の被覆性質を使って，次を満たす$\Braket{B_\xi | \xi < \kappa}$を帰納的に取る：
+  \begin{enumerate}
+   \item $B_\xi \in [\alpha]^{<\delta}$, $B_0 = A$,
+   \item $B_\xi \in W \implies B_{\xi + 1}$は$B_\xi \subseteq B_{\xi+1} \in W'$なる元,
+   \item $B_\xi \notin W \implies B_{\xi + 1}$は$B_\xi \subseteq B_{\xi+1} \in W$なる元,
+   \item 極限順序数$\xi$に対して，$B_\xi \defeq \bigcup_{\gamma < \xi} B_\gamma \in V$とおく．
+  \end{enumerate}
+  最後の極限順序数の場合の処置は，$W'$で$\leq\delta$-置換公理が成り立つことから可能である．
+  最後に$B \defeq \bigcup_{\xi < \delta} B_\xi$とおく．
+  これが求めるものであることを見る．
+  同様に$B \in W'$も示せるので，特に$B \in W$だけ示す．
+  いま$W$は$\delta$-近似性質を持っているから，任意の$C \in [\alpha]^{<\delta} \cap W$に対して$B \cap C \in W$となる事が言えればよい．
+  いま，$\delta$の正則性から任意の$\xi > \eta$に対し$B \cap C = B_\xi \cap C$となる$\eta < \delta$が存在する．
+  構成より，$B_\xi \in W$となるような$\xi < \delta$は共終的に存在するから，特に$B \cap C = B_\xi \cap C \in W$となるような$\xi$は必ず存在する．
+  これが示したかったことである．
+ \end{subproof}
+ これを踏まえて$[\On]^{<\delta} \cap W = [\On]^{<\delta} \cap W'$を示す．
+ 特に対称性から$[\On]^{<\delta} \cap W \subseteq [\On]^{<\delta} \cap W'$が言えれば逆も同様になる．
+ そこで$A \in [\On]^{<\delta}$を任意に固定する．
+ 上の主張から，$B \in [\On]^{\leq \delta} \cap W \cap W'$で$A \subseteq B$となるものが取れる．
+ 特に，$\otp(B) < \delta^+$なので，二項関係$w \in W$で$\otp(\delta, w) = \otp(B, {<})$となる物が取れる．
+ いま$w \subseteq \delta \times \delta$であり，$\delta$の部分集合としてコードできるので，仮定より$\Pow^W(\delta) = \Pow^{W'}(\delta)$に注意すれば，$w \in W'$とできる．
+ すると，$w$は$B$の列挙$B = \Set{b_\alpha | \alpha < \delta'}$を誘導し，$W'$の$\leq\delta$-置換公理より$\Braket{b_\alpha | \alpha < \delta'} \in W'$となる．
+ 一方，$A^* = \Set{\alpha < \delta' | b_\alpha \in A}$は$W$で定義可能であり，再び$\Pow^W(\delta) = \Pow^{W'}(\delta)$より$A^* \in W'$を得る．
+ 逆に$A$は$A^*$と$\Braket{b_\alpha | \alpha < \delta'}$だけを用いて定義可能なので，$A \in W'$を得る． \qed
+\end{proof}
+以上から擬基礎モデルの定義可能性が従う：
+\begin{lemma}\label{lem:cb-defn}
+ $W \subseteq V$が$\delta$-擬基礎モデルなら，$W$は$r \defeq (\power{<\delta}{2})^W$をパラメータに使って$V$で定義可能．
+\end{lemma}
+\begin{proof}
+ $x \in W$は「十分大きな$\theta$について$x \in H_\theta \cap W$」というのと同値だが，上の定理~\ref{thm:2-d-determ-pg}より$H_\theta \cap W$は$r = (\power{<\delta}{2})^W$によって一意に定まる．
+ そこで次のように書いてやれば良い：
+ \begin{align*}
+  x \in W
+  \iff \exists \theta \gg \delta\: &\exists M \subseteq H_\theta\\
+   &\begin{cases}
+     \theta > 2^{\delta}: \text{正則非可算},
+     (\power{<\delta}{2})^M = r, (\delta^+)^M = (\delta^+)^V,\\
+     x \in M \models \ZFC_\delta^{\leq\delta}: \text{transitive},\\
+     M \subseteq H_\theta \mathrel{\text{has}} \delta\text{-AP} \text{ and } \delta\text{-CP}.
+  \end{cases}
+ \end{align*}
+\end{proof}
+\begin{corollary}
+ 論理式$\psi(x, y)$で，任意のクラス$W$に対して次を満たすものが存在：
+ \[
+  \exists r \in V \: \left[W = \Set{x | \varphi(x, r)}\right] \iff W\text{ は }V\text{ の擬基礎モデルで }r \in W.
+ \]
+\end{corollary}
+\begin{proof}
+ $r = (\power{<\delta}{2})^M$の形になっていなければ$V$の元にして，それ以外なら上の$M$を返す． \qed
+\end{proof}
+よって，あとは$\Set{(x, r) | \psi(x, r)}$の中から$\ZFC$のモデルで$V$の基礎モデルになっているものだけ見付けてくれば良い．
+それには，次の事実を使えばよい：
+\begin{fact}
+ 推移的部分モデル$M \subseteq V$がG\"{o}del演算で閉じ，概宇宙的であるなら$M$は$\ZF$の内部モデルとなる．
+ 但し，$M$が概宇宙的であるとは$x \in \Pow(M) \cap V$なら$x \subseteq y \in M$なる$y$が取れることであり，G\"{o}del演算は対や積，射影，順序入れ換えなどなんか良い感じの定義可能な集合演算10個のことである．
+\end{fact}
+\begin{proof}
+ See Jech \cite[Theorem 13.9]{Jech:2002}. \qed
+\end{proof}
+つまり，定義可能な基本集合演算で閉じていて，内包公理の候補を絞ってくれる集合が取れるなら$\ZF$が成り立つ，という訳である．
+$\ZFC$のモデルになっているかは，これに加えて選択公理が成り立つかどうかだけチェックすればよい．
+基礎モデルであるかも，単に$V$が$M$にある擬順序による強制拡大になっているか書けばいいだけだから，これらは全て一階の論理式で書ける．
+よって，定義可能性定理が従う．
+\begin{proof}[Proof of Uniform Definability of Grounds]
+ 上の議論から$W = \Set{ (x, r) | \varphi(x, r)}$が\ref{item:Wr-defines-ground}-~\ref{item:V-is-W[G]-defble}の性質を満たすように取れるのは明らか．
+ 問題は絶対性に関する\ref{item:Wr-dwnwd-abs}, \ref{item:Wr-upwd-abs}.
+
+ まず\ref{item:Wr-dwnwd-abs}について．
+ $W_r \subsetneq U \subsetneq V$の場合だけ考えればよい．
+ この時，$W_r$における完備Boole代数$\mathbb{B} \in W_r$と$(W_r, \mathbb{B})$-生成フィルター$G$で$W_r[G] = V$となる物を取る．
+ $\delta \defeq |\mathbb{B}|$とおいて$r$を適宜取り直せば，$r = (\power{<\delta}{2})^{W_r}$として良い．
+ このとき，中間拡大補題~\ref{lem:interm-ext}より$\mathbb{B}_0 \lessdot \mathbb{B}$で$U = W_r[G \cap \mathbb{B}_0]$となるものが取れる．
+ このとき$|\mathbb{B}_0| \leq |\mathbb{B}| = \delta$なので$W_r \subseteq U$は$\delta^+$-擬基礎モデルになっている．
+ よって$W_r^V = W_r^U$となる．
+
+ \ref{item:Wr-upwd-abs}は$W_r \subseteq V \subseteq V[G]$とした時に$V[G]$で$W_s^{V[G]} = W_r^V$となる$s \in W_r$を取れば，\ref{item:Wr-dwnwd-abs}から従う． \qed
+\end{proof}
+
+\section*{次回予告}
+\href{https://konn-san.com/math/geology-mantle-and-ddg.html}{次回}は$\sDDG$からの帰結について取り扱います．
+特に，$\sDDG$からマントル$\mathbb{M}$が$\ZFC$のモデルとなることや，生成多宇宙の構造が決まることを見ます．
+
+\nocite{Fuchs:2014fj,Usuba:2017fp,Reitz:2007af}
+\printbibliography[title=参考文献]
+\end{document}

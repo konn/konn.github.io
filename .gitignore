@@ -1,3 +1,4 @@
+# -*- mode: gitignore; -*-
 # git ls-files --others --exclude-from=.git/info/exclude
 # Lines that start with '#' are comments.
 # For a project mostly in C, the following would be a good set of
@@ -24,8 +25,8 @@ draft
 .cabal-sandbox
 cabal.sandbox.config
 ### https://raw.github.com/github/gitignore/be3333655bffe9507d66cc864aee95ed6052b4ed/Global/emacs.gitignore
+.shake
 
-# -*- mode: gitignore; -*-
 *~
 \#*\#
 /.emacs.desktop
@@ -295,3 +296,7 @@ pythontex-files-*/
 *.fff
 
 
+_cache-new
+_site-new
+_*-new
+_snapshots
