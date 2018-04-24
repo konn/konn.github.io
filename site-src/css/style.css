@@ -68,6 +68,10 @@ ul[id^="socials"] > li[id^="hatena-star"] {
     margin-top: -10px;
 }
 
+ul[id^="socials"] > li.hatena-star {
+    margin-top: -10px;
+}
+
 ul[id^="socials"] > li:first-child {
     margin-left: 0;
 }
