@@ -7,7 +7,6 @@ disqus: false
 top-star: false
 ---
 
-
 {{#logs}}
 <article class="log" id="{{ident}}">
 <header>

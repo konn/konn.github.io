@@ -23,7 +23,8 @@ import           Control.Monad                   hiding (mapM)
 import           Control.Monad.State
 import qualified Crypto.Hash.SHA256              as SHA
 import           Data.Aeson                      (Options, ToJSON (..),
-                                                  camelTo2, defaultOptions,
+                                                  Value (..), camelTo2,
+                                                  defaultOptions,
                                                   fieldLabelModifier, fromJSON,
                                                   genericToJSON, toJSON)
 import qualified Data.ByteString.Char8           as BS
@@ -218,15 +219,9 @@ main = shakeArgs myShakeOpts $ do
         =<< applyDefaultTemplate ctx
         =<< myPandocCompiler out
 
-    -- (destD </> "logs" </> "*.html") %> \out -> do
-    -- route $ setExtension "html"
-    -- compile' $
-    --   myPandocCompiler >>= saveSnapshot "content"
-    --   >>= applyDefaultTemplate (myDefaultContext <> bodyField "description")
-
-
     (destD </?> "index.html") .&&. complement (disjoin copies) %%> \out -> do
       (count, posts) <- renderPostList . take 5
+                        =<< aggregateLogs
                         =<< myRecentFirst
                         =<< listChildren False out
       let ctx = mconcat [ constField "child-count" (show count)
@@ -373,9 +368,9 @@ listChildren includeIndices out = do
   let dir = takeDirectory out
       pat0 = dir <//> "*.html"
       excludes = fromString out :
-                 concat [["//index.html","archive.html", "archive.md", "//index.md"] | not includeIndices]
+                 concat [["//index.html", destD </?> "archive.html", destD </?> "archive.md", "//index.md"] | not includeIndices]
       includes = fromString pat0 :
-                 concat [["//index.html", "archive.html", "index.md", "archive.md"] | includeIndices ]
+                 concat [["//index.html", destD </?> "archive.html", destD </?> "index.md", destD </?> "archive.md"] | includeIndices ]
       pat = disjoin includes .&&. complement (disjoin excludes)
       chs = [ (targ, ofp)
             | (targ, ofp) <- HM.toList dic, pat ?=== targ
@@ -700,22 +695,39 @@ makeNavBar ident = do
   src <- readFromFile' "templates/navbar.mustache"
   return $ LT.unpack $ Mus.renderMustache src cats
 
--- readHierarchy :: String -> [(String, String)]
--- readHierarchy = mapMaybe (toTup . words) . lines
---   where
---     toTup (x:y:ys) = Just (y ++ unwords ys, x)
---     toTup _        = Nothing
+logPat :: Patterns
+logPat = destD </?> "logs/*.html"
+
+appendText :: Value -> Value -> Value
+appendText ~(String a) ~(String b) = String (a <> b)
+
+aggregateLogs :: [Item T.Text] -> Action [Item T.Text]
+aggregateLogs is0 =
+  case break ((logPat ?===) . itemTarget) is0 of
+    (ps, a : qs) -> do
+      i <- loadOriginal siteConf (destD </> "logs/index.html")
+      let rest = filter (not . (logPat ?===) . itemTarget) qs
+          targ = itemTarget a
+          anc   = '#' : takeBaseName targ
+          lastUpdate = T.concat ["（最終更新：", T.pack $ takeBaseName targ, "）"]
+          meta' = itemMetadata i
+                & HM.insertWith (flip appendText) "description" (String lastUpdate)
+                & HM.insert "date" (fromMaybe (String "") $ HM.lookup "date" (itemMetadata a))
+          i' = i { itemTarget = destD </> "logs/index.html" ++ anc
+                 , itemMetadata = meta'
+                 }
+      return $ ps ++ i' : rest
+    (ps, qs)     -> return $ ps ++ qs
 
 postList :: Maybe Int -> Action (Int, T.Text)
 postList mcount =
   renderPostList . maybe id take mcount
-  =<< myRecentFirst . filter isPublished
-  =<< filterM (hasSnapshot siteConf "content")
-  =<< listChildren False destD
+    =<< myRecentFirst . filter isPublished
+    =<< filterM (hasSnapshot siteConf "content")
+    =<< listChildren False destD
 
 urlField :: Context a
-urlField = field_ "url" $ \item ->
-  replaceDir destD "/" (itemTarget item) -<.> "html"
+urlField = field_ "url" $ replaceDir destD "/" . itemTarget
 
 renderPostList :: [Item T.Text] -> Action (Int, T.Text)
 renderPostList posts = do
@@ -735,17 +747,25 @@ renderPostList posts = do
             refs = buildRefInfo $ itemBody item
             fp = replaceDir srcD destD (runIdentifier ident) -<.> "html"
         in fromPure $
-           writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
-           =<< readMarkdown readerConf descr
-      iCtxs = pdfField <> myDateField <> urlField
-              <> descField  <> defaultContext
+               writeHtml5String writerConf . bottomUp (remoteCiteLink fp refs)
+               =<< readMarkdown readerConf descr
+
+      iCtxs = mconcat [ pdfField,  myDateField, urlField
+                      , descField, defaultContext
+                      ]
   src <- procKaTeX =<< applyTemplateList postItemTpl iCtxs posts
   return (length posts, src)
 
 myDefaultContext :: Context T.Text
 myDefaultContext =
-  mconcat [ disqusCtx, defaultContext ]
+  mconcat [ disqusCtx, defaultContext, canonicContext ]
   where
+    canonicContext = field "canonic" $ \item ->
+      let targ = replaceDir destD "/" $ itemTarget item
+      in return $
+         if takeFileName targ == "index.html"
+         then takeDirectory targ
+         else targ
     blacklist = ["index.md", "//index.*", "archive.md", "profile.md"]
     disqusCtx = field "disqus" $ \item ->
       let fp = runIdentifier $ itemIdentifier item
