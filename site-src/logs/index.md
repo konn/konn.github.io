@@ -32,7 +32,7 @@ head: |
 <li id="facebook-{{ident}}">
 <div class="fb-like" data-href="https://konn-san.com/logs/{{ident}}.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
 <li id="hatena-bookmarks-{{ident}}">
-<a href="//b.hatena.ne.jp/entry/https://konn-san.com/logs/{{ident}}.html" class="hatena-bookmark-button" data-hatena-bookmark-title="{{title}} - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+<a href="http://b.hatena.ne.jp/entry/s/konn-san.com/logs/{{ident}}.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
 <li>
 <script src="//apis.google.com/js/plusone.js"></script>
 <div class="g-plusone" data-size="standard" data-count="true"></div>
