@@ -40,6 +40,7 @@ import           Web.Sake                   (Action, FilePattern,
                                              liftAction, liftIO, loadItem,
                                              makeRelative, need, putNormal,
                                              readFromBinaryFile',
+                                             readFromBinaryFileNoDep,
                                              removeFilesAfter, withTempFile,
                                              writeBinaryFile, writeToFile, (%>),
                                              (<//>), (</>), (?==), (?>), (~>))
@@ -276,7 +277,7 @@ loadSnapshot cnf name pat =
 
 loadAllSnapshots :: (Store a) => SakeConf -> Snapshot -> Action [Item a]
 loadAllSnapshots SakeConf{..} sn@Snapshot{..} = do
-  ContentsIndex dic <- readFromBinaryFile' (cacheDir </> pageListName)
+  ContentsIndex dic <- readFromBinaryFileNoDep (cacheDir </> pageListName)
   let targs = [ fp
               | (fp, pinfo) <- HM.toList dic
               , maybe False (snapshotTarget ?===) $
@@ -301,7 +302,7 @@ loadOriginal cnf fp = do
 
 getSourcePath :: SakeConf -> FilePath -> Action FilePath
 getSourcePath SakeConf{..} fp = do
-  ContentsIndex dic <- readFromBinaryFile' (cacheDir </> pageListName)
+  ContentsIndex dic <- readFromBinaryFileNoDep (cacheDir </> pageListName)
   case HM.lookup fp dic of
     Just PageInfo{ sourcePath = Just pth } -> return pth
     _           -> error $ "No Source Path found: " ++ fp
@@ -324,7 +325,7 @@ ifChanged write fp bdy = do
     when b $ write fp bdy
 
 loadContentsIndex :: SakeConf -> Action ContentsIndex
-loadContentsIndex SakeConf{..} = readFromBinaryFile' (cacheDir </> pageListName)
+loadContentsIndex SakeConf{..} = readFromBinaryFileNoDep (cacheDir </> pageListName)
 
 infixr 5 </?>
 (</?>) :: FilePath -> Patterns -> Patterns

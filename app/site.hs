@@ -170,7 +170,7 @@ runShake = shakeArgs myShakeOpts $ do
   let copies = ["t//*" ,  "js//*" ,  ".well-known//*", "//*imgs//*", "//*img//*"
                ,"prog/automaton//*", "prog/doc//*", "math//*.pdf"
                , "css//*.css", "css//*.map", "//*.key"
-               ,"katex//*"
+               ,"katex//*", "keybase.txt"
                ]
       routing = [ Convert ("//*.md" .||. "//*.html" .||. "//*.tex") (-<.> "html")
                 , Convert "//*.tex" (-<.> "pdf")
