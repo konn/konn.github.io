@@ -1100,10 +1100,11 @@ toLog i = do
 
 rewriteIDs :: T.Text -> Tag T.Text -> Tag T.Text
 rewriteIDs ident (TagOpen "a" atts)
-  | Just rest <- T.stripPrefix "#" =<< lookup "href" atts =
+  | Just rest <- T.stripPrefix "#" =<< lookup "href" atts
+  , "fn" `T.isInfixOf` rest =
       TagOpen "a" $ ("href", mconcat ["#", ident, "-", rest]) : filter ((/="href") . fst) atts
 rewriteIDs ident (TagOpen t atts)
-  | Just name <- lookup "id" atts =
+  | Just name <- lookup "id" atts, "fn" `T.isInfixOf` name  =
       TagOpen t $ ("id", mconcat [ident,"-",name]) : filter ((/="id") . fst) atts
 rewriteIDs _ t = t
 
