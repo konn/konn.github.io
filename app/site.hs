@@ -153,11 +153,13 @@ watch args = do
   where
   server = run 8000 $ staticApp $ (defaultWebAppSettings destD) { ssIndices = [unsafeToPiece "index.html"]
                                                                 }
-  builder chan = forever $ do
-    _ <- readChan chan
-    putStrLn "Changed!"
+  builder chan = do
     withArgs args runShake
-    putStrLn "Compilation Finished."
+    forever $ do
+      _ <- readChan chan
+      putStrLn "Changed!"
+      withArgs args runShake
+      putStrLn "Compilation Finished."
   watcher chan = withManager $ \man -> do
     src <- canonicalizePath srcD
     watchTreeChan man src (const True) chan
@@ -260,7 +262,10 @@ runShake = shakeArgs myShakeOpts $ do
     (destD </> "logs" </> "index.html") %> \out -> do
       logs <- mapM toLog
              =<< myRecentFirst
-             =<< listChildren False out
+             =<< loadAllSnapshots siteConf
+                 "content" { snapshotSource = "logs//*.md" .&&. complement "logs/index.md"
+                           , snapshotTarget = subContentsWithoutIndex
+                           }
       let pages = L.chunksOf 3 logs
           toName 0 = out
           toName n = dropExtension out ++ "-" ++ show n <.> "html"
@@ -1091,9 +1096,7 @@ toLog :: Item T.Text -> Action (Item Log)
 toLog i = do
   let logIdent = T.pack $ takeBaseName $ itemPath i
       logLog = withTags (rewriteIDs logIdent) $
-               demoteHeaders $ demoteHeaders $
-               either (const $ itemBody i) id $
-               runPure $ writeHtml5String writerConf =<< readMarkdown readerConf (itemBody i)
+               demoteHeaders $ demoteHeaders $ itemBody i
       Just logTitle = lookupMetadata "title" i
   logDate <- itemDateStr i
   return $ const Log{..} <$> i
