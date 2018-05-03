@@ -9,8 +9,10 @@ module MissingSake
        , Patterns, (.&&.), (.||.), complement, stripDirectory
        , (?===), (%%>), conjoin, disjoin, globDirectoryFiles, ifChanged
        , replaceDir, withRouteRules, loadAllItemsAfter, loadOriginal, getSourcePath
+       , loadItemWith, loadOriginalMaybe
        , loadContentsIndex, saveSnapshot, loadSnapshot, loadAllSnapshots
        ) where
+import           Control.Lens               ((<&>))
 import           Control.Monad              (forM, when)
 import           Crypto.Hash.SHA256         (hash)
 import           Data.Aeson                 (Value)
@@ -21,6 +23,7 @@ import           Data.HashMap.Strict        (HashMap)
 import qualified Data.HashMap.Strict        as HM
 import qualified Data.HashSet               as HS
 import qualified Data.List                  as L
+import           Data.Maybe                 (catMaybes)
 import           Data.Scientific            (Scientific (..))
 import           Data.Semigroup             (Semigroup, (<>))
 import           Data.Store                 (Store (..))
@@ -32,18 +35,19 @@ import           System.Directory           (createDirectoryIfMissing)
 import           System.IO                  (IOMode (..), withFile)
 import           Web.Sake                   (Action, FilePattern,
                                              Identifier (..), Item (..),
-                                             Metadata, MonadAction, Readable,
-                                             Rules, alternatives, copyFile',
-                                             doesFileExist, filePattern,
-                                             getDirectoryFiles, itemBody,
-                                             itemIdentifier, itemPath,
+                                             Metadata, MonadAction, MonadSake,
+                                             Readable, Rules, alternatives,
+                                             copyFile', doesFileExist,
+                                             filePattern, getDirectoryFiles,
+                                             itemBody, itemIdentifier,
                                              liftAction, liftIO, loadItem,
                                              makeRelative, need, putNormal,
                                              readFromBinaryFile',
                                              readFromBinaryFileNoDep,
                                              removeFilesAfter, withTempFile,
                                              writeBinaryFile, writeToFile, (%>),
-                                             (<//>), (</>), (?==), (?>), (~>))
+                                             (-<.>), (<//>), (</>), (?==), (?>),
+                                             (~>))
 import           Web.Sake.Conf              (SakeConf (..))
 
 tryWithFile :: MonadAction m => FilePath -> m a -> m (Maybe a)
@@ -64,15 +68,13 @@ newtype Patterns = DNF [Clause]
                  deriving newtype (Store)
 
 data Snapshot = Snapshot { snapshotName   :: String
-                         , snapshotTarget :: Patterns
                          , snapshotSource :: Patterns
                          }
               deriving (Read, Show, Eq, Generic, Store)
 
--- | Pattern syntax is @[[sourcePattern "|" |]targetPattern#]snapshot_name@ and you can escape @|@, @#@ and @\\@ by prefixing @\\@.
---   Forexample, @"content"@ is equivalent to @'Snapshot' { snapshotName = "content", snapshotSource = "//*", snapshotTarget = "//*"}@,
--- @"//*.html#content"@ to @'Snapshot' { snapshotName = "content", snapshotSource = "//*", snapshotTarget = "//*.html"}@, and
--- @"//source-\\#*.md|//index-\\|*.html#content"@ to @'Snapshot' { snapshotName = "content", snapshotSource = "//source-#*.md", snapshotTarget = "//index-|*.html"}@.
+-- | Pattern syntax is @[sourcePattern#]snapshot_name@ and you can escape @#@ and @\\@ by prefixing @\\@.
+--   Forexample, @"content"@ is equivalent to @'Snapshot' { snapshotName = "content", snapshotSource = "//*" }@,
+-- @"//*.md#content"@ to @'Snapshot' { snapshotName = "contant", snapshotTarget = "//*.md"}@.
 
 instance IsString Snapshot where
   fromString = parseSnapshot . T.pack
@@ -81,28 +83,23 @@ parseSnapshot :: Text -> Snapshot
 parseSnapshot src =
   case breakOnEscaped '#' src of
     (snap, "") -> defSnap { snapshotName = fromString $ T.unpack snap }
-    (pths, t)  ->
+    (fromString . T.unpack -> snapshotSource, t)  ->
       let snapshotName = T.unpack $ T.tail t
-      in case breakOnEscaped '|' pths of
-        (targ, "")  -> defSnap { snapshotName, snapshotTarget = fromString $ T.unpack targ }
-        (srcPat, targ) ->
-          let snapshotTarget = fromString $ T.unpack $ T.tail targ
-              snapshotSource = fromString $ T.unpack srcPat
-          in Snapshot {..}
+      in Snapshot {..}
   where
-    defSnap = Snapshot "" "//*" "//*"
+    defSnap = Snapshot "" "//*"
 
 breakOnEscaped :: Char -> Text -> (Text, Text)
 breakOnEscaped c = breakEscaped' ""
   where
     breakEscaped' acc str =
       case T.break (`elem` [c, '\\']) str of
-        (left, T.uncons -> Just ('\\', T.uncons -> Just ('\\', r)))
-          -> breakEscaped' (acc <> left <> "\\") r
-        (left, T.uncons -> Just ('\\', T.uncons -> Just (d, r)))
-          | d == c -> breakEscaped' (acc <> left `T.snoc` c) r
-          | otherwise -> breakEscaped' (acc <> left `T.snoc` '\\' `T.snoc` d) r
-        (left, r0@(T.uncons -> Just (_, _))) -> (acc <> left, r0)
+        (l, T.uncons -> Just ('\\', T.uncons -> Just ('\\', r)))
+          -> breakEscaped' (acc <> l <> "\\") r
+        (l, T.uncons -> Just ('\\', T.uncons -> Just (d, r)))
+          | d == c -> breakEscaped' (acc <> l `T.snoc` c) r
+          | otherwise -> breakEscaped' (acc <> l `T.snoc` '\\' `T.snoc` d) r
+        (l, r0@(T.uncons -> Just (_, _))) -> (acc <> l, r0)
         (l, r) -> (acc <> l, r)
 
 instance IsString Patterns where
@@ -273,20 +270,17 @@ saveSnapshot SakeConf{..} name i@Item{..} = do
 
 loadSnapshot :: (Store a) => SakeConf -> SnapshotName -> FilePath -> Action (Item a)
 loadSnapshot cnf name pat =
-  head <$> loadAllSnapshots cnf (fromString name) { snapshotTarget = fromString pat }
+  head <$> loadAllSnapshots cnf (fromString name) { snapshotSource = fromString pat }
 
 loadAllSnapshots :: (Store a) => SakeConf -> Snapshot -> Action [Item a]
-loadAllSnapshots SakeConf{..} sn@Snapshot{..} = do
-  ContentsIndex dic <- readFromBinaryFileNoDep (cacheDir </> pageListName)
-  let targs = [ fp
-              | (fp, pinfo) <- HM.toList dic
-              , maybe False (snapshotTarget ?===) $
-                stripDirectory destinationDir fp
-              , maybe False (snapshotSource ?===) $
-                stripDirectory sourceDir =<< sourcePath pinfo
-              ]
-  forM targs $ \fp ->
-    snapToItem <$> readFromBinaryFile' (replaceDir destinationDir (snapshotDir </> snapshotName) fp)
+loadAllSnapshots SakeConf{..} Snapshot{..} = do
+  targs <- globDirectoryFiles sourceDir snapshotSource
+  fmap catMaybes . forM targs $ \fp -> do
+    let snapPath = snapshotDir </> snapshotName </> fp -<.> "html"
+    there <- doesFileExist snapPath
+    if there
+      then Just . snapToItem <$> readFromBinaryFile' snapPath
+      else return Nothing
 
 hasSnapshot :: SakeConf -> SnapshotName -> Item a -> Action Bool
 hasSnapshot SakeConf{..} snap i =
@@ -295,10 +289,21 @@ hasSnapshot SakeConf{..} snap i =
 replaceDir :: FilePath -> FilePath -> FilePath -> FilePath
 replaceDir from to pth = to </> makeRelative from pth
 
+loadOriginalMaybe :: Readable a => SakeConf -> FilePath -> Action (Maybe (Item a))
+loadOriginalMaybe SakeConf{..} fp = do
+  ContentsIndex dic <- readFromBinaryFileNoDep (cacheDir </> pageListName)
+  case sourcePath =<< HM.lookup fp dic of
+    Nothing -> return Nothing
+    Just orig -> do
+      i <- loadItem orig
+      return $ Just i { itemTarget = fp }
 loadOriginal :: Readable a => SakeConf -> FilePath -> Action (Item a)
 loadOriginal cnf fp = do
   i <- loadItem =<< getSourcePath cnf fp
   return i { itemTarget = fp }
+
+loadItemWith :: (MonadSake f, Readable a) => FilePath -> FilePath -> f (Item a)
+loadItemWith targ fp = loadItem fp <&> \i -> i { itemTarget = targ }
 
 getSourcePath :: SakeConf -> FilePath -> Action FilePath
 getSourcePath SakeConf{..} fp = do

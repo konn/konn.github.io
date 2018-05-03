@@ -41,9 +41,9 @@ import qualified Data.HashMap.Strict             as HM
 import           Data.List
 import qualified Data.List                       as L
 import qualified Data.List.Split                 as L
-import           Data.Maybe                      (fromMaybe, isJust, isNothing,
-                                                  listToMaybe, mapMaybe,
-                                                  maybeToList)
+import           Data.Maybe                      (catMaybes, fromMaybe, isJust,
+                                                  isNothing, listToMaybe,
+                                                  mapMaybe, maybeToList)
 import           Data.Monoid                     ((<>))
 import           Data.Ord                        (comparing)
 import qualified Data.Store                      as S
@@ -212,7 +212,7 @@ runShake = shakeArgs myShakeOpts $ do
                   "yuicompressor" origPath "-o" out
 
     (destD </> "robots.txt") %> \out -> do
-      tmpl <- itemBody <$> loadOriginal siteConf out
+      tmpl <- itemBody <$> loadItemWith out (srcD </> "robots.txt")
       drafts <- mapMaybe (stripDirectory destD . itemTarget) <$> listDrafts out
       let obj = object ["disallowed" .= map ('/':) drafts]
       writeLazyTextFile out $ Mus.renderMustache tmpl obj
@@ -236,7 +236,7 @@ runShake = shakeArgs myShakeOpts $ do
                         , constField "children" items
                         , myDefaultContext
                         ]
-      loadOriginal siteConf out
+      loadItemWith out (srcD </> "archive.md")
         >>= compilePandoc readerConf writerConf
         >>= applyDefaultTemplate ctx {- tags -}
         >>= writeTextFile out . itemBody
@@ -248,7 +248,7 @@ runShake = shakeArgs myShakeOpts $ do
       if ".pdf" `L.isSuffixOf` srcPath
         then copyFile' srcPath out
         else do
-        Item{..} <- loadOriginal siteConf out
+        Item{..} <- loadItemWith out $ destToSrc $ out -<.> "tex"
         let opts = fromMaybe "-pdflua" $
                    maybeResult . fromJSON =<< HM.lookup "latexmk" itemMetadata
         withTempDir $ \tmp -> do
@@ -264,7 +264,6 @@ runShake = shakeArgs myShakeOpts $ do
              =<< myRecentFirst
              =<< loadAllSnapshots siteConf
                  "content" { snapshotSource = "logs//*.md" .&&. complement "logs/index.md"
-                           , snapshotTarget = subContentsWithoutIndex
                            }
       let pages = L.chunksOf 3 logs
           toName 0 = out
@@ -272,7 +271,7 @@ runShake = shakeArgs myShakeOpts $ do
       tmpl <- myPandocCompiler out
       makePagination mempty tmpl toName pages
 
-    (destD </?> "index.html") .&&. complement (disjoin copies) %%> \out -> do
+    (destD </?> "index.html") .&&. complement (disjoin copies .||. "logs/index.html") %%> \out -> do
       (count, posts) <- renderPostList . take 5
                         =<< aggregateLogs
                         =<< myRecentFirst
@@ -281,7 +280,11 @@ runShake = shakeArgs myShakeOpts $ do
                         , constField "updates" posts
                         , myDefaultContext
                         ]
-      loadOriginal siteConf out
+      let mdPath = destToSrc $ out -<.> "md"
+      mdThere <- doesFileExist mdPath
+      let pth | mdThere = mdPath
+              | otherwise = mdPath -<.> "html"
+      loadItemWith out pth
         >>= compilePandoc readerConf writerConf
         >>= applyDefaultTemplate ctx {- tags -}
         >>= writeTextFile out . itemBody
@@ -310,7 +313,8 @@ runShake = shakeArgs myShakeOpts $ do
 
     (cacheD <//> "*.tex.preprocess") %> \out -> do
       macs <- readFromYamlFile' "config/macros.yml"
-      i@Item{..} <- loadOriginal siteConf out
+      let origPath = replaceDir cacheD srcD $ dropExtension out
+      i@Item{..} <- loadItemWith out origPath
       let cmacs = itemMacros i
           ans   = preprocessLaTeX (cmacs <> macs) itemBody
           go    = do
@@ -326,8 +330,7 @@ runShake = shakeArgs myShakeOpts $ do
 
     (destD </> "feed.xml") %> \out -> do
       putNormal "Generating feed."
-      loadAllSnapshots siteConf "content" { snapshotSource = "//*.md" .||. "//*.html" .||. "//*.tex"
-                                          , snapshotTarget = subContentsWithoutIndex
+      loadAllSnapshots siteConf "content" { snapshotSource = ("//*.md" .||. "//*.html" .||. "//*.tex") .&&. complement ("draft//*" .||. "logs/index*.md" .||. "logs/index*.html")
                                           }
         >>= myRecentFirst
         >>= renderAtom feedConf feedCxt
@@ -337,7 +340,6 @@ runShake = shakeArgs myShakeOpts $ do
         >>= writeTextFile out
 
     serialPngOrSvg ?> \out -> do
-      putNormal $ "Preprocessing for " <> out
       let prepro = replaceDir destD cacheD $ takeDirectory out <.> "tex" <.> "preprocess"
       need [prepro]
 
@@ -354,7 +356,7 @@ takeImageNumber fp = do
 
 texToHtml :: FilePath -> Action ()
 texToHtml out = do
-  i0 <- loadOriginal @T.Text siteConf out
+  i0 <- loadItemWith @_ @T.Text out $ destToSrc $ out -<.> "tex"
   PreprocessedLaTeX{..} <- readFromBinaryFile' (replaceDir srcD cacheD (itemPath i0) <.> "preprocess")
   let imgs = maybe [] (\(j, _) -> concat
                                   [ [base <.> "png", base <.> "svg"]
@@ -429,7 +431,7 @@ listChildren includeIndices out = do
             | (targ, ofp) <- HM.toList dic, pat ?=== targ
             , maybe False ((srcD </?> subContentsWithoutIndex) ?===) $ sourcePath ofp
             ]
-  mapM (\(targ, _) -> loadOriginal siteConf targ) chs
+  catMaybes <$> mapM (loadOriginalMaybe siteConf . fst) chs
 
 subContentsWithoutIndex :: Patterns
 subContentsWithoutIndex =
@@ -811,7 +813,7 @@ aggregateLogs :: [Item T.Text] -> Action [Item T.Text]
 aggregateLogs is0 =
   case break ((logPat ?===) . itemTarget) is0 of
     (ps, a : qs) -> do
-      i <- loadOriginal siteConf (destD </> "logs/index.html")
+      i <- loadItem (srcD </> "logs/index.md")
       let rest = filter (not . (logPat ?===) . itemTarget) qs
           targ = itemTarget a
           anc   = '#' : takeBaseName targ
@@ -1090,7 +1092,7 @@ data Log = Log { logLog   :: T.Text
                , logDate  :: T.Text
                , logIdent :: T.Text
                }
-  deriving (Generic)
+  deriving (Generic, Show)
 
 toLog :: Item T.Text -> Action (Item Log)
 toLog i = do
