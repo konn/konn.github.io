@@ -16,34 +16,33 @@ import Settings
 import Utils
 import Web.Sake.Feed
 
-import           Blaze.ByteString.Builder        (toByteString)
-import           Control.Applicative             ((<|>))
-import           Control.Concurrent              (newChan, readChan,
-                                                  threadDelay)
-import           Control.Concurrent.Async        (concurrently_)
-import           Control.Lens                    (iforM_, imap, ix, (%~), (.~),
-                                                  (^?), _2)
-import           Control.Monad                   hiding (mapM)
+import           Blaze.ByteString.Builder (toByteString)
+import           Control.Applicative      ((<|>))
+import           Control.Concurrent       (newChan, readChan, threadDelay)
+import           Control.Concurrent.Async (concurrently_)
+import           Control.Lens             (iforM_, imap, ix, (%~), (.~), (^?),
+                                           _2)
+import           Control.Monad            hiding (mapM)
 import           Control.Monad.State
-import qualified Crypto.Hash.SHA256              as SHA
-import           Data.Aeson                      (Options, ToJSON (..),
-                                                  Value (..), camelTo2,
-                                                  defaultOptions,
-                                                  fieldLabelModifier, fromJSON,
-                                                  genericToJSON, toJSON)
-import qualified Data.ByteString.Char8           as BS
-import qualified Data.CaseInsensitive            as CI
-import           Data.Char                       hiding (Space)
-import           Data.Data                       (Data)
-import           Data.Foldable                   (asum)
+import qualified Crypto.Hash.SHA256       as SHA
+import           Data.Aeson               (Options, ToJSON (..), Value (..),
+                                           camelTo2, defaultOptions,
+                                           fieldLabelModifier, fromJSON,
+                                           genericToJSON, toJSON)
+import qualified Data.ByteString.Char8    as BS
+import qualified Data.CaseInsensitive     as CI
+import           Data.Char                hiding (Space)
+import           Data.Data                (Data)
+import           Data.Foldable            (asum)
 import           Data.Function
-import qualified Data.HashMap.Strict             as HM
+import qualified Data.HashMap.Strict      as HM
 import           Data.List
-import qualified Data.List                       as L
-import qualified Data.List.Split                 as L
-import           Data.Maybe                      (catMaybes, fromMaybe, isJust,
-                                                  isNothing, listToMaybe,
-                                                  mapMaybe, maybeToList)
+import qualified Data.List                as L
+import qualified Data.List.Split          as L
+import           Data.Maybe               (fromMaybe, isJust, isNothing,
+                                           listToMaybe, mapMaybe, maybeToList)
+
+
 import           Data.Monoid                     ((<>))
 import           Data.Ord                        (comparing)
 import qualified Data.Store                      as S
@@ -165,16 +164,20 @@ watch args = do
     watchTreeChan man src (const True) chan
     forever $ threadDelay maxBound
 
+copies :: [Patterns]
+copies = ["t//*" ,  "js//*" ,  ".well-known//*", "//*imgs//*", "//*img//*"
+         ,"math/cellular-automaton//*", "math/computational-algebra-seminar//*"
+         ,"prog/automaton//*", "prog/doc//*", "math//*.pdf", "prog/ruby//*"
+         , "css//*.css", "css//*.map", "//*.key", "//*.webp"
+         , "logs//*.jpg", "logs//*.png", "math/3d-mandelbrot/*"
+         ,"katex//*", "keybase.txt", "math/cellular-automaton//*.png", "//*.jpg", "//*.gif", "//*.webm"
+         ]
+
 runShake :: IO ()
 runShake = shakeArgs myShakeOpts $ do
   want ["site"]
 
-  let copies = ["t//*" ,  "js//*" ,  ".well-known//*", "//*imgs//*", "//*img//*"
-               ,"prog/automaton//*", "prog/doc//*", "math//*.pdf"
-               , "css//*.css", "css//*.map", "//*.key"
-               ,"katex//*", "keybase.txt"
-               ]
-      routing = [ Convert ("//*.md" .||. "//*.html" .||. "//*.tex") (-<.> "html")
+  let routing = [ Convert ("//*.md" .||. "//*.html" .||. "//*.tex") (-<.> "html")
                 , Convert "//*.tex" (-<.> "pdf")
                 , Convert "//*.sass" (-<.> "css")
                 , Convert "robots.txt" id
@@ -271,7 +274,7 @@ runShake = shakeArgs myShakeOpts $ do
       tmpl <- myPandocCompiler out
       makePagination mempty tmpl toName pages
 
-    (destD </?> "index.html") .&&. complement (disjoin copies .||. "logs/index.html") %%> \out -> do
+    (destD </> "index.html") %> \out -> do
       (count, posts) <- renderPostList . take 5
                         =<< aggregateLogs
                         =<< myRecentFirst
@@ -364,6 +367,7 @@ texToHtml out = do
                                   , let base = dropExtension out  </> "image-" ++ show i
                                   ])
              images
+  putNormal $ "requiring images: "  ++ show imgs
   needed $ [ destD </> "katex" </> "katex.min.js" , out -<.> "pdf" ]
         ++ imgs
   (style, bibs) <- cslAndBib out
@@ -419,19 +423,15 @@ addPDFLink plink (Pandoc meta body) = Pandoc meta body'
 
 listChildren :: Bool -> FilePath -> Action [Item T.Text]
 listChildren includeIndices out = do
-  ContentsIndex dic <- loadContentsIndex siteConf
-  let dir = takeDirectory out
-      pat0 = dir <//> "*.html"
-      excludes = fromString out :
-                 concat [["//index.html", destD </?> "archive.html", destD </?> "archive.md", "//index.md"] | not includeIndices]
-      includes = fromString pat0 :
-                 concat [["//index.html", destD </?> "archive.html", destD </?> "index.md", destD </?> "archive.md"] | includeIndices ]
-      pat = disjoin includes .&&. complement (disjoin excludes)
-      chs = [ (targ, ofp)
-            | (targ, ofp) <- HM.toList dic, pat ?=== targ
-            , maybe False ((srcD </?> subContentsWithoutIndex) ?===) $ sourcePath ofp
-            ]
-  catMaybes <$> mapM (loadOriginalMaybe siteConf . fst) chs
+  let dir = takeDirectory $ destToSrc  out
+      excludes = disjoin $
+                 fromString out :
+                 concat [["//index.md", "archive.md", "archive.md", "//index.md"] | not includeIndices] ++ copies
+  mapM loadItemToHtml . filter (not . (?===) excludes . dropDirectory1) . map  (dir </>)
+    =<< globDirectoryFiles dir subContentsWithoutIndex
+
+loadItemToHtml :: (Readable a, MonadSake f) => FilePath -> f (Item a)
+loadItemToHtml fp = loadItemWith (replaceDir srcD destD fp -<.> "html") fp
 
 subContentsWithoutIndex :: Patterns
 subContentsWithoutIndex =
