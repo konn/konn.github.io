@@ -847,7 +847,7 @@ renderPostList posts = do
         in if "//*.tex" ?== fp
         then do
              needed [pdfVer]
-             return $ Just $ T.pack pdfVer
+             return $ Just $ T.pack $ dropDirectory1 pdfVer
         else return Nothing
       descField = field_ "description" $ \item ->
         let ident = itemIdentifier item
