@@ -371,7 +371,7 @@ texToHtml out = do
   needed $ [ destD </> "katex" </> "katex.min.js" , out -<.> "pdf" ]
         ++ imgs
   (style, bibs) <- cslAndBib out
-  ipan <-  linkCard . addPDFLink ("/" </> out -<.> "pdf")
+  ipan <-  linkCard . addPDFLink ("/" </> dropDirectory1 out -<.> "pdf")
          . addAmazonAssociateLink "konn06-22"
        =<< procSchemes . myProcCites style bibs
        =<< liftIO (texToMarkdown out latexSource)
