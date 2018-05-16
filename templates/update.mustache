@@ -1,5 +1,5 @@
 <dt><a href="{{url}}">{{title}}</a>
-{{#pdf}} [<a href="{{.}}">PDF版</a>]{{/pdf}} - {{date}}
+{{#pdf}} [<a onclick="ga('send', 'event', 'download', 'ac', '{{.}}')" href="{{.}}">PDF版</a>]{{/pdf}} - {{date}}
 <span class="star-here"></span>
 </dt>
 <dd>{{& description }}</dd>

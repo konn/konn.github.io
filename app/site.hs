@@ -417,9 +417,14 @@ listDrafts fp =
 addPDFLink :: FilePath -> Pandoc -> Pandoc
 addPDFLink plink (Pandoc meta body) = Pandoc meta body'
   where
-    Pandoc _ body' = doc $ mconcat [ para $ mconcat [ "[", link plink "PDF版" "PDF版", "]"]
+    Pandoc _ body' = doc $ mconcat [ para $ mconcat [ "[", link' plink "PDF版" "PDF版", "]"]
                                    , Pan.fromList body
                                    ]
+
+link' :: (H5.ToMarkup a2, H5.ToMarkup a1) => a1 -> a2 -> p -> Inlines
+link' l txt _ttl =
+  rawInline "html" $ renderHtml
+    [shamlet|<a href=#{l} onclick="ga('send', 'event', 'download', 'ac', '#{l}')">#{txt}|]
 
 listChildren :: Bool -> FilePath -> Action [Item T.Text]
 listChildren includeIndices out = do
@@ -847,7 +852,7 @@ renderPostList posts = do
         in if "//*.tex" ?== fp
         then do
              needed [pdfVer]
-             return $ Just $ T.pack $ dropDirectory1 pdfVer
+             return $ Just $ replaceDir destD "/" itemTarget -<.> "pdf"
         else return Nothing
       descField = field_ "description" $ \item ->
         let ident = itemIdentifier item
