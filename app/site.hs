@@ -268,7 +268,7 @@ runShake = shakeArgs myShakeOpts $ do
              =<< loadAllSnapshots siteConf
                  "content" { snapshotSource = "logs//*.md" .&&. complement "logs/index.md"
                            }
-      let pages = L.chunksOf 3 logs
+      let pages = L.chunksOf 5 logs
           toName 0 = out
           toName n = dropExtension out ++ "-" ++ show n <.> "html"
       tmpl <- myPandocCompiler out
