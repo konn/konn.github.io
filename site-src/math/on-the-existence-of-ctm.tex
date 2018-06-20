@@ -31,7 +31,7 @@ latexmk: -lualatex
 
 集合論の様々なモデルを構成する方法として\textbf{強制法}があります．強制法の流儀には複数ありますが，その中の一つに$\ZFC$の\textbf{可算推移的モデル}(\textit{c.t.m.})を取る方法があり，Kunen\cite{Kunen:2011}でもこの方法が採用されています．
 
-実はこの「$\ZFC$の可算推移的モデルの存在」は「$\ZF(\mathrm{C})$の無矛盾性（＝$\ZF(\mathrm{C})$の集合モデルの存在）」よりも強い仮定です（つまり$\Con(\ZF) \nrightarrow \exists \text{c.t.m.}$）\footnote{ですので，Kunenでは「$\Con(ZFC)$からの相対無矛盾性を示す際には，厳密には反映原理で議論を展開するのに十分な$\ZFC$の有限部分を取ってきてそのc.t.m.を取ることになる」という説明がされています．}．このことはKunen\cite{Kunen:2011}や新井\cite{Arai:2011}で言及されていますが，具体的に何故なのかは触れられていません．
+実はこの「$\ZFC$の可算推移的モデルの存在」は「$\ZF(\mathrm{C})$の無矛盾性（＝$\ZF(\mathrm{C})$の集合モデルの存在）」よりも強い仮定です（つまり$\Con(\ZF) \nrightarrow \exists \text{c.t.m.}$）\footnote{ですので，Kunenでは「$\Con(\ZFC)$からの相対無矛盾性を示す際には，厳密には反映原理で議論を展開するのに十分な$\ZFC$の有限部分を取ってきてそのc.t.m.を取ることになる」という説明がされています．}．このことはKunen\cite{Kunen:2011}や新井\cite{Arai:2011}で言及されていますが，具体的に何故なのかは触れられていません．
 以下では，この辺りの議論について少し詳しく書いてみます．
 
 \section{典型的な誤解とそれが誤解である手短な説明}
@@ -61,9 +61,9 @@ $\Con(ZF)$から存在する可算モデルを$(M, E)$としましょう．$=$�
 しかし，それでも他の方法で取れる可能性はあるのではないか？と云う疑問が湧いてきます．そこで，以下では，c.t.m.の存在が$\Con(ZF)$よりも強いことを示します．
 以下の議論については，くるるさん（\href{https://twitter.com/kururu_goedel}{@kururu\_goedel}）から本質的な示唆\footnote{\url{https://twitter.com/kururu_goedel/status/514174894779953152}}を頂きました．ありがとうございます．
 
-そこで，$\Con(\ZFC) \rightarrow \exists \text{c.t.m.}$を仮定して矛盾を導きましょう．そもそも$\ZFC + \Con(ZFC)$が矛盾する場合はつぶれてしまって考える意味がないので，$\Con(\ZFC + \Con(ZFC))$としましょう．するとG\"{o}delの第二不完全性定理および完全性定理から，$M \models \ZFC + \Con(ZFC) + \neg \Con(\ZFC + \Con(ZFC))$を満たすモデル$M$が存在します．今，$\Con(\ZFC) \rightarrow \exists \text{c.t.m.}$を仮定しているので，$M$の中で$\ZFC$の可算推移的モデル$N \subseteq M$が取れます．ここで，「可算」「推移的」「$\subseteq$」はいずれも$M$をユニヴァースと見た時のものであることに注意しましょう．とはいえ，これ以後$M$の外に出ることはないので，$M$をユニヴァースだと思ってしまって，以下$\in$は$M$における$\epsilon$-関係であるとして議論を進めることにします．
+そこで，$\Con(\ZFC) \rightarrow \exists \text{c.t.m.}$を仮定して矛盾を導きましょう．そもそも$\ZFC + \Con(\ZFC)$が矛盾する場合はつぶれてしまって考える意味がないので，$\Con(\ZFC + \Con(\ZFC))$としましょう．するとG\"{o}delの第二不完全性定理および完全性定理から，$M \models \ZFC + \Con(\ZFC) + \neg \Con(\ZFC + \Con(\ZFC))$を満たすモデル$M$が存在します．今，$\Con(\ZFC) \rightarrow \exists \text{c.t.m.}$を仮定しているので，$M$の中で$\ZFC$の可算推移的モデル$N \subseteq M$が取れます．ここで，「可算」「推移的」「$\subseteq$」はいずれも$M$をユニヴァースと見た時のものであることに注意しましょう．とはいえ，これ以後$M$の外に出ることはないので，$M$をユニヴァースだと思ってしまって，以下$\in$は$M$における$\epsilon$-関係であるとして議論を進めることにします．
 
-すると，$N \models \ZFC$かつ$\neg \Con(ZFC + \Con(ZFC))$より$N \models \neg \Con(ZFC)$となります．すると，$\ZFC$の有限個の公理$\varphi_1, \dots, \varphi_n$があってそこから矛盾が出ます：
+すると，$N \models \ZFC$かつ$\neg \Con(\ZFC + \Con(\ZFC))$より$N \models \neg \Con(\ZFC)$となります．すると，$\ZFC$の有限個の公理$\varphi_1, \dots, \varphi_n$があってそこから矛盾が出ます：
 
 \[
 N \models \neg \Con(\varphi_1 \wedge \dots \wedge \varphi_n)
