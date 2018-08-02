@@ -1,0 +1,104 @@
+---
+title: Boole値解析入門
+date: 2016/07/11 11:00:00 JST
+author: 石井大海
+description: |
+  集合論の分野で，**強制法**はモデルを構成する主要な方法の一つであり，種々の命題の**無矛盾性・独立性の証明**に用いられています．
+  一方，Kunen\cite{Kunen:1980}でも少しだけ触れられているように，強制法は無矛盾性証明だけでなく，**$\ZFC$の定理を証明する手法**としても用いることが出来ます．
+  本稿では，この側面の用いられ方の一つである**Boole値解析**の手法を採り上げます．
+  これは強制法の同値な定式化である**Boole値モデル**の手法を使って，初等解析の結果を測度論や関数解析の定理に読み替える（！）という物で，例えば「確率変数」が「あるモデルの中の実数」と一対一に対応したりします．
+  Boole値モデルを定式化した一人であるScottらが初期から提案していたものですが，今回はTakeuti\cite{Takeuti:2012cv}の説明に基づきます．
+
+latexmk: -lualatex
+tag: Boole値モデル,集合論,解析学,測度論,Boole値解析
+katex: true
+draft: true
+macro:
+  M: '\mathbb{M}'
+  Add: '\mathop{\mathsf{Add}}'
+  img: '\mathbin{\text{``}}'
+---
+\documentclass[a4j,leqno]{ltjsarticle}
+\usepackage[hiragino-pron]{luatexja-preset}
+\usepackage{mystyle}
+\usepackage{luatexja-otf}
+\usepackage{dsfont}
+\DeclareMathAlphabet{\mathrsfs}{U}{rsfso}{m}{n}
+\renewcommand{\mathscr}[1]{\mathup{\mathrsfs{#1}}}
+\usepackage{fixme}
+\usepackage[super]{nth}
+\usepackage[bookmarksnumbered,pdfproducer={LuaLaTeX},%
+            luatex,psdextra,pdfusetitle,pdfencoding=auto]{hyperref}
+\usepackage[backend=biber, style=math-numeric]{biblatex}
+\addbibresource{myreference.bib}
+\renewcommand{\emph}[1]{\textsf{\textgt{#1}}}
+
+\title{Boole値解析入門}
+\author{石井大海}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+ 集合論の分野で，\emph{強制法}はモデルを構成する主要な方法の一つであり，種々の命題の無矛盾性・独立性の証明に用いられています．
+ 一方，Kunen~\cite{Kunen:2011}でも少しだけ触れられているように，強制法は無矛盾性証明だけでなく，\emph{$\ZFC$の定理を証明する手法}としても用いることが出来ます．
+ 本稿では，この側面の用いられ方の一つである\emph{Boole値解析}の手法を採り上げます．
+ これは強制法の同値な定式化である\emph{Boole値モデル}の手法を使って，初等解析の結果を測度論や関数解析の定理に読み替える（！）という物で，例えば「確率変数」が「あるモデルの中の実数」と一対一に対応したりします．
+ Boole値モデルを定式化した一人であるScottらが初期から提案していたものですが，今回はTakeuti~\cite{Takeuti:2012cv}の説明に基づきます．
+\end{abstract}
+
+\section{定理証明技法としての強制法}
+集合論において，\emph{強制法}はモデルを構成する主要な手法の一つだが，専ら無矛盾性証明のための道具として用いられることが多い．
+強制法の基礎理論については，以前『Boole値モデルと強制法』という記事~\cite{Ishii:2016mj}で紹介したが，今回は\emph{定理証明技法としての強制法}について採り上げる．
+そのため，詳細には立ち入らないが，まずはウォームアップと題して違う手法を採り上げて，それを通して強制法の基本的な事項を採り上げていきたい．
+
+\subsection{ウォームアップ：絶対性と強制法のあわせ技による定理の証明}
+本題のBoole値解析の話に入る前に，Kunen~\cite{Kunen:2011}に載っている強制法による定理証明の方法を見てみよう．
+
+\begin{definition}
+ \begin{enumerate}
+  \item 順序集合$(T, <)$が\emph{木}であるとは任意の$x \in T$に対して${\downarrow}x \defeq \Set{ y \in T | y < x}$が$<$に関し整列集合となること．
+  \item $\rank_T(x) \defeq \otp({\downarrow}x)$, $T_\alpha \defeq \Set{ x \in X | \rank_T(x) = \alpha }$, $\height(T) \defeq \sup_{x \in X} (\rank_T(x)+1)$.
+  \item 木$(T, <)$が\emph{Suslin} $\defs$ $T$は高さ$\omega_1$の木で，$|T_\alpha| \leq \aleph_0$かつ$T$は順序型$\omega_1$の鎖を持たない．
+  \item Suslin木$T$が\emph{well-pruned} $\defs$任意の$x \in T$と$\alpha < \omega_1$に対し，$T_\alpha \cap {\uparrow}x \neq \emptyset$.
+ \end{enumerate}
+\end{definition}
+
+\begin{theorem}
+ $T$がSuslin木の時，狭義単調写像$\varphi: T \rightarrow \R$は存在しない．
+\end{theorem}
+
+この定理に使うのは次の補題だ：
+
+\begin{lemma}\label{lem:no-omega-1-incr-reals}
+ 実数の長さ$\omega_1$の狭義増大列は存在しない．
+\end{lemma}
+\begin{proof}
+ $\Braket{x_\alpha | \alpha < \omega_1}$が実数の狭義増大列だとする．
+ このとき，$\R$における$\Q$の稠密性から，各$\alpha < \omega_1$に対し$x_\alpha < r_\alpha < x_{\alpha+1}$となるような$\Braket{ r_\alpha \in \Q | \alpha < \omega_1}$が取れる．
+ すると，取り方からこの$r_\alpha$たちは互いに相異なるが，これは$\Q = \aleph_0$に矛盾． \qed
+\end{proof}
+
+えっ，そもそも「順序型$\omega_1$の鎖を持たない」がSuslin木の定義に入ってるのに，どう使うの？と思うかもしれない．
+実は，$V$におけるSuslin木$T$に対して，より大きな宇宙$V[G]$で$T$がSuslin木でなくなるような宇宙がある．
+
+\begin{fact}
+ 任意のSuslin木$T$に対し，その部分木$T^*$でwell-prunedなものが取れる．
+\end{fact}
+
+これを別として，
+
+\begin{proof}
+ そのような$\varphi \in V$が取れたと仮定し矛盾を導く（\emph{背理法}）．
+ $G$を$(T, >)$-生成フィルターとする．
+ $T$の各レベルが高々可算であることから，$T$は強制法としてc.c.c.を持ち，特に$V$と$V[G]$で$\omega_1$の値は変わらないことに注意する．
+ 特に，$T$は$V[G]$でも$\omega_1$-木である．
+
+ いま，$T$がwell-prunedである事から，各$\alpha < \omega_1$に対し$T_\alpha$は稠密である．
+ すると，$G \cap T_\alpha \neq \emptyset$かつ$G$が上に閉（つまり$T$の順序についていえば下に閉）であることから，$G$は$T$を通る道であり，$T$が$V[G]$でも$\omega_1$-木であることから$\otp(G) = \omega_1$である．
+ 狭義単調性は推移的モデルの間で絶対的で，特に$\varphi$は$V[G]$でも狭義単調写像であることに気を付ければ，$\varphi \mathbin{\text{``}} G \subseteq \R$は実数の順序型$\omega_1$の真の増大列である．
+ これは補題~\ref{lem:no-omega-1-incr-reals}に反する． \qed
+\end{proof}
+
+\printbibliography[title=参考文献]
+\end{document}
