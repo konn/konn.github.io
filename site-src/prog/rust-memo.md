@@ -31,6 +31,7 @@ Rustに入門したので、適宜HaskellのこれはRustのこれ、という�
 * Haskell と違い、変数はバシバシ shadowing していく文化。
     * __注意__：Shadowing された変数にアクセスする方法はないが、shadowing されてもスコープが区切られなければ Drop はされない。
 * コメントは一行コメントのみ：`// これはコメントです`{.rs}
+* ここに入れていいのかわからないが、インデントは4スペース。
 
 # 変数束縛
 * `let a: T = b`{.rs} は不変変数宣言。
@@ -94,10 +95,36 @@ Rustに入門したので、適宜HaskellのこれはRustのこれ、という�
 * ベクトル：`Vec<T>`。リストリテラルのように作るのは `vec![1,2,3]`{.rs}。
     * 固定長ベクトルは `[T; 3]`{.rs} のよう。
 
-# モナド
+# モナドと例外・失敗処理
 * モナドはない。
     * でも将来に向けて `do`{.rs} は予約語になっているようだ。
-* `Maybe`
+* 例外機構はなく、`panic`{.rs}を使って自殺するか、後述の `Result`{.rs} を使っていくのがよいとされているようだ。
+* `Maybe a`{.hs} に対応するのが `Option<T>`{.hs}。
+  `Nothing`{.hs}と`Just a`には{.hs} には `Some(a)`{.rs} と `None`{.rs}が対応。
+    * `Option`{.rs} を `panic`{.rs}に変換するには：
+        * `fromJust ma`{.hs} $=$ `ma.unwrap()`
+        * `fromMaybe (error "unko") ma`{.hs} $=$ `ma.expect("unko")`{.rs}
+* `Either a b`{.hs} に対応するのが `Result<B, A>`{.rs}
+    * `Right a`{.hs} $=$ `Ok(a)`{.rs}, `Left b`{.hs} $=$ `Err(b)`{.rs}
+    * ライブラリ毎に `type MyResult<T> = Result<T, MyError>`{.rs} のような別名を用意している。
+    * **順番に注意**！Haskell の流儀では二番目の型引数が「成功」だが、Rustでは**最初の型引数が成功値**。
+    * `unwrap()` と `expect("foo")`{.rs}は同様に使える。
+    * モナドはないが、SwiftやCoffeeScriptの `?` オペレータと同じようなものがある。
+      ```rs
+      fn proc(opt_arg: Option<i64>) -> Result<i16,SomeError>  {
+          let a = opt_arg?.some_method().still_perhaps_failling()?;
+          println!("Hahaha");
+          { some heavy proc ... }
+          Ok(42)
+      }
+      ```
+      とかあったら、`?`が付いてる値が `Err(hoge)`{.rs} だった場合、なんかいいかんじの変換が成されて直ちに `Err`{.rs} が返るようになる（注：Haskellと違いRustにはearly returnがある）。
+        * 但し関数定義（`return`{.rs}が呼べるところ）でしか使えない。
+        * qnighy氏の記事によれば、nightly では `do catch`{.rs} 構文があるようだが、stableには入ってない模様。
+
+          [](https://qnighy.hatenablog.com/entry/2017/06/03/070000)
+
+
 
 # オーバーロード
 * Haskell の型クラスに当るのがトレイト（`trait`{.rs}）
