@@ -91,8 +91,7 @@ Rustに入門したので、適宜HaskellのこれはRustのこれ、という�
   ```rust
   trait Trait<'a, T, U>: this::is::SuperTrait {
     type F  // 関連型（associated type）もある
-    fn foo<T>(args: i64, ...)  -> result {
-    }
+    fn foo<T>(args: i64, ...)  -> result;
   }
 
   impl<'a, T> Trait<'a, T, T> for MyStruct {
