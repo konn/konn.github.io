@@ -1,6 +1,5 @@
 ---
 title: Haskellerの私的Rustチートシート
-date: 2018/08/27 01:45:47 JST
 author: 石井大海
 description: Rustに入門したので、適宜HaskellのこれはRustのこれ、ということをここに蓄積していって、個人的なチートシートにする。
 tag: Rust,Haskell,Programming,Tech,Programming Language
@@ -66,6 +65,7 @@ Rustに入門したので、適宜HaskellのこれはRustのこれ、という�
         * `else if let p = e { ... } else { ... }`{.rust} のように連ねたりfallback で else が使える。
 * ループ：`while p { ... }`{.rust} および `loop { ... }`{.rust}
     * スコープとlifetimeの関係で、条件判定やパタンマッチを `while`{.rust} の条件部ではなく `loop{ ... }`{.rust} 内部でやった方が適切な場合あり。
+* `TypeApplications`{.haskell}: GHCの`TypeApplications`{.hs} での `f @T xs`{.hs} に当るのは `f::<T>(xs)`{.rs}。ワイルドカードも使える：`f::<Vec<_>>(xs)`。
 
 # データ型
 * `Int16, Int32, Int64, Word16, Word32, Word64`{.rust} に当るのが `i16, i32, i64, u16, u32, u64`{.rust}。
@@ -92,6 +92,8 @@ Rustに入門したので、適宜HaskellのこれはRustのこれ、という�
     * ここでも `use`{.rs} が使え、`use Struct::*`{.rs} や `use Enum::*`{.rs} のようにすると、単に`A(12)`{.rs}や`B { val: 12, dull: 54 }`{.rs} のように呼べる。
 * `NamedFieldPuns`{.haskell} 拡張のようなことが出来、`Foo { bar } `{.rust} とやるとスコープにある `bar` の値が `bar`フィールド`bar` の値になる。
     * 逆にパターンの来る文脈で `let P {x , y} = p`{.rust} とすればフィールド `x`, `y` の値が変数 `x`, `y` にバインドされる。
+* レコードの更新：`d = D { field: a, gield: b }`{.rs} のとき、
+  Haskellでいう `d { field = val }`{.hs} は Rust だと `D { field: val, .. d }`{.rs} となる。
 * ベクトル：`Vec<T>`。リストリテラルのように作るのは `vec![1,2,3]`{.rs}。
     * 固定長ベクトルは `[T; 3]`{.rs} のよう。
 
