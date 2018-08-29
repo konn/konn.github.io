@@ -126,8 +126,6 @@ Rustに入門したので、適宜HaskellのこれはRustのこれ、という�
 
           [](https://qnighy.hatenablog.com/entry/2017/06/03/070000)
 
-
-
 # オーバーロード
 * Haskell の型クラスに当るのがトレイト（`trait`{.rs}）
 
@@ -154,3 +152,4 @@ Rustに入門したので、適宜HaskellのこれはRustのこれ、という�
   struct Showable(dyn Display);
   ```
     * `dyn`{.rs} は動的にディスパッチするので、ゼロコスト抽象は効かない。
+
