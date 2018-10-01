@@ -47,7 +47,7 @@ Activity
 
 Papers
 ------
-* Hiromi ISHII, "*A Purely Functional Computer Algebra System Embedded in Haskell*" ([preprint](https://arxiv.org/abs/1807.01456)), In: Computer Algebra in Scientific Computing, pp. 288-303. 20th International Workshop, CASC 2018, Lille, France, September 17-21, 2018. DOI: [10.1007/978-3-319-99639-4](https://doi.org/10.1007/978-3-319-99639-4).
+* Hiromi ISHII, "*A Purely Functional Computer Algebra System Embedded in Haskell*" ([preprint](https://arxiv.org/abs/1807.01456)), In: Computer Algebra in Scientific Computing, pp. 288-303. 20th International Workshop, CASC 2018, Lille, France, September 17-21, 2018. DOI: [10.1007/978-3-319-99639-4_20](https://doi.org/10.1007/978-3-319-99639-4_20).
 * Hiromi ISHII, "[Regularity Properties of Sets of Reals and Inaccesible Cardinals](math/regularity-and-inaccessible.html)", Master's Thesis.
 * Oleg Kiselyov and Hiromi ISHII, "[Freer Monads, More Extensible effects](http://okmij.org/ftp/Haskell/extensible/more.pdf)". Haskell Symposium 2015.
 
