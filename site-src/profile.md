@@ -2,7 +2,7 @@
 title: プロフィール
 description: わたしについて。
 tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オートマトン
-date: 2018/02/10 02:50:51 JST
+date: 2018/10/01 17:46:25 JST
 ---
 
 自己紹介
@@ -47,6 +47,7 @@ Activity
 
 Papers
 ------
+* Hiromi ISHII, "*A Purely Functional Computer Algebra System Embedded in Haskell*" ([preprint](https://arxiv.org/abs/1807.01456)), In: Computer Algebra in Scientific Computing, pp. 288-303. 20th International Workshop, CASC 2018, Lille, France, September 17-21, 2018. DOI: [10.1007/978-3-319-99639-4](https://doi.org/10.1007/978-3-319-99639-4).
 * Hiromi ISHII, "[Regularity Properties of Sets of Reals and Inaccesible Cardinals](math/regularity-and-inaccessible.html)", Master's Thesis.
 * Oleg Kiselyov and Hiromi ISHII, "[Freer Monads, More Extensible effects](http://okmij.org/ftp/Haskell/extensible/more.pdf)". Haskell Symposium 2015.
 
@@ -54,6 +55,7 @@ Talks
 -----
 勉強会や社内セミナーなどでの発表記録。
 
+* 2018/09/19 [Computer Algebra in Scientific Computing 2018](http://www.casc.cs.uni-bonn.de/2018/) \@ University of Lille, "[A Purely Functional Computer Algebra System Embedded in Haskell](/math/casc2018-talk.pdf)".
 * 2017/11/07 [Workshop on Iterated Forcing Theory and Cardinal Invariants](http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html)＠RIMS『[Reflection Principles and Saturated Filters on $\mathcal{P}_{\omega_1} \lambda$](math/rims2017.pdf)』
 * 2017/10/27 数学基礎論若手の会2017＠大学セミナーハウス『**正集合の反映原理と飽和イデアルの構成**』（[Slide PDF](/math/wakate-2017.pdf)）
 * 2017/03/06 筑波大学計算機数学グループ 春の合宿 in 館山 2017『**ものまね鳥を愛でる 結合子論理と計算**』（[SlideShare](https://www.slideshare.net/konn/ss-72840520), [PDF](math/mocking-bird-tateyama.pdf), 録画(N/A)）
