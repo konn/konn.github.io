@@ -1,6 +1,6 @@
 ---
 title: Emacs から Visual Studio Code に乗り換える作業のメモ
-date: 2018/10/15 17:09:15 JST
+date: 2018/10/15 18:15:00 JST
 author: 石井大海
 description: |
   Emacs にそろそろ辟易してきたので、VSCode に乗り換えようとしています。その作業記録。
