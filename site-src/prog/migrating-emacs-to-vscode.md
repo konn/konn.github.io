@@ -1,6 +1,6 @@
 ---
 title: Emacs から Visual Studio Code に乗り換える作業のメモ
-date: 2018/10/15 18:15:00 JST
+date: 2018/10/15 18:42:00 JST
 author: 石井大海
 description: |
   Emacs にそろそろ辟易してきたので、VSCode に乗り換えようとしています。その作業記録。
@@ -37,6 +37,7 @@ tag: emacs,vscode,env,ide,intero,Haskero,
 
     僕はもうこれがなければ数式が打てないレベルまで来ているので、この機能の代替が欲しい。
     前 Atom に乗り換えようとした際にも、[Atom 向けのイメージ補完機構][atom shape compl]を作ってみていたのだが、途中で飽きて放り投げてある。キーイベントをフックするのとかが面倒だったし、よくわからないタイミングでキーが外に逃げたりするので……。
+* Tramp による SSH 越しに sudo やったりするやつ
 
 現状
 ----
@@ -155,6 +156,10 @@ Scala
 ### YaTeX の代替
 残念ながらまだ見付かってないです。良い奴教えてください。
 最低要件は上で書いたイメージ補完が使えることです。
+
+### Emacs の TRAMP 相当
+Emacs には tramp-mode というのがあって、SSH越しにリモートファイルを編集したり、更にリモートで sudo 越しに保護されたファイル（サーバの config とか）を編集したりということができた。
+VSCode では何を使えばいいんだろう。
 
 [YaTeX]: https://www.yatex.org
 [intero]: http://commercialhaskell.github.io/intero/
