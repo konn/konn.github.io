@@ -1,6 +1,6 @@
 ---
 title: Emacs から Visual Studio Code に乗り換える作業のメモ
-date: 2018/10/15 18:42:00 JST
+date: 2018/10/16 00:05:00 JST
 author: 石井大海
 description: |
   Emacs にそろそろ辟易してきたので、VSCode に乗り換えようとしています。その作業記録。
@@ -159,7 +159,12 @@ Scala
 
 ### Emacs の TRAMP 相当
 Emacs には tramp-mode というのがあって、SSH越しにリモートファイルを編集したり、更にリモートで sudo 越しに保護されたファイル（サーバの config とか）を編集したりということができた。
-VSCode では何を使えばいいんだろう。
+~~VSCode では何を使えばいいんだろう。~~
+
+当面の間は[SSH FS for VSCode][SSHFS]を使うことにした[^1]。
+TRAMP は ~/.ssh/config を自動で読み出してくれるが、SSH FS では自分で設定を書く必要があるようだ。
+[このissue][sshfs issue]によれば、現行の 1.10.0 でも `"sftpCommand": "sudo /usr/lib/openssh/sftp-server"`{.json} とか指定すれば、リモートで `sudo` 打てる筈なのだが、どうも上手く接続出来ないのでどうしたものか。
+あと、ワークスペースとしてマウントする奴なので、ちょっと一つのファイルだけ開きたい時はオーバーキルのような気もする。
 
 [YaTeX]: https://www.yatex.org
 [intero]: http://commercialhaskell.github.io/intero/
@@ -172,3 +177,7 @@ VSCode では何を使えばいいんだろう。
 [Haskutil]: https://marketplace.visualstudio.com/items?itemName=Edka.haskutil
 [Hasklig]: https://github.com/i-tu/Hasklig
 [haskell-ide-engine]: https://github.com/haskell/haskell-ide-engine
+[SSHFS]: https://marketplace.visualstudio.com/items?itemName=Kelvin.vscode-sshfs
+[sshfs issue]: https://github.com/SchoofsKelvin/vscode-sshfs/issues/28#issuecomment-425078388
+
+[^1]: 所でどうでもいいけど、SSH FS って言うと FUSE の SSH マウント出来やつtと紛らわしいな。
