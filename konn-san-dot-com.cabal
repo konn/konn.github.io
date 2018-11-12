@@ -1,8 +1,10 @@
--- This file has been generated from package.yaml by hpack version 0.28.2.
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7165a1b61e922d8789a66e156c9dfec8087760be08c6c7c715e6c1eb174ad1b4
+-- hash: 5a26a92b54759597edeb010657992f63ef0e64f762b9da403bf78457298b06ed
 
 name:           konn-san-dot-com
 version:        0.1.0.0
@@ -14,7 +16,6 @@ maintainer:     konn.jinro_at_gmail.com
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
-cabal-version:  >= 1.10
 
 executable site
   main-is: site.hs
