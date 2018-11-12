@@ -1,6 +1,6 @@
 ---
 title: VSCode で YaTeX のイメージ補完やユニコード数式記号を入力する為の拡張をつくった
-date: 2018/11/12 18:25:12 JST
+date: 2018/11/12 18:54:00 JST
 author: 石井大海
 description: |
   VSCode で YaTeX のイメージ補完相当の機能を実現したり、Agda や Lean などの定理証明系で必要となるユニコード数式記号の入力を補助するための機能拡張を作った話しです。
@@ -64,3 +64,4 @@ tag: vscode,YaTeX,LaTeX,定理証明系
 [latex preview]: https://marketplace.visualstudio.com/items?itemName=ajshort.latex-preview
 [latex-input]: https://marketplace.visualstudio.com/items?itemName=yellpika.latex-input
 [unicode latex]: https://marketplace.visualstudio.com/items?itemName=oijaz.unicode-latex
+[redtt]: https://github.com/RedPRL/redtt
