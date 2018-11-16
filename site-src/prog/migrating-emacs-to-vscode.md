@@ -34,13 +34,13 @@ tag: emacs,vscode,env,IDE,intero,Haskero,
   - 最近使ってみているので、快適なのが欲しい。
 - [YaTeX] の代替になるやつ
 
-  - **2018/11/12 追記**：幾つか組み合わせつつ、[自前で拡張を書いて解決][generic-input]した。
+  - **2018/11/12 追記**：幾つか組み合わせつつ、[自前で拡張を書いて解決][CaTeX]した。
   - 永らく LaTeX の執筆環境では YaTeX-mode を利用してきた。  
     特に、YaTeX にはイメージ補完というのがあって、アスキーで表現された数学記号のイメージに相当する記号を手軽に入力出来る。
     例えば <kbd>;||-</kbd> で $\Vdash$ (`\Vdash`)、<kbd>;ox</kbd> で $\otimes$ (`\otimes`)、あるいは <kbd>:a</kbd> で $\alpha$ (`\alpha`)、<kbd>:ph-</kbd> で $\varphi$ (`\varphi`) といった具合に。
 
     僕はもうこれがなければ数式が打てないレベルまで来ているので、この機能の代替が欲しい。
-    前 Atom に乗り換えようとした際にも、[Atom 向けのイメージ補完機構][atom shape compl]を作ってみていたのだが、途中で飽きて放り投げてある。キーイベントをフックするのとかが面倒だったし、よくわからないタイミングでキーが外に逃げたりするので……。
+    前 Atom に乗り換えようとした際にも、[Atom 向けのイメージ補完機構][atom shape compl]を作ってみていたのだが、途中で飽きて放り投げてある。VSCode の方がAPIが整理されていて、遥かに書き易かった。
 
 - Tramp による SSH 越しに sudo やったりするやつ
 
@@ -191,5 +191,6 @@ TRAMP は ~/.ssh/config を自動で読み出してくれるが、SSH FS では�
 [sshfs]: https://marketplace.visualstudio.com/items?itemName=Kelvin.vscode-sshfs
 [sshfs issue]: https://github.com/SchoofsKelvin/vscode-sshfs/issues/28#issuecomment-425078388
 [generic-input]: ./generic-input-method-and-latex-in-vscode.html
+[CaTeX]: https://marketplace.visualstudio.com/items?itemname=mr-konn.catex
 
 [^1]: 所でどうでもいいけど、SSH FS って言うと FUSE の SSH マウント出来るやつと紛らわしいな。
