@@ -9,10 +9,12 @@ date: 2018/10/01 17:46:25 JST
 
 自己紹介
 =======
-集合論を学ぶ修士（理学）。数学（集合論をはじめとした数学基礎論）と本格ミステリ、関数型プログラミング。時々パズル。
+
+集合論と計算機代数を学ぶ修士（理学）。数学（集合論をはじめとした数学基礎論）と本格ミステリ、関数型プログラミング。時々パズル。
 
 専門と趣味について
 --------------
+
 好きな作家（順不同）
 :    麻耶雄嵩、円城塔、森川智喜、円居挽、倉知淳。座右の書は麻耶雄嵩『[夏と冬の奏鳴曲](asin:4062638916)』と円城塔『[Boy's Surface](asin:4150310203)』。パズル作家の芦ヶ原伸之さんのエッセイも好き。
 
@@ -24,12 +26,14 @@ date: 2018/10/01 17:46:25 JST
 
 受賞歴・資格等
 ------------
+
 * 2015年度 第十四回茗渓会賞
 * 2013年度 早稲田大学基幹理工学部卒業生総代
 * 2013年度 早稲田大学基幹理工学部長賞最優秀賞（第一回）
 
 年表
 -----
+
 * 2017/04〜2019/03 日本学術振興会特別研究員（DC2）
 * 2016/04〜 筑波大学大学院 数理物質科学研究科 数学専攻 博士後期課程
 * 2016/03 筑波大学大学院 数理物質科学研究科 数学専攻 博士前期課程修了
@@ -45,18 +49,22 @@ date: 2018/10/01 17:46:25 JST
 
 Activity
 ========
+
 現在・過去の活動記録など。
 
 Papers
 ------
+
 * Hiromi ISHII, "*A Purely Functional Computer Algebra System Embedded in Haskell*" ([preprint](https://arxiv.org/abs/1807.01456)), In: Computer Algebra in Scientific Computing, pp. 288-303. 20th International Workshop, CASC 2018, Lille, France, September 17-21, 2018. DOI: [10.1007/978-3-319-99639-4_20](https://doi.org/10.1007/978-3-319-99639-4_20).
-* Hiromi ISHII, "[Regularity Properties of Sets of Reals and Inaccesible Cardinals](math/regularity-and-inaccessible.html)", Master's Thesis.
+* Hiromi ISHII, "[Regularity Properties of Sets of Reals and Inaccessible Cardinals](math/regularity-and-inaccessible.html)", Master's Thesis.
 * Oleg Kiselyov and Hiromi ISHII, "[Freer Monads, More Extensible effects](http://okmij.org/ftp/Haskell/extensible/more.pdf)". Haskell Symposium 2015.
 
 Talks
 -----
+
 勉強会や社内セミナーなどでの発表記録。
 
+* 2018/11/24 数学基礎論若手の会＠コテージにらい恩納『**集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク**』（[Slide PDF](https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf)）
 * 2018/09/19 [Computer Algebra in Scientific Computing 2018](http://www.casc.cs.uni-bonn.de/2018/) \@ University of Lille, "[A Purely Functional Computer Algebra System Embedded in Haskell](/math/casc2018-talk.pdf)".
 * 2017/11/07 [Workshop on Iterated Forcing Theory and Cardinal Invariants](http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html)＠RIMS『[Reflection Principles and Saturated Filters on $\mathcal{P}_{\omega_1} \lambda$](math/rims2017.pdf)』
 * 2017/10/27 数学基礎論若手の会2017＠大学セミナーハウス『**正集合の反映原理と飽和イデアルの構成**』（[Slide PDF](/math/wakate-2017.pdf)）
@@ -79,6 +87,7 @@ Talks
 
 Pre-publication Reviews
 -----------------------
+
 プログラミング関連で幾つか出版前のレビューに協力させて頂きました。
 
 [すごいHaskell楽しく学ぼう！](asin:4274068854)
@@ -95,6 +104,7 @@ Pre-publication Reviews
 
 Other Publications
 ------------------
+
 [Coqによる定理証明](http://tcug.jp/books/2013-12/)
 :    Tsukuba Coq Users' Group による、主に Coq による定理証明の技法についての同人誌。わたしの担当は第三章で、Haskell を定理証明系として用いる方法を解説する記事を書きました。[販促記事はこちら](/prog/2013-advent-calendar.html)。
 
