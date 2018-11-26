@@ -2,7 +2,7 @@
 title: プロフィール
 description: わたしについて。
 tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オートマトン
-date: 2018/10/01 17:46:25 JST
+date: 2018/11/24 09:30:00 JST
 ---
 
 [English CV](/t/cv.pdf)
