@@ -165,7 +165,7 @@ Scala
 
 ~~残念ながらまだ見付かってないです。良い奴教えてください。最低要件は上で書いたイメージ補完が使えることです。~~
 
-だいぶ楽になった。詳細は[新記事][CaTeX]を参照。
+だいぶ楽になった。詳細は[新記事][CaTeX-article]を参照。
 
 ### Emacs の TRAMP 相当
 
@@ -192,5 +192,6 @@ TRAMP は ~/.ssh/config を自動で読み出してくれるが、SSH FS では�
 [sshfs issue]: https://github.com/SchoofsKelvin/vscode-sshfs/issues/28#issuecomment-425078388
 [generic-input]: ./generic-input-method-and-latex-in-vscode.html
 [CaTeX]: https://marketplace.visualstudio.com/items?itemname=mr-konn.catex
+[CaTeX-article]: ../articles/2018-11-26-happy-latex-with-catex.html
 
 [^1]: 所でどうでもいいけど、SSH FS って言うと FUSE の SSH マウント出来るやつと紛らわしいな。
