@@ -3,7 +3,7 @@ title: CaTeX（軽鳥／怪鳥）で快適 LaTeX ライフ in VSCode
 date: 2018/11/26 23:10:00 JST
 author: 石井大海
 description: |
-  [YaTeX](http://yatex.org) の補完機能を [Visual Studio Code](https://code.visualstudio.com) で実現する CaTeX 機能拡張のご紹介。
+  [YaTeX](http://yatex.org) の補完機能を [Visual Studio Code](https://code.visualstudio.com) で実現する [CaTeX](https://marketplace.visualstudio.com/items?itemName=mr-konn.catex) 機能拡張のご紹介。
 tag: vscode,LaTeX,YaTeX,CaTeX
 ---
 
