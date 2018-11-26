@@ -7,7 +7,7 @@ description: |
 tag: vscode,YaTeX,LaTeX,定理証明系
 ---
 
-**<span style="color: red;">LaTeX機能は独立させて[CaTeX] として新たにリリースしました。Generic Input Method を入れてもイメージ補完等は使えなくなったので、CaTeX の方を入れてください。詳細なアナウンスは暫しお待ちを。</span>**
+**<span style="color: red;">LaTeX機能は独立させて[CaTeX] として新たにリリースしました。Generic Input Method を入れてもイメージ補完等は使えなくなったので、CaTeX の方を入れてください。[詳細なアナウンス](../articles/2018-11-26-happy-latex-with-catex.html)。</span>**
 
 [][CaTeX]
 
