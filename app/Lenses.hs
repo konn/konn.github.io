@@ -14,7 +14,7 @@ flip makeLensesWith ''SakeConf $
   underscoreFields & lensField .~ \_ _ name -> [TopName $ mkName $ '_' : nameBase name]
 
 newtype MonoidFun a w = MonoidFun { runMonoidArr :: a -> w }
-                        deriving (Monoid, Functor)
+                        deriving (Semigroup, Monoid, Functor)
 
 makePrisms ''MonoidFun
 makeWrapped ''MonoidFun

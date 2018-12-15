@@ -105,7 +105,8 @@ breakOnEscaped c = breakEscaped' ""
 instance IsString Patterns where
   fromString = DNF . pure . flip Clause HS.empty . HS.singleton . fromString
 
-instance Semigroup Clause
+instance Semigroup Clause where
+  (<>) = mappend
 
 instance Monoid Clause where
   mempty = Clause HS.empty HS.empty

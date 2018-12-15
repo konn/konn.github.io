@@ -1,21 +1,20 @@
 flags: {}
 packages:
-- '.'
+  - "."
 
 extra-deps:
-- roman-numerals-0.5.1.5
+  - roman-numerals-0.5.1.5
 
-- git: git@github.com:konn/latex-crossref.git
-  commit: 79c9ac25f2bb1bfcb40f261a0ea4ffaefd295067
+  - git: git@github.com:konn/latex-crossref.git
+    commit: 79c9ac25f2bb1bfcb40f261a0ea4ffaefd295067
 
-- git: git@github.com:konn/sake.git
-  commit: 692a60591db2f33d834329aa40a57a5944d01dbf
+  - git: git@github.com:konn/sake.git
+    commit: 19e3a827156be1b6cdeac38f0bfa0955586243cc
 
-
-resolver: lts-10.5
+resolver: lts-12.4
 
 extra-include-dirs:
-- /usr/local/opt/icu4c/include
+  - /usr/local/opt/icu4c/include
 
 extra-lib-dirs:
-- /usr/local/opt/icu4c/lib
+  - /usr/local/opt/icu4c/lib

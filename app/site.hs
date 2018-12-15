@@ -393,7 +393,7 @@ cslAndBib fp = do
   let cslPath = srcD </> fp -<.> "csl"
       bibPath = srcD </> fp -<.> "bib"
   mbib <- tryWithFile bibPath $ readFromFileNoDep bibPath
-  gbib <- liftIO . readBiblioFile $ globalBib
+  gbib <- liftIO $ readBiblioFile (const True) globalBib
   customCSL <- doesFileExist cslPath
   style <-
     if customCSL

@@ -11,7 +11,6 @@ import           Control.Lens           ((^?!))
 import           Control.Lens.Extras
 import           Control.Lens.Plated
 import           Control.Monad          (guard)
-import           Control.Monad.Writer
 import           Data.Char
 import           Data.Data
 import           Data.HashMap.Strict    (HashMap)

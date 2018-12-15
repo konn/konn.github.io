@@ -34,6 +34,7 @@ deriving instance Store RefType
 deriving instance Store Literal
 deriving instance Store Formatted
 deriving instance Store Agent
+deriving instance Store Season
 deriving instance Store RefDate
 deriving instance Store CNum
 deriving instance Store Reference
@@ -74,4 +75,4 @@ instance {-# OVERLAPPING #-} Readable Style where
   readFrom_ = readCSLFile Nothing
 
 instance {-# OVERLAPPING #-} Readable [Reference] where
-  readFrom_ = readBiblioFile
+  readFrom_ = readBiblioFile (const True)
