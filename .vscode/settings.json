@@ -1,0 +1,13 @@
+{
+  "editor.wordBasedSuggestions": false,
+  "markdownlint.config": {
+    "MD013": false,
+    "MD033": false
+  },
+  "latex-workshop.chktex.path": "",
+  "latex-workshop.latex.additionalBib": [
+    "/Users/hiromi/Library/texmf/bibtex/bib/myreference.bib"
+  ],
+  "latex-workshop.latex.autoBuild.cleanAndRetry.enabled": false,
+  "latex-workshop.latex.recipes": []
+}
