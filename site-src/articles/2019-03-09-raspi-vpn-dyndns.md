@@ -345,7 +345,7 @@ EOF
 fi
 ```
 
-古い情報は `~/.batch/global_ipaddr` に保存することにして、適宜 `mkdir ~/.batch`{.zsh} などしておく。
+古い情報は `$HOME/.batch/global_ipaddr` に保存することにして、適宜 `mkdir $HOME/.batch`{.zsh} などしておく。
 実行権限を付与し、ちゃんと動くことを確認しておく。
 
 ```zsh
