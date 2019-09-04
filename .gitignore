@@ -300,3 +300,6 @@ _cache-new
 _site-new
 _*-new
 _snapshots
+node_modules
+*.lock
+*-lock.json
