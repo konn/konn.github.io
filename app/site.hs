@@ -1026,8 +1026,10 @@ removeTeXGomiStr :: String -> String
 removeTeXGomiStr = packed %~ T.replace "\\qed" ""
                            . T.replace "\\mbox" ""
                            . T.replace "~" ""
+                           . T.replace "\\xxxxxxpbbl" "\\printbibliography"
                            . T.replace "\\printbibliography" ""
                            . T.replace "\\printbibliography[title=参考文献]" ""
+                           . T.replace "\\\\printbibliography" "\\xxxxxxpbbl"
                            . T.replace "\\RequirePackage{luatex85}" ""
 
 unicodiseMath :: Inline -> Inline
