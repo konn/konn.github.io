@@ -1003,6 +1003,7 @@ isReference _                              = False
 data RefInfo = RefInfo { refAnchor :: T.Text, refLabel :: T.Text }
              deriving (Read, Show, Eq, Ord)
 
+
 buildRefInfo :: T.Text -> HM.HashMap T.Text RefInfo
 buildRefInfo =
   foldMap go
@@ -1022,11 +1023,27 @@ unbracket ('[':l)
   | otherwise = l
 unbracket lab = lab
 
-removeTeXGomiStr :: String -> String
-removeTeXGomiStr = packed %~ T.replace "\\qed" ""
+removeTeXGomiStr :: Inline -> Inline
+removeTeXGomiStr (Str p)          = Str $ bakaReplace p
+removeTeXGomiStr (Emph is)        = Emph $ map removeTeXGomiStr is
+removeTeXGomiStr (Strong is)      = Strong $ map removeTeXGomiStr is
+removeTeXGomiStr (Strikeout is)   = Strikeout $ map removeTeXGomiStr is
+removeTeXGomiStr (Superscript is) = Superscript $ map removeTeXGomiStr is
+removeTeXGomiStr (Subscript is)   = Subscript $ map removeTeXGomiStr is
+removeTeXGomiStr (SmallCaps is)   = SmallCaps $ map removeTeXGomiStr is
+removeTeXGomiStr (Quoted ty is)   = Quoted ty $ map removeTeXGomiStr is
+removeTeXGomiStr (Cite cs is)     = Cite cs $ map removeTeXGomiStr is
+removeTeXGomiStr (Math ty m)      = Math ty $ bakaReplace m
+removeTeXGomiStr (Link att is t)  = Link att (map removeTeXGomiStr is) t
+removeTeXGomiStr (Image att is t) = Image att (map removeTeXGomiStr is) t
+removeTeXGomiStr (Note bs)        = Note $ bottomUp removeTeXGomiStr bs
+removeTeXGomiStr (Span ats is)    = Span ats (map removeTeXGomiStr is)
+removeTeXGomiStr i                = i
+
+bakaReplace :: String -> String
+bakaReplace = packed %~ T.replace "\\qed" ""
                            . T.replace "\\mbox" ""
                            . T.replace "~" ""
-                           . T.replace "\\xxxxxxpbbl" "\\printbibliography"
                            . T.replace "\\printbibliography" ""
                            . T.replace "\\printbibliography[title=参考文献]" ""
                            . T.replace "\\\\printbibliography" "\\xxxxxxpbbl"
@@ -1108,7 +1125,7 @@ toLog i = do
                demoteHeaders $ demoteHeaders $ itemBody i
       Just logTitle = lookupMetadata "title" i
   logDate <- itemDateStr i
-  return $ const Log{..} <$> i
+  return $ Log{..} <$ i
 
 rewriteIDs :: T.Text -> Tag T.Text -> Tag T.Text
 rewriteIDs ident (TagOpen "a" atts)
