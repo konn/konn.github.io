@@ -148,12 +148,9 @@ biblatex を使うには、preamble に次のように書きます：
 ここでは、裏でファイル処理などを行ってくれるバックエンドとして今まで通り `bibtex` を使っています。今までは文献一覧を印字したいところに`\bibliography{myreference.bib,biblio.bib}`{.tex}などと指定していましたが、BibLaTeX では preamble で `\addbibresouce` を使って一つずつ追加していきます。
 
 本文で参考文献を表示したい時には次のようにします：
-
 ```tex
 \printbibliography[title=参考文献]
 ```
-
-
 今までは `\bibliography{..}` を使っていましたが、BibLaTeX では `\printbibliography` です。BibLaTeX はまだ日本語にローカライズされていないので、単に`\printbibliography` だけだと「参考文献」の代わりに「Bibliography」が節題になってしまいます。それを避けるために、`[title=参考文献]`として強制的に節題を指定している訳です。
 
 biblatex にバックエンドとして bibtex と組み合わせて使う際には、一つ注意があります。どうした訳か `upbibtex` は `biblatex` の吐いた aux ファイルを処理しようとするとフリーズしてしまいます。ですので、latexmk での設定では
