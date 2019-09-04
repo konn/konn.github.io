@@ -153,6 +153,7 @@ biblatex を使うには、preamble に次のように書きます：
 \printbibliography[title=参考文献]
 ```
 
+
 今までは `\bibliography{..}` を使っていましたが、BibLaTeX では `\printbibliography` です。BibLaTeX はまだ日本語にローカライズされていないので、単に`\printbibliography` だけだと「参考文献」の代わりに「Bibliography」が節題になってしまいます。それを避けるために、`[title=参考文献]`として強制的に節題を指定している訳です。
 
 biblatex にバックエンドとして bibtex と組み合わせて使う際には、一つ注意があります。どうした訳か `upbibtex` は `biblatex` の吐いた aux ファイルを処理しようとするとフリーズしてしまいます。ですので、latexmk での設定では
