@@ -306,9 +306,12 @@ runShake = shakeArgs myShakeOpts $ do
         =<< myPandocCompiler out
 
     destD <//> "profile.html" %> \out -> do
-      talks <- loadBinary @[Talk] (cacheD </> "talks.bin")
-      let cxt = constField "talks" $
-                  map addItemInfo (itemBody talks)
+      talks <- renderTalks $ Just 10
+      let cxt = constField "talks" $ itemBody talks
+      mdOrHtmlToHtml' cxt out
+    destD <//> "talks.html" %> \out -> do
+      talks <- renderTalks Nothing
+      let cxt = constField "talks" $ itemBody talks
       mdOrHtmlToHtml' cxt out
 
     fromString (destD <//> "*.html") .&&. complement (disjoin copies) %%> \out -> do
@@ -1149,6 +1152,21 @@ rewriteIDs ident (TagOpen t atts)
   | Just name <- lookup "id" atts, "fn" `T.isInfixOf` name  =
       TagOpen t $ ("id", mconcat [ident,"-",name]) : filter ((/="id") . fst) atts
 rewriteIDs _ t = t
+
+renderTalks :: MonadSake m => Maybe Int -> m (Item T.Text)
+renderTalks mlen = do
+  talkTplt <- loadItem "templates/talks.mustache"
+  talks0 <- loadBinary @[Talk] (cacheD </> "talks.bin")
+  let talks = map addItemInfo
+            . maybe id take mlen
+            . sortBy (flip $ comparing date)
+            <$> talks0
+      cxt = mconcat
+        [ constField "talks" $ itemBody talks
+        , constField "continued" $
+            length (itemBody talks0) /= length (itemBody talks)
+        ]
+  applyAsMustache cxt talkTplt
 
 logConf :: Options
 logConf = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 3 }

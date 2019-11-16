@@ -5,7 +5,11 @@
 >{{/url}}{{#venue}}＠{{venue}}{{/venue}}{{/conference}}『<b
 >{{#link}}<a href="{{link}}">{{/link}}{{title}}{{#link}}</a>{{/link}}</b
 >』{{#hasLinks}}（{{#links}}<a href="{{url}}">{{name}}</a
->{{#notLast}}，{{/notLast}}{{/links}}）
-{{/hasLinks}}</li
->{{/talks}}
+>{{#notLast}}，{{/notLast}}{{/links}}）{{/hasLinks}}</li>
+{{/talks}}
 </ul>
+{{#continued}}
+<p>
+See <a href="/talks.html">Talks</a> for all talks.
+</p>
+{{/continued}}

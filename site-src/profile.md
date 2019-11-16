@@ -66,19 +66,9 @@ Papers
 Talks
 -----
 
-勉強会や社内セミナーなどでの発表記録。
+勉強会や社内セミナーなどでの発表記録（直近十件；[全一覧](/talks.html)）。
 
-<ul>
-{{#talks}}
-<li>{{date}} {{#conference}}
-{{#url}}<a href="{{url}}">{{/url}}{{name}}{{#url}}</a
->{{/url}}{{#venue}}＠{{venue}}{{/venue}}{{/conference}}『<b
->{{#link}}<a href="{{link}}">{{/link}}{{title}}{{#link}}</a>{{/link}}</b
->』{{#hasLinks}}（{{#links}}<a href="{{url}}">{{name}}</a
->{{#notLast}}，{{/notLast}}{{/links}}）
-{{/hasLinks}}</li
->{{/talks}}
-</ul>
+{{{talks}}}
 
 Pre-publication Reviews
 -----------------------
