@@ -40,6 +40,9 @@ head: |
 </ul>
 </div>
 <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on {{date}}</div>
+{{#update}}
+<div><i class="fa fa-calendar" aria-hidden="true"></i> updated on {{update}}</div>
+{{/update}}
 </header>
 <div class="log-body">
 {{{ log }}}

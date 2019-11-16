@@ -66,7 +66,7 @@ instance FromJSON Card where
                   ) val
     where
       fromMus txt =
-        either (fail . MP.parseErrorPretty' txt)
+        either (fail . MP.errorBundlePretty)
         return $ Mus.compileMustacheText "url" txt
 
 data Cards = Cards { cardDic     :: HashMap T.Text Card

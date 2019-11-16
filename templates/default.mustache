@@ -85,6 +85,9 @@
       </ul>
     </div>
     <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on {{date}}</div>
+    {{#update}}
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> updated on {{update}}</div>
+    {{/update}}
     </div>
     <hr>
         <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
@@ -141,7 +144,6 @@
      crossorigin="anonymous"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
-  <script src="/js/bookmark.js"></script>
   <script>
       var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
       (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
