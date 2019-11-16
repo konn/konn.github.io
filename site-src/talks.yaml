@@ -1,0 +1,30 @@
+- date: 2019/11/09
+  conference: 
+    name: Haskell Day 2019
+    url: https://techplay.jp/event/727059
+    venue: "TECH PLAY SHIBUYA"
+  title: 大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──
+  links:
+    Slide URL: 
+      https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil
+
+* 2018/11/24 数学基礎論若手の会＠コテージにらい恩納『**集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク**』（[Slide PDF](https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf)）
+* 2018/09/19 [Computer Algebra in Scientific Computing 2018](http://www.casc.cs.uni-bonn.de/2018/) \@ University of Lille, "[A Purely Functional Computer Algebra System Embedded in Haskell](/math/casc2018-talk.pdf)".
+* 2017/11/07 [Workshop on Iterated Forcing Theory and Cardinal Invariants](http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html)＠RIMS『[Reflection Principles and Saturated Filters on $\mathcal{P}_{\omega_1} \lambda$](math/rims2017.pdf)』
+* 2017/10/27 数学基礎論若手の会2017＠大学セミナーハウス『**正集合の反映原理と飽和イデアルの構成**』（[Slide PDF](/math/wakate-2017.pdf)）
+* 2017/03/06 筑波大学計算機数学グループ 春の合宿 in 館山 2017『**ものまね鳥を愛でる 結合子論理と計算**』（[SlideShare](https://www.slideshare.net/konn/ss-72840520), [PDF](math/mocking-bird-tateyama.pdf), 録画(N/A)）
+* 2016/10/23 数学基礎論若手の会2016＠清里高原『**On Projective Baire Property**』（[Slide](/math/projective-baire-fmyg16.pdf)）
+* 2016/06/04 [第4回つくばフレッシュマンセミナー](https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxzaGltaWtlbnh8Z3g6MWY5OWFiZDM2NTcyNzljZQ)「**集合論への招待　〜実数直線の集合論〜**」（[資料](math/freshman-2016-resume.pdf)）
+* 2016/03/08 [第18回プログラミングおよびプログラミング言語ワークショップ PPL 2016](http://logic.cs.tsukuba.ac.jp/ppl2016/) 「**Freer Monads, More Extensible Effects**」（[SlideShare](http://www.slideshare.net/konn/freer-monads-more-extensible-effects-59411772), [PDF](prog/freer-ppl16.pdf), [Keynote](prog/freer-ppl16.key)）
+* 2015/07/27 修士論文中間発表『**実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について**（公開版）』（[Slide](http://www.slideshare.net/konn/ss-50957683)）
+* 2015/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2015『**（数式の入った）本をつくる**』（[Slide](http://www.slideshare.net/konn/ss-45587178)、[録画](https://www.youtube.com/watch?v=a0NcKmVWKq0) 
+）
+* 2014/11/20 数学基礎論若手の会2014＠鳥取『**Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項**』（[Slide](http://www.slideshare.net/konn/lebesgue-solovayshelah)）
+* 2014/03/20 PFI社内セミナー『**技術者が知るべき Gröbner 基底**』（[Slide](http://www.slideshare.net/konn/grbner )、UStream [前半](http://www.ustream.tv/recorded/45083535)・[後半](http://www.ustream.tv/recorded/45083876)）
+* 2014/03/08 筑波大学計算機数学グループ 春の合宿 in 館山 2014『**数学プログラムをHaskellで書くべき6の理由**』（[Slide](http://www.slideshare.net/konn/haskell-6-32258528)、[録画](https://www.youtube.com/watch?v=S4_7KVNA-Ww)）
+* 2013/10/12 第四回選択公理オフ『**数理論理学の初歩の初歩の初歩の……**』（[HTML](/math/acoff-04.html)、[PDF](/math/acoff-04.pdf)）
+* 2013/05/04 [Haskell で計算機代数勉強会](http://partake.in/events/451a51b0-b18e-4e01-bda4-423bf57f4051)『**わかったつもりになる Gröbner 基底**』（[Slide](http://www.slideshare.net/konn/groebner-basisanintroductionreduced)）
+* 2012/11/22 PFI 社内セミナー『**Algebraic DP: 動的計画法を書きやすく**』（[Slide](http://www.slideshare.net/konn/algebraic-dp)、[Ustream](http://www.ustream.tv/recorded/27196711)）
+* 2012/04/22 (祝) Yesod 1.0 勉強会『**Yesod で Blog Engine をつくってみた**』（[Slide](http://www.slideshare.net/konn/yesod-12637438)、[録画](http://www.justin.tv/kiwamu/b/315818516)）
+* 2012/04/12 PFI 社内セミナー『**How wonderful to be (statically) typed 〜型が付くってスバラシイ〜**』（[Slide](http://www.slideshare.net/konn/how-wonderful-to-be-statically-typed)、[Ustream](http://www.ustream.tv/recorded/21781769)）
+* 2011/09/22 PFI 社内セミナー『**Alloy Analyzer のこと**』（[Slide](http://www.slideshare.net/konn/alloy-analyzer-9379488)、[Ustream](http://www.ustream.tv/recorded/17430540)）
