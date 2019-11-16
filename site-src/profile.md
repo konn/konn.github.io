@@ -2,7 +2,7 @@
 title: プロフィール
 description: わたしについて。
 tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オートマトン
-date: 2019/04/01 00:00:00 JST
+date: 2019/11/16 14:05:00 JST
 ---
 
 [English CV](/t/cv.pdf)
@@ -67,6 +67,7 @@ Talks
 
 勉強会や社内セミナーなどでの発表記録。
 
+* 2019/11/09 [Haskell Day 2019](https://techplay.jp/event/727059)＠TECH PLAY SHIBUYA, 『**大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──**』（[Slide URL](https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil)）
 * 2018/11/24 数学基礎論若手の会＠コテージにらい恩納『**集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク**』（[Slide PDF](https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf)）
 * 2018/09/19 [Computer Algebra in Scientific Computing 2018](http://www.casc.cs.uni-bonn.de/2018/) \@ University of Lille, "[A Purely Functional Computer Algebra System Embedded in Haskell](/math/casc2018-talk.pdf)".
 * 2017/11/07 [Workshop on Iterated Forcing Theory and Cardinal Invariants](http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html)＠RIMS『[Reflection Principles and Saturated Filters on $\mathcal{P}_{\omega_1} \lambda$](math/rims2017.pdf)』
