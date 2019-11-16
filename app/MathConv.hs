@@ -492,5 +492,5 @@ texToEnvNamePlainString str =
   where
     go :: Inline -> Inline
     go = bottomUp $ \case
-      Math _ math ->  Str $ stringify $ MyT.readTeXMath  math
+      Math _ eqn ->  Str $ stringify $ MyT.readTeXMath eqn
       t           -> t

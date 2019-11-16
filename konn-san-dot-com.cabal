@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.0.
+-- This file has been generated from package.yaml by hpack version 0.31.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5a26a92b54759597edeb010657992f63ef0e64f762b9da403bf78457298b06ed
+-- hash: 36d6b80d8be22b5f77d68426248469244a18cfd4cdf6c20d78a2d46891daf16b
 
 name:           konn-san-dot-com
 version:        0.1.0.0
@@ -80,6 +80,7 @@ executable site
       MathConv
       MissingSake
       MyTeXMathConv
+      PubTalks
       Settings
       Utils
       Paths_konn_san_dot_com

@@ -12,6 +12,7 @@ import Lenses
 import Macro
 import MathConv
 import MissingSake
+import PubTalks
 import Settings
 import Utils
 import Web.Sake.Feed
@@ -304,6 +305,12 @@ runShake = shakeArgs myShakeOpts $ do
         =<< applyDefaultTemplate ctx
         =<< myPandocCompiler out
 
+    destD <//> "profile.html" %> \out -> do
+      talks <- loadBinary @[Talk] (cacheD </> "talks.bin")
+      let cxt = constField "talks" $
+                  map addItemInfo (itemBody talks)
+      mdOrHtmlToHtml' cxt out
+
     fromString (destD <//> "*.html") .&&. complement (disjoin copies) %%> \out -> do
       srcPath <- getSourcePath siteConf out
       need [srcPath]
@@ -313,6 +320,9 @@ runShake = shakeArgs myShakeOpts $ do
            if (destD </> "articles") `L.isPrefixOf` out
            then mdOrHtmlToHtml out
            else copyFile' srcPath out
+    (cacheD </> "talks.bin") %> \out -> do
+      talks <- readFromYamlFile' @_ @[Talk] "site-src/talks.yaml"
+      writeBinaryFile out talks
 
     (cacheD <//> "*.tex.preprocess") %> \out -> do
       macs <- readFromYamlFile' "config/macros.yml"
@@ -383,9 +393,12 @@ texToHtml out = do
     =<< applyAsMustache panCtx (setItemBody html i0)
 
 mdOrHtmlToHtml :: FilePath -> Action ()
-mdOrHtmlToHtml out =
+mdOrHtmlToHtml = mdOrHtmlToHtml' mempty
+
+mdOrHtmlToHtml' :: Context T.Text -> FilePath -> Action ()
+mdOrHtmlToHtml' cxt out =
   myPandocCompiler out
-  >>= applyDefaultTemplate myDefaultContext
+  >>= applyDefaultTemplate (cxt <> myDefaultContext)
   >>= writeTextFile out . itemBody
 
 cslAndBib :: FilePath -> Action (Style, [Reference])

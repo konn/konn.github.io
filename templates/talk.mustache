@@ -1,0 +1,11 @@
+<ul>
+{{#talks}}
+<li>{{date}} {{#conference}}
+{{#url}}<a href="{{url}}">{{/url}}{{name}}{{#url}}</a
+>{{/url}}{{#venue}}＠{{venue}}{{/venue}}{{/conference}}『<b
+>{{#link}}<a href="{{link}}">{{/link}}{{title}}{{#link}}</a>{{/link}}</b
+>』{{#hasLinks}}（{{#links}}<a href="{{url}}">{{name}}</a
+>{{#notLast}}，{{/notLast}}{{/links}}）
+{{/hasLinks}}</li
+>{{/talks}}
+</ul>
