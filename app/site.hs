@@ -565,11 +565,11 @@ generateImages fp body = do
     writeTextFile (tmp </> "image.tex") body
     cmd_ (Cwd tmp) "latexmk" (EchoStdout False) (WithStdout True) "-pdflua" "image.tex"
     cmd_ (Cwd tmp) "tex2img" (EchoStdout False) (WithStdout True)
-      ["--latex=luajittex --fmt=luajitlatex.fmt"]
+      ["--latex=lualatex"]
       "--with-text" "image.tex" "image.svg"
     -- Generating PNGs
     cmd_ (Cwd tmp) (EchoStdout False) (WithStdout True)
-          "convert" "-density" "200" "image.pdf" "image-%d.png"
+          "convert" "-density" "200" "-strip" "image.pdf" "image-%d.png"
     Stdout infos <-
       cmd (Cwd tmp) "pdftk"
           (EchoStdout False) (WithStdout True)
@@ -995,7 +995,7 @@ applyAtts ats elt =
   in foldl (!) elt as
 
 linkLocalCite :: Inline -> Inline
-linkLocalCite (Cite cs bdy) =
+linkLocalCite (Cite cs@(_ : _) bdy) =
   Cite cs [Link ("", [], []) bdy ("#ref-" ++ citationId (head cs), "")]
 linkLocalCite i = i
 
