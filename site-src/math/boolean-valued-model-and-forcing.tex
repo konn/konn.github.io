@@ -1,9 +1,9 @@
 ---
 title: Boole値モデルと強制法
-date: 2016/07/11 11:00:00 JST
+date: 2020/06/22 14:30:00 JST
 author: 石井大海
 description: 集合論における無矛盾性証明で用いられる主要な手法である**強制法**と，密接に関連する**Boole値モデル**の手法について，本稿では幾らか証明を省略しつつ概略を採り上げます．また，Hamkinsら [@Hamkins:2012qv] の説明に基づいて，超冪とBoole値モデルの関係についても簡単に解説します．
-latexmk: -lualatex
+latexmk: -pdflua
 tag: Boole値モデル,無矛盾性証明,強制法,公理的集合論,集合論,超冪,数理論理学
 katex: true
 macro:
@@ -113,6 +113,29 @@ $\sigma \in V^{\mathbb{B}}$に対応する部分関数を仮に$\bar{\sigma}$と
   \item $V^{\mathbb{B}} \models \varphi[\vec{\sigma}]$は$\truth{\varphi[\vec{\sigma}]} = \mathds{1}$の略記とする．
  \end{itemize}
 \end{definition}
+\begin{remark}[パラメータが真のクラスを渡る上限・下限について]
+  鋭い人は，上の真偽値の定義の$\forall$の部分に違和感を覚えるかもしれません：
+  \begin{align*}
+    \truth{\forall x \: \varphi[x, \vec{\sigma}]}
+    \defeq \prod_{\dot{x} \in V^{\mathbb{B}}} \truth{\varphi[\dot{x}, \vec{\sigma}]}.
+  \end{align*}
+  というのもここで，$\prod$が$V^{\mathbb{B}}$という\emph{真のクラス}を亘って取られているように見えるからです．
+  完備Boole代数では，$\prod$や$\sum$の範囲は\emph{集合}に限定されていた筈だが，これは大丈夫なのか？と心配になるわけです．
+  しかし，ここで$\prod$はあくまで$\mathbb{B}$の\emph{特定の条件を満たす要素たち}に対してとっており，$\mathbb{B}$自体は\emph{集合}ですので，最終的に下限が取られる対象も集合に収まるので問題はありません．
+
+  もう少し詳しく説明すると，以下のようになります．
+  まず，上記の$\prod_{\dot{x} \in V^{\mathbb{B}}} \truth{\varphi[\dot{x}, \vec{\sigma}]}$というのは以下の略記であったことを思い出しましょう：
+  \begin{align*}
+    &\prod_{\dot{x} \in V^{\mathbb{B}}} \truth{\varphi[\dot{x}, \vec{\sigma}]}\\
+    &= \prod \Set{ \truth{\varphi[\dot{x}, \vec{\sigma}]} | \dot{x} \in V^{\mathbb{B}}}\\
+    &= \prod \Set{ b \in \mathbb{B} | \exists \dot{x} \in V^\mathbb{B} \: b = \truth{\varphi[\dot{x}, \sigma]} }
+  \end{align*}
+  最後の式で$\prod$が取られているクラスは，ある論理式を満たす$\mathbb{B}$の元の全体，という形で定義されています．
+  いま，$\mathbb{B}$そのものは集合でしたから，\emph{分出公理}よりこの形のクラスも集合であることが保証されます．
+  よって，$\mathbb{B}$の完備性からその下限を取ることができ，無事定義がwell-definedになる訳です．
+
+  このように，$\prod, \sum$をとる際に使われるパラメータが真のクラスであっても，$\mathbb{B}$が集合を成すことに気を付ければ自由に上限・下限を取ることができるので，以下気にせず取ってしまうことにします．
+\end{remark}
 これにより，$V^{\mathbb{B}}$において，強制法の論理式の解釈が$\mathbb{B}$-真偽値として定まりました．
 
 一つ注意しなくてはいけないのは，原子論理式に対する真偽値や$\Vdash$は$V$の中で一様に定義できていますが，一般の$\varphi$についてはそうではない，ということです．
@@ -123,7 +146,7 @@ $\sigma \in V^{\mathbb{B}}$に対応する部分関数を仮に$\bar{\sigma}$と
 こうして広げた$V^{\mathbb{B}}$は，常に集合論のモデルとなります：
 
 \begin{theorem}
- $V^{\mathbb{B}} \models \ZFC$. \footnote{置換公理図式に現れる論理式に$\check{V}$を入れてよいかどうか？という疑問が沸くかもしれません．ここでは立ち入りませんが，実は$V^{\mathbb{B}}$で$V$を定義出来ることが知られています~\cite{Laver:2007sf}．なので，置換公理図式の中に$\check{V}$が入っていても問題はありません．詳細は拙稿『\href{https://konn-san.com/math/geology-ground-definability.html}{集合論の地質学1：概観と基礎モデルの定義可能性}』を参照の事。}
+ $V^{\mathbb{B}} \models \ZFC$. \footnote{置換公理図式に現れる論理式に$\check{V}$を入れてよいかどうか？という疑問が沸くかもしれません．ここでは立ち入りませんが，実は$V^{\mathbb{B}}$で$V$を定義出来ることが知られています~\cite{Laver:2007sf}．なので，置換公理図式の中に$\check{V}$が入っていても問題はありません．詳細は拙稿『\href{https://konn-san.com/math/geology-ground-definability.html}{集合論の地質学1：概観と基礎モデルの定義可能性}』を参照の事．}
 \end{theorem}
 これも，厳密には\emph{定理スキーマ}です．
 つまり，$\ZFC$の各公理$\varphi$について，$\truth[\mathbb{B}]{\varphi} = \mathds{1}$となることが個別に示せる，ということです．
@@ -826,7 +849,15 @@ $\kappa$が正則基数のとき$\Add(\kappa)$の組合せ論的性質として�
  $\Pow(I)$の場合，$\mathcal{A} \defeq \Set{\set{i} | i \in I}$が最小の極大反鎖となる．
  ここで$\mathcal{A}$と$I$は自然に同一視出来，この同一視の下で超冪はBoole超冪と見做せるし，初等埋め込み写像も自然に同一視出来る． \qed
 \end{proof}
+
+\section{更新履歴}
+\begin{itemize}
+  \item 2016/07/11 11:00:00 JST 公開
+  \item 2020/06/22 14:30:00 JST パラメータが真のクラスを渡る上限・下限について追記
+\end{itemize}
+
 \renewcommand{\emph}[1]{\textsf{\textgt{#1}}}
 \nocite{Hamkins:2012qv,Jech:2002,Kunen:2011,Kamo:2007,Shioya:2014fr}
 \printbibliography[title=参考文献]
 \end{document}
+
