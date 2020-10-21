@@ -442,7 +442,7 @@ extractTikZ = bottomUpM step
     step t@(TeXEnv "tikzpicture" _ _) = save t
     step (TeXComm "tikz" args) =
       case splitAt (length args - 1) args of
-        (opts, ~[FixArg l]) -> save $ TeXEnv "tikzpicture" opts l
+        (opts, [FixArg l]) -> save $ TeXEnv "tikzpicture" opts l
     step t = return t
 
     save t = do
