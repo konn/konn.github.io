@@ -9,5 +9,7 @@
     "/Users/hiromi/Library/texmf/bibtex/bib/myreference.bib"
   ],
   "latex-workshop.latex.autoBuild.cleanAndRetry.enabled": false,
-  "latex-workshop.latex.recipes": []
+  "latex-workshop.latex.recipes": [],
+  "insertDateString.format": "YYYY/MM/DD hh:mm:ss JST",
+  "insertDateString.formatDate": "YYYY/MM/DD"
 }
