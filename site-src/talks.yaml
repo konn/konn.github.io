@@ -1,3 +1,9 @@
+- date: 2020/12/22
+  conference:
+    name: Computer Algebra – Theory and its Applications
+    url: http://www.nda.ac.jp/cc/masayo/20/rims20.html
+    venue: "Zoom Webinar"
+  title: 自動微分と Gröbner 基底による高次冪零無限小解析
 - date: 2019/11/09
   conference: 
     name: Haskell Day 2019
