@@ -1,17 +1,21 @@
+resolver: lts-17.2
 flags: {}
 packages:
   - "."
-
+allow-newer: true
 extra-deps:
-  - roman-numerals-0.5.1.5
+- roman-numerals-0.5.1.5
+- pandoc-2.11.4
+- pandoc-citeproc-0.17.0.2
+- citeproc-0.3.0.7@sha256:662fde1a8eaa43ee4b9870cf7e17f911d87662181fb0f28c3d60a85317dbe9b4,5590
+- commonmark-0.1.1.4
+- commonmark-extensions-0.2.0.4
+- commonmark-pandoc-0.2.0.1
+- git: git@github.com:konn/latex-crossref.git
+  commit: 79c9ac25f2bb1bfcb40f261a0ea4ffaefd295067
 
-  - git: git@github.com:konn/latex-crossref.git
-    commit: 79c9ac25f2bb1bfcb40f261a0ea4ffaefd295067
-
-  - git: git@github.com:konn/sake.git
-    commit: 091302d5cd19c152812bf805799926ef2d6b0d4a
-
-resolver: lts-14.14
+- git: git@github.com:konn/sake.git
+  commit: d0fd9c168d82ea1e4c8def7c62e1d895b44b2c06
 
 extra-include-dirs:
   - /usr/local/opt/icu4c/include

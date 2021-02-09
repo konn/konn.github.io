@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 36d6b80d8be22b5f77d68426248469244a18cfd4cdf6c20d78a2d46891daf16b
+-- hash: e8f594d92c843ac9e656e41bfaf9ef13fa750a6d3e4d2b79018d673cd6ffb7be
 
 name:           konn-san-dot-com
 version:        0.1.0.0
@@ -34,6 +34,7 @@ executable site
     , blaze-markup
     , bytestring
     , case-insensitive
+    , pandoc-citeproc
     , containers
     , contravariant
     , cryptohash-sha256
@@ -48,7 +49,6 @@ executable site
     , mtl
     , network-uri
     , pandoc
-    , pandoc-citeproc
     , pandoc-types
     , parsec
     , regex-applicative

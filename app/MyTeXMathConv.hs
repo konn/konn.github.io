@@ -1,27 +1,36 @@
-{-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# OPTIONS_GHC -Wincomplete-patterns #-}
+
 module MyTeXMathConv where
-import Data.Either                    (rights)
+
+import Data.Either (rights)
+import Data.Text (Text)
+import qualified Data.Text as T
 import Text.Pandoc.Definition
 import Text.TeXMath.Readers.TeX
 import Text.TeXMath.Types
 import Text.TeXMath.Unicode.ToUnicode
 
--- | Converts a raw TeX math formula to a list of 'Pandoc' inlines.
--- Defaults to raw formula between @$@ characters if entire formula
--- can't be converted.
-readTeXMath :: String    -- ^ String to parse (assumes @'\n'@ line endings)
-            -> [Inline]
+{- | Converts a raw TeX math formula to a list of 'Pandoc' inlines.
+ Defaults to raw formula between @$@ characters if entire formula
+ can't be converted.
+-}
+readTeXMath ::
+  -- | String to parse (assumes @'\n'@ line endings)
+  Text ->
+  [Inline]
 readTeXMath inp = case texMathToPandoc inp of
-                        Left _    -> [Str inp]
-                        Right res -> res
+  Left _ -> [Str inp]
+  Right res -> res
 
-texMathToPandoc :: String -> Either String [Inline]
-texMathToPandoc inp = inp `seq`
-  case readTeX inp of
-         Left err    -> Left err
-         Right exps  -> case expsToInlines exps of
-                             Nothing  -> Left "Formula too complex for [Inline]"
-                             Just r   -> Right r
+texMathToPandoc :: Text -> Either Text [Inline]
+texMathToPandoc inp =
+  inp
+    `seq` case readTeX inp of
+      Left err -> Left err
+      Right exps -> case expsToInlines exps of
+        Nothing -> Left "Formula too complex for [Inline]"
+        Just r -> Right r
 
 expsToInlines :: [Exp] -> Maybe [Inline]
 expsToInlines xs = concat <$> mapM expToInlines xs
@@ -31,14 +40,15 @@ expToInlines (ENumber s) = Just [Str s]
 expToInlines (EIdentifier s) = Just [Emph [Str s]]
 expToInlines (EMathOperator s) = Just [Str s]
 expToInlines (ESymbol t s) = Just $ addSpace t (Str s)
-  where addSpace Op x  = [x, thinspace]
-        addSpace Bin x = [medspace, x, medspace]
-        addSpace Rel x = [widespace, x, widespace]
-        addSpace Pun x = [x, thinspace]
-        addSpace _ x   = [x]
-        thinspace = Str "\x2006"
-        medspace  = Str "\x2005"
-        widespace = Str "\x2004"
+  where
+    addSpace Op x = [x, thinspace]
+    addSpace Bin x = [medspace, x, medspace]
+    addSpace Rel x = [widespace, x, widespace]
+    addSpace Pun x = [x, thinspace]
+    addSpace _ x = [x]
+    thinspace = Str "\x2006"
+    medspace = Str "\x2005"
+    widespace = Str "\x2004"
 -- expToInlines (EStretchy x) = expToInlines x
 expToInlines (EDelimited start end xs) = do
   xs' <- mapM expToInlines $ rights xs
@@ -48,9 +58,9 @@ expToInlines (ESpace 0.167) = Just [Str "\x2009"]
 expToInlines (ESpace 0.222) = Just [Str "\x2005"]
 expToInlines (ESpace 0.278) = Just [Str "\x2004"]
 expToInlines (ESpace 0.333) = Just [Str "\x2004"]
-expToInlines (ESpace 1)     = Just [Str "\x2001"]
-expToInlines (ESpace 2)     = Just [Str "\x2001\x2001"]
-expToInlines (ESpace _)         = Just [Str " "]
+expToInlines (ESpace 1) = Just [Str "\x2001"]
+expToInlines (ESpace 2) = Just [Str "\x2001\x2001"]
+expToInlines (ESpace _) = Just [Str " "]
 -- expToInlines (ESymbol Bin _ _ _) = Nothing
 expToInlines (ESub x y) = do
   x' <- expToInlines x
@@ -72,21 +82,21 @@ expToInlines (EText TextBold x) = Just [Strong [Str x]]
 expToInlines (EText TextMonospace x) = Just [Code nullAttr x]
 expToInlines (EText TextItalic x) = Just [Emph [Str x]]
 expToInlines (EText style x) = Just [Str $ toUnicode style x]
-expToInlines (EOver _ (EGrouped [EIdentifier [c]]) (ESymbol Accent [accent])) =
+expToInlines (EOver _ (EGrouped [EIdentifier mc]) (ESymbol Accent acc))
+  | [c] <- T.unpack mc
+    , [accent] <- T.unpack acc =
     case accent of
-         '\x203E' -> Just [Emph [Str [c,'\x0304']]]  -- bar
-         '\x00B4' -> Just [Emph [Str [c,'\x0301']]]  -- acute
-         '\x0060' -> Just [Emph [Str [c,'\x0300']]]  -- grave
-         '\x02D8' -> Just [Emph [Str [c,'\x0306']]]  -- breve
-         '\x02C7' -> Just [Emph [Str [c,'\x030C']]]  -- check
-         '.'      -> Just [Emph [Str [c,'\x0307']]]  -- dot
-         '\x00B0' -> Just [Emph [Str [c,'\x030A']]]  -- ring
-         '\x20D7' -> Just [Emph [Str [c,'\x20D7']]]  -- arrow right
-         '\x20D6' -> Just [Emph [Str [c,'\x20D6']]]  -- arrow left
-         '\x005E' -> Just [Emph [Str [c,'\x0302']]]  -- hat
-         '\x0302' -> Just [Emph [Str [c,'\x0302']]]  -- hat
-         '~'      -> Just [Emph [Str [c,'\x0303']]]  -- tilde
-         _        -> Nothing
+      '\x203E' -> Just [Emph [Str $ T.pack [c, '\x0304']]] -- bar
+      '\x00B4' -> Just [Emph [Str $ T.pack [c, '\x0301']]] -- acute
+      '\x0060' -> Just [Emph [Str $ T.pack [c, '\x0300']]] -- grave
+      '\x02D8' -> Just [Emph [Str $ T.pack [c, '\x0306']]] -- breve
+      '\x02C7' -> Just [Emph [Str $ T.pack [c, '\x030C']]] -- check
+      '.' -> Just [Emph [Str $ T.pack [c, '\x0307']]] -- dot
+      '\x00B0' -> Just [Emph [Str $ T.pack [c, '\x030A']]] -- ring
+      '\x20D7' -> Just [Emph [Str $ T.pack [c, '\x20D7']]] -- arrow right
+      '\x20D6' -> Just [Emph [Str $ T.pack [c, '\x20D6']]] -- arrow left
+      '\x005E' -> Just [Emph [Str $ T.pack [c, '\x0302']]] -- hat
+      '\x0302' -> Just [Emph [Str $ T.pack [c, '\x0302']]] -- hat
+      '~' -> Just [Emph [Str $ T.pack [c, '\x0303']]] -- tilde
+      _ -> Nothing
 expToInlines _ = Nothing
-
-

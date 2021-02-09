@@ -41,7 +41,7 @@ dependencies:
 - mtl
 - network-uri
 - pandoc
-- pandoc-citeproc
+- citeproc
 - pandoc-types
 - parsec
 - regex-applicative
