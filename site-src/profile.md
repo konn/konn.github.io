@@ -2,7 +2,7 @@
 title: プロフィール
 description: わたしについて。
 tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オートマトン
-date: 2020/12/27 00:55:03 JST
+date: 2021/06/29 16:20:00 JST
 disqus: false
 ---
 
@@ -23,7 +23,7 @@ disqus: false
 :    専攻は集合論を初めとした数理論理学、計算代数、および関数型プログラミング。
 
 プログラミング
-:    中学の頃くらいからやっている。おおよそ REALbasic → Ruby → Haskell という遍歴を辿っている。他にも色々な言語をつまみぐいしてみたりしたが、現在は Haskell 一本に落ち着いている。関数型プログラミングがもっと広がればいいのに。因みにこのサイトも Haskell で生成・管理しています。
+:    中学の頃くらいからやっている。おおよそ REALbasic → Ruby → Haskell という遍歴を辿っている。他にも色々な言語をつまみぐいしてみたりしたが、現在は Haskell 一本に落ち着き、飯を食っている。このサイトも Haskell で生成・管理しています。
 
 受賞歴・資格等
 ------------
@@ -59,10 +59,22 @@ Activity
 Papers
 ------
 
+### Refereed Papers
+
+* Hiromi ISHII, "*Automatic Differentiation With Higher Infinitesimals, or Computational Smooth Infinitesimal Analysis in Weil Algebra*", Computer Algebra in Scientific Computation 2021, 2021, to appear. ([arxiv:2106.14153](https://arxiv.org/abs/2106.14153))
 * Hiromi ISHII, "*[Bidirectional Interplay between Mathematics and Computer Science: Safety and Extensibility in Computer Algebra and Haskell](https://hdl.handle.net/2241/00156881)*", Ph.D. Thesis.
 * Hiromi ISHII, "*A Purely Functional Computer Algebra System Embedded in Haskell*" ([preprint](https://arxiv.org/abs/1807.01456)), In: Computer Algebra in Scientific Computing, pp. 288-303. 20th International Workshop, CASC 2018, Lille, France, September 17-21, 2018. DOI: [10.1007/978-3-319-99639-4_20](https://doi.org/10.1007/978-3-319-99639-4_20).
 * Hiromi ISHII, "*[Regularity Properties of Sets of Reals and Inaccessible Cardinals](math/regularity-and-inaccessible.html)*", Master's Thesis.
 * Oleg Kiselyov and Hiromi ISHII, "[Freer Monads, More Extensible effects](http://okmij.org/ftp/Haskell/extensible/more.pdf)". Haskell Symposium 2015.
+
+### Non-refereed Papers
+* Hiromi Ishii, "*[A Succinct Multivariate Lazy Multivariate Tower AD for Weil Algebra Computation](RIMSca2021-rims)*", Computer Algebra – Theory and its Applications, RIMS Kôkyûroku No. 2185 (2021), pp. 104-112. ([arxiv:2103.11615](RIMSca2021-arxiv))
+
+[RIMSca2021-rims]: https://www.kurims.kyoto-u.ac.jp/~kyodo/kokyuroku/contents/2185.html
+[RIMSca2021-arxiv]: https://arxiv.org/abs/2103.11615
+
+### Preprints-only
+* Hiromi ISHII, "*[Functional Pearl: Witness Me -- Constructive Arguments Must Be Guided with Concrete Witness](https://arxiv.org/abs/2103.11751)*", 2021.
 
 Talks
 -----
