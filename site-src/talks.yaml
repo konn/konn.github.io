@@ -1,3 +1,14 @@
+- date: 2021/07/04
+  conference:
+    name: "alg-d"
+    url: https://www.youtube.com/channel/UCSA2iDIY6Z-J9X4pWfdPPnw
+    venue: "YouTube"
+  title: 自動微分とGröbner基底による高次冪零無限小解析
+  links:
+    Slides: https://konn-san.com/math/smooth-algd-talk.pdf
+    YouTube: https://www.youtube.com/watch?v=0xtOjwQaib4
+    Paper: https://arxiv.org/abs/2106.14153
+
 - date: 2020/12/22
   conference:
     name: Computer Algebra – Theory and its Applications
