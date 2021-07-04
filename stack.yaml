@@ -17,6 +17,9 @@ extra-deps:
 - git: git@github.com:konn/sake.git
   commit: d0fd9c168d82ea1e4c8def7c62e1d895b44b2c06
 
+- git: git@github.com:haskell/text-icu.git
+  commit: 1d2b39abe9f32dc3d19d252391c074ccd82de23f
+
 extra-include-dirs:
   - /usr/local/opt/icu4c/include
 
