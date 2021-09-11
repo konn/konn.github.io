@@ -1,4 +1,6 @@
 resolver: lts-17.3
+compiler: ghc-8.10.7
+
 flags: {}
 packages:
   - "."
