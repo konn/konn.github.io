@@ -1,3 +1,13 @@
+- date: 2021/09/15
+  conference:
+    name: "Computer Algebra in Scientific Computing 2021"
+    url: https://www.casc-conference.org/2021/index.html
+    venue: "Hybrid (Sochi, Russia and Online)"
+  title: "Automatic differentiation with higher infinitesimals, or computational smooth infinitesimal analysis in Weil algebra"
+  links:
+    Slides: https://konn-san.com/math/casc-smooth.pdf
+    Proceedings: https://link.springer.com/book/10.1007/978-3-030-85165-1
+    Preprint: https://arxiv.org/abs/2106.14153
 - date: 2021/07/04
   conference:
     name: "alg-d"
