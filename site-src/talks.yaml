@@ -1,3 +1,10 @@
+- date: 2022/03/06
+  conference:
+    name: Tsukuba Computer Mathematics Seminar 2022
+    venue: "Hybrid (Tsukuba and Online)"
+  title: "計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める"
+  links:
+    Slides: https://konn-san.com/math/ishii-fibonacci-slides.pdf
 - date: 2021/09/15
   conference:
     name: "Computer Algebra in Scientific Computing 2021"
