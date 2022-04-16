@@ -66,6 +66,7 @@ import Data.String (IsString (..))
 import Data.Text (Text)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
+import Instances ()
 import System.Directory (createDirectoryIfMissing)
 import System.IO (IOMode (..), withFile)
 import Web.Sake
@@ -118,7 +119,8 @@ data Clause = Clause
   { _positives :: HS.HashSet FilePattern
   , _negatives :: HS.HashSet FilePattern
   }
-  deriving (Read, Show, Eq, Generic, Store)
+  deriving (Read, Show, Eq, Generic)
+  deriving anyclass (Store)
 
 newtype Patterns
   = -- | Disjunction Normal Form (disjunction of conjunctions of literals)
@@ -130,7 +132,8 @@ data Snapshot = Snapshot
   { snapshotName :: String
   , snapshotSource :: Patterns
   }
-  deriving (Read, Show, Eq, Generic, Store)
+  deriving (Read, Show, Eq, Generic)
+  deriving anyclass (Store)
 
 {- | Pattern syntax is @[sourcePattern#]snapshot_name@ and you can escape @#@ and @\\@ by prefixing @\\@.
    Forexample, @"content"@ is equivalent to @'Snapshot' { snapshotName = "content", snapshotSource = "//*" }@,
@@ -299,13 +302,6 @@ withRouteRules sakeConf@SakeConf {..} rconfs rules = alternatives $ do
 loadAllItemsAfter :: FilePath -> Patterns -> Action [Item Text]
 loadAllItemsAfter fp pats =
   mapM (loadItem . (fp </>)) =<< globDirectoryFiles fp pats
-
-instance Store Scientific where
-  size = contramap Bin.encode size
-  peek = Bin.decode <$> peek
-  poke = poke . Bin.encode
-
-deriving instance Store Value
 
 data Snapshotted a = Snapshotted
   { snapBody :: a

@@ -12,5 +12,6 @@
   "latex-workshop.latex.recipes": [],
   "insertDateString.format": "YYYY/MM/DD hh:mm:ss JST",
   "insertDateString.formatDate": "YYYY/MM/DD",
-  "haskell.serverExecutablePath": "/Users/hiromi/Documents/Programming/Haskell/git/haskell-language-server/.stack-work/install/x86_64-osx/9bf23dc043c65e317fdabc00ce9e283c450724e3fce05276ee9df9b9ace850bd/8.10.4/bin/haskell-language-server"
+  "haskell.serverExecutablePath": "~/.local/bin/haskell-language-server",
+  "haskell.formattingProvider": "fourmolu"
 }

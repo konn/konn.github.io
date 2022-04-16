@@ -1,5 +1,4 @@
-resolver: lts-17.3
-compiler: ghc-8.10.7
+resolver: lts-19.3
 
 flags: {}
 packages:
@@ -7,20 +6,16 @@ packages:
 allow-newer: true
 extra-deps:
 - roman-numerals-0.5.1.5
-- pandoc-2.11.4
-- pandoc-citeproc-0.17.0.2
-- citeproc-0.3.0.7@sha256:662fde1a8eaa43ee4b9870cf7e17f911d87662181fb0f28c3d60a85317dbe9b4,5590
-- commonmark-0.1.1.4
-- commonmark-extensions-0.2.0.4
-- commonmark-pandoc-0.2.0.1
+- citeproc-hs-0.3.10@sha256:770a1c3c4be2a1916b7eb994ab038d594d9ddcb83c08a432f655c92a29e611a4,5734
+
 - git: git@github.com:konn/latex-crossref.git
   commit: 79c9ac25f2bb1bfcb40f261a0ea4ffaefd295067
 
 - git: git@github.com:konn/sake.git
-  commit: d0fd9c168d82ea1e4c8def7c62e1d895b44b2c06
+  commit: 749eea7de99c8d5041c9f795d594d7d293c92b59
 
-- git: git@github.com:haskell/text-icu.git
-  commit: 1d2b39abe9f32dc3d19d252391c074ccd82de23f
+# - git: git@github.com:haskell/text-icu.git
+#   commit: 1d2b39abe9f32dc3d19d252391c074ccd82de23f
 
 extra-include-dirs:
   - /usr/local/opt/icu4c/include

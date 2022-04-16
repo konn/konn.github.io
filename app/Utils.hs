@@ -2,6 +2,7 @@ module Utils where
 
 import Data.Aeson (FromJSON, Result (..), Value, fromJSON)
 import Data.Text (Text, pack)
+import Data.Time
 import Text.Pandoc.Definition (Block (..), Inline (..), MetaValue (..))
 
 mvToBlocks :: MetaValue -> [Block]
@@ -12,8 +13,8 @@ mvToBlocks (MetaString s) = [Plain [Str s]]
 mvToBlocks (MetaInlines ins) = [Plain ins]
 mvToBlocks (MetaBlocks bs) = bs
 
-fromRight :: Either a b -> b
-fromRight ~(Right a) = a
+fromRight' :: Either a b -> b
+fromRight' ~(Right a) = a
 
 tshow :: Show a => a -> Text
 tshow = pack . show
@@ -30,3 +31,11 @@ fromJSON' = maybeResult . fromJSON
 maybeResult :: Result a -> Maybe a
 maybeResult (Success a) = Just a
 maybeResult _ = Nothing
+
+timeLocaleWithJST :: TimeLocale
+timeLocaleWithJST =
+  defaultTimeLocale
+    { knownTimeZones =
+        TimeZone (9 * 60) False "JST" :
+        knownTimeZones defaultTimeLocale
+    }

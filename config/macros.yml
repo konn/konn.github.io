@@ -51,7 +51,6 @@ congto: '\stackrel{\sim}{\to}'
 quot: [2, '#1/#2']
 compat: '\mathrel{\|}'
 Iff: '\mathrel{\mathrm{iff}}'
-braket: [1, '\langle #1 \rangle']
 defeq: '\mathrel{:=}'
 eqdef: '\mathrel{=:}'
 deffml: '\mathrel{:\equiv}'
@@ -65,7 +64,7 @@ rank: '\mathop{\mathrm{rank}}\nolimits'
 mathreg: [1, '\mathrm{#1}']
 restr: '\upharpoonright'
 power: [2, '{}^{#1} {#2}']
-boldface: [1, '\mathbf{#1}']
+boldface: [1, '\boldsymbol{#1}']
 quoted: [1, '\text{“}#1\text{”}']
 mathds: [1, '\mathbb{#1}']
 lh:     '\mathop{\mathrm{lh}}'

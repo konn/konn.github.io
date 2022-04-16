@@ -1,10 +1,8 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: e8f594d92c843ac9e656e41bfaf9ef13fa750a6d3e4d2b79018d673cd6ffb7be
 
 name:           konn-san-dot-com
 version:        0.1.0.0
@@ -19,27 +17,42 @@ build-type:     Simple
 
 executable site
   main-is: site.hs
+  other-modules:
+      Breadcrumb
+      Instances
+      Lenses
+      Macro
+      MathConv
+      MissingSake
+      MyTeXMathConv
+      PubTalks
+      Settings
+      Utils
+      Paths_konn_san_dot_com
   hs-source-dirs:
       app
-  other-extensions: DeriveDataTypeable TemplateHaskell
+  other-extensions:
+      DeriveDataTypeable
+      TemplateHaskell
   ghc-options: -O2 -threaded -Wall
   build-depends:
       HaTeX
     , aeson
     , async
-    , base >=4 && <5
+    , base ==4.*
     , binary
     , blaze-builder
     , blaze-html
     , blaze-markup
     , bytestring
     , case-insensitive
-    , pandoc-citeproc
+    , citeproc
     , containers
     , contravariant
     , cryptohash-sha256
     , data-default
     , directory
+    , exceptions
     , filepath
     , fsnotify
     , http-types
@@ -72,16 +85,4 @@ executable site
     , wai-app-static
     , warp
     , yaml
-  other-modules:
-      Breadcrumb
-      Instances
-      Lenses
-      Macro
-      MathConv
-      MissingSake
-      MyTeXMathConv
-      PubTalks
-      Settings
-      Utils
-      Paths_konn_san_dot_com
   default-language: Haskell2010

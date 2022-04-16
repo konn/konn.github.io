@@ -1,9 +1,12 @@
+{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE MultiWayIf #-}
@@ -24,9 +27,16 @@ module Main where
 
 import Blaze.ByteString.Builder (toByteString)
 import Breadcrumb
+import Citeproc
+  ( Reference,
+    Style,
+    parseStyle,
+  )
+import Citeproc.Pandoc
 import Control.Applicative ((<|>))
 import Control.Concurrent (newChan, readChan, threadDelay)
 import Control.Concurrent.Async (concurrently_)
+import Control.Exception (throwIO)
 import Control.Lens
   ( both,
     iforM_,
@@ -51,12 +61,16 @@ import Data.Aeson
     genericToJSON,
     toJSON,
   )
+import qualified Data.Aeson.Key as AK
+import qualified Data.Aeson.KeyMap as KM
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.CaseInsensitive as CI
 import Data.Char hiding (Space)
 import Data.Data (Data)
+import Data.Either (fromRight)
 import Data.Foldable (asum)
 import Data.Function
+import Data.Functor.Identity (Identity (..))
 import qualified Data.HashMap.Strict as HM
 import Data.List
 import qualified Data.List as L
@@ -70,12 +84,13 @@ import Data.Maybe
     maybeToList,
   )
 import Data.Monoid ((<>))
-import Data.Ord (comparing)
+import Data.Ord (Down (Down), comparing)
 import qualified Data.Store as S
 import Data.String
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as ET
 import qualified Data.Text.ICU.Normalize as UNF
+import qualified Data.Text.IO as T
 import qualified Data.Text.Lazy as LT
 import Data.Text.Lens (packed, unpacked)
 import Data.Time
@@ -97,7 +112,7 @@ import Network.Wai.Application.Static
 import Network.Wai.Handler.Warp (run)
 import PubTalks
 import Settings
-import Skylighting hiding (Context (..), Style)
+import Skylighting hiding (Context (..), ListItem (..), Style)
 import System.Directory
   ( canonicalizePath,
     createDirectoryIfMissing,
@@ -114,13 +129,6 @@ import Text.Blaze.Html5 ((!))
 import qualified Text.Blaze.Html5 as H5
 import qualified Text.Blaze.Html5.Attributes as H5 hiding (span)
 import Text.Blaze.Internal (Attributable)
-import Text.CSL
-  ( Reference,
-    Style,
-    readBiblioFile,
-    readCSLFile,
-  )
-import Text.CSL.Pandoc
 import Text.HTML.TagSoup
 import qualified Text.HTML.TagSoup as TS
 import Text.HTML.TagSoup.Match
@@ -130,11 +138,14 @@ import Text.LaTeX.Base.Parser
 import Text.LaTeX.Base.Syntax hiding ((<>))
 import qualified Text.Mustache as Mus
 import Text.Pandoc hiding
-  ( getModificationTime,
+  ( Item (..),
+    getModificationTime,
     runIO,
   )
+import qualified Text.Pandoc as Pandoc
 import Text.Pandoc.Builder hiding ((<>))
 import qualified Text.Pandoc.Builder as Pan
+import Text.Pandoc.Citeproc
 import Text.Pandoc.Shared (stringify, trim)
 import qualified Text.TeXMath as UM
 import Utils
@@ -151,9 +162,9 @@ default (String, T.Text)
 home :: FilePath
 home = $(litE . stringL =<< runIO getHomeDirectory)
 
-globalBib :: FilePath
+{- globalBib :: FilePath
 globalBib = home </> "Library/texmf/bibtex/bib/myreference.bib"
-
+ -}
 myShakeOpts :: ShakeOptions
 myShakeOpts =
   shakeOptions
@@ -356,7 +367,7 @@ runShake = shakeArgs myShakeOpts $ do
           Item {..} <- loadItemWith out $ destToSrc $ out -<.> "tex"
           let opts =
                 fromMaybe "-pdflua" $
-                  maybeResult . fromJSON =<< HM.lookup "latexmk" itemMetadata
+                  maybeResult . fromJSON =<< KM.lookup "latexmk" itemMetadata
           withTempDir $ \tmp -> do
             writeTextFile (tmp </> texFileName) itemBody
             bibThere <- doesFileExist bibPath
@@ -496,7 +507,7 @@ texToHtml out = do
           ( \(j, _) ->
               concat
                 [ [base <.> "png", base <.> "svg"]
-                | i <- [0 .. j -1]
+                | i <- [0 .. j - 1]
                 , let base = dropExtension out </> "image-" ++ show i
                 ]
           )
@@ -506,11 +517,13 @@ texToHtml out = do
     [destD </> "katex" </> "katex.min.js", out -<.> "pdf"]
       ++ imgs
   (style, bibs) <- cslAndBib out
+  defMacs <- readFromYamlFile' "config/macros.yml"
   ipan <-
     linkCard . addPDFLink ("/" </> dropDirectory1 out -<.> "pdf")
       . addAmazonAssociateLink "konn06-22"
-      =<< procSchemes . myProcCites style bibs
-      =<< liftIO (texToMarkdown out latexSource)
+      =<< procSchemes
+      =<< myProcCites style bibs
+      =<< liftIO (texToMarkdown defMacs out latexSource)
   let html = "{{=<% %>=}}\n" <> fromPure (writeHtml5String writerConf ipan)
       panCtx =
         pandocContext $
@@ -528,19 +541,31 @@ mdOrHtmlToHtml' cxt out =
     >>= applyDefaultTemplate (cxt <> myDefaultContext)
     >>= writeTextFile out . itemBody
 
-cslAndBib :: FilePath -> Action (Style, [Reference])
+type CSLPath = FilePath
+
+newtype RefMeta = RefMeta Pan.Meta
+  deriving newtype (Semigroup, Monoid)
+
+instance Readable RefMeta where
+  readFrom_ fp = runIOorExplode do
+    fmap (\(Pandoc m _) -> RefMeta m) . readBibLaTeX def
+      =<< liftIO (T.readFile fp)
+
+cslAndBib :: FilePath -> Action (CSLPath, RefMeta)
 cslAndBib fp = do
   let cslPath = srcD </> fp -<.> "csl"
       bibPath = srcD </> fp -<.> "bib"
-  mbib <- tryWithFile bibPath $ readFromFileNoDep bibPath
-  gbib <- liftIO $ readBiblioFile (const True) globalBib
+  {- mbib <-
+    tryWithFile bibPath $
+      readFromFile' bibPath -}
+  -- gbib <- readFromFile' globalBib
+  -- need [globalBib]
   customCSL <- doesFileExist cslPath
-  style <-
-    if customCSL
-      then needing (liftIO . readCSLFile Nothing) cslPath
-      else needing (liftIO . readCSLFile Nothing) ("data" </> "default.csl")
-  let bibs = fromMaybe [] mbib ++ gbib
-  return (style, bibs)
+  let finalCslPath
+        | customCSL = cslPath
+        | otherwise = "data" </> "default.csl"
+  let bibs = mempty -- fromMaybe mempty mbib <> gbib
+  return (finalCslPath, bibs)
 
 pandocContext :: Pandoc -> Context a
 pandocContext (Pandoc meta _)
@@ -617,14 +642,14 @@ normaliseFeed = concatMapTags $ \case
   t -> [t]
 
 itemDateFeedStr :: MonadSake m => Item a -> m T.Text
-itemDateFeedStr = fmap (insertColon . T.pack . formatTime defaultTimeLocale "%Y-%m-%dT%H:%M:%S%z") . itemDate
+itemDateFeedStr = fmap (insertColon . T.pack . formatTime timeLocaleWithJST "%Y-%m-%dT%H:%M:%S%z") . itemDate
   where
     insertColon txt =
       let (bh, ah) = T.splitAt (T.length txt - 2) txt
        in bh <> ":" <> ah
 
 itemDateStr :: MonadSake m => Item a -> m T.Text
-itemDateStr = fmap (T.pack . formatTime defaultTimeLocale "%Y/%m/%d %X %Z") . itemDate
+itemDateStr = fmap (T.pack . formatTime timeLocaleWithJST "%Y/%m/%d %X %Z") . itemDate
 
 feedConf :: FeedConf
 feedConf =
@@ -654,7 +679,7 @@ myPandocCompiler out = do
   loadOriginal siteConf out
     >>= readPandoc readerConf
     >>= mapM
-      ( procSchemes . myProcCites csl bib
+      ( procSchemes <=< myProcCites csl bib
           <=< linkCard . addAmazonAssociateLink "konn06-22"
       )
     >>= writePandoc writerConf
@@ -1003,7 +1028,7 @@ makePagination ::
   Action ()
 makePagination ctx0 page toName iss = do
   tmpl <- readFromFile' "templates/pagination.mustache"
-  let ps = map (\i -> Page (replaceDir destD "/" $ toName i) i False) [0 .. length iss -1]
+  let ps = map (\i -> Page (replaceDir destD "/" $ toName i) i False) [0 .. length iss - 1]
       pag i =
         Pagination
           { paginationPages = ps & ix i %~ \p -> p {pageActive = True}
@@ -1012,7 +1037,7 @@ makePagination ctx0 page toName iss = do
                 then Just (ps !! (i - 1))
                 else Nothing
           , paginationNext =
-              if i < length ps -1
+              if i < length ps - 1
                 then Just (ps !! (i + 1))
                 else Nothing
           }
@@ -1045,8 +1070,10 @@ aggregateLogs is0 =
           lastUpdate = T.concat ["（最終更新：", T.pack $ takeBaseName targ, "）"]
           meta' =
             itemMetadata i
-              & HM.insertWith (flip appendText) "description" (String lastUpdate)
-              & HM.insert "date" (fromMaybe (String "") $ HM.lookup "date" (itemMetadata a))
+              & insertWithKM (flip appendText) "description" (String lastUpdate)
+              & KM.insert
+                "date"
+                (fromMaybe (String "") $ KM.lookup "date" (itemMetadata a))
           i' =
             i
               { itemTarget = destD </> "logs/index.html" ++ anc
@@ -1054,6 +1081,12 @@ aggregateLogs is0 =
               }
       return $ ps ++ i' : rest
     (ps, qs) -> return $ ps ++ qs
+
+insertWithKM :: (v -> v -> v) -> AK.Key -> v -> KM.KeyMap v -> KM.KeyMap v
+insertWithKM f k v =
+  runIdentity . flip KM.alterF k \case
+    Nothing -> Identity $ Just v
+    Just v' -> Identity $ Just $ f v' v
 
 postList :: Maybe Int -> Action (Int, T.Text)
 postList mcount =
@@ -1118,7 +1151,7 @@ myRecentFirst :: [Item a] -> Action [Item a]
 myRecentFirst is0 = do
   let is = filter isPublished is0
   ds <- mapM itemDate is
-  return $ map snd $ sortBy (flip $ comparing (zonedTimeToLocalTime . fst)) $ zip ds is
+  return $ map snd $ sortOn (Down . zonedTimeToLocalTime . fst) $ zip ds is
 
 isPublished :: Item a -> Bool
 isPublished item =
@@ -1129,7 +1162,7 @@ isPublished item =
 itemMacros :: Item a -> TeXMacros
 itemMacros Item {..} =
   fromMaybe HM.empty $
-    maybeResult . fromJSON =<< HM.lookup "macros" itemMetadata
+    maybeResult . fromJSON =<< KM.lookup "macros" itemMetadata
 
 capitalise :: String -> String
 capitalise "" = ""
@@ -1139,7 +1172,7 @@ itemDate :: MonadSake m => Item a -> m ZonedTime
 itemDate item =
   let ident = itemIdentifier item
       mdate =
-        parseTimeM True defaultTimeLocale "%Y/%m/%d %X %Z"
+        parseTimeM True timeLocaleWithJST "%Y/%m/%d %X %Z"
           =<< lookupMetadata "date" item
    in case mdate of
         Just date -> return date
@@ -1169,19 +1202,17 @@ extractNoCites = queryWith collect
           _ -> []
     collect _ = []
 
-myProcCites :: Style -> [Reference] -> Pandoc -> Pandoc
-myProcCites style bib p =
-  let cs = extractCites p
-      pars = map (Para . pure . flip Cite []) $ cs ++ extractNoCites p
-      -- Pandoc _ bibs = processCites style bib (Pandoc mempty pars)
-      Pandoc info pan' = processCites style bib p
-      refs = bottomUp refBlockToList $ filter isReference pan'
-      body = filter (not . isReference) pan'
-   in bottomUp removeTeXGomiStr $
-        bottomUp linkLocalCite $
-          if null pars
-            then p
-            else Pandoc info (body ++ [Header 1 ("biblio", [], []) [Str "参考文献"]] ++ refs)
+myProcCites :: CSLPath -> RefMeta -> Pandoc -> Action Pandoc
+myProcCites style (RefMeta bib) p0 = do
+  p <-
+    liftIO $
+      runIOorExplode $
+        processCitations $
+          p0 & (\(Pandoc m0 b) -> Pandoc (bib <> m0) b)
+            & setMeta "csl" style
+  pure $
+    bottomUp removeTeXGomiStr $
+      bottomUp linkLocalCite p
 
 refBlockToList :: Block -> Block
 refBlockToList
@@ -1201,7 +1232,7 @@ refBlockToList
             $ do
               H5.span ! H5.class_ "ref-label" $ H5.text lab
               H5.span ! H5.class_ "ref-body" $
-                fromRight $
+                fromRight' $
                   runPure $
                     writeHtml5 writerConf $
                       Pandoc nullMeta [Plain $ dropWhile (== Space) dv]
@@ -1293,7 +1324,7 @@ unicodiseMath m@(Math mode eqn) =
 unicodiseMath i = i
 
 fromPure :: IsString a => PandocPure a -> a
-fromPure = either (const "") id . runPure
+fromPure = fromRight "" . runPure
 
 myExts :: Extensions
 myExts = mconcat [extensionsFromList exts, pandocExtensions]

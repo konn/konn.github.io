@@ -13,6 +13,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE NoMonomorphismRestriction #-}
@@ -26,8 +27,10 @@ module MathConv
 where
 
 import Control.Arrow (left)
+import Control.Exception (SomeException)
 import Control.Lens hiding (rewrite)
 import Control.Lens.Extras (is)
+import qualified Control.Monad.Catch as E
 import Control.Monad.Identity
 import Control.Monad.State.Strict
   ( MonadState,
@@ -48,6 +51,7 @@ import Data.Char
     isSpace,
   )
 import Data.Default
+import Data.Either (fromRight)
 import Data.Foldable (toList)
 import qualified Data.HashMap.Strict as HM
 import qualified Data.HashSet as HS
@@ -65,9 +69,13 @@ import Data.Typeable
 import Development.Shake
 import GHC.Generics (Generic)
 import Instances ()
+import Language.Haskell.TH (litE)
+import qualified Language.Haskell.TH as TH
+import Language.Haskell.TH.Lib (stringL)
 import Lenses
 import Macro
 import qualified MyTeXMathConv as MyT
+import System.Directory (getHomeDirectory, makeAbsolute)
 import System.FilePath
 import Text.Blaze.Html.Renderer.Text (renderHtml)
 import Text.Blaze.Html5 (img, object, toValue, (!))
@@ -153,7 +161,7 @@ extractMacros = runWriter . transformM go
     go c@(TeXComm "renewcommand*" _) = TeXEmpty <$ tell [c]
     go c = return c
 
-type Machine = StateT MachineState IO
+type Machine = StateT MachineState PandocIO
 
 myReaderOpts :: ReaderOptions
 myReaderOpts =
@@ -174,13 +182,50 @@ myReaderOpts =
 parseTeX :: Text -> Either String LaTeX
 parseTeX = left show . P.runParser latexParser defaultParserConf ""
 
-texToMarkdown :: FilePath -> Text -> IO Pandoc
-texToMarkdown fp src_ = do
+home :: FilePath
+home = $(litE . stringL =<< TH.runIO getHomeDirectory)
+
+absBib :: FilePath
+absBib = home </> "Library/texmf/bibtex/bib/myreference.bib"
+
+rewriteBib :: FilePath -> LaTeX -> LaTeX
+rewriteBib dir = bottomUp loop
+  where
+    loop (TeXComm "addbibresource" [FixArg "myreference.bib"]) =
+      TeXComm "addbibresource" [FixArg $ TeXRaw $ T.pack absBib]
+    loop (TeXComm "addbibresource" [FixArg fp])
+      | isRelative (T.unpack $ render fp) =
+        TeXComm
+          "addbibresource"
+          [ FixArg $
+              TeXRaw $
+                T.pack $ dir </> T.unpack (render fp)
+          ]
+    loop t = t
+
+texToMarkdown :: TeXMacros -> FilePath -> Text -> IO Pandoc
+texToMarkdown defMacros fp src_ = do
+  absFP <- makeAbsolute $
+    case L.stripPrefix "_site/" fp of
+      Nothing -> fp
+      Just rest -> "site-src" </> rest
+  let setupResource = do
+        srcs <- getResourcePath
+        setResourcePath $
+          [ home </> "Library/texmf/tex/platex"
+          , home </> "Library/texmf/bibtex/bib"
+          , takeDirectory absFP
+          ]
+            ++ srcs
   macros <-
     liftIO $
       fst . parseMacroDefinitions
         <$> T.readFile "/Users/hiromi/Library/texmf/tex/platex/mystyle.sty"
-  let ltree0 = view _Right $ parseTeX $ applyMacros macros src_
+  let ltree0 =
+        applyTeXMacro defMacros $
+          rewriteBib (takeDirectory absFP) $
+            view _Right $
+              parseTeX $ applyMacros macros src_
       initial =
         applyMacros macros $
           render $
@@ -190,16 +235,17 @@ texToMarkdown fp src_ = do
           { _macroDefs = macros -- ++ lms
           , _imgPath = dropDirectory1 $ dropExtension fp
           }
-      mabs =
-        either (const Nothing) ((^? _MetaBlocks) <=< M.lookup "abstract" . unMeta . getMeta) $
-          runPure $ readLaTeX myReaderOpts initial
-  pan <- do
+  mabs <-
+    either (const Nothing) ((^? _MetaBlocks) <=< M.lookup "abstract" . unMeta . getMeta)
+      <$> runIO (setupResource >> readLaTeX myReaderOpts initial)
+  pan <- runIOorExplode $ do
+    setupResource
     (p0@(Pandoc meta0 bdy), s0) <- runStateT (texToMarkdownM initial) st0
     case mabs of
       Nothing -> return p0
       Just bs -> do
         let ps0 = Pandoc meta0 bs
-            asrc = either (const "") id $ runPure $ writeLaTeX def ps0
+        asrc <- fromRight "" <$> E.try @_ @SomeException (writeLaTeX def ps0)
         Pandoc _ abbs <- evalStateT (texToMarkdownM asrc) s0
         return $ Pandoc (Meta $ M.insert "abstract" (MetaBlocks abbs) $ unMeta meta0) bdy
 
@@ -211,11 +257,9 @@ getMeta (Pandoc m _) = m
 texToMarkdownM :: Text -> Machine Pandoc
 texToMarkdownM s = do
   mcs <- use macroDefs
-  let lat =
-        either (error . show) id $
-          runPure $
-            readLaTeX myReaderOpts $
-              applyMacros mcs s
+  lat <-
+    readLaTeX myReaderOpts $
+      applyMacros mcs s
   procTikz =<< rewriteEnv lat
 
 adjustJapaneseSpacing :: Pandoc -> Pandoc
@@ -450,12 +494,12 @@ concatMapM f a = concat <$> mapM f a
 
 procEnumerate :: [TeXArg] -> LaTeX -> Machine Block
 procEnumerate args body = do
-  Pandoc _ [OrderedList _ blcs] <-
-    rewriteEnv $
-      either (error . show) id $
-        runPure $
-          readLaTeX myReaderOpts $
+  ~(Pandoc _ [OrderedList _ blcs]) <-
+    rewriteEnv
+      =<< lift
+        ( readLaTeX myReaderOpts $
             render $ TeXEnv "enumerate" [] body
+        )
   return $ OrderedList (parseEnumOpts args) blcs
 
 -- tr :: Show a => String -> a -> a
