@@ -1208,7 +1208,7 @@ myProcCites style (RefMeta bib) p0 = do
     liftIO $
       runIOorExplode $
         processCitations $
-          p0 & (\(Pandoc m0 b) -> Pandoc (bib <> m0) b)
+          p0 & setMeta "reference-section-title" "参考文献"
             & setMeta "csl" style
   pure $
     bottomUp removeTeXGomiStr $

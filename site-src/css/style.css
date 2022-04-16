@@ -283,3 +283,18 @@ li div.sourceCode {
     padding-top: 0pt;
     border-top: 0pt;
 }
+
+.citation {
+  vertical-align: super;
+  font-size: small;
+}
+
+.csl-entry .csl-left-margin {
+  display: inline;
+  margin-left: 0pt;
+  padding-left: 0pt;
+  margin-right: 5pt;
+}
+.csl-entry .csl-right-inline {
+  display: inline;
+}
