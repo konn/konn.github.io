@@ -1,0 +1,394 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>CaTeX（軽鳥／怪鳥）で快適 LaTeX ライフ in VSCode - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="vscode,LaTeX,YaTeX,CaTeX"><meta name="description" content="YaTeX の補完機能を Visual Studio Code で実現する CaTeX 機能拡張のご紹介。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/articles/2018-11-26-happy-latex-with-catex.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/articles/2018-11-26-happy-latex-with-catex.html">
+  <meta property="og:title" content="CaTeX（軽鳥／怪鳥）で快適 LaTeX ライフ in VSCode">
+  <meta property="og:description" content="YaTeX の補完機能を Visual Studio Code で実現する CaTeX 機能拡張のご紹介。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/articles/">Blog</a></li>
+  <li class="li breadcrumb-item active">CaTeX（軽鳥／怪鳥）で快適 LaTeX ライフ in VSCode</li>
+</ol>
+
+    <div class="page-header">
+    <h1>CaTeX（軽鳥／怪鳥）で快適 LaTeX ライフ in VSCode <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/articles/2018-11-26-happy-latex-with-catex.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/articles/2018-11-26-happy-latex-with-catex.html" class="hatena-bookmark-button" data-hatena-bookmark-title="CaTeX（軽鳥／怪鳥）で快適 LaTeX ライフ in VSCode - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2018/11/26 23:10:00 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="catex-のご紹介" class="level1">
+<h2>CaTeX のご紹介</h2>
+<p>Visual Studio Code に乗り換えたというのは<a href="../prog/migrating-emacs-to-vscode.html">前の記事</a>でも書きましたが、その際には
+LaTeX を編集するのに <a href="http://yatex.org">YaTeX</a>
+の代替がないのが不満、という話をしていました。</p>
+<p>そこで、僕がVSCodeに足りないと思っている <a href="http://yatex.org">YaTeX</a> 機能を実現する機能拡張 <a href="https://marketplace.visualstudio.com/items?itemName=mr-konn.catex">CaTeX</a>
+をリリースしました！</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://marketplace.visualstudio.com/items?itemName=mr-konn.catex">
+</iframe>
+
+    </div>
+
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://github.com/konn/catex">
+</iframe>
+
+    </div>
+
+<p>有り難いことに、<a href="http://yatex.org/#catex">YaTeX
+公式でもご紹介</a>頂いています。</p>
+<p>先日の研究集会のスライドは CaTeX で書き進めて、今は一段落しています。
+とはいえ、これからD論を書くので、まだドッグフーディングは続いていくと思います。
+というわけで、今回は、CaTeXのアレコレについて説明させて頂こうかなと思います。</p>
+<section id="名称" class="level2">
+<h3>名称</h3>
+<p>YaTeX ファミリーは <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mtext>TX</mtext><mspace width="-0.1667em"></mspace><mpadded voffset="-0.5ex"><mrow><mtext>E</mtext></mrow></mpadded><mspace width="-0.125em"></mspace></mrow></mrow><annotation encoding="application/x-tex">\TeX</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.68333em;"></span><span class="strut bottom" style="height: 0.89883em; vertical-align: -0.2155em;"></span><span class="base"><span class="mord text"><span class="mord textrm">T</span><span class="mord rule" style="margin-right: -0.1667em;"></span><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.46782999999999997em;"><span class style="top: -2.7845em;"><span class="pstrut" style="height: 3em;"></span><span class="mord text"><span class="mord textrm">E</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2155em;"></span></span></span><span class="mord rule" style="margin-right: -0.125em;"></span><span class="mord textrm">X</span></span></span></span></span></span></span>
+が日本語で「てふ」と呼ばれがちなことを逆手にとって、和名として「○○てふ」→「○○鳥」を名乗ることが多いです。
+今回は Visual Studio Code の Code から<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> C
+を採って <em>CaTeX</em>
+と命名し、ローマ字というより英語的に発音して「けいてふ→けいちょう→軽鳥」、あるいは約めて「けてふ→けちょう→怪鳥」と読むことにしました。</p>
+</section>
+<section id="設計思想と機能" class="level2">
+<h3>設計思想と機能</h3>
+<p><a href="https://marketplace.visualstudio.com/items?itemName=mr-konn.catex">Marketplace</a>でも紹介していますが、CaTeX
+は主に James Yu 氏の <strong><a href="https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop">LaTeX
+Workshop</a> と共に使うことを想定</strong>しています。</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop">
+</iframe>
+
+    </div>
+
+<p>LaTeX Workshop は本当に良く出来た拡張で、SyncTeX の機能（PDF と TeX
+本文の往き来）や参考文献ブラウザ、自動タイプセットなど本当に豊富な機能があります。
+スニペットを使ったコマンドの補完も実は既に LaTeX Workshop
+にあるんですが、これは余り拡張しやすい感じにはなっていません。
+また、個人的に YaTeX
+のキラー機能だと思っているイメージ補完やセクション補完機能もありません。
+CaTeX は、この<strong>YaTeX と LaTeX Workshop
+のギャップを埋める</strong>というのが大きな動機の一つになっています。
+ですので、上に挙げたような、LaTeX Workshop
+で既に実現されている機能については、当面のところ CaTeX
+で敢えてサポートする予定はありません。 LaTeX Workshop には YaTeX の
+<kbd>C-c C-k</kbd> （Smart Kill）や <kbd>C-c C-c</kbd>
+に相当するそのものズバリの機能はありませんが、LaTeX Workshop の “<em>Add
+a multicursor to the current environment name</em>” や “<em>Navigate to
+matching begin/end</em>” あるいは “<em>Select current environment
+name</em>” あたりを使えばなんとかなるので、まだ手を着けてません。</p>
+<p>また、YaTeX は Emacs が前提となる UI
+の設計をしていますが、郷に入りては郷に、ローマにてはローマに、VSCode
+では Microsoft に従え、ということで、<strong>YaTeX の機能をより VSCode
+らしい方法で実現</strong>することを念頭に置いています。
+なので、補完機能に関しても、VSCode の <strong>InteliSence
+やコードスニペットの機能</strong>を使って実装して、他の機能拡張とシームレスに連携出来ような物を心掛けています。</p>
+<p>では、以下各機能を順に見ていきましょう。</p>
+<section id="ギリシア文字補完イメージ補完フォント補完" class="level3">
+<h4>ギリシア文字補完、イメージ補完、フォント補完</h4>
+<p>最初に書いておくと、実はまだ、VSCode
+では他の機能拡張で提供されている構文定義から、構文上のスコープを得る方法が提供されていません。
+これはつまり、手軽に「今カーソルのある場所が数式の内部なのか手軽に判定できない」という意味です。
+という訳で、下記のギリシア<strong>文字補完、イメージ補完等は数式環境外でも呼び出せてしまう</strong>状態です。
+まあ、TikZ 環境の中で <code class="sourceCode latex"><span class="fu">\matrix</span>[math nodes] { ... }</code>
+と書かれててもイメージ補完が使えなかったりすることはよくあり、そういう点では望ましいかもしれませんが、普通の本文中（テキストモード）でも
+<code>;</code> や <code>:</code>
+を入力しようとしたら補完を解除しないといけないのは、ちょっと不便かもしれません。
+その内なんとかなる、といいな……。</p>
+<p>デモは以下の通り。 まず、<kbd>;</kbd> で数式補完が、<kbd>:</kbd>
+でギリシア文字補完が走ります。</p>
+<figure>
+<img src="https://github.com/konn/catex/raw/master/images/image-and-greek.gif" alt="イメージとギリシア文字補完">
+<figcaption aria-hidden="true">イメージとギリシア文字補完</figcaption>
+</figure>
+<p>補完ではなく単に <code>:</code> や <code>;</code>
+などのトリガー自身を入力したい時は、<kbd>Esc</kbd>キーでも押して補完をキャンセルすれば大丈夫です。
+本家に合わせて二回押しとかにしても良いかもしれないですが、取り敢えず現状はこうなってます。</p>
+<p>あと本家 YaTeX
+にはデフォルトでは付いていませんが、<kbd>@</kbd>キーで数式フォント補完が走ります。
+ただ、<kbd>@</kbd> は LaTeX Workshop
+が提供している補完のプレフィックスと被っていて、使いづらいです。</p>
+<p>また、キーボードだけではなくて、直接コマンドを呼び出すことでも補完を実行出来ます：</p>
+<figure>
+<img src="https://github.com/konn/catex/raw/master/images/image-invoked.gif" alt="イメージ、直接呼出">
+<figcaption aria-hidden="true">イメージ、直接呼出</figcaption>
+</figure>
+<p>補完のトリガーキーや辞書は <code>catex.image-completion</code>
+を編集することでカスタマイズ出来ます。
+例えば、デフォルトでは以下のような設定になっています：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;name&quot;</span><span class="op">:</span> <span class="st">&quot;CaTeX Image Completion&quot;</span><span class="op">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;languages&quot;</span><span class="op">:</span> [</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;latex&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;triggers&quot;</span><span class="op">:</span> [</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;;&quot;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dictionary&quot;</span><span class="op">:</span> <span class="st">&quot;defaults/images.json&quot;</span><span class="op">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;renderMode&quot;</span><span class="op">:</span> <span class="st">&quot;latex&quot;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><code>renderMode</code> の部分は必須で、<code>triggers</code>
+を空配列にすればホットキーは無効になり、直接呼出以外は出来なくなります。
+<code>languages</code> の欄については、なんか生 TeX とか expl3
+とかでも使いたくなったら入れてください。 <code>dictionary</code>
+の部分がファイルになっていますが、これは <strong>CaTeX
+に標準で同梱されているデフォルトの辞書</strong>
+への参照になっていて、例えば、以下のように書き換えることができます：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>{ <span class="op">...</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dictionary&quot;</span><span class="op">:</span> [</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;defaults/images.json&quot;</span><span class="op">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="co">// デフォルトでは \int のような \maketitle 型の補完になる。</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      { <span class="st">&quot;label&quot;</span><span class="op">:</span> <span class="st">&quot;{/&quot;</span><span class="op">,</span> <span class="st">&quot;body&quot;</span><span class="op">:</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">notin&quot;</span><span class="op">,</span> <span class="st">&quot;description&quot;</span><span class="op">:</span> <span class="st">&quot;∉&quot;</span> }<span class="op">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;label&quot;</span><span class="op">:</span> <span class="st">&quot;wcheck&quot;</span><span class="op">,</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;body&quot;</span><span class="op">:</span> <span class="st">&quot;widecheck&quot;</span><span class="op">,</span> <span class="st">&quot;description&quot;</span><span class="op">:</span> <span class="st">&quot;✓ (wide accent)&quot;</span><span class="op">,</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;type&quot;</span><span class="op">:</span> <span class="st">&quot;section&quot;</span> <span class="co">// &quot;environment&quot; などもある</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>この補完機能は拙作の[Generic Input
+Method]機能拡張を使って実現されています。
+なので、他の補完機能を作りたくなったら、同じ要領で Input Method
+の定義を書いて、<code>generic-input-methods.input-methods</code>
+にでも追加しておけば大丈夫な筈です。</p>
+</section>
+<section id="セクション環境maketitle-そして-large-補完" class="level3">
+<h4>セクション、環境、<code>\maketitle</code> そして
+<code>{\Large }</code> 補完</h4>
+<p>詳しくは<a href="https://marketplace.visualstudio.com/items?itemName=mr-konn.catex">Marketplace</a>や<a href="https://github.com/konn/catex">GitHub</a>に上がっているGIFを見て欲しいんですが、<kbd>C-c
+*</kbd> 系の補完も用意してあります。
+特に分ける意味もないので、例えばセクション補完では <kbd>C-c s</kbd>
+を押すと、選択範囲があれば囲む形で、そうでなければ新しくスニペットを挿入する形になっています：</p>
+<figure>
+<img src="https://github.com/konn/catex/raw/master/images/section-1.gif" alt="Section Completion">
+<figcaption aria-hidden="true">Section Completion</figcaption>
+</figure>
+<p>また、YaTeXの補完機能 （や全く関係ないけど
+AquaSKK）を偉大たらしめている<strong>その場での辞書登録機能</strong>も
+CaTeX は提供しています。</p>
+<figure>
+<img src="https://github.com/konn/catex/raw/master/images/section-2.gif" alt="Section Completion in-place registration">
+<figcaption aria-hidden="true">Section Completion in-place
+registration</figcaption>
+</figure>
+<p>折角 VSCode
+のスニペット機能を使っているので、<strong>引数の仕様まで含めて登録</strong>することが出来るようにしました。
+例えば二番目に <code>[]{}[]</code>
+とか入力すると、オプション引数、固定引数、オプション引数の順だという定義になります。
+オプション引数はまず括弧全体が選択されるので、不要なら削除することができます。
+上図の通り、デフォルトのプレースホルダ文字列も指定出来て、<code>{foo}{}[bar]</code>とかすると、<code>\mycmd{foo}{}[bar]</code>という形で挿入されるので、デフォルトの内容が決まってる時や、引数の説明などを入れると良いでしょう。</p>
+<p>選択範囲を囲む機能については、<code>\begin/\end</code>-補完では選択範囲を環境の本体として扱いますが、それ以外の補完については、</p>
+<ol type="1">
+<li>プレースホルダが <code>!</code> で始まっていればそこに挿入</li>
+<li>そうでなければ一番最初の固定引数の所に挿入</li>
+</ol>
+<p>という仕様です。上のデモで <code>!here</code>
+と書かれている場所がそうです。 上記 1
+の場合の引数については、選択範囲が空の場合はそのまま <code>here</code>
+部分がプレースホルダとして使用され、タブで往き来出来るようになります。
+選択範囲が空でない場合は引数の内容として用いられ、その部分はスニペット展開では地の文として扱われタブでは無視されます。</p>
+<p>以上のような機能は、<code>\begin{}...\end{}</code>-補完、<code>{\Large }</code>-補完、<code>\maketitle</code>-補完でも使うことが出来ます。
+ただ、VSCode
+は2ストロークまでしかショートカットを許可していないので、YaTeX でいう
+<kbd>C-c b a</kbd>で <code>align</code> 環境を補完したり、<kbd>C-c b
+[SPACE]</kbd>で環境名一覧を出したり、といった機能は実装できていません。
+まあとはいえ、曖昧検索をしてくれるので、今のところそんなに不便を感じていません。</p>
+<p>自動登録をしてもいいですが、辞書を手で編集することも出来ます。
+例えば以下のような感じ：</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;catex.environment.dictionary&quot;</span><span class="op">:</span> [</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;include&quot;</span><span class="op">:</span> <span class="st">&quot;defaults/environments.json&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;name&quot;</span><span class="op">:</span> <span class="st">&quot;fact&quot;</span><span class="op">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;args&quot;</span><span class="op">:</span> [</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="st">&quot;optional&quot;</span><span class="op">,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;placeholder&quot;</span><span class="op">:</span> <span class="st">&quot;title&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      ]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;name&quot;</span><span class="op">:</span> <span class="st">&quot;remark&quot;</span><span class="op">,</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;args&quot;</span><span class="op">:</span> [</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;kind&quot;</span><span class="op">:</span> <span class="st">&quot;optional&quot;</span><span class="op">,</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;placeholder&quot;</span><span class="op">:</span> <span class="st">&quot;title&quot;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      ]</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span></code></pre></div>
+<p>まあこれも、<a href="https://github.com/konn/catex/tree/master/defaults">GitHubで
+<code>defaults/*.json</code></a>を見ればだいたい書き方がわかると思います。</p>
+</section>
+</section>
+<section id="既知の問題" class="level2">
+<h3>既知の問題</h3>
+<section id="vscode-における日本語入力" class="level3">
+<h4>VSCode における日本語入力</h4>
+<p>これは CaTeX に限らない既知の問題ですが、VSCode
+では日本語入力が乱れる、特に AquaSKK
+との食い合わせが悪い、という事が知られています。
+完全に解決は出来ませんが、余分な拡張をオフにすると若干改善します。特に、私の環境では単語ベースの
+InteliSense 補完と Spell Right
+機能拡張（自動スペルチェッカ）をオフにした所、完全にではないものの、許容出来る範囲まで文字列の乱れを軽減出来ました。</p>
+<p>また、Emacs の要領で <kbd>C-g</kbd>
+を連発していたりすると制御文字が溜まるので、<a href="https://marketplace.visualstudio.com/items?itemName=satokaz.vscode-bs-ctrlchar-remover">Remove
+backpace control character</a>機能拡張を使うと良いでしょう。
+とはいえ、たぶんこれエディタのテキストを <code>EditorTextEdit</code>
+ではなく <code>text</code>
+を置き換える形でやっていてあまり行儀がよくないのがちょっと不満です。</p>
+</section>
+</section>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>正直な話、Visual Studio Code のCLIが
+<code>code</code>
+って名前なのはどうなのよと思わなくはないんですが、そこはそれ。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/articles/2018-11-26-happy-latex-with-catex.html";
+          this.page.identifier = "/articles/2018-11-26-happy-latex-with-catex.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/articles/2018-11-26-happy-latex-with-catex.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

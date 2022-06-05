@@ -1,0 +1,555 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>Extensible Effects はモナド変換子に対する救世主になり得るか？ - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="haskell, monad, programming, paper"><meta name="description" content="Oleg らによる、モナド変換子に対する大体手法、Extensible Effects の論文を読んだ感想紹介記事です。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/prog/haskell/extensible-effects.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/prog/haskell/extensible-effects.html">
+  <meta property="og:title" content="Extensible Effects はモナド変換子に対する救世主になり得るか？">
+  <meta property="og:description" content="Oleg らによる、モナド変換子に対する大体手法、Extensible Effects の論文を読んだ感想紹介記事です。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/prog/">プログラミング関連</a></li>
+  <li class="li breadcrumb-item active">Extensible Effects はモナド変換子に対する救世主になり得るか？</li>
+</ol>
+
+    <div class="page-header">
+    <h1>Extensible Effects はモナド変換子に対する救世主になり得るか？ <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/prog/haskell/extensible-effects.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/prog/haskell/extensible-effects.html" class="hatena-bookmark-button" data-hatena-bookmark-title="Extensible Effects はモナド変換子に対する救世主になり得るか？ - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2013/07/21 21:26:00 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <p>Oleg, Sabry and Swords らによる <a href="http://www.cs.indiana.edu/~sabry/papers/exteff.pdf">Extensible
+Effects: An Alternative to Monad Transformers</a>
+の論文を読んだメモ的な何かです。モナド変換子に関する簡単な現状確認から入ってはいますが、想定読者層は日常的にモナドやモナド変換子を用いたプログラムを書いている人達です。</p>
+<p>どちらかというと自分向けのメモの性格が強いので、詳しい部分は論文を参照してみてください。</p>
+<section id="背景モナド変換子とその問題" class="level1">
+<h2>背景：モナド変換子とその問題</h2>
+<p>Haskell
+を中心に、関数型言語では副作用のある<strong>函数を合成</strong>するための手段として<strong>モナド</strong>が広く用いられている。モナドは非常に強力な抽象化で、およそ副作用と呼べるものはモナドを使って定式化することが出来た。例えば、大域的な環境
+<code class="sourceCode haskell">r</code> を持った計算は <code class="sourceCode haskell"><span class="dt">Reader</span> r</code>
+モナドを使うし、操作のログを残すような計算は <code class="sourceCode haskell"><span class="dt">Writer</span> [<span class="dt">String</span>]</code>、失敗する恐れのある計算は
+<code class="sourceCode haskell"><span class="dt">Maybe</span></code>、外界との入出力全般を使うのなら
+<code class="sourceCode haskell"><span class="dt">IO</span></code>を使う、といった具合に。</p>
+<p>他方、複数の種類の副作用を持つようなモナドを作りたいと思うときがある。必要な機能を持ったモナドを一から書いても良いが、モナドを自前で定義するのは面倒だし、既に用意されているモナドを組合せることが出来れば便利だ。そこで、Haskell
+では<strong>モナド変換子</strong>と呼ばれる手法を使って、既存の<strong>モナドを合成</strong>して得ることが
+Haskell
+では一般になっている。つまり、既存の「ピュア」なモナドに対して、他のモナドに対して垂直に合成できるような変換子を用意してやって、それを積み上げて新しいモナドを作るというわけだ。例えば、「大域的な環境を参照しつつ、操作のログを残しながら、ユーザとの入出力を行なう失敗するかもしれない計算」であれば
+<code class="sourceCode haskell"><span class="dt">MaybeT</span> (<span class="dt">WriterT</span> [<span class="dt">String</span>] (<span class="dt">ReaderT</span> r <span class="dt">IO</span>))</code>
+というような感じに。</p>
+<p>こうしたモナド変換子を用いた方法は一般的に用いられているが、次のような欠点があった：</p>
+<ol type="1">
+<li>合成するモナドが増えるたびに、計算の効率が落ちる</li>
+<li>モナドを合成する順番によって、計算の意味が変わってくる</li>
+<li>下位のモナドの処理を行うのに、一々 <code class="sourceCode haskell">lift</code> を行う必要がある</li>
+<li>モナドの合成順は固定されてい、途中で入れ替えることができない</li>
+</ol>
+<p>それぞれを手短かに説明しよう。<strong>1.
+合成するモナドが増える度に、計算の効率が落ちる</strong>というのは、モナド変換子は<strong>別種の種類のモナドの組合せ</strong>であるので、例えば
+<code class="sourceCode haskell"><span class="fu">return</span></code>
+が呼ばれたり、<code class="sourceCode haskell"><span class="op">&gt;&gt;=</span></code>
+で合成したりする度にそれぞれの層に対する処理が発生してしまうという事だ。一つ一つの計算ステップで必要になるモナドの処理は限られていても、毎回全階層での処理が発生してしまうので、一般にモナドスタックが深くなる程効率が落ちてしまう。これを回避するには、最終的に自前でモナドを定義したりしなくてはいけなくなり、余り嬉しくない。</p>
+<p><strong>2.
+モナドを合成する順番によって、計算の意味が変わってくる</strong>というのはどういうことか。例えば、<code class="sourceCode haskell"><span class="dt">StateT</span> <span class="dt">Int</span> <span class="dt">Maybe</span></code>
+という計算と <code class="sourceCode haskell"><span class="dt">MaybeT</span> (<span class="dt">State</span> <span class="dt">Int</span>)</code>
+という計算を比較してみよう。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">action ::</span> (<span class="dt">MonadPlus</span> m, <span class="dt">MonadState</span> <span class="dt">Int</span> m) <span class="ot">=&gt;</span> m b</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>action <span class="ot">=</span> modify (<span class="op">+</span><span class="dv">1</span>) <span class="op">&gt;&gt;</span> mzero</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> runState (runMaybeT (modify (<span class="op">+</span><span class="dv">1</span>) <span class="op">&gt;&gt;</span> mzero)) <span class="dv">10</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>(<span class="dt">Nothing</span>,<span class="dv">11</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> runMaybeT (runStateT (modify (<span class="op">+</span><span class="dv">1</span>) <span class="op">&gt;&gt;</span> mzero) <span class="dv">10</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="dt">Nothing</span></span></code></pre></div>
+<p>最初の実行例では、<code class="sourceCode haskell"><span class="dt">MaybeT</span> (<span class="dt">State</span> <span class="dt">Int</span>)</code>
+の順で合成されている<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。一番下のモナドは <code class="sourceCode haskell"><span class="dt">State</span> <span class="dt">Int</span></code>
+なので、計算が失敗してもその直前の内部状態は保存されている。それに対し、二番目の例は
+<code class="sourceCode haskell"><span class="dt">StateT</span> <span class="dt">Int</span> <span class="dt">Maybe</span></code>
+の順になっている。一番下のモナドは <code class="sourceCode haskell"><span class="dt">MaybeT</span> <span class="dt">IO</span></code>
+なので、計算が失敗するとその前までの内部状態は全て破棄されてしまう。上のように、元のアクションが
+polymorphic な形で定義されていれば、実行する際に <code class="sourceCode haskell">run</code>
+する順番を選んで適切な意味に変えることも出来るが、何か具体的なアプリケーションをモナドで作ろうとする時は、まずモナドスタックを構成して
+<code class="sourceCode haskell"><span class="kw">newtype</span></code>
+で包むというのが一般的な手順であるように思うし、その場合は最初に合成順について考えなくてはいけないということになる。</p>
+<p><strong>3. 下位のモナドの処理を行うのに、一々 <code class="sourceCode haskell">lift</code> を行う必要がある</strong>
+について。例えば、<code class="sourceCode haskell">mtl</code> では <code class="sourceCode haskell">ask</code> とか <code class="sourceCode haskell">mzero</code> とかは <code class="sourceCode haskell"><span class="dt">MonadReader</span></code> や
+<code class="sourceCode haskell"><span class="dt">MonadPlus</span></code>
+といった形でクラスを使って一般的に定義されてはいる。しかし、それは各モナド変換子に対して、例えば下のレイヤーに
+<code class="sourceCode haskell"><span class="dt">MonadReader</span></code>
+なり <code class="sourceCode haskell"><span class="dt">MonadPlus</span></code>
+なりのインスタンスが居れば <code class="sourceCode haskell">lift</code>
+してそれを使う、というような形になっている。だから、表面上はなくても、<code class="sourceCode haskell">lift</code>
+は常に本質的にモナド変換子に張り付いている。また、こういった型クラスがないような場合は、やはり
+<code class="sourceCode haskell">lift</code>
+を連発する必要がある。例えば、<code class="sourceCode haskell"><span class="dt">MaybeT</span> <span class="dt">IO</span></code>
+の下で <code class="sourceCode haskell"><span class="dt">IO</span></code>
+を実行するには、やっぱり <code class="sourceCode haskell">lift</code>
+なり <code class="sourceCode haskell">liftIO</code>
+を使ってやる必要がある。更に、二つ以上下のモナドの機能を使うには <code class="sourceCode haskell">lift</code>
+を多重に使ってやる必要があり、これは中々辛いものだ。</p>
+<p><strong>4.
+モナドの合成順は固定されてい、途中で入れ替えることができない</strong>
+というのは、上の問題と関連していて、下の層のモナドの副作用を使うには
+<code class="sourceCode haskell">lift</code>
+で潜る必要があり、なおかつその順番を跨ぐような処理は出来ない、ということだ。これについては、のちほど論文で言及されている例を通じて詳しく説明しよう。</p>
+<p>さて、ここまでモナド変換子の抱える問題について整理してきた。今回 Oleg
+らが紹介している <strong>Extensible Effects</strong> の手法（以下
+<em>EE</em>
+と呼ぶ）は、これらの問題を一挙に解決することを目論んだものだ。</p>
+<section id="extensible-effects-の仕組み" class="level2">
+<h3>Extensible Effects の仕組み</h3>
+<p>上の問題に対して、Oleg
+らの手法がどういった解決を与えているのかを見てみよう。</p>
+<section id="モナドの合成と効率性モナドスタック-委譲関係" class="level3">
+<h4>モナドの合成と効率性：モナドスタック = 委譲関係</h4>
+<p>一番目。<strong>モナド合成による効率性の低下問題</strong>について。EE
+がモナド変換子と根本的に異なるのが、<strong>全ての計算を一つのモナドの中で行う</strong>ことだ。この中心的な役割を果すモナドは、原著では
+<code class="sourceCode haskell"><span class="dt">Eff</span></code>
+モナドと呼ばれている。</p>
+<p>一つのモナドの中で行うといっても、一つの超万能なモナドがあってその中で操作をするという訳ではない。それではモナドの旨味がなくなってしまう。ではどうするのか？EE
+の基本的な考え方は、<strong>副作用とはクライアントとハンドラの相互作用だ</strong>
+という物だ。一つ一つのアクションは、それを処理出来るハンドラへのリクエストとして見る事が出来る。例えば、<code class="sourceCode haskell">ask</code>
+は大域環境を持つ計算を司るハンドラへのリクエストと見れるし、<code class="sourceCode haskell"><span class="dt">IO</span></code>
+計算なんかは正に外部との入出力を行うハンドラへの命令と見ることが出来る。</p>
+<p>そこで EE では、<code class="sourceCode haskell"><span class="dt">Eff</span></code>
+モナドの型パラメタとして、「<strong>実行に必要な副作用ハンドラの一覧</strong>」をタグとして持たせている。そして、そのリクエストを処理するハンドラが今までの
+<code class="sourceCode haskell">runStateT</code> や <code class="sourceCode haskell">runMaybeT</code>
+に当たる。ハンドラは自分の処理できるコマンドを全て処理して、処理し終えた印としてタグを取り除く。これを繰り返していって、最終的にピュアな計算か、<code class="sourceCode haskell"><span class="dt">IO</span></code> や <code class="sourceCode haskell"><span class="dt">ST</span></code>
+のような基盤モナドの計算までに辿り着いたら、<code class="sourceCode haskell">run</code> や <code class="sourceCode haskell">runLift</code> で結果を取り出す。これが EE
+の基本的な戦略だ。</p>
+<p>ちょっとわかりづらいかもしれない。これは、（著者の五年前くらいで止まっている知識を総動員すれば）OOP
+でいう <em>Chain of Responsibility</em> パターンを Haskell
+で実現したものになっている。EE
+は、モナド変換子のモナドスタックを、委譲関係のチェーンとして捉え直したものとも云うことが出来るのだ。例えば、<code class="sourceCode haskell"><span class="dt">StateT</span> <span class="dt">Int</span> <span class="dt">Maybe</span></code>
+なら <code class="sourceCode haskell"><span class="dt">State</span> <span class="dt">Int</span> <span class="op">:&gt;</span> <span class="dt">Try</span> <span class="op">:&gt;</span> <span class="dt">Void</span></code>
+という委譲関係のチェーンだし、<code class="sourceCode haskell"><span class="dt">WriterT</span> [<span class="dt">String</span>] (<span class="dt">ReaderT</span> <span class="dt">Int</span> <span class="dt">IO</span>)</code>
+なら <code class="sourceCode haskell"><span class="dt">Writer</span> [<span class="dt">String</span>] <span class="op">:&gt;</span> <span class="dt">Reader</span> <span class="dt">Int</span> <span class="op">:&gt;</span> <span class="dt">Lift</span> <span class="dt">IO</span></code>
+というチェーンになる（<code class="sourceCode haskell"><span class="op">:&gt;</span></code>
+は左から右に委譲関係がある、という風に読めばよい）。</p>
+<p>直観的には、<code class="sourceCode haskell">runReader</code> なり
+<code class="sourceCode haskell">runState</code>
+なりを噛ませる度に、それぞれのハンドラが処理出来る命令を「処理」して、出来ないものはそのまま残しておくことになる。下位のハンドラへ処理を流すのに、結局ハンドラの数だけ使ってしまいそうな気がするが、EE
+ではこれを継続渡し形式を使ったコルーチンとして実現しているため、結果的にはハンドラ数に依存しない定数時間で処理が可能になるそうだ<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
+</section>
+<section id="副作用の合成順open-union" class="level3">
+<h4>副作用の合成順：Open Union</h4>
+<p>次に<strong>2.
+モナドを合成する順番によって、計算の意味が変わってくる</strong>
+について。上の説明だけでは、「モナドスタックを一つのモナドの中に押し込めただけで、結局階層になってるんじゃないの？」という突っ込みが成立しうる。確かに、<code class="sourceCode haskell">runReader</code>
+などを呼んで実際に計算を実行する際には階層は確定していることになる。しかし、EE
+がモナド変換子と大きく異なるのは、<em>Open Union</em>
+という考え方を用いていることだ。</p>
+<p>どういうことか？それを説明するために、各函数のシグネチャを見てみよう。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- | Computation with the global environment (corresponds to Reader)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ot">ask       ::</span> (<span class="dt">Typeable</span> e, <span class="dt">Member</span> (<span class="dt">Reader</span> e) r) <span class="ot">=&gt;</span> <span class="dt">Eff</span> r e</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ot">local     ::</span> (<span class="dt">Typeable</span> e, <span class="dt">Member</span> (<span class="dt">Reader</span> e) r) <span class="ot">=&gt;</span> (e <span class="ot">-&gt;</span> e) <span class="ot">-&gt;</span> <span class="dt">Eff</span> r a <span class="ot">-&gt;</span> <span class="dt">Eff</span> r a</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ot">runReader ::</span> <span class="dt">Typeable</span> e <span class="ot">=&gt;</span> <span class="dt">Eff</span> (<span class="dt">Reader</span> e <span class="op">:&gt;</span> r) w <span class="ot">-&gt;</span> e <span class="ot">-&gt;</span> <span class="dt">Eff</span> r w</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">-- | computation which may fail (corresponds to MaybeT)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ot">failure   ::</span> <span class="dt">Member</span> <span class="dt">Try</span> r <span class="ot">=&gt;</span> <span class="dt">Eff</span> r a</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ot">recover   ::</span> <span class="dt">Member</span> <span class="dt">Try</span> r <span class="ot">=&gt;</span> <span class="dt">Eff</span> r a <span class="ot">-&gt;</span> <span class="dt">Eff</span> r a <span class="ot">-&gt;</span> <span class="dt">Eff</span> r a</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ot">runTry    ::</span> <span class="dt">Eff</span> (<span class="dt">Try</span> <span class="op">:&gt;</span> r) a <span class="ot">-&gt;</span> <span class="dt">Eff</span> r (<span class="dt">Maybe</span> a)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- | Computation with underlying monad</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="ot">lift      ::</span> (<span class="dt">Monad</span> m, <span class="dt">Typeable1</span> m, <span class="dt">MemberU2</span> <span class="dt">Lift</span> (<span class="dt">Lift</span> m) r) <span class="ot">=&gt;</span> m a <span class="ot">-&gt;</span> <span class="dt">Eff</span> r a</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="ot">runLift   ::</span> (<span class="dt">Typeable1</span> m, <span class="dt">Monad</span> m) <span class="ot">=&gt;</span> <span class="dt">Eff</span> (<span class="dt">Lift</span> m <span class="op">:&gt;</span> <span class="dt">Void</span>) a <span class="ot">-&gt;</span> m a</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- | evaluate @Eff@ to pure value.</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="ot">run       ::</span> <span class="dt">Eff</span> <span class="dt">Void</span> a <span class="ot">-&gt;</span> a</span></code></pre></div>
+<p>この函数を見ると、<code class="sourceCode haskell">runHoge</code>
+系の函数以外は、<code class="sourceCode haskell"><span class="dt">Member</span> <span class="dt">Hoge</span> r</code>
+という型制約を使って記述されていることがわかる。これは、「<code class="sourceCode haskell">r</code> の中の何処かに <code class="sourceCode haskell"><span class="dt">Hoge</span></code>
+という副作用のタグが含まれいてる」という意味の制約だ。<code class="sourceCode haskell"><span class="op">:&gt;</span></code>
+は型レベルのリストと見做すことが出来るので、その中に <code class="sourceCode haskell"><span class="dt">Hoge</span></code>
+が入っているかどうか？という判定だと思えばよい。このように、<code class="sourceCode haskell">ask</code> や <code class="sourceCode haskell">failure</code>
+などの「副作用を持った」函数は単にそのチェーンの中に必要な副作用が含まれていることしか要求しないのだ。これは、モナド変換子を使う際に
+<code class="sourceCode haskell"><span class="dt">MonadReader</span></code> や
+<code class="sourceCode haskell"><span class="dt">MonadPlus</span></code>
+クラスを使ったやり方と似ていると云えば似ているが、このような仕組みにしたことで、<strong>3.
+一々 <code class="sourceCode haskell">lift</code>
+を行う必要がある</strong>
+という問題が解決されている。モナドの階層は、各函数のレベルで見ればあくまでもフラットで対等なものなので、いちいち
+<code class="sourceCode haskell">lift</code>
+を呼ぶ必要がないのだ。もっとも、最終的に <code class="sourceCode haskell"><span class="dt">IO</span></code> や <code class="sourceCode haskell"><span class="dt">STM</span></code>、<code class="sourceCode haskell"><span class="dt">ST</span></code>
+といった値を計算するようなモナドを合成したい場合はあるが、そのときは
+<code class="sourceCode haskell">liftIO</code> と同じ要領で上の <code class="sourceCode haskell">lift</code>
+を呼ぶことになる。だが、こうした基底モナドの命令を呼び出す場合を別にすれば、合成された他の副作用を呼ぶときに一々
+<code class="sourceCode haskell">lift</code>
+をつける必要がなくなる。</p>
+<p>どういう事か？例えば、余りよい設計とは云えないが、<code class="sourceCode haskell"><span class="dt">ReaderT</span> <span class="dt">Int</span> (<span class="dt">Reader</span> <span class="dt">String</span>) a</code>
+のような例を考えてみよう。EE で対応するのは <code class="sourceCode haskell"><span class="dt">Eff</span> (<span class="dt">Reader</span> <span class="dt">Int</span> <span class="op">:&gt;</span> <span class="dt">Reader</span> <span class="dt">String</span> <span class="op">:&gt;</span> <span class="dt">Void</span>) a</code>
+という型になる。例えば、従来のモナド変換子を用いた方法では、次のように書くことになる：</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">action ::</span> <span class="dt">ReaderT</span> <span class="dt">Int</span> (<span class="dt">Reader</span> <span class="dt">String</span>) (<span class="dt">Int</span>, <span class="dt">String</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>action <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  int <span class="ot">&lt;-</span> asks (<span class="op">*</span><span class="dv">2</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  str <span class="ot">&lt;-</span> lift (asks <span class="fu">reverse</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (int, str)</span></code></pre></div>
+<p>つまり、「一個下」の文字列の環境を取り出すのに、ここでは <code class="sourceCode haskell">lift</code> を使う必要があった。だが、EE
+ではこれは次のように簡単に書ける：</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">action ::</span> (<span class="dt">Member</span> (<span class="dt">Reader</span> <span class="dt">Int</span>) r, <span class="dt">Member</span> (<span class="dt">Reader</span> <span class="dt">String</span>) r) <span class="ot">=&gt;</span> <span class="dt">Eff</span> r (<span class="dt">Int</span>, <span class="dt">String</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>action <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  int <span class="ot">&lt;-</span> asks (<span class="op">*</span><span class="dv">2</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  str <span class="ot">&lt;-</span> asks <span class="fu">reverse</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="ot">int ::</span> <span class="dt">Int</span> ,<span class="ot"> str ::</span> <span class="dt">String</span>)</span></code></pre></div>
+<p>面倒な <code class="sourceCode haskell">lift</code>
+が消えて、どちらも <code class="sourceCode haskell">asks</code>
+だけになっている！ただ、値を返す際にそれぞれの値に型注釈をしている。これは、<code class="sourceCode haskell">asks</code> の型の曖昧性をなくすためで、<code class="sourceCode haskell">int</code> や <code class="sourceCode haskell">str</code> がどの <code class="sourceCode haskell"><span class="dt">Reader</span></code>
+に向けての命令なのかをハッキリさせるためだ。このような簡単なプログラムだと注釈を書く必要があったが、現実的なもっと長いプログラムであれば、こういった型は推論により確定できるようになるだろうから、余り問題にはならない。それに、型の注釈は簡単に書けるが、<code class="sourceCode haskell">lift</code>
+は階層の数だけ書かなくてはいけなくて、<code class="sourceCode haskell"><span class="dt">ReaderT</span> <span class="dt">Int</span> (<span class="dt">ReaderT</span> <span class="dt">String</span> (<span class="dt">ReaderT</span> (<span class="dt">Int</span>, <span class="dt">Bool</span>) (<span class="dt">ReaderT</span> <span class="dt">Env</span> <span class="dt">IO</span>))) a</code>
+みたいな型があったら、いったいどこの値を取り出すのに何回 <code class="sourceCode haskell">lift</code>
+を書けばいいのかパッとみよくわからないだろう。EE
+では、そういったことを考える必要性はない。</p>
+<p>ここで、あるていど使っているひとは疑問に思うかもしれないことがある。それは、「<code class="sourceCode haskell"><span class="dt">ReaderT</span> <span class="dt">Int</span> (<span class="dt">Reader</span> <span class="dt">Int</span>) a</code>
+のように同じ型の状態を持つ Reader
+が重なってるような状況をどう表現するの？」ということだ。これには、お馴染の
+<code class="sourceCode haskell"><span class="kw">newtype</span></code>
+ハックを使えばよい。そもそも、こういった型の設計はプログラムとして余りたちのいいものではないし、それぞれの環境の意味をハッキリさせる意味でも、それぞれを
+<code class="sourceCode haskell"><span class="kw">newtype</span></code>
+で包むべきだ。</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Page</span> <span class="ot">=</span> <span class="dt">Page</span> <span class="dt">Int</span> <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Eq</span>, <span class="dt">Ord</span>, <span class="dt">Num</span>, <span class="dt">Integral</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Line</span> <span class="ot">=</span> <span class="dt">Line</span> <span class="dt">Int</span> <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Eq</span>, <span class="dt">Ord</span>, <span class="dt">Num</span>, <span class="dt">Integral</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ot">lineLen ::</span> <span class="dt">Int</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>lineLen <span class="ot">=</span> <span class="dv">40</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ot">linePerPage ::</span> <span class="dt">Int</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>linePerPage <span class="ot">=</span> <span class="dv">40</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="ot">currentPos ::</span> (<span class="dt">Member</span> (<span class="dt">Reader</span> <span class="dt">Page</span>) r, <span class="dt">Member</span> (<span class="dt">Reader</span> <span class="dt">Line</span>) r) <span class="ot">=&gt;</span> <span class="dt">Eff</span> r <span class="dt">Int</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>currentPos <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Page</span> p <span class="ot">&lt;-</span> ask</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Line</span> l <span class="ot">&lt;-</span> ask</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (p <span class="op">*</span> linePerPage <span class="op">*</span> lineLen <span class="op">+</span> lineLen <span class="op">*</span> l)</span></code></pre></div>
+<p>こうすれば、 <code class="sourceCode haskell">lift</code>
+も要らないし、パターンマッチの所で型が確定するので、型注釈も要らない。</p>
+<p>また、上のコードを見て気付くひとは気付くかもしれないが、多少の柔軟性を犠牲にすれば、<code class="sourceCode haskell"><span class="dt">Eff</span></code> 型を mtl
+の <code class="sourceCode haskell"><span class="dt">MonadReader</span></code> や
+<code class="sourceCode haskell"><span class="dt">MonadState</span></code>
+のインスタンスにすることも簡単に出来る。こうした準備をしておけば、<code>mtl</code>
+の API を使って実質的に EE を使ったプログラムが掛ける。また、mtl から EE
+への移行を本格的にしようと思っても、コードに殆んど手を入れる必要はない。型注釈の所を書き換えて、<code class="sourceCode haskell">lift</code>
+を取り除いたりすれば大抵の場合ちゃんと動くようになる。EE
+はモナド変換子とは本質的には異なる実装ではあるが、ユーザの側では殆んど変更なしで採り入れることが出来るのだ。</p>
+<p>この <code class="sourceCode haskell">lift</code>
+と関連して、モナド変換子のアプローチにはもう一つ限界がある。それは、セマンティクスが柔軟ではないということだ。その例を見てみよう（以下、論文からの例）。</p>
+<p>問題設定は簡単だ。ここでは、非決定計算とエラー処理とを組み合わせることにしよう。非決定的にリストの計算を進めて、途中で
+5 より大きな数が出て来たらそこで処理を中断することにしよう：</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">TooBig</span> <span class="ot">=</span> <span class="dt">TooBig</span> <span class="dt">Int</span> <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Eq</span>, <span class="dt">Ord</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Error</span> <span class="dt">TooBig</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ot">choice ::</span> <span class="dt">MonadPlus</span> m <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> m a</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>choice <span class="ot">=</span> msum <span class="op">.</span> <span class="fu">map</span> <span class="fu">return</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ot">ex2 ::</span> <span class="dt">MonadError</span> <span class="dt">TooBig</span> m <span class="ot">=&gt;</span> m <span class="dt">Int</span> <span class="ot">-&gt;</span> m <span class="dt">Int</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>ex2 m <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> m</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> (v <span class="op">&gt;</span> <span class="dv">5</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">then</span> throwError (<span class="dt">TooBig</span> v)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">else</span> <span class="fu">return</span> v</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> runIdentity (runErrorT (runListT (ex2 (choice [<span class="dv">5</span>,<span class="dv">7</span>,<span class="dv">1</span>]))))</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="dt">Left</span> (<span class="dt">TooBig</span> <span class="dv">7</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span>  runIdentity  (runErrorT (runListT (ex2 (choice [<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">1</span>]))))</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="dt">Right</span> [<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">1</span>]</span></code></pre></div>
+<p>ところで、ここでお上の都合で「やっぱり 7
+以下の数は大きくないんじゃね？」ということになったとする。そこで、例外をキャッチして、
+7 以下だったら処理を再開するようにしてみよう。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">exRec ::</span> <span class="dt">MonadError</span> <span class="dt">TooBig</span> m <span class="ot">=&gt;</span> m <span class="dt">Int</span> <span class="ot">-&gt;</span> m <span class="dt">Int</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>exRec m <span class="ot">=</span> catchError m handler</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    handler (<span class="dt">TooBig</span> n) <span class="op">|</span> n <span class="op">&lt;=</span> <span class="dv">7</span> <span class="ot">=</span> <span class="fu">return</span> n</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    handler e <span class="ot">=</span> throwError e</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> runIdentity (runErrorT (runListT (exRec (ex2 (choice [<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">1</span>])))))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="dt">Right</span> [<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">1</span>]</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> runIdentity (runErrorT (runListT (exRec (ex2 (choice [<span class="dv">5</span>,<span class="dv">7</span>,<span class="dv">1</span>])))))</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="dt">Right</span> [<span class="dv">7</span>]</span></code></pre></div>
+<p>おや……？最後の計算では、<code class="sourceCode haskell">[<span class="dv">5</span>,<span class="dv">7</span>,<span class="dv">1</span>]</code>
+が返って欲しいのに <code class="sourceCode haskell">[<span class="dv">7</span>]</code>
+しか返ってきていない。なんでだろう！</p>
+<p>これは、この函数の型が <code class="sourceCode haskell"><span class="dt">ListT</span> (<span class="dt">ErrorT</span> <span class="dt">TooBig</span> <span class="dt">Identity</span>) [<span class="dt">Int</span>]</code>
+であって、<code class="sourceCode haskell"><span class="dt">ErrorT</span></code>
+がより底の方にあるからだ。つまり、例外 <code class="sourceCode haskell"><span class="dt">TooBig</span> <span class="dv">7</span></code>
+が飛んだ時点で、上に重ねられていた非決定計算としての <code class="sourceCode haskell"><span class="dt">ListT</span></code>
+での演算は忘れ去られてしまうのだ！</p>
+<p>どうしよう……と悩んで、じゃあ <code class="sourceCode haskell"><span class="dt">ErrorT</span> <span class="dt">TooBig</span></code>
+を二重に張り巡らせたらどうだろう？という気分になったとしよう：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">ErrorT</span> <span class="dt">TooBig</span> (<span class="dt">ListT</span> (<span class="dt">ErrorT</span> <span class="dt">TooBig</span> <span class="dt">Identity</span>)) a</span></code></pre></div>
+<p>一旦非決定計算上の各ブランチで例外を見てあげて、それからそれを下の基盤に近いほうのエラーモナドに伝播してやろうと云う戦略をとる訳だ：</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ot">runErrorRelay ::</span> <span class="dt">MonadError</span> e m <span class="ot">=&gt;</span> <span class="dt">ErrorT</span> e m a <span class="ot">-&gt;</span> m a</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>runErrorRelay m <span class="ot">=</span> runErrorT m <span class="op">&gt;&gt;=</span> check</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    check (<span class="dt">Right</span> x) <span class="ot">=</span> <span class="fu">return</span> x</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    check (<span class="dt">Left</span> e) <span class="ot">=</span> throwError e</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> runIdentity (runErrorT (runListT (runErrorRelay  (exRec (ex2 (choice [<span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">1</span>]))))))</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="dt">Right</span> [<span class="dv">5</span>]</span></code></pre></div>
+<p>えーーーこれどういうことなの……。何で 5 だけ残るの……。</p>
+<p>よぉく考えてみよう。<code class="sourceCode haskell">ex2</code>
+のコードを見ると、一番最初に <code class="sourceCode haskell">v <span class="ot">&lt;-</span> m</code>
+としてアクションの値を取り出している。でも、今このコードでの <code class="sourceCode haskell">m</code> は「<code class="sourceCode haskell"><span class="dt">ErrorT</span> <span class="dt">TooBig</span> (<span class="dt">ListT</span> (<span class="dt">ErrorT</span> <span class="dt">TooBig</span> <span class="dt">Identity</span>)) <span class="dt">Int</span></code>」
+という型の、一番左の <code class="sourceCode haskell"><span class="dt">ErrorT</span> <span class="dt">TooBig</span></code>
+に包まれた値なのだ。ここで使われている <code class="sourceCode haskell"><span class="dt">MonadPlus</span></code>
+のインスタンスは、<code class="sourceCode haskell"><span class="dt">ListT</span></code>
+ではなく、<code class="sourceCode haskell"><span class="dt">ErrorT</span> a</code>
+に対するインスタンスなのだ。これを本来非決定計算の文脈に持っていきたいのだから、ここで
+<code class="sourceCode haskell">lift</code>
+を使わなくてはいけないことがわかる：</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ot">ex1 ::</span> <span class="dt">Monad</span> m <span class="ot">=&gt;</span> m <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">ErrorT</span> <span class="dt">TooBig</span> m <span class="dt">Int</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ex1 m <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> lift m</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> v <span class="op">&gt;</span> <span class="dv">5</span> <span class="kw">then</span> throwError (<span class="dt">TooBig</span> v) <span class="kw">else</span> <span class="fu">return</span> v</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> runIdentity (runErrorT (runListT (runErrorRelay  (exRec (ex2 (choice [<span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">1</span>]))))))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="dt">Right</span> [<span class="dv">5</span>,<span class="dv">7</span>,<span class="dv">1</span>]</span></code></pre></div>
+<p>や、やっと動いた……。</p>
+<p>これは、モナド変換子が本質的に抱える限界を表している例だ。では、これを
+EE を使って書いてみよう。</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ot">ex2 ::</span> <span class="dt">Member</span> (<span class="dt">Exc</span> <span class="dt">TooBig</span>) r <span class="ot">=&gt;</span> <span class="dt">Eff</span> r <span class="dt">Int</span> →<span class="dt">Eff</span> r <span class="dt">Int</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ex2 m <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> m</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> v <span class="op">&gt;</span> <span class="dv">5</span> <span class="kw">then</span> throwError (<span class="dt">TooBig</span> v) <span class="kw">else</span> <span class="fu">return</span> v</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ot">runErrBig ::</span> <span class="dt">Eff</span> (<span class="dt">Exc</span> <span class="dt">TooBig</span> <span class="op">:&gt;</span> r) a <span class="ot">-&gt;</span> <span class="dt">Eff</span> r (<span class="dt">Either</span> <span class="dt">TooBig</span> a)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>runErrBig m <span class="ot">=</span> runError m</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="ot">exRec ::</span> <span class="dt">Member</span> (<span class="dt">Exc</span> <span class="dt">TooBig</span>) r <span class="ot">=&gt;</span> <span class="dt">Eff</span> r <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Eff</span> r <span class="dt">Int</span> </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>exRec m <span class="ot">=</span> catchError m handler</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span> </span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    handler (<span class="dt">TooBig</span> n) <span class="op">|</span> n <span class="op">&lt;=</span> <span class="dv">7</span> <span class="ot">=</span> <span class="fu">return</span> n </span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    handler e <span class="ot">=</span> throwError e</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> run (runErrBig (makeChoice (exRec (ex2 (choose [<span class="dv">5</span>,<span class="dv">7</span>,<span class="dv">1</span>])))))</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="dt">Right</span> [<span class="dv">5</span>,<span class="dv">7</span>,<span class="dv">1</span>]</span></code></pre></div>
+<p><code class="sourceCode haskell">lift</code>
+なんて書く必要もないし、また型の部分以外は、mtl
+で書いたプログラムと殆んど変わっていないことがわかるだろう。このように、EE
+は継続渡しを基本として、最終的に一つのモナドとして実行されるフラットな設計になっているので、直観的にモナドの効果を組み合わせることが出来るのだ。</p>
+</section>
+<section id="階層を超えた副作用" class="level3">
+<h4>階層を超えた副作用</h4>
+<p>ここまでの例で、「単純に階層構造を委譲関係と捉えたもの」という訳ではないことがわかったという。更に、EE
+では<strong>階層を超えた副作用のハンドリング</strong>が出来る。つまり、モナド変換子の<strong>4.
+モナドの合成順は固定されてい、途中で入れ替えることができない</strong>
+という限界を乗り越えることが出来るのだ。</p>
+<p>この解説を書くつもりでいたのだが、段々面倒になってきたので詳細は<a href="http://www.cs.indiana.edu/~sabry/papers/exteff.pdf">論文を参照</a>して欲しい。論文では、大域環境とコルーチン的な副作用を合わせもったプログラムを書こうとしている。まず、全体でひとつの環境を共有した状態でスタートするが、各スレッドの中で環境が変更されたら、その環境は以後外から切り離されるような仕組みを作りたいとする。詳しい説明は面倒だしちゃんと理解出来ていないのでここでは書かないが、実は、モナド変換子を使った方法ではこのようなプログラムは<strong>書けない</strong>。理由は論文を参照してほしい。しかし、EE
+を使うとこのような処理も書けるようになるらしい。</p>
+</section>
+</section>
+<section id="おわりに" class="level2">
+<h3>おわりに</h3>
+<p>よくわかっていない部分もあった（特に最後の例）が、駆け足で Extensible
+Effects について解説してきた。改めて特徴をまとめると次のようになる：</p>
+<ul>
+<li>変換子を重ねるのではなく、一つのモナドの中でハンドラを組み合わせて記述する
+<ul>
+<li>ある種の Server-Client モデルや Chain of Responsibility
+パターンと見做せる</li>
+<li>副作用を幾つ組み合わせてもオーバーヘッドは生じない</li>
+</ul></li>
+<li>面倒な <code class="sourceCode haskell">lift</code> は不要</li>
+<li>単純な一本鎖ではなく、階層を跨いだ処理も可能（？）</li>
+<li>mtl の API の上に載せることも出来、あるいは mtl
+からも型を変えるだけで簡単に移行出来る</li>
+<li>内部的には継続渡しに基づいたコルーチンとして実装されている</li>
+</ul>
+<p>読んでいて気になった点は以下の通り（私の理解不足もあるだろうので、こうじゃないの？というのがあれば教えて頂けると幸い）：</p>
+<dl>
+<dt>函数が <code class="sourceCode haskell"><span class="dt">Typeable</span></code>
+インスタンスを要求する</dt>
+<dd>
+EE は委譲の判断をする際に内部的に <code class="sourceCode haskell">gcast</code> を用いており、これを使うのに
+<code class="sourceCode haskell"><span class="dt">Typeable</span></code>
+のインスタンスが必要になる。大抵の型は <code class="sourceCode haskell"><span class="kw">deriving</span></code>
+なりを使ってやれば簡単に <code class="sourceCode haskell"><span class="dt">Typeable</span></code>
+に出来るが、必ずしもそうは行かないものもあり、また型制約部分が汚なくなるような気がするので、余り嬉しくないような気がする。
+</dd>
+<dt>ハンドラは継続渡しで書く必要がある</dt>
+<dd>
+既存の物を組み合わせてプログラムを組む場合は良いが、自分で新たな副作用を追加したいと思ったときに、継続渡し形式でプログラムを書くのは慣れていないとちょっと手間がかかるのではないだろうか。
+</dd>
+<dt><code class="sourceCode haskell"><span class="dt">MonadPlus</span></code> や
+<code class="sourceCode haskell"><span class="dt">Applicative</span></code>
+スタイルとの兼ね合い</dt>
+<dd>
+モナド変換子の場合、<code class="sourceCode haskell"><span class="dt">Applicative</span></code> や
+<code class="sourceCode haskell"><span class="dt">MonadPlus</span></code>
+のインスタンスは、上の例でも出て来たように先頭のモナド変換子が決定する。しかし、<code class="sourceCode haskell"><span class="dt">Eff</span></code>
+モナドの場合はその辺りのセマンティクスはどのように決定されるのだろうか？セマンティクスが柔軟だと書いてあるが今一よくわからない。多分、上の例を見る限り、一番最初に
+<code class="sourceCode haskell">run</code>
+したもののセマンティクスが選ばれる？余りありそうもないが、例えば上で「失敗」とされた挙動をして欲しいような場合はどう書けばいいのだろう。
+</dd>
+<dt>階層を跨いだ実行（interleave）の意味がイマイチよくわからない</dt>
+<dd>
+どういうことなんだろう……。
+</dd>
+<dt>既存のモナド変換子との兼ね合い</dt>
+<dd>
+<code class="sourceCode haskell"><span class="dt">Conduit</span></code>
+であるとか、 <code class="sourceCode haskell"><span class="dt">Parsec</span></code>
+であるとかとの連携の仕方？この <code class="sourceCode haskell"><span class="dt">Eff</span></code>
+の上に載せられるだろうか。
+</dd>
+<dt>理論的な取り扱い</dt>
+<dd>
+EE
+の手法は、応用上は確かにわかりやすい（継続渡しを書くことを除けば）が、理論的にはどのように取り扱われるのだろうか？より詳しく、数学的にどのように定式化されるのだろうか？その辺りがよくわからなかった。個人的に、こうしたものには数学的にしっかりとした基礎付けが欲しく思う（この辺りは異論も色々あるだろうとは思う）。
+</dd>
+</dl>
+<p>個人的な感触としては、EE
+はかなり頑張っていて中々良い代替案になりそうな気がする。ただ、モナド変換子の方がわかりやすいような局面もまだあるように思うし、これが救世主かと云われるとそうでないような気がする。理論的な背景がもう少し欲しくもあるし。いずれにせよ、一つの新しい方法で、それなりに面白く使い易そうなものであることは確かだし、何回か使ってみて感触を確かめてみたい。継続ベースなだけあって、例外処理や限定継続との相性は良さそうだ。</p>
+<p>モナド変換子や合成に関する取り組みは他にも幾つかあるようで、たとえば
+<a href="http://hackage.haskell.org/package/mmorph">mmroph</a> や <a href="http://hackage.haskell.org/package/effects">effects</a>
+といったものもあるようなので、これらも時間があったら調べて比較してみたいと思う。</p>
+</section>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>モナドスタックの上から順に実行していくので、<code class="sourceCode haskell">runHoge</code>
+の順番とスタックの合成順は一般に逆順になることに注意。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>継続渡しはいまいちちゃんと理解出来ていないので、これで大丈夫な理由はちゃんと腑に落ちていない。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/prog/haskell/extensible-effects.html";
+          this.page.identifier = "/prog/haskell/extensible-effects.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/prog/haskell/extensible-effects.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

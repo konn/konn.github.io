@@ -1,0 +1,289 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>zsh hooks を使って ssh / mosh の接続先によって Terminal.app のテーマを変える
+ - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="zsh,OSX,macOS,Terminal,Terminal.app,mosh,ssh"><meta name="description" content="この記事はQiitaからの移行記事です。情報は古いので、記録以上の価値はありません。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/prog/chaging-terminal-bg.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/prog/chaging-terminal-bg.html">
+  <meta property="og:title" content="zsh hooks を使って ssh / mosh の接続先によって Terminal.app のテーマを変える
+">
+  <meta property="og:description" content="この記事はQiitaからの移行記事です。情報は古いので、記録以上の価値はありません。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/prog/">プログラミング関連</a></li>
+  <li class="li breadcrumb-item active">zsh hooks を使って ssh / mosh の接続先によって Terminal.app のテーマを変える
+</li>
+</ol>
+
+    <div class="page-header">
+    <h1>zsh hooks を使って ssh / mosh の接続先によって Terminal.app のテーマを変える
+ <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/prog/chaging-terminal-bg.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/prog/chaging-terminal-bg.html" class="hatena-bookmark-button" data-hatena-bookmark-title="zsh hooks を使って ssh / mosh の接続先によって Terminal.app のテーマを変える
+ - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2015/08/04 00:00:00 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="前置き" class="level1">
+<h2>前置き</h2>
+<p>最近リモートの VPS とテモートの VM
+で同時に作業していて、どっちがどっちのプロンプトかわからなくなるということがよくあります。</p>
+<p>そこで、Terminal.app の背景を接続先に応じて変化させられたら便利です。
+この解決法については、たとえば次の記事にあります：</p>
+<ul>
+<li><a href="http://qiita.com/ironsand/items/b04581bf668f886e3d20">OSXからSSHでリモートサーバーにログインしてる時は背景色を変更する</a></li>
+<li><a href="http://stackoverflow.com/questions/157959/how-do-i-make-the-apple-terminal-window-auto-change-colour-scheme-when-i-ssh-to">osx
+- How do I make the apple terminal window auto change colour scheme when
+I ssh to a specific server - Stack Overflow</a></li>
+</ul>
+<section id="問題点" class="level2">
+<h3>問題点</h3>
+<p>とはいえ、上のやり方には幾つか問題点や不満があります。</p>
+<dl>
+<dt>
+タブが最前決め打ち
+</dt>
+<dd>
+<code>tab 1 of window 1</code>
+決め打ちなので、ウインドウを切り替えたタイミングによっては違うタブの色が変わってしまう。
+</dd>
+<dt>
+ダミーのコマンドを用意する必要がある
+</dt>
+<dd>
+最優先のパスの所に同名のコマンドを作って置くわけで、他のプロセスが
+<code>ssh</code> や <code>mosh</code>
+を呼ぶときに思わぬ問題が発生する可能性があるし、気付きづらい。
+</dd>
+<dt>
+パスの設定によっては機能しない
+</dt><dd>
+上の問題と関連して、パスが適切に通っている場所に配置しないと、優先順位の問題などで機能しなくなる可能性がある。
+</dd>
+</dl>
+<p>これらを解決しましょう。</p>
+<section id="タブの決め打ちを何とかする" class="level3">
+<h4>タブの決め打ちを何とかする</h4>
+<p>まず最初の問題については、AppleScript レベルで <code>window</code>
+には ID が振られているので、呼び出された瞬間にその <code>id</code>
+を取得すれば良い。ただ、 <code>tab</code> には ID
+が割り振られていないようなので、ウィンドウの中で左から何番目かを覚えておく他に解決法はないみたい。なので、途中で同じウインドウの前のタブを閉じたりして順番が変わっていると、結局変更を辿ることができない。</p>
+</section>
+<section id="上書きパスの問題" class="level3">
+<h4>上書きパスの問題</h4>
+<p>ぼくは zsh を使っているので、下記を参考に zsh hooks
+を使うことにしました。</p>
+<ul>
+<li><a href="http://qiita.com/mollifier/items/558712f1a93ee07e22e2">zshでhook関数を登録する
+- Qiita</a></li>
+<li><a href="http://izawa.hatenablog.jp/entry/2012/09/18/220106">zsh
+でウィンドウ名に ホスト名とコマンド名を表示する - 俺の日記</a></li>
+</ul>
+<p>上の情報を使って、<code>preexec</code> フックで ssh や mosh
+が呼び出されていたらサーバ名によってテーマを切り替えるようにすればよい。その際にシェル変数として、ウィンドウのIDとタブの位置、それから元々のテーマを覚えておいて、その変数が定義されている場合に限り
+<code>precmd</code>
+フックで覚えておいたタブを元のテーマに復帰させればよい。</p>
+</section>
+</section>
+<section id="出来上がったもの" class="level2">
+<h3>出来上がったもの</h3>
+<p>以下の内容を <code>~/usr/share/ssh-mosh-bgch-hook.sh</code>
+とか適当な名前で保存し、 <code>~/.zshrc</code> の適当な位置に
+<code>source ~/usr/share/ssh-mosh-bgch-hook.sh</code>
+という行を追加しとけばいい：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode zsh:ssh-mosh-bgch-hook.sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">autoload</span> <span class="at">-Uz</span> add-zsh-hook<span class="kw">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">unset</span> <span class="va">__WINDOWLOC</span><span class="kw">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">unset</span> <span class="va">__PREVSETID</span><span class="kw">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span><span class="fu"> set_bg ()</span> <span class="kw">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="ex">osascript</span> <span class="at">-e</span> <span class="st">&quot;tell app </span><span class="dt">\&quot;</span><span class="st">Terminal</span><span class="dt">\&quot;</span><span class="st"> to set the current settings of the tab </span><span class="va">${__WINDOWLOC</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span><span class="va">}</span><span class="st"> of window id </span><span class="va">${__WINDOWLOC</span><span class="op">[</span><span class="dv">2</span><span class="op">]</span><span class="va">}</span><span class="st"> to settings set </span><span class="dt">\&quot;</span><span class="va">$1</span><span class="dt">\&quot;</span><span class="st">&quot;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span><span class="fu"> ssh-mosh-observe()</span> <span class="kw">{</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="va">mycmd</span><span class="op">=</span><span class="va">(${</span><span class="er">(s: :)${1</span><span class="va">}</span>}<span class="va">)</span><span class="kw">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="va">${mycmd</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span><span class="va">}</span> <span class="kw">in</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="ss">ssh</span><span class="kw">|</span><span class="ss">mosh</span><span class="kw">)</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>            <span class="va">HOSTNAME</span><span class="op">=</span><span class="va">${mycmd</span><span class="op">[</span>-1<span class="op">]</span><span class="va">}</span><span class="kw">;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>            <span class="va">__WINDOWLOC</span><span class="op">=</span><span class="va">(</span><span class="kw">`</span><span class="ex">osascript</span> <span class="at">-e</span> <span class="st">&quot;tell app </span><span class="dt">\&quot;</span><span class="st">Terminal</span><span class="dt">\&quot;</span><span class="st"> to selected tab of the window 1&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="st">&#39; &#39;</span> <span class="at">-f</span> 2,6<span class="kw">`</span><span class="va">)</span><span class="kw">;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            <span class="va">__PREVSETID</span><span class="op">=</span><span class="kw">`</span><span class="ex">osascript</span> <span class="at">-e</span> <span class="st">&quot;tell app </span><span class="dt">\&quot;</span><span class="st">Terminal</span><span class="dt">\&quot;</span><span class="st"> to name of current settings of tab </span><span class="va">${__WINDOWLOC</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span><span class="va">}</span><span class="st"> of the window id </span><span class="va">${__WINDOWLOC</span><span class="op">[</span><span class="dv">2</span><span class="op">]</span><span class="va">}</span><span class="st">&quot;</span><span class="kw">`;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">case</span> <span class="va">$HOSTNAME</span> <span class="kw">in</span> <span class="co"># host name</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                <span class="ss">sakura-vps</span><span class="kw">)</span> <span class="ex">set_bg</span> <span class="st">&quot;Sakura&quot;</span><span class="cf">;;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                <span class="ss">ubuntu-vm</span><span class="kw">)</span>  <span class="ex">set_bg</span> <span class="st">&quot;VM&quot;</span><span class="cf">;;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                <span class="pp">*</span><span class="kw">)</span>          <span class="ex">set_bg</span> <span class="st">&quot;Pro&quot;</span><span class="cf">;;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">esac;;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">esac</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ex">add-zsh-hook</span> preexec ssh-mosh-observe</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span><span class="fu"> ssh-mosh-post()</span> <span class="kw">{</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">[</span> <span class="ot">-n</span> <span class="st">&quot;</span><span class="va">${__WINDOWLOC</span><span class="op">-</span><span class="va">}</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        <span class="ex">set_bg</span> <span class="va">${__PREVSETID}</span><span class="kw">;</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="bu">unset</span> <span class="va">__WINDOWLOC</span><span class="kw">;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">unset</span> <span class="va">__PREVSETID</span><span class="kw">;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="ex">add-zsh-hook</span> precmd ssh-mosh-post</span></code></pre></div>
+<p>ここで、<code>Sakura</code> とか <code>Pro</code> とか
+<code>VM</code>
+とかってのは、ターミナル環境設定の「プロファイル」一覧に上がっているテーマの名前。サーバ毎に適当に色とか背景画像とかを作れば良いだけの話。</p>
+<section id="デモ" class="level3">
+<h4>デモ</h4>
+<p>以下のように、非常にシームレスにテーマが入れ替わるのがわかると思う：</p>
+<p><a href="http://gyazo.com/13a3c43d6bee5cfcb27770f9b76ae43f"><img src="http://i.gyazo.com/13a3c43d6bee5cfcb27770f9b76ae43f.gif" alt="デモを御覧頂けないのが残念です"></a></p>
+<p>また、次のように ssh
+が終了した時に背面にあっても、（タブさえ動いていなければ）元のテーマに復帰するようになっている：</p>
+<p><a href="http://gyazo.com/2b7eb83278afb22d029c703bc1b43e66"><img src="http://i.gyazo.com/2b7eb83278afb22d029c703bc1b43e66.gif" alt="Gyazo"></a></p>
+</section>
+<section id="不満点" class="level3">
+<h4>不満点</h4>
+<ul>
+<li>タブの位置が決め打ち。こればかりは <code>tab</code> に
+<code>id</code> みたいのがないから仕方ない。</li>
+<li>サーバ名が ssh / mosh
+コマンドのラストに来ると決め打ちしている。これは真面目にパーザ書けばいいだろうけど、ダルいしまあ実用上はそんなに問題ないだろう。</li>
+</ul>
+</section>
+</section>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/prog/chaging-terminal-bg.html";
+          this.page.identifier = "/prog/chaging-terminal-bg.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/prog/chaging-terminal-bg.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

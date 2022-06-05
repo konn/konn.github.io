@@ -1,0 +1,229 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>初めてのブログ - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content><meta name="description" content="ブログを作った報告。技術的な詳細解説。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/articles/2012-03-12-my-first-blog.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/articles/2012-03-12-my-first-blog.html">
+  <meta property="og:title" content="初めてのブログ">
+  <meta property="og:description" content="ブログを作った報告。技術的な詳細解説。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/articles/">Blog</a></li>
+  <li class="li breadcrumb-item active">初めてのブログ</li>
+</ol>
+
+    <div class="page-header">
+    <h1>初めてのブログ <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/articles/2012-03-12-my-first-blog.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/articles/2012-03-12-my-first-blog.html" class="hatena-bookmark-button" data-hatena-bookmark-title="初めてのブログ - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2012/03/12 15:00:59 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="what-is-this" class="level2">
+<h3>What is this?</h3>
+<p>なんかはてなブックマークが炎上しているのと、はてなブログが思ったより使い勝手がよくないのとで、自分で自由に弄って遊べるようなブログを設置したいなあ、と思ったので、勉強も兼ねて自分で実装してみたのがこれである。</p>
+<p>下のフッタを見て貰えれば判るとおり、まず第一にこれは <a href="http://yesodweb.com">Yesod</a> アプリで、つまり <a href="http://www.haskell.org">Haskell</a>
+で書かれている。サブドメインで動かすために、kazu-yamamoto さんの<a href="http://mew.org/~kazu/proj/mighttpd/en/">Mighttpd2</a>
+のリバースプロクシ機能を使っています。デザインの才能がないので、その辺りは一括して<a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>と<a href="http://jquery.com/">jQuery</a>のお世話になっている。JavaScript
+むずい<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。
+今のところ記事は私しか書けないようにしているけど、はてなみたいにタブを切り替えて編集しながら内容の確認も出来るようになっている。</p>
+<p>記事の整形は<a href="http://hackage.haskell.org/package/pandoc">Pandoc</a>を使った。基本的に
+markdown 決め打ち。シンタックス・カラーリングも <a href="http://hackage.haskell.org/package/highlighting-kate">hightlighting-kate</a>
+と連携して綺麗にやってくれる。うれしい。こんな感じに。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Handler.Root</span> <span class="kw">where</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Text</span> <span class="kw">as</span> <span class="dt">T</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Control.Monad</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Import</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ot">getRootR ::</span> <span class="dt">Handler</span> <span class="dt">RepHtml</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>getRootR <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  articles <span class="ot">&lt;-</span> runDB <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    as <span class="ot">&lt;-</span> <span class="fu">map</span> entityVal <span class="op">&lt;$&gt;</span> selectList [] [<span class="dt">Asc</span> <span class="dt">ArticleCreatedDate</span>, <span class="dt">Asc</span> <span class="dt">ArticleCreatedTime</span>, <span class="dt">LimitTo</span> <span class="dv">5</span><span class="ot"> ::</span> <span class="dt">SelectOpt</span> <span class="dt">Article</span>]</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">zip</span> as <span class="op">&lt;$&gt;</span> <span class="fu">mapM</span> (get404 <span class="op">.</span> articleAuthor) as</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> render <span class="ot">=</span> writeHtml defaultWriterOptions <span class="op">.</span> readMarkdown defaultParserState</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  defaultLayout <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    h2id <span class="ot">&lt;-</span> lift newIdent</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    setTitle <span class="st">&quot;Yablog homepage&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">$</span>(widgetFile <span class="st">&quot;homepage&quot;</span>)</span></code></pre></div>
+<p>また、<a href="http://www.mathjax.org/">MathJax</a>を使った数式のレンダリングにも対応している。<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msqrt><mrow><mn>2</mn></mrow></msqrt><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>1</mn><mo>+</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi mathvariant="normal">⋮</mi></mrow></mfrac></mrow></mfrac></mrow></mfrac></mrow><annotation encoding="application/x-tex">\sqrt{2}=\frac{1}{\frac{1}{1 +
+\frac{1}{\vdots}}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.90722em;"></span><span class="strut bottom" style="height: 2.07716em; vertical-align: -1.16994em;"></span><span class="base"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.90722em;"><span class="svg-align" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord" style="padding-left: 0.833em;"><span class="mord">2</span></span></span><span class style="top: -2.86722em;"><span class="pstrut" style="height: 3em;"></span><span class="hide-tail" style="min-width: 0.853em; height: 1em;"><svg width="400em" height="1em" viewBox="0 0 400000 1000" preserveAspectRatio="xMinYMin slice"><path d="M95 622c-2.667 0-7.167-2.667-13.5
+-8S72 604 72 600c0-2 .333-3.333 1-4 1.333-2.667 23.833-20.667 67.5-54s
+65.833-50.333 66.5-51c1.333-1.333 3-2 5-2 4.667 0 8.667 3.333 12 10l173
+378c.667 0 35.333-71 104-213s137.5-285 206.5-429S812 17.333 812 14c5.333
+-9.333 12-14 20-14h399166v40H845.272L620 507 385 993c-2.667 4.667-9 7-19
+7-6 0-10-1-12-3L160 575l-65 47zM834 0h399166v40H845z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.13278em;"></span></span></span></span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mrel">=</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.845108em;"><span class style="top: -2.59898em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mopen nulldelimiter sizing reset-size3 size6"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.8443142857142858em;"><span class style="top: -2.439757142857143em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mbin mtight">+</span><span class="mord mtight"><span class="mopen nulldelimiter sizing reset-size1 size6"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 1.03144em;"><span class style="top: -2.2765em;"><span class="pstrut" style="height: 3em;"></span><span class="mord mtight"><span class="mord mtight">⋮</span></span></span><span class style="top: -3.1275em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line mtight" style="height: 0.245em;"><svg width="100%" height="0.245em" viewBox="0 0 10 10" preserveAspectRatio="none"><line x1="0" y1="5" x2="10" y2="5" stroke-width="2"></line><line x1="0" y1="5" x2="10" y2="5" stroke-width="2"></line></svg></span></span><span class style="top: -3.387em;"><span class="pstrut" style="height: 3em;"></span><span class="mord mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.7535000000000001em;"></span></span></span></span><span class="mclose nulldelimiter sizing reset-size1 size6"></span></span></span></span></span><span class style="top: -3.1275em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line mtight" style="height: 0.245em;"><svg width="100%" height="0.245em" viewBox="0 0 10 10" preserveAspectRatio="none"><line x1="0" y1="5" x2="10" y2="5" stroke-width="2"></line><line x1="0" y1="5" x2="10" y2="5" stroke-width="2"></line></svg></span></span><span class style="top: -3.384em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 1.0984571428571428em;"></span></span></span></span><span class="mclose nulldelimiter sizing reset-size3 size6"></span></span></span></span></span><span class style="top: -3.15em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="height: 0.2em;"><svg width="100%" height="0.2em" viewBox="0 0 10 10" preserveAspectRatio="none"><line x1="0" y1="5" x2="10" y2="5" stroke-width="2"></line><line x1="0" y1="5" x2="10" y2="5" stroke-width="2"></line></svg></span></span><span class style="top: -3.394em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 1.16994em;"></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></span>
+みたいにインラインで数式を書くこともできるし、</p>
+<p><span class="math display"><span><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mo>∫</mo><mrow><mo>−</mo><mi mathvariant="normal">∞</mi></mrow><mi mathvariant="normal">∞</mi></msubsup><msup><mi>e</mi><msup><mi>x</mi><mn>2</mn></msup></msup><mi>d</mi><mi>x</mi><mo>=</mo><msqrt><mrow><mi>π</mi></mrow></msqrt></mrow><annotation encoding="application/x-tex">
+\int_{-\infty}^{\infty} e^{x^2} dx = \sqrt{\pi}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 1.414292em;"></span><span class="strut bottom" style="height: 2.384573em; vertical-align: -0.970281em;"></span><span class="base"><span class="mop"><span style="margin-right: 0.44445em; position: relative; top: -0.0011249999999999316em;" class="mop op-symbol large-op">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 1.414292em;"><span class style="top: -1.7880500000000001em; margin-left: -0.44445em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">∞</span></span></span></span><span class style="top: -3.8129000000000004em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∞</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.970281em;"></span></span></span></span></span><span class="mord rule" style="margin-right: 0.16666666666666666em;"></span><span class="mord"><span class="mord mathit">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 1.0369199999999998em;"><span class style="top: -3.113em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathit mtight">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8913142857142857em;"><span class style="top: -2.931em; margin-right: 0.07142857142857144em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="mord mathit">d</span><span class="mord mathit">x</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mrel">=</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.8491550000000001em;"><span class="svg-align" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord" style="padding-left: 0.833em;"><span style="margin-right: 0.03588em;" class="mord mathit">π</span></span></span><span class style="top: -2.809155em;"><span class="pstrut" style="height: 3em;"></span><span class="hide-tail" style="min-width: 0.853em; height: 1em;"><svg width="400em" height="1em" viewBox="0 0 400000 1000" preserveAspectRatio="xMinYMin slice"><path d="M95 622c-2.667 0-7.167-2.667-13.5
+-8S72 604 72 600c0-2 .333-3.333 1-4 1.333-2.667 23.833-20.667 67.5-54s
+65.833-50.333 66.5-51c1.333-1.333 3-2 5-2 4.667 0 8.667 3.333 12 10l173
+378c.667 0 35.333-71 104-213s137.5-285 206.5-429S812 17.333 812 14c5.333
+-9.333 12-14 20-14h399166v40H845.272L620 507 385 993c-2.667 4.667-9 7-19
+7-6 0-10-1-12-3L160 575l-65 47zM834 0h399166v40H845z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.190845em;"></span></span></span></span></span></span></span></span></span></span></p>
+<p>みたいに別行立ての数式も書ける。これで可換図式が書ければ云うことないんだけどなー。</p>
+<p>ブログのデータなどは、VPSで立ちっぱなしにしてある <a href="http://www.mongodb.org/">MongoDB</a>
+で今風に管理している。おっしゃれー。</p>
+<p>あと、後々コマンドラインクライアントなどを書くことも考えて、RESTful
+なAPIも用意されている。問題としては、いちど Google か BrowserID
+で認証する必要があるのでそこが面倒なことか。OAuth Provider
+書ければそっち経由でやるのが楽ですがはて。</p>
+</section>
+<section id="ソースコード" class="level2">
+<h3>ソースコード</h3>
+<p>ソースコードは <a href="http://gitweb.konn-san.com/repo/Yablog/tree/master">Gitolist
+で管理</a>しています。Gitolist じたい、ぼくが Yesod で書いた Gitolite
+のウェブフロントエンドです。こいつはあと commit
+内容/diffの確認とかを付ければ一段落する予定。</p>
+<p>###TODO * コメント・トラックバック機能。 *
+リファラ統計などアクセス解析機能。 * RSS 配信機能 * Twitter との連携？ *
+UI の改善 * タグのUIの改善</p>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>iframe
+の中身を弄るのにかなり時間を割いた。あとtextareaの中身を取得するのに
+.text を使っていておっかしいなー、と思ったら .val()
+を使わなくてはいけないらしかった。知るか！<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/articles/2012-03-12-my-first-blog.html";
+          this.page.identifier = "/articles/2012-03-12-my-first-blog.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/articles/2012-03-12-my-first-blog.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>Emacs から Visual Studio Code に乗り換える作業のメモ - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="emacs,vscode,env,IDE,intero,Haskero,"><meta name="description" content="Emacs にそろそろ辟易してきたので、VSCode に乗り換えようとしています。その作業記録。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/prog/migrating-emacs-to-vscode.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/prog/migrating-emacs-to-vscode.html">
+  <meta property="og:title" content="Emacs から Visual Studio Code に乗り換える作業のメモ">
+  <meta property="og:description" content="Emacs にそろそろ辟易してきたので、VSCode に乗り換えようとしています。その作業記録。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/prog/">プログラミング関連</a></li>
+  <li class="li breadcrumb-item active">Emacs から Visual Studio Code に乗り換える作業のメモ</li>
+</ol>
+
+    <div class="page-header">
+    <h1>Emacs から Visual Studio Code に乗り換える作業のメモ <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/prog/migrating-emacs-to-vscode.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/prog/migrating-emacs-to-vscode.html" class="hatena-bookmark-button" data-hatena-bookmark-title="Emacs から Visual Studio Code に乗り換える作業のメモ - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2018/10/16 00:05:00 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="発端" class="level1">
+<h2>発端</h2>
+<p>発端という程のことは何もないんですが、Emacs
+のプラグインが肥大化するに伴なって、食い合せが悪くて変な挙動をしたり、バージョンを上げたらパッケージが動かなくなったり……といったことにいい加減辟易してきました。
+最近はよくわらないタイミングでビジーになったり死んでしまうことも多くなってきたので、いっそモダンなエディタに乗り換えよう、という機運でした。</p>
+<p>そんな中で VSCode (Visual Studio Code)
+を選んだのは、何か最近話題になっていたからというのと、Atom
+があんまり手に合わない印象があったから、あと TL で VSCode
+使ってる人が多かったからという感じで、まあ特に理由はないです。</p>
+<section id="要件" class="level2">
+<h3>要件</h3>
+<p>とはいえ、Emacs ではかなりカスタマイズを進めていたので、VSCode
+に移行するに当っては以下の要件が満たされて欲しい、という思いがあります。</p>
+<ul>
+<li><p>マトモな Haskell 統合環境</p>
+<ul>
+<li><p>Emacs ではここ数年はずっと <a href="http://commercialhaskell.github.io/intero/">intero</a>
+を使っていた。 intero
+の補完・警告システムはかなり良かったので、完全互換ではないにせよ、十分伍するものが欲しい。</p>
+<p>そもそも今回乗り換えようと思ったのは、intero
+が最近あまりメンテされていない感じで、REPL で IO
+の結果を表示しようとすると Hang
+するとか、型の重いプログラムを書いていると、REPL
+で補完を働かせようとしてビジーになるとか、そういうことが続いたからでもあった。</p></li>
+</ul></li>
+<li><p>コードスニペットデータの移行</p>
+<ul>
+<li>僕はコードスニペットを多用してコーディングをしているので、<a href="https://github.com/konn/dotfiles/tree/master/.emacs.d/share/snippets">これまでのスニペット</a>が移行出来ないと死ぬ。</li>
+<li>スニペットエンジンは <a href="https://github.com/joaotavora/yasnippet">Yasnippet</a>
+を使っていて、たとえば <code class="sourceCode haskell"><span class="kw">module</span></code>
+宣言の補完とかは 内部で ELisp を使って
+<code>piyo/Hoge/Fuga/Bar.hs</code> なら <code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Hoge.Fuga.Bar</span> <span class="kw">where</span><span class="op">...</span></code>、
+小文字のファイル名 <code>moke.hs</code> とかなら <code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></code>
+となるようにしていたので、こういうことが出来ると嬉しい。</li>
+</ul></li>
+<li><p>Rust と Scala の統合環境</p>
+<ul>
+<li>最近使ってみているので、快適なのが欲しい。</li>
+</ul></li>
+<li><p><a href="https://www.yatex.org">YaTeX</a> の代替になるやつ</p>
+<ul>
+<li><p><strong>2018/11/12 追記</strong>：幾つか組み合わせつつ、<a href="https://marketplace.visualstudio.com/items?itemname=mr-konn.catex">自前で拡張を書いて解決</a>した。</p></li>
+<li><p>永らく LaTeX の執筆環境では YaTeX-mode を利用してきた。<br>
+特に、YaTeX
+にはイメージ補完というのがあって、アスキーで表現された数学記号のイメージに相当する記号を手軽に入力出来る。
+例えば <kbd>;||-</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>⊩</mo></mrow><annotation encoding="application/x-tex">\Vdash</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.69224em;"></span><span class="strut bottom" style="height: 0.69224em; vertical-align: 0em;"></span><span class="base"><span class="mrel amsrm">⊩</span></span></span></span></span></span>
+(<code>\Vdash</code>)、<kbd>;ox</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>⊗</mo></mrow><annotation encoding="application/x-tex">\otimes</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.58333em;"></span><span class="strut bottom" style="height: 0.66666em; vertical-align: -0.08333em;"></span><span class="base"><span class="mord">⊗</span></span></span></span></span></span> (<code>\otimes</code>)、あるいは
+<kbd>:a</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.43056em;"></span><span class="strut bottom" style="height: 0.43056em; vertical-align: 0em;"></span><span class="base"><span style="margin-right: 0.0037em;" class="mord mathit">α</span></span></span></span></span></span>
+(<code>\alpha</code>)、<kbd>:ph-</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>φ</mi></mrow><annotation encoding="application/x-tex">\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.43056em;"></span><span class="strut bottom" style="height: 0.625em; vertical-align: -0.19444em;"></span><span class="base"><span class="mord mathit">φ</span></span></span></span></span></span> (<code>\varphi</code>)
+といった具合に。</p>
+<p>僕はもうこれがなければ数式が打てないレベルまで来ているので、この機能の代替が欲しい。
+前 Atom に乗り換えようとした際にも、<a href="https://github.com/konn/atom-latex-shape-completion">Atom
+向けのイメージ補完機構</a>を作ってみていたのだが、途中で飽きて放り投げてある。VSCode
+の方がAPIが整理されていて、遥かに書き易かった。</p></li>
+</ul></li>
+<li><p>Tramp による SSH 越しに sudo やったりするやつ</p></li>
+</ul>
+</section>
+<section id="現状" class="level2">
+<h3>現状</h3>
+<p>上記の要件に対して、どの程度まで移行出来ているか、以下で順次書いていくことにする。</p>
+<section id="haskell-環境" class="level3">
+<h4>Haskell 環境</h4>
+<p>この構築に一番手間取った。検索してヒットするのはだいたい以下の三つだろう：</p>
+<ul>
+<li>Haskell Language Server
+<ul>
+<li><a href="https://github.com/haskell/haskell-ide-engine"><code>haskell-ide-engine</code></a>
+ベース。 裏で <code>intero</code>, <code>ghc-mod</code>,
+<code>brittany</code>, <code>hoogle</code>, <code>HaRe</code>
+などを呼び出すことになっている。</li>
+</ul></li>
+<li>Haskero</li>
+<li>Haskelly
+<ul>
+<li>どちらも<a href="http://commercialhaskell.github.io/intero/"><code>intero</code></a>
+ベース。</li>
+</ul></li>
+</ul>
+<p>最終的には haskell-ide-engine
+に収斂していくべきだと思っているので、Haskell Language Server
+をまず入れてみたのがだ、結論から言うと全然動かなかった。 一応
+<code>hie-wrapper</code> をめぼしい GHC
+バージョンごとにビルドしてインストールはしてあったのだが、モジュールの補完は利かないし、マウスオーバーで表示されるはずのドキュメントがいつまで経っても出てこないし、warning
+や error
+の報告も全然表示されないしで、検索するとヒットするような対応はだいたい試してみたつもりだが、ロクに動かなかった。</p>
+<p>次いで Haskelly。これは調べた感じ Warning や error
+の表示がないみたいなので割愛。</p>
+<p>最後に
+Haskero。これもなかなかマウスオーバーでドキュメント表示が上手くいかなかった。
+これはローカルの DB だけあればいいだろうと思っていたら、どうも global な
+DB も必要だったらしい。
+なので、以下を実行すればマウスオーバーは出来るようになる：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hoogle generate</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd path/to/project</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> stack haddock <span class="at">--keep-going</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> stack hoogle generate</span></code></pre></div>
+<p>多分最後の三行はローカルの DB 要らねと思ったら実行する必要はない。
+実にはこの工程を試したあとに Haskell Language Server
+のマウスオーバーも試していて、その上でタイムアウトしている。</p>
+<p>これで Haskero
+のマウスオーバーは出来るようになったが、警告やエラーが一向に表示されない。
+調べてみると、次の issue が見付かった。</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://gitlab.com/vannnns/haskero/issues/82#note_73389918">
+</iframe>
+
+    </div>
+
+<p>ここで書かれている対処法を参考に、インストールの Haskero
+を書き換える形で一時的に解決している。 なんでも <code>:l</code> した後に
+<code>:r</code> をするのが不味いらしい。
+具体的には、<code>$HOME/.vscode/extensions/vans.haskero-1.3.1/server/intero/commands/reload.js</code>
+の <code class="sourceCode javascript">ReloadRequest</code> クラスの
+<code class="sourceCode javascript">send</code>
+メソッドを以下のように書き換える：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">send</span>(interoProxy) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> filePath <span class="op">=</span> uriUtils_1<span class="op">.</span><span class="at">UriUtils</span><span class="op">.</span><span class="fu">toFilePath</span>(<span class="kw">this</span><span class="op">.</span><span class="at">uri</span>)<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> escapedFilePath <span class="op">=</span> interoUtils_1<span class="op">.</span><span class="at">InteroUtils</span><span class="op">.</span><span class="fu">escapeFilePath</span>(filePath)<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> load <span class="op">=</span> <span class="vs">`:l </span><span class="sc">${</span>escapedFilePath<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// const reloadRequest = &#39;:r&#39;;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> interoProxy<span class="op">.</span><span class="fu">sendRawRequest</span>(load)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">/*</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">               .then(response =&gt; {</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">            return interoProxy.sendRawRequest(reloadRequest);</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">        })</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">        */</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>               <span class="op">.</span><span class="fu">then</span>((response) <span class="kw">=&gt;</span> {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="bu">Promise</span><span class="op">.</span><span class="fu">resolve</span>(<span class="kw">new</span> <span class="fu">ReloadResponse</span>(response<span class="op">.</span><span class="at">rawout</span><span class="op">,</span> response<span class="op">.</span><span class="at">rawerr</span>))<span class="op">;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            })<span class="op">;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
+<p>すると、開いた直後は掻き消えることがあるが、一応問題なく動ようになった。</p>
+<p>Haskero には REPL はなさそうだったので、<a href="https://marketplace.visualstudio.com/items?itemName=rcook.ghci-helper">GHCi
+Helper</a> を入れた。 REPL としての intero
+は、<code>-fdefer-type-errors</code>
+が掛かっていたり、無駄に補完しようとしてビジーになったり、正直腐り切っていたので、<code>stack ghci</code>
+を使う GHCi Helper は性に合っていそうである。</p>
+<p>あと、コードフォーマッタは Haskero は <code>brittany</code>
+を推奨しているようだが、僕は <code>stylish-haskell</code>
+を使っているので、<a href="https://marketplace.visualstudio.com/items?itemName=vigoo.stylish-haskell">stylish-haskell
+用機能拡張</a>を入れた。 HLint も使いたいので、<a href="https://marketplace.visualstudio.com/items?itemName=lunaryorn.hlint"><code>hlint</code>機能拡張</a>も入れた。<code>haskell-linter</code>とかいうのもあるが、<code>apply-refact</code>
+を使った自動反映に対応しているっぽかったので、<code>hlint</code>
+の方を選んだ。</p>
+<p>他にも Haskero の warning や error を同様に適用してくれる奴として、
+<a href="https://marketplace.visualstudio.com/items?itemName=Edka.haskutil"><code>Haskutil</code></a>も入れた。
+以上で、完全ではないがあるていどこれまでの Haskell
+統合環境に近いものが構築出来た。</p>
+<p>さらに、オマケとして、Haskell 編集中だけ Haskell 用リガチャフォントの
+<a href="https://github.com/i-tu/Hasklig">Hasklig</a>
+を使うようにするため、以下の設定を <code>settings.json</code>
+に追加した：</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span>   <span class="er">...</span><span class="fu">,</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;[haskell]&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;editor.fontFamily&quot;</span><span class="fu">:</span> <span class="st">&quot;Hasklig,Menlo, Monaco, &#39;Courier New&#39;, monospace&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+</section>
+<section id="コードスニペットの移行" class="level3">
+<h4>コードスニペットの移行</h4>
+<p>検索すると幾つか変換器がヒットするが、どう対応しているのかわからなかったので、Rust
+を使って変換器を書いた。</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://github.com/konn/yas-to-vscode">
+</iframe>
+
+    </div>
+
+<p>Rust のパーザコンビネータである <code>combine</code> crate
+の良い練習になった。 Yasnippet では選択肢から選ぶという場合はそれ専用の
+ELisp 関数を呼び出しやる必要があったのだが、VSCode
+では専用の構文が用意されており、 <code class="vscode">${1|foo,bar,buz|}</code> とすればよく大変楽だった。</p>
+<p>取り敢えず、可能な限り選択肢からの変換やプレースホルダの変換の面倒を見つつ、内部で任意コードを呼びだしているっぽいスニペットが来たら、標準出力で警告をするようにしている。
+使い方としては、</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> path/to/output</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> crates ~/.emacs/share/snippets path/to/output</span></code></pre></div>
+<p>とすれば、言語ごとに <code>haskell.json</code>
+のような形でまとめられたスニペット定義が出来上がるので、上の警告を参考に書き換えつつ、macOS
+なら <code>$HOME/Library/Application Support/Code/User/snippets</code>
+にでも置けばよい。 ところで、如何に天下の Microsoft
+だからといって、サポートファイルの識別名を <code>Code</code>
+にするのはいかがなものか。 というか、なんで <code>$HOME/.vscode</code>
+にしないのか全く理解出来ない。</p>
+<p>一方で、任意のコードが実行出来るわけではないので、上の要件に上げたモジュール名補完は今のところ有効打が見付かっていない。
+一応、正規表現で一回だけ置換したり大文字小文字を弄ったり、空かどうかで分岐したり、といった機構が
+VSCode にもあるにはある。
+だが、調べた感じ複数回置換は出来なさそうだし、そもそも正規表のキャプチャグループとスニペットのタブストップへの参照がどちらも
+<code>$1, $2, ...</code>
+という形でごっちゃになっている上に、変数の正規表現置換と空文字列の条件分岐を組み合わせようとすると一瞬で変な挙動をするので、今のところ実現出来ていない、という感じである。</p>
+<p>何か良い手を思い付いた方は御一報下さい。いっそのこと機能拡張を作って、動的にスニペットを生成して補完候補として呼び出させるのも一つの手かもしれないが……。</p>
+</section>
+<section id="rust-と-scala" class="level3">
+<h4>Rust と Scala</h4>
+<dl>
+<dt>Rust</dt>
+<dd>
+Rusty Code と Rust (<code>rls</code>) を入れたら万事 OK。
+</dd>
+<dt>Scala</dt>
+<dd>
+Scala Language Server、Scala (<code>sbt</code>)
+あたりを入れたら動いて見える。
+</dd>
+</dl>
+</section>
+<section id="yatex-の代替" class="level3">
+<h4>YaTeX の代替</h4>
+<p><del>残念ながらまだ見付かってないです。良い奴教えてください。最低要件は上で書いたイメージ補完が使えることです。</del></p>
+<p>だいぶ楽になった。詳細は<a href="../articles/2018-11-26-happy-latex-with-catex.html">新記事</a>を参照。</p>
+</section>
+<section id="emacs-の-tramp-相当" class="level3">
+<h4>Emacs の TRAMP 相当</h4>
+<p>Emacs には tramp-mode というのがあって、SSH
+越しにリモートファイルを編集したり、更にリモートで sudo
+越しに保護されたファイル（サーバの config
+とか）を編集したりということができた。 <del>VSCode
+では何を使えばいいんだろう。</del></p>
+<p>当面の間は<a href="https://marketplace.visualstudio.com/items?itemName=Kelvin.vscode-sshfs">SSH
+FS for VSCode</a>を使うことにした<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。 TRAMP は /.ssh/config
+を自動で読み出してくれるが、SSH FS
+では自分で設定を書く必要があるようだ。 <a href="https://github.com/SchoofsKelvin/vscode-sshfs/issues/28#issuecomment-425078388">この
+issue</a>によれば、現行の 1.10.0 でも <code class="sourceCode json"><span class="er">&quot;sftpCommand&quot;:</span> <span class="er">&quot;sudo</span> <span class="er">/usr/lib/openssh/sftp-server&quot;</span></code>
+とか指定すれば、リモートで <code>sudo</code>
+打てる筈なのだが、どうも上手く接続出来ないのでどうしたものか。
+あと、ワークスペースとしてマウントする奴なので、ちょっと一つのファイルだけ開きたい時はオーバーキルのような気もする。</p>
+</section>
+</section>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>所でどうでもいいけど、SSH FS
+って言うと FUSE の SSH マウント出来るやつと紛らわしいな。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/prog/migrating-emacs-to-vscode.html";
+          this.page.identifier = "/prog/migrating-emacs-to-vscode.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/prog/migrating-emacs-to-vscode.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

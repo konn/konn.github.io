@@ -1,0 +1,450 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>QuickCheck / SmallCheck の紹介 〜オートマトンの例を通して〜 - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content><meta name="description" content="オートマトンの検証という例を通して、QuickCheck や SmallCheck による性質ベースのテスト手法を紹介します。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/articles/2012-04-27-automaton-and-quick-small-check.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/articles/2012-04-27-automaton-and-quick-small-check.html">
+  <meta property="og:title" content="QuickCheck / SmallCheck の紹介 〜オートマトンの例を通して〜">
+  <meta property="og:description" content="オートマトンの検証という例を通して、QuickCheck や SmallCheck による性質ベースのテスト手法を紹介します。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/articles/">Blog</a></li>
+  <li class="li breadcrumb-item active">QuickCheck / SmallCheck の紹介 〜オートマトンの例を通して〜</li>
+</ol>
+
+    <div class="page-header">
+    <h1>QuickCheck / SmallCheck の紹介 〜オートマトンの例を通して〜 <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/articles/2012-04-27-automaton-and-quick-small-check.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/articles/2012-04-27-automaton-and-quick-small-check.html" class="hatena-bookmark-button" data-hatena-bookmark-title="QuickCheck / SmallCheck の紹介 〜オートマトンの例を通して〜 - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2012/04/27 01:09:37 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="オートマトンの設計" class="level1">
+<h2>オートマトンの設計</h2>
+<p>大学で計算理論の講義を取っていて，宿題で「n
+の倍数となる2進数文字列を受理するオートマトンの状態遷移図を描け(n=2,3,4,6)」と云う問題が出ました．</p>
+<p>まあそれは剰余に注目すれば簡単に解ける訳ですが，どうせなので状態数をゴルフしよう<sup><a href="#fn1" id="fnref1" class="footnoteRef">1</a></sup>と思ったりするわけです．
+その為には，同じ入力に対して次の状態が同じものを同一視してやればいい<sup><a href="#fn2" id="fnref2" class="footnoteRef">2</a></sup>訳ですが、合ってるとは思ってもちょっと不安です．</p>
+<p>そこで，Haskell の QuickCheck / smallcheck
+を使って、どうやら大丈夫そうだぞ、と云うのを確かめてみることにしました．</p>
+</section>
+<section id="quickcheck-smallcheck-とは" class="level1">
+<h2>QuickCheck / smallcheck とは？</h2>
+<p><a href="http://hackage.haskell.org/package/QuickCheck">QuickCheck</a>というのは，既に知っているひともいるかと思いますが、簡単に云って乱数テストを自動的に実行してくれるようなライブラリです．函数やデータ構造が満たしてほしい性質を記述すると、自動的にランダムに値を生成して、その性質が成り立つかをチェックしてくれるのです．詳しくは『<a href="http://www.amazon.co.jp/dp/4274068056?tag=konn06-22">関数プログラミングの楽しみ</a>』の第二章で解説されています。</p>
+<p>対して<a href="http://hackage.haskell.org/package/smallcheck">smallcheck</a>は，QuickCheck
+と Alloy
+を出会わせたような性格をしています．仕様を記述するまでは同じなんですが，QuickCheck
+が乱数を生成していたのに対して，SmallCheck
+は特定の「深さ」までのデータを<strong>全て</strong>，exhaustive
+に生成してチェックする，と云う違いがあります． Alloy
+を出会わせたような，と云うのは，Alloy
+の設計思想である「小スコープ仮説」と云うものに基づいているからです．小スコープ仮説と云うのは，「大きく複雑なケースで出て来るバグは，（複雑性の）小さなスコープでも再現する筈だ」と云うものです．勿論これだけ小さなスコープで再現すればOK！みたいな上限は存在しません．そんなのがあったらチューリングマシン停止問題が解けちゃいますから．
+じゃあどうするのか，と云うと，段々とデータの大きさ（スコープ）を大きくしていって，ある程度まで確かめて大丈夫だったらそれで良いだろう，とします．</p>
+</section>
+<section id="実装してみよう" class="level1">
+<h2>実装してみよう</h2>
+<p>取り敢えずは，素朴にオートマトンを実装してみたのが次です．</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Test.QuickCheck</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.Char</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Numeric</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.Maybe</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.List</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.Ord</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.Function</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Control.Arrow</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.Word</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Control.Applicative</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Automaton</span> s i <span class="ot">=</span> <span class="dt">Automaton</span> {<span class="ot"> initial    ::</span> s</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                               ,<span class="ot"> accepted   ::</span> [s]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                               ,<span class="ot"> transition ::</span> s <span class="ot">-&gt;</span> i <span class="ot">-&gt;</span> s</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                               }</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ot">runAutomaton ::</span> <span class="dt">Automaton</span> s i <span class="ot">-&gt;</span> [i] <span class="ot">-&gt;</span> s</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>runAutomaton (<span class="dt">Automaton</span> q0  _ t) is <span class="ot">=</span> go q0 is</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    go q []     <span class="ot">=</span> q</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    go q (i<span class="op">:</span>is) <span class="ot">=</span> go (t q i) is</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ot">isAccepted ::</span> <span class="dt">Eq</span> s <span class="ot">=&gt;</span> <span class="dt">Automaton</span> s i <span class="ot">-&gt;</span> [i] <span class="ot">-&gt;</span> <span class="dt">Bool</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>isAccepted auto is <span class="ot">=</span> runAutomaton auto is <span class="ot">`elem`</span> accepted auto</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ot">fromList ::</span> (<span class="dt">Eq</span> i, <span class="dt">Eq</span> s, <span class="dt">Ord</span> s) <span class="ot">=&gt;</span> [(s, i, s)] <span class="ot">-&gt;</span> s <span class="ot">-&gt;</span> i <span class="ot">-&gt;</span> s</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>fromList dic s i <span class="ot">=</span> fromJust <span class="op">$$</span> <span class="fu">lookup</span> i <span class="op">=&lt;&lt;</span> <span class="fu">lookup</span> s d&#39;</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    d&#39; <span class="ot">=</span> <span class="fu">map</span> (<span class="fu">fst</span> <span class="op">.</span> <span class="fu">head</span> <span class="op">&amp;&amp;&amp;</span> <span class="fu">map</span> <span class="fu">snd</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>           <span class="op">$$</span> groupBy ((<span class="op">==</span>) <span class="ot">`on`</span> <span class="fu">fst</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>           <span class="op">$$</span> sortBy (comparing <span class="fu">fst</span>) <span class="op">$$</span> <span class="fu">map</span> (\(a,b,c) <span class="ot">-&gt;</span> (a,(b,c))) dic</span></code></pre></div>
+<p>取り敢えず，<code>Automaton s i</code>は内部状態<code>s</code>で，<code>i</code>のリストを入力に取るオートマトンです．
+遷移函数を一々記述するのが面倒なので，状態の一覧を書いた辞書リストから遷移関数を作ってくれるのが<code>fromList</code>ですね．
+<code>runAutomaton</code>や<code>isAccepted</code>は定義のまんまですね．走らせた後の状態が受理状態に入っていたら受理である，という．</p>
+<p>では，これらを使って，二進数の入力列を受け取って，6の倍数か判定するオートマトンを書いてみましょう．</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">aDivBy6&#39; ::</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>aDivBy6&#39; <span class="ot">=</span> <span class="dt">Automaton</span> <span class="dv">0</span> [<span class="dv">0</span>] go</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    go s i <span class="ot">=</span> (s <span class="op">*</span> <span class="dv">2</span> <span class="op">+</span> <span class="fu">digitToInt</span> i) <span class="ot">`mod`</span> <span class="dv">6</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ot">aDivBy6 ::</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>aDivBy6 <span class="ot">=</span> <span class="dt">Automaton</span> <span class="dv">0</span> [<span class="dv">0</span>] (fromList dic)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    dic <span class="ot">=</span> [ (<span class="dv">0</span>, <span class="ch">&#39;0&#39;</span>, <span class="dv">0</span>), (<span class="dv">0</span>, <span class="ch">&#39;1&#39;</span>, <span class="dv">1</span>), (<span class="dv">1</span>, <span class="ch">&#39;0&#39;</span>, <span class="dv">2</span>), (<span class="dv">1</span>, <span class="ch">&#39;1&#39;</span>, <span class="dv">3</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>          , (<span class="dv">2</span>, <span class="ch">&#39;0&#39;</span>, <span class="dv">1</span>), (<span class="dv">2</span>, <span class="ch">&#39;1&#39;</span>, <span class="dv">2</span>), (<span class="dv">3</span>, <span class="ch">&#39;0&#39;</span>, <span class="dv">0</span>), (<span class="dv">3</span>, <span class="ch">&#39;1&#39;</span>, <span class="dv">1</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>          ]</span></code></pre></div>
+<p>最初のは素朴に桁がズレるごとに今の余りを二倍して新しい桁を足している，という素朴な実装です．これは明らかに6の倍数のみを受け付けるオートマトンです．
+二番目のを出すのには工夫がいります．たとえば，最初のやつの状態遷移図を描いてみて，動作の同じ状態どうしを纏めて一つにしてみたものと見れます．
+他にも，3の倍数かつ0で終わる（=2の倍数）ときに受理する，と云う風に読んでもいいです．</p>
+<section id="quickcheck-を使ってみる" class="level2">
+<h3>QuickCheck を使ってみる</h3>
+<p>理屈の上では多分二番目のも素朴な<code>aDivBy6&#39;</code>と同様に動いてくれる筈です．でも，ちょっと不安だなあ……．
+と云うわけで，早速 QuickCheck で確かめてみましょう！</p>
+<p>6で割れれば<code>aDivBy6</code>でその二進数表現が受理される，と云う条件を書きます．</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">showBin ::</span> <span class="dt">Integral</span> r <span class="ot">=&gt;</span> r <span class="ot">-&gt;</span> <span class="dt">String</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>showBin <span class="ot">=</span> <span class="fu">flip</span> (showIntAtBase <span class="dv">2</span> <span class="fu">intToDigit</span>) <span class="st">&quot;&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ot">test_automaton0 ::</span> <span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> (<span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Property</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>test_automaton0 base auto <span class="ot">=</span> \r <span class="ot">-&gt;</span> r <span class="ot">`mod`</span> base <span class="op">==</span> <span class="dv">0</span> <span class="op">==&gt;</span> isAccepted auto (showBin r)</span></code></pre></div>
+<p><code>showBin</code> は2進表現に変換するヘルパ函数ですね．
+<code>test_automaton0</code>は，底とチェックしたいオートマトンを受け取って，仕様を返す函数です．
+QuickCheck
+での「仕様」は，単なる<code>Bool</code>か<code>Property</code>，または何らかの引数を取って<code>Bool または Property</code>を返す函数のいずれかです．わかりやすいように，ここでは仕様になる部分を括弧で括って</p>
+<pre><code>Word -&gt; Property</code></pre>
+<p>と書いています．何らかの引数，と云いましたが，正確には QuickCheck
+が生成方法を知っている必要があるので，<code>Arbitrary</code>クラスのインスタンスであるひつようがあります．ここでは<code>Word</code>，すなわち正の整数です．
+なので，これは，「指定した底で割り切れるならオートマトン auto
+で受理される」のが仕様です．</p>
+<p>では，実際にテストしてみましょう！テストするには，<code>quickCheck</code>函数に喰わせるだけで大丈夫です．ライブラリが自動的に例を乱数生成して，仕様が満たされているかチェックしてくれます．</p>
+<pre><code>ghci&gt; quickCheck $$ test_automaton0 6 aDivBy6
++++ OK, passed 100 tests.</code></pre>
+<p>なんだか矢鱈時間が掛かりますね……．今回は上手くいきましたが，何度か試してみると……</p>
+<pre><code>ghci&gt; quickCheck $$ test_automaton0 6 aDivBy6
+*** Gave up! Passed only 92 tests.</code></pre>
+<p>のように，92の試験に合格したのちに，100に到達しきれなくてギブアップしてます．
+これは，6の倍数以外も全部生成して試しているからです．事前条件に引っ掛からなかった値は捨て去られるので，大量の無駄が発生してしまっているのです．</p>
+<p>では，最初から6の倍数だけ生成して試すようにしてみましょう．</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">divisible ::</span> <span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Gen</span> <span class="dt">Word</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>divisible d <span class="ot">=</span> (d <span class="op">*</span>) <span class="op">&lt;$$&gt;</span> arbitrary <span class="ot">`suchThat`</span> (<span class="op">&lt;</span>(<span class="fu">maxBound</span> <span class="ot">`div`</span> d))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ot">test_automaton1 ::</span> <span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> <span class="dt">Property</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>test_automaton1 base auto <span class="ot">=</span> forAll (divisible base) <span class="op">$$</span> \r <span class="ot">-&gt;</span> isAccepted auto (showBin r)</span></code></pre></div>
+<p><code>divisible</code>で任意の自然数で割り切れる数だけを生成しているわけです．「d
+倍しても桁溢れしない任意の数を用意して，それを
+d倍する」と，そのまま読み下せますね．
+<code>test_automaton01</code>のほうも，そのまま「任意のbaseで割り切れる自然数
+r について，その2進表現が auto で受理される」と読めます．</p>
+<p>使ってみると……</p>
+<pre><code>ghci&gt; quickCheck $$ test_automaton1 6 aDivBy6
++++ OK, passed 100 tests.</code></pre>
+<p>こんどはすぐにテストをパスしています！上手くいったようですね．</p>
+<p>と，思いますが，よくよく考えたら問題は「6の倍数か判定するオートマトン」，つまり「6の倍数<strong>だけ</strong>を受理するオートマトン」を作ることでした．このままだと，6の倍数が受理されることはわかりますが，6の倍数でないものが受理される可能性があります．</p>
+<p>ではどうするか．折角定義した
+<code>divisible</code>を使うのをやめて，両方の場合を一気にチェックする函数に書き換えましょう．</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ot">test_automaton2 ::</span> <span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> (<span class="dt">Word</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>test_automaton2 q a <span class="ot">=</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  \r <span class="ot">-&gt;</span> <span class="kw">if</span> r <span class="ot">`mod`</span> <span class="dv">6</span> <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">then</span> isAccepted a (showBin r)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">else</span> <span class="fu">not</span> <span class="op">$$</span> isAccepted a (showBin r)</span></code></pre></div>
+<p>仕様は<code>Property</code>でも<code>Word -&gt; Property</code>でもなく，単なる述語<code>Word -&gt; Bool</code>に変わっていますね．6で割れれば受理され，そうでなければ受理されないこと，とそのまま記述しています．</p>
+<p>では，これを使ってみましょう．</p>
+<pre><code>ghci&gt; quickCheck $$ test_automaton2 6 aDivBy6
++++ OK, passed 100 tests.</code></pre>
+<p>すぐに実行がおわって，テストを通過しました！やりましたね！</p>
+</section>
+<section id="smallcheck-で書いてみよう" class="level2">
+<h3>SmallCheck で書いてみよう</h3>
+<p>では，今度はSmallCheck
+で書いてみます．と云っても，やることは殆んどかわりません． QuickCheck
+をインポートしている部分を</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Test.SmallCheck</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Test.SmallCheck.Series</span></span></code></pre></div>
+<p>に書き換えて……</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ot">test_automaton2 ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> (<span class="dt">N</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>test_automaton2 base auto <span class="ot">=</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    \(<span class="dt">N</span> r) <span class="ot">-&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> r <span class="ot">`mod`</span> base <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">then</span> isAccepted auto (showBin r)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">else</span> <span class="fu">not</span> <span class="op">$$</span> isAccepted auto (showBin r)</span></code></pre></div>
+<p>とするだけです！殆んど変更になっていません！</p>
+<p><code>Word</code>が<code>N Int</code>になっていますね．SmallCheck は
+Word 型をサポートしていないかわりに，Num 型を <code>N</code>
+でラップしてやることで，正数しか生成しないようになります．</p>
+<p>では，早速試してみましょう．</p>
+<pre><code>ghci&gt; smallCheck 1000 $$ test_automaton2 6 aDivBy6&#39;
+Depth 0:
+    Completed 1 test(s) without failure.
+Depth 1:
+    Completed 2 test(s) without failure.
+...
+Depth 1000:
+    Completed 1001 test(s) without failure.</code></pre>
+<p>行が沢山出力されるので時間がかかるかと思いますが，実際には一瞬で終わっています．
+先程までと違うところは，<code>quickCheck</code>のかわりに<code>smallCheck</code>を使っているところでしょうか．また，そのあとに<code>1000</code>と云う引数を渡していますね．これはなんでしょうか？</p>
+<p>これは，Depth，つまりデータ型の深さ・大きさです．先にも説明したように，SmallCheck
+は「深さ」ごとにデータを総当たり的に生成して，それらを全部チェックする，と云う戦略をとっています．深さが何を指すのはデータ型によって異なりますが，整数型の場合は特に最大値だと思えばよいです．<code>smallCheck</code>函数は深さ0から徐々に指定された深さまで増加させていって，包括的に調べる，と云う函数です．特定の深さだけを調べたい場合は<code>depthCheck</code>函数が使えます．</p>
+<p>なので，上のテストでは最大1000までの整数しかチェックできていなくて，ちょっと非効率的です．そこで，深さを最大値ではなくビット長とするように書き換えてみましょう．</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Bit</span> <span class="ot">=</span> <span class="dt">I</span> <span class="op">|</span> <span class="dt">O</span> <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Read</span>, <span class="dt">Eq</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ot">bitToDigit ::</span> <span class="dt">Bit</span> <span class="ot">-&gt;</span> <span class="dt">Char</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>bitToDigit <span class="dt">I</span> <span class="ot">=</span> <span class="ch">&#39;1&#39;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>bitToDigit <span class="dt">O</span> <span class="ot">=</span> <span class="ch">&#39;0&#39;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Serial</span> <span class="dt">Bit</span> <span class="kw">where</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  series <span class="ot">=</span> cons0 <span class="dt">O</span> \<span class="op">/</span> cons0 <span class="dt">I</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  coseries rs d <span class="ot">=</span> [ \m <span class="ot">-&gt;</span> <span class="kw">case</span> m <span class="kw">of</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>                            <span class="dt">O</span> <span class="ot">-&gt;</span> a</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>                            <span class="dt">I</span> <span class="ot">-&gt;</span> b</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                  <span class="op">|</span> a <span class="ot">&lt;-</span> alts0 rs d</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                  , b <span class="ot">&lt;-</span> alts0 rs d</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>                  ]</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="ot">readBits ::</span> <span class="dt">Integral</span> a <span class="ot">=&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> a</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>readBits binary <span class="ot">=</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">maybe</span> <span class="dv">0</span> <span class="fu">fst</span> <span class="op">$$</span> listToMaybe <span class="op">$$</span> <span class="fu">readInt</span> <span class="dv">2</span> (\c <span class="ot">-&gt;</span> c <span class="op">==</span> <span class="ch">&#39;0&#39;</span> <span class="op">||</span> c <span class="op">==</span> <span class="ch">&#39;1&#39;</span>) <span class="fu">digitToInt</span> binary</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="ot">test_automaton3 ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> [<span class="dt">Bit</span>] <span class="ot">-&gt;</span> <span class="dt">Bool</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>test_automaton3 q a <span class="ot">=</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    \bits <span class="ot">-&gt;</span> </span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> binary <span class="ot">=</span> <span class="fu">map</span> bitToDigit bits</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>          r      <span class="ot">=</span> readBin binary</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>      <span class="kw">in</span> <span class="kw">if</span> r <span class="ot">`mod`</span> q <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>         <span class="kw">then</span> isAccepted a binary</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>         <span class="kw">else</span> <span class="fu">not</span> <span class="op">$$</span> isAccepted a binary</span></code></pre></div>
+<p><code>Bit</code>がBitを表わすデータ型で，その列を生成するように変更していますね．<code>Bit</code>を深さごとにexhaustiveに生成するために，<code>Serial</code>型クラスのインスタンスにしています．型からは一見なにをすればいいのかわかりづらいですが，<code>()</code>や<code>Maybe a</code>に対するインスタンス宣言を参考にしつつ，ヘルパ函数を使えば簡単にインスタンスが書けます．<code>series</code>函数は指定の深さのデータを生成する函数で，<code>coseries</code>は，<code>Bit</code>を含むような別のデータ構造を生成するときに使われます．</p>
+<p><code>test_automaton3</code>では，生成した2進表現を喰わせて，それが6進数であるかどうかとオートマトンに受理されるかどうかが同値であることを確かめているだけですね．</p>
+<p>では，確かめてみましょう．</p>
+<pre><code>ghci&gt; smallCheck 16 $$ test_automaton3 6 aDivBy6&#39;
+Depth 0:
+  Completed 1 test(s) without failure.
+Depth 1:
+  Completed 3 test(s) without failure.
+...
+Depth 15:
+  Completed 65535 test(s) without failure.
+Depth 16:
+  Completed 131071 test(s) without failure.</code></pre>
+<p>なんかかなり時間がかかりました．実行してみるとわかりますが，15を越えたあたりから急に遅くなりはじめます．指数爆発だ……．
+実際のところどれくらい時間がかかるのか，ちょっと<code>:set +s</code>して測ってみましょう．</p>
+<pre><code>ghci&gt; depthCheck 15 $$ test_automaton3 6 aDivBy6&#39;
+Depth 15:
+  Completed 65535 test(s) without failure.
+(3.06 secs, 1224982104 bytes)
+
+ghci&gt; depthCheck 16 $$ test_automaton3 6 aDivBy6&#39;
+Depth 16:
+  Completed 131071 test(s) without failure.
+(6.45 secs, 2585880856 bytes)
+
+ghci&gt; depthCheck 17 $$ test_automaton3 6 aDivBy6&#39;
+Depth 17:
+  Completed 262143 test(s) without failure.
+(13.57 secs, 5465946920 bytes)</code></pre>
+<p>うへえ，これはひどい，メモリもかなりくってます．何とか枝刈りをしたいところです．</p>
+<p>ここでは，n-bit長の数値を生成しているわけですが，実際には頭に0が沢山ついてるような子，例えば</p>
+<pre><code>000101010
+010100101</code></pre>
+<p>みたいなのも生成しちゃってます．もちろん，こういった入力が来ても大丈夫なチェックにもなっているわけですが，ぶっちゃけ邪魔です．
+そこで，先頭が 1 であるものだけを判定するようにしてみましょう．</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ot">test_automaton4 ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Automaton</span> <span class="dt">Int</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> [<span class="dt">Bit</span>] <span class="ot">-&gt;</span> <span class="dt">Property</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>test_automaton4 q a <span class="ot">=</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    \bits <span class="ot">-&gt;</span> </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> binary <span class="ot">=</span> <span class="fu">map</span> bitToDigit bits</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>          r      <span class="ot">=</span> <span class="fu">maybe</span> <span class="dv">0</span> <span class="fu">fst</span> <span class="op">$$</span> listToMaybe <span class="op">$$</span> <span class="fu">readInt</span> <span class="dv">2</span> (\c <span class="ot">-&gt;</span> c <span class="op">==</span> <span class="ch">&#39;0&#39;</span> <span class="op">||</span> c <span class="op">==</span> <span class="ch">&#39;1&#39;</span>) <span class="fu">digitToInt</span> binary</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">in</span> (<span class="fu">not</span> <span class="op">$$</span> <span class="fu">null</span> bits) <span class="op">&amp;&amp;</span> <span class="fu">head</span> bits <span class="op">==</span> <span class="dt">I</span> <span class="op">==&gt;</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>         <span class="kw">if</span> r <span class="ot">`mod`</span> q <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>         <span class="kw">then</span> isAccepted a binary</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>         <span class="kw">else</span> <span class="fu">not</span> <span class="op">$$</span> isAccepted a binary</span></code></pre></div>
+<p>実行してみます．</p>
+<pre><code>Depth 15:
+  Completed 65535 test(s) without failure.
+  But 32768 did not meet ==&gt; condition.
+(1.71 secs, 659780920 bytes)
+
+ghci&gt; depthCheck 16 $$ test_automaton4 6 aDivBy6&#39;
+Depth 16:
+  Completed 131071 test(s) without failure.
+  But 65536 did not meet ==&gt; condition.
+(3.56 secs, 1386670368 bytes)
+
+ghci&gt; depthCheck 17 $$ test_automaton4 6 aDivBy6&#39;
+Depth 17:
+  Completed 262143 test(s) without failure.
+  But 131072 did not meet ==&gt; condition.
+(7.49 secs, 2915713216 bytes)</code></pre>
+<p>17bit に
+7.49秒です．大分ましにはなりました．これで大体13万までは全部大丈夫，と云えます．
+数学の証明にはまるでなりませんが，まあ，この値くらいまで平気であれば多分大丈夫だろう，と云うことにして，納得出来るのではないでしょうか．上限が小さすぎると云う場合は，QuickCheckの方でも乱数チェックをしているのでまあ多分大丈夫！ということで．</p>
+</section>
+</section>
+<section id="結論と補遺" class="level1">
+<h2>結論と補遺</h2>
+<p>Haskell
+でプログラムが仕様を満たすかどうかをテストする方法として，QuickCheck と
+SmallCheck の二つの方法を紹介しました．QuickCheck
+はランダムテスト，SmallCheck は深さを制限した総当たりテストでした．</p>
+<p>SmallCheck には，Lazy SmallCheck
+と云うバリアントがあって，これは遅延評価を枝刈りに生かした実装になっています．
+部分的に定義された値，例えば，</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Tree</span> a <span class="ot">=</span> <span class="dt">Leaf</span> <span class="op">|</span> <span class="dt">Branch</span> (<span class="dt">Tree</span> a) a (<span class="dt">Tree</span> a)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>hoge <span class="ot">=</span> <span class="dt">Branch</span> (<span class="dt">Branch</span> <span class="dt">Leaf</span> <span class="dv">12</span> <span class="dt">Leaf</span>) <span class="dv">23</span> <span class="fu">undefined</span></span></code></pre></div>
+<p>みたいな値を喰わせることで，最初の幾つかだけ見たら失敗するようなケースは纏めて排除出来ます．例えば，</p>
+<pre><code>ghci&gt; isSorted $$ 2:1:undefined</code></pre>
+<p>みたいなのは，最初の二つだけみれば，もうソート済みでないことはわかるので，これから始まる他の長さのデータももう調べなくて済みます．undefined
+まで到達したらさらに長いデータを喰わせて，適宜チェックしていくと云う訳です．</p>
+<p>これはすごい頭いいんですが，Laziness
+と云うのはなかなかむずかしくて，リスト全体を読む必要があるような場合だとLazy
+でない SmallCheck
+よりも効率がわるくなることがおおいみたいです．例えば，今回の例だと最後までリストを読まなければ倍数かどうかを判定出来ないので，Lazy
+は使えません．このあたりはまだちゃんと理解していないので，この先ちゃんと調べてみようとおもいます．</p>
+<p>授業前の思い付きから予想以上に長くなってしまいました……．そんなこんなで，誰がよむんだ，みたいな感じになってきたところでこの辺で．それでは！</p>
+<section class="footnotes">
+<hr>
+<ol>
+<li><div id="fn1">
+<p>「ゴルフする」って云うのは，コードゴルフとかのゴルフと同じで、つまりなるべく少なくしよう、と云う意味です．有限オートマトンには最小化アルゴリズムがあるので，それを使えば確実に出来てよいわけですが，そう云うのを知らなくて，ちゃんと動作するかどうかを確かめたい場合を考えます．<a href="#fnref1">↩︎</a></p>
+</div></li>
+<li><div id="fn2">
+<p>ただし，受理状態とそうでない状態は区別しないと駄目です．mod 6 での 0
+と 3とか．<a href="#fnref2">↩︎</a></p>
+</div></li>
+</ol>
+</section>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/articles/2012-04-27-automaton-and-quick-small-check.html";
+          this.page.identifier = "/articles/2012-04-27-automaton-and-quick-small-check.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/articles/2012-04-27-automaton-and-quick-small-check.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

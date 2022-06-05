@@ -1,0 +1,374 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>こんさんドットコムを TLS (HTTPS) に乗り換えた話 - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="ブログ,TLS,はてなブックマーク"><meta name="description" content="こんさんドットコムを TLS ベースに乗り換えたのでその顛末を。 特に、はてなブックマークの数が移行されないのでちょっと工夫したという話をする。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/articles/2018-02-09-hello-from-tls.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/articles/2018-02-09-hello-from-tls.html">
+  <meta property="og:title" content="こんさんドットコムを TLS (HTTPS) に乗り換えた話">
+  <meta property="og:description" content="こんさんドットコムを TLS ベースに乗り換えたのでその顛末を。 特に、はてなブックマークの数が移行されないのでちょっと工夫したという話をする。 ">
+  <meta property="og:image" content="https://konn-san.com/site-src/articles/imgs/hello-from-tls/new-badge-enabled.png">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/articles/">Blog</a></li>
+  <li class="li breadcrumb-item active">こんさんドットコムを TLS (HTTPS) に乗り換えた話</li>
+</ol>
+
+    <div class="page-header">
+    <h1>こんさんドットコムを TLS (HTTPS) に乗り換えた話 <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/articles/2018-02-09-hello-from-tls.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/articles/2018-02-09-hello-from-tls.html" class="hatena-bookmark-button" data-hatena-bookmark-title="こんさんドットコムを TLS (HTTPS) に乗り換えた話 - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2018/02/09 22:35:00 JST</div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> updated on 2019/11/16 13:51:00 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="https-に乗り換えた" class="level1">
+<h2>HTTPS に乗り換えた</h2>
+<p>URLバーを見てもらえれば判ると思いますが、本日を以て konn-san.com
+コンテンツを全て HTTPS (TLS)ベースにスイッチしました。
+これはまあ<del>現実逃避</del> <ins><a href="http://www.itmedia.co.jp/news/articles/1802/09/news066.html">Chrome
+が HTTPS
+以外は野蛮で危険なウェッブだと宣言するようになった</a></ins>という話が入ってきていたので、証明書は既に<a href="https://letsencrypt.org">Let’s
+Encrypt</a>で遥か前に取ってあったしこれを機に乗り換えるかー、と決心した次第です。</p>
+<section id="nginxの設定書き換え" class="level2">
+<h3>Nginxの設定書き換え</h3>
+<p>でまあ僕のサーバは今はリバースプロキシやWebSocketsとかの対応状況を鑑みて
+<a href="http://nginx.org">Nginx</a>
+を使ってるんですが、ウェッブの波に乗った結果ほんの数行設定ファイルを書き換えれば良いということがわかり、これは滞りなく済んだ。</p>
+<p>もともとは、</p>
+<pre><code>server {
+  server_name konn-san.com;
+  listen 80;
+
+  root /path/to/web/root;
+  
+  location / {
+    try_files $uri $uri/ =404;
+  }
+}</code></pre>
+<p>こんな感じだったのを、</p>
+<pre><code>server {
+  listen 80;
+  server_name konn-san.com;
+  return 301 https://$host$request_uri;
+}
+
+server {
+  server_name konn-san.com default_server;
+  listen 443;
+  ssl on;
+  ssl_certificate      /path/to/tls/fullchain.pem;
+  ssl_certificate_key  /path/to/tls/privkey.pem;
+
+  root /path/to/web/root;
+  
+  location / {
+    try_files $uri $uri/ =404;
+  }
+}</code></pre>
+<p>こんな感じにしてやって <code class="sourceCode bash"><span class="fu">sudo</span> systemctl reload nginx</code>
+とでもすれば、これまで通りに <code>http://konn-san.com/math</code>
+にアクセスしても、自動的に <code>https://konn-san.com/math</code>
+に飛ばされるようになる。やったね！</p>
+<p>[2018/02/09 22:35追記]<br>
+Firefoxで開いたら「証明書不正だ」と怒られた。なんだと！Let’s Encrypt
+だぞ！とキレていたが、<a href="https://qiita.com/Y-dash/items/f0008d8124c1622729f3">このQiita記事</a></p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://qiita.com/Y-dash/items/f0008d8124c1622729f3">
+</iframe>
+
+    </div>
+
+<p>によれば、<code>cert.pem</code>
+ではなく<code>fullchain.pem</code>を指定する必要があるらしい。
+ということで上の設定ファイルも現時点ではそのように書き換えてある。<br>
+[/2018/02/09 22:35追記ここまで]</p>
+</section>
+<section id="テンプレート等の書き換え" class="level2">
+<h3>テンプレート等の書き換え</h3>
+<p>……というだけで済むのなら良かったのだけど、セキュリティ対策ということで<strong>HTTPSサイトからHTTPサイトのリソースは読み込んで貰えない</strong>。
+なので、これまでのテンプレートで
+<code>http://konn-san.com/css/style.css</code>
+みたいにリンクが貼ってあった所をぜんぶ
+<code>https://konn-san.com/css/style.css</code>
+に貼り替える必要がある。さもないとCSSが読み込まれずデザインが崩れることになる。まあこんなの
+<code>find-dired</code> で一瞬なので問題ない。</p>
+<p>あと、弊サイトの出力には <a href="http://jaspervdj.be/hakyll/">Hakyll</a>
+を使っているので、そこでの設定もちゃんと <code>https</code>
+になるように以下のように書き換える必要がある：</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">feedConf ::</span> <span class="dt">FeedConfiguration</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>feedConf <span class="ot">=</span> <span class="dt">FeedConfiguration</span> { feedTitle <span class="ot">=</span> <span class="st">&quot;konn-san.com 建設予定地&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                             , feedDescription <span class="ot">=</span> <span class="st">&quot;数理論理学を中心に数学、Haskell、推理小説、評論など。&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                             , feedAuthorName <span class="ot">=</span> <span class="st">&quot;Hiromi ISHII&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                             , feedAuthorEmail <span class="ot">=</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                             , feedRoot <span class="ot">=</span> <span class="st">&quot;https://konn-san.com&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                             }</span></code></pre></div>
+<p>あとはTwitter向けの Card のサムネールとかその辺りのリンクも適宜修正。
+全部纏めて再コンパイルしてアップロードし直し、よし！と喜び勇んでアクセスするが……あれ？URLバーに錠前<span class="emoji" data-emoji="lock">🔒</span>アイコンが表示されない。
+その上、なんかはてブボタンやはてなスターの表示もおかしい。はてブ数は「ゼロ」として表示されるはずなのに、そもそも数が表示されるべき場所がない。</p>
+<p>これも結局は外部サイトから読み込んでいるJavaScriptや画像が
+<code>HTTP</code>
+経由のものだったためらしい。そういえばはてブやTwitter等へのリンクとか、CDNへのリンクとか、あの辺りは
+<code>//cdn.com/hoge/fuga</code> みたいにしてるのと
+<code>http://cdn.com/home</code>
+みたいにしてんのがあったと思い出し、その辺りも全部
+<code>//cdn.com/hoge/fuga</code>
+に統一してやる。すると、URLバーにもちゃんと錠前が現れ、はてブ数欄とはてなスターも復活した。やったぜ。</p>
+</section>
+<section id="はてぶ数との戦いは終わった201911追記あり" class="level2">
+<h3>はてぶ数との戦い（は終わった；201911追記あり）</h3>
+<p>
+<ins>
+<strong>2019/11/16追記</strong>：はてブ2019年2月から<a href="https://bookmark.hatenastaff.com/entry/2019/02/13/105009">301/308リダイレクトやカノニカルURLを共有する記事のはてブ数を統合するようになった</a>事により、以下の記事の対処は不要になった。ばんざい！（最初からこの仕様にしておいて欲しかった）
+</ins>
+</p>
+<p>さてではこれで終わり……かというと（というくだりは二回も続けば十分）、もう一つ問題がある。
+それは、<strong>ソーシャルブクマ数の引き継ぎ</strong>である。</p>
+<p>URLが変わるわけだから、ソーシャルブクマのデータも新しい
+<code>https://~</code> から始まるアドレスに対しては全部ゼロである。
+だから、我がサイトのキラーコンテンツである <a href="../prog/never-understood-monad-tutorial.html">性格の悪いモナドチュートリアル</a>
+とか <a href="../prog/why-not-latexmk.html"><code>latexmk</code>の使い方講座</a>とかのそこそこいっていたデータが全部飛んで、全部「ブクマ0」になってしまう。</p>
+<p>まあ、Google+とかFacebookのいいねとかの数はどうでもいいんだが、私はインターネット老人に片足を突っ込んでいるので、はてブ数は引き継ぎたい<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。 サービスによっては
+<code>301 Moved Permanently</code>
+で飛ばしてあればよしなにしてくれるものもあるらしいが、はてブはそういう事はやってくれないらしい。
+それどころが、調べたところ<a href="https://www.akiyan.com/blog/archives/2017/04/akiyan-dot-com-ssl.html">はてブはデータの法人相手の有償サービスとしてしかやっていない</a>らしい。阿漕な商売やで……<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
+<p>では、そもそもブクマボタンを<strong>古いHTTPのリンクのままにする</strong>というのはどうか？
+<code>http://~</code> から <code>https://~</code>
+に自動転送されるのだから、これは問題ない筈……ということでタグを弄って以下のようにしてみる：</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">&quot;//b.hatena.ne.jp/entry/http://konn-san.com/index.html&quot;</span> <span class="er">...</span><span class="kw">&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;img</span> <span class="er">src</span><span class="ot">=</span><span class="st">&quot;//b.st-hatena.com/images/entry-button/button-only.gif&quot;</span> <span class="er">...</span><span class="kw">&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/a&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ot">        src=</span><span class="st">&quot;//b.st-hatena.com/js/bookmark_button.js&quot;</span> <span class="er">...</span><span class="kw">&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/script&gt;</span></span></code></pre></div>
+<p>しかし、こうしても<strong>勝手に <code>https://</code>
+に直されたページに飛ばされる</strong>。
+囲い込んでやがんなぁ……というので上の <code>//</code> を
+<code>http://</code> に戻すのはよくなくて、上で<strong>折角獲得した<span class="emoji" data-emoji="lock">🔒</span>アイコンが消える</strong>。
+セキュアにしようと思ってやっているのだから、このバッヂを手放すのはまあ本末転倒でじゃあHTTPのまんまでいいだろうとなる。</p>
+<section id="失敗する試みiframe-の書き換え" class="level3">
+<h4>失敗する試み：<code class="sourceCode html"><span class="kw">&lt;iframe&gt;</span></code>
+の書き換え</h4>
+<p>色々と調べていると、はてなブックマークのAPIが公開されている。</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=http://developer.hatena.ne.jp/ja/documents/bookmark/apis/getcount">
+</iframe>
+
+    </div>
+
+<p>これを使って、はてブが自動で生成するボタンの内容を書き換えられないか？というのが自然に現れる。</p>
+<p>しかし、これは上手くいかない。なぜなら、<strong>はてブボタンは外部URLへの
+<code class="sourceCode html"><span class="kw">&lt;iframe&gt;</span></code>
+要素として実現されている</strong>からだ。
+CSRFとかを防ぐためにも、JavaScriptを使って外部URLへの <code class="sourceCode html"><span class="kw">&lt;iframe&gt;</span></code>
+の内容を書き換えることはできないので、直接はてブボタンを弄る作戦は上手くいかないのだ。</p>
+</section>
+<section id="今回取った作戦合計はてブ数欄をつくる" class="level3">
+<h4>今回取った作戦：「合計はてブ数欄をつくる」</h4>
+<p>仕方がないので、<strong>はてブボタンの横にHTTP版との合算を自前で挿入する</strong>ことにした。
+ということで書いたのが次のコードである：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$</span>(<span class="bu">document</span>)<span class="op">.</span><span class="fu">ready</span>(<span class="kw">function</span>(){</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> urlBody <span class="op">=</span> location<span class="op">.</span><span class="at">href</span><span class="op">.</span><span class="fu">replace</span>(location<span class="op">.</span><span class="at">protocol</span><span class="op">,</span> <span class="st">&quot;&quot;</span>)<span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> protos <span class="op">=</span>  [<span class="st">&quot;http&quot;</span><span class="op">,</span> <span class="st">&quot;https&quot;</span>]<span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> query <span class="op">=</span> <span class="st">&quot;?&quot;</span><span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">2</span> <span class="op">;</span> i<span class="op">+=</span><span class="dv">1</span>) {</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">var</span> parts <span class="op">=</span> <span class="pp">encodeURIComponent</span>(protos[i] <span class="op">+</span> <span class="st">&quot;:&quot;</span> <span class="op">+</span> urlBody)<span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        query <span class="op">+=</span> <span class="vs">`url=</span><span class="sc">${</span>parts<span class="sc">}</span><span class="vs">;`</span><span class="op">;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> url <span class="op">=</span> <span class="st">&quot;https://b.hatena.ne.jp/entry.count&quot;</span> <span class="op">+</span> query<span class="op">;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    $<span class="op">.</span><span class="fu">ajax</span>({</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">url</span><span class="op">:</span> url<span class="op">,</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">type</span><span class="op">:</span> <span class="st">&quot;GET&quot;</span><span class="op">,</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">crossDomain</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">dataType</span><span class="op">:</span> <span class="st">&#39;jsonp&#39;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    })<span class="op">.</span><span class="fu">done</span>(<span class="kw">function</span>(data) {</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="bu">Number</span>(data) <span class="op">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            <span class="kw">var</span> li <span class="op">=</span> <span class="fu">$</span>(<span class="st">&quot;&lt;li&gt;&quot;</span>)<span class="op">;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>            <span class="kw">var</span> msg <span class="op">=</span> <span class="st">&quot;&quot;</span><span class="op">;</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>            msg <span class="op">+=</span> data<span class="op">;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>            msg <span class="op">+=</span> <span class="st">&quot; user(s) including &quot;</span><span class="op">;</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>            <span class="kw">var</span> link <span class="op">=</span> <span class="fu">$</span>(<span class="st">&quot;&lt;a&gt;&quot;</span>)<span class="op">.</span><span class="fu">text</span>(<span class="st">&quot;HTTP version&quot;</span>)<span class="op">.</span><span class="fu">attr</span>(<span class="st">&#39;href&#39;</span><span class="op">,</span> <span class="st">&quot;http://b.hatena.ne.jp/entry/http:&quot;</span> <span class="op">+</span> urlBody)<span class="op">;</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>            <span class="fu">$</span>(<span class="st">&#39;&lt;span&gt;&#39;</span>)<span class="op">.</span><span class="fu">attr</span>(<span class="st">&quot;id&quot;</span><span class="op">,</span> <span class="st">&quot;old-bookmark-numbers&quot;</span>)<span class="op">.</span><span class="fu">text</span>(msg)<span class="op">.</span><span class="fu">append</span>(link)<span class="op">.</span><span class="fu">appendTo</span>(li)<span class="op">;</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>            li<span class="op">.</span><span class="fu">insertAfter</span>(<span class="st">&quot;#social #hatena-bookmarks&quot;</span>)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>       }</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<p>注意点は、<strong>上のはてなのAPI文書そのままのURLは機能しない</strong>ということである<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>。 なぜか。それは
+<code>http://api.b.st-hatena.com/entry.count?url=...</code>
+というURLを見るとわかってそうこのエンドポイントはHTTPなのだ。
+だからこれまで散々述べてきた理由によって<strong>HTTPSページからJS経由で叩くことができない</strong>。
+ではどうするのか……というと、<a href="https://blog.hinaloe.net/2015/08/15/hatena-bookmark-api-on-ssl/">ありがたい事にこのページ</a>に書かれている
+<strong><code>https://b.hatena.ne.jp/entry.count</code>
+というエンドポイントを使えばよい</strong>。</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://blog.hinaloe.net/2015/08/15/hatena-bookmark-api-on-ssl/">
+</iframe>
+
+    </div>
+
+<p>というわけで上のコードが出来あがった。見てくれはこんな感じになる：</p>
+<p><a href="../prog/never-understood-monad-tutorial.html"><img src="./imgs/hello-from-tls/new-badge-enabled.png" class="img-fluid img-thumbnail rounded mx-auto d-block" alt="+211 users"></a></p>
+<p>はてブの横に “211 user(s) including…”
+とか書いてあるのがわかると思う。
+横に長すぎるきらいがあるが、ちゃんと「HTTP版のですよ」っていうエクスキュースは必要だし、まあ仕方ないと思おう<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>。
+一方、悲しいことに元々一切はてブが付いていなかった場合は次のように省略されるようになっている：</p>
+<p><a href="../math/geology-bukovsky-theorem.html"><img src="./imgs/hello-from-tls/new-badge-disabled.png" class="img-fluid img-thumbnail rounded mx-auto d-block" alt="No users appear"></a></p>
+<p>かなしいなあ。かなしい。かなしいので皆さんブクマしていってください。</p>
+</section>
+</section>
+</section>
+<section id="まとめ" class="level1">
+<h2>まとめ</h2>
+<p>まあとにかくこんな感じで、弊サイトはHTTPSに乗り換えました。
+ちゃんと乗り換えられたということがわかりたいので、みなさんも弊サイトにはてなスターとはてなブクマをやっていってください。</p>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>はてなスターは最近設置したばかりなのでまだゼロ個しか貰っていなかったから無傷。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p><strong>[以下SEO屋の悪口]</strong><br>
+ところで、リンクしたページ以外にもHTTPS移行後はてブ消滅問題を扱っているページは幾つか見付かったんだけど、SEO対策を謳っているサイトに載っているPHPによる対応策のコードが全然整形されておらず読み辛いのには大変笑った。PVを気にする余り何か大切なものを置いてきてしまったのだろうか。以下でjQueryによる対応策を述べているが、SEO屋のコードは読み辛くてそもそも読んでいないので、全く参考にしていない。悪しからず。<br>
+<strong>[/SEO屋の悪口終わり]</strong><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>あとこれは本筋に関係ないんだけど、勘でJavaScriptを書いているので、特に何も考えず最初は
+jQuery の Slim 版を読み込んでいた。こいつらは <code class="sourceCode javascript">jQuery<span class="op">.</span><span class="at">ajax</span></code>
+とかが省かれているが故の「スリム」版なので、最初は上のコードが通らずにウーン何故だ……と無駄に悩むことになった。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>スマホでみると縦に分割されてちょっと見苦しいのでなんとかしたいんだけどね……。<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/articles/2018-02-09-hello-from-tls.html";
+          this.page.identifier = "/articles/2018-02-09-hello-from-tls.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/articles/2018-02-09-hello-from-tls.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

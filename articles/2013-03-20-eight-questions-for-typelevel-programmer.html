@@ -1,0 +1,303 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>８つの質問で、GHC の type-level language 業界の現状を知る - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content><meta name="description" content="「８つの質問」という釣り記事が技術クラスタで昔流行って、それに便乗してGHCの型システムの話を書いた。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/articles/2013-03-20-eight-questions-for-typelevel-programmer.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/articles/2013-03-20-eight-questions-for-typelevel-programmer.html">
+  <meta property="og:title" content="８つの質問で、GHC の type-level language 業界の現状を知る">
+  <meta property="og:description" content="「８つの質問」という釣り記事が技術クラスタで昔流行って、それに便乗してGHCの型システムの話を書いた。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/articles/">Blog</a></li>
+  <li class="li breadcrumb-item active">８つの質問で、GHC の type-level language 業界の現状を知る</li>
+</ol>
+
+    <div class="page-header">
+    <h1>８つの質問で、GHC の type-level language 業界の現状を知る <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/articles/2013-03-20-eight-questions-for-typelevel-programmer.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/articles/2013-03-20-eight-questions-for-typelevel-programmer.html" class="hatena-bookmark-button" data-hatena-bookmark-title="８つの質問で、GHC の type-level language 業界の現状を知る - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2013/03/20 15:01:50 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <p>Web サービス系の隆盛があって、GHC の type-level language
+をふんだんに用いた <a href="http://www.yesodweb.com">Yesod</a>
+のリリースが騒がれたのが１−３年くらい前だろうか。<br>
+GHC の type-level language が、今どうなってるかって？</p>
+<p><span style="color: red;"><strong>大方の予想より凄惨ですよ。</strong></span></p>
+<p>それが分かる方法がある。GHC の type-level
+language技術者に技術力を問う８つの質問によってだ。<br>
+GHC の type-level language
+業界のエンジニアの平均レベルを知りたくって、いろんな会社さんの
+type-level language
+開発者（経験者）向けに以下のような８つの質問を継続的にしたいけどそんな人がいない。<br>
+対象者としては、type-level language
+経験３から１０年ぐらいの現役バリバリのはずの型レベルエンジニアだ。</p>
+<p>その８つの質問というのはこんな問題だ。</p>
+<section id="ghc-の-type-level-language-技術者に技術力を問う８の質問" class="level2">
+<h3>GHC の type-level language 技術者に技術力を問う８の質問</h3>
+<ol type="1">
+<li><p>Type Family
+のメリットを一言で表してください。（筆記解答）</p></li>
+<li><p><code>wai</code> package で POST
+されたデータを取得する方法は何ですか？（筆記解答）</p></li>
+<li><p>Scoped Type Variables
+を端的に説明してください。（筆記解答）</p></li>
+<li><p>次のうち、</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">(&lt;=) ::</span> <span class="dt">Nat</span> <span class="ot">-&gt;</span> <span class="dt">Nat</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Z</span>   <span class="op">&lt;=</span> _   <span class="ot">=</span> <span class="dt">True</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">S</span> _ <span class="op">&lt;=</span> <span class="dt">Z</span>   <span class="ot">=</span> <span class="dt">False</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">S</span> n <span class="op">&lt;=</span> <span class="dt">S</span> m <span class="ot">=</span> n <span class="op">&lt;=</span> m</span></code></pre></div>
+<p>で定義される自然数の順序の、型レベル版として用いることが出来るものはどれですか？
+GHC
+の型レベル機能によりその証明を記述し、それが証明になっていることの根拠を述べるか、GHC
+で記述出来ない場合はその理由を述べ、メタ的な証明を与えてください。余力のある方は、それぞれどのような場合に用いるのに適しているか答えてください。（筆記・選択解答；複数回答可）</p>
+<ol type="1">
+<li><p>そのいち</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> (<span class="ot">n ::</span> <span class="dt">Nat</span>) <span class="op">:&lt;=</span> (<span class="ot">m ::</span> <span class="dt">Nat</span>) <span class="kw">where</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">ZeroLeq</span><span class="ot">     ::</span> <span class="dt">SNat</span> m  <span class="ot">-&gt;</span> <span class="dt">Zero</span> <span class="op">:&lt;=</span> m</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SuccLeqSucc</span><span class="ot"> ::</span> n <span class="op">:&lt;=</span> m <span class="ot">-&gt;</span> <span class="dt">S</span> n  <span class="op">:&lt;=</span> <span class="dt">S</span> m</span></code></pre></div></li>
+<li><p>そのに</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="kw">family</span>   (<span class="ot">n ::</span> <span class="dt">Nat</span>) <span class="op">:&lt;&lt;=</span> (<span class="ot">m ::</span> <span class="dt">Nat</span>)<span class="ot"> ::</span> <span class="dt">Bool</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="kw">instance</span> <span class="dt">Z</span>   <span class="op">:&lt;=</span> n   <span class="ot">=</span> <span class="dt">True</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="kw">instance</span> <span class="dt">S</span> n <span class="op">:&lt;=</span> <span class="dt">Z</span>   <span class="ot">=</span> <span class="dt">False</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="kw">instance</span> <span class="dt">S</span> n <span class="op">:&lt;=</span> <span class="dt">S</span> m <span class="ot">=</span> n <span class="op">:&lt;&lt;=</span> m</span></code></pre></div></li>
+<li><p>そのさん</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> (<span class="ot">n ::</span> <span class="dt">Nat</span>) <span class="op">:&lt;=</span> (<span class="ot">m ::</span> <span class="dt">Nat</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Zero</span> <span class="op">:&lt;=</span> n</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> (n <span class="op">:&lt;=</span> m) <span class="ot">=&gt;</span> <span class="dt">S</span> n <span class="op">:&lt;=</span> <span class="dt">S</span> m</span></code></pre></div></li>
+<li><p>そのよん</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">(%&lt;=) ::</span> <span class="dt">SNat</span> n <span class="ot">-&gt;</span> <span class="dt">SNat</span> m <span class="ot">-&gt;</span> <span class="dt">SBool</span> (n <span class="op">:&lt;=</span> m)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">SZ</span>   <span class="op">%&lt;=</span> _    <span class="ot">=</span> sTrue</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="dt">SS</span> _ <span class="op">%&lt;=</span> <span class="dt">SZ</span>   <span class="ot">=</span> sFalse</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="dt">SS</span> n <span class="op">%&lt;=</span> <span class="dt">SS</span> m <span class="ot">=</span> n <span class="op">%&lt;=</span> m</span></code></pre></div></li>
+</ol></li>
+<li><p>プログラムをコンパイルしていたところ、<a href="http://d.hatena.ne.jp/ku-ma-me/20130303/p1">GHC
+がメモリを食い潰して OS
+がフリーズ</a>しました。原因として何が考えられますか？（筆記解答）</p></li>
+<li><p>GADTs や存在型を <code class="sourceCode haskell"><span class="kw">let</span></code> や <code class="sourceCode haskell"><span class="kw">where</span></code>
+でパターンマッチするのはなぜ NG
+なのかメカニズムを説明してください。（筆記解答）</p></li>
+<li><p>シングルトンを用いた依存型プログラミングを利用する上で利用すべきライブラリは何ですか？また、それが
+GHC 7.4.1 で使えない理由を教えてください。（筆記解答）</p></li>
+<li><p>JavaScriptでHTML要素をid属性の指定により取得するメソッドは何ですか？（筆記解答）</p></li>
+</ol>
+</section>
+<section id="過去に実施した平均点" class="level2">
+<h3>過去に実施した平均点</h3>
+<p>この８問について、僕が出会ったエンジニアに解答してもらった平均正解数は、なんと<strong><span style="color: red;">８点満点中 <code class="sourceCode haskell"><span class="dt">NaN</span></code>
+点</span></strong>である。</p>
+</section>
+<section id="内訳的な話" class="level2">
+<h3>内訳的な話</h3>
+<p>うろ覚えになってしまってるだろうから満点は無理でも、ちゃんと GHC の
+type-level language
+をやってるエンジニアさんであれば4問は解けるだろう。<br>
+筆記問題については相当甘くつけるから尚更だ。<br>
+例えば１問目「Type Family
+のメリット」は、「型関数の実現および表現力の増加」ならニジュウマルだが、「関数従属性を使わないで綺麗に書けるようになる」でも「型の意味がわかりやすくなる」でも「<a href="http://research.microsoft.com/en-us/um/people/simonpj/papers/assoc-types/fun-with-type-funs/typefun.pdf">型関数たのしい</a>しなんとなくかっこいい」でもマルで、それらに類する説明ならちょっと分かりにくくても、なんでも正解にしてる。</p>
+<p>GHC
+がメモリ食い潰す問題は、経験していなかったから知らないから何も言えなくてもまぁいいだろう。<br>
+（10年やってても型検査の込み入ったトラブルを経験しないなんて運がいい人なのだろうか、悪い人なのだろうか）<br>
+「<code class="sourceCode javascript">getElementById</code>」なんてほとんど白紙解答。<br>
+「GADTs はおまじない的に <code class="sourceCode haskell"><span class="kw">let</span></code>
+でパタンマッチしちゃダメと思うようにしている」<br>
+「<code class="sourceCode haskell"><span class="kw">case</span></code>
+を使うべきと教えられたから」<br>
+そんな状況である。１、２年目ではなく３−１０年生であり、型レベルバリバリとの触れ込みなのだ。<br>
+Template Haskell やWeb開発を得意としている人ではない。<strong><span style="color: red;">型プログラマー対象</span></strong>なんだぜ。<br>
+（どの会社でも型レベルプログラミングをやってればたぶん満点ばかりじゃないか。これは<a href="http://research.microsoft.com/en-us/um/people/simonpj/papers/assoc-types/fun-with-type-funs/typefun.pdf">関</a>
+<a href="http://research.microsoft.com/en-us/people/dimitris/fc-kind-poly.pdf">連</a>
+<a href="http://www.cis.upenn.edu/~eir/papers/2012/singletons/paper.pdf">論</a>
+<a href="http://dreixel.net/research/pdf/trkgp_nocolor.pdf">文</a>を読んでいれば当たり前の点数だろう）</p>
+</section>
+<section id="これぞ現在の-type-level-language-業界の実態" class="level2">
+<h3>これぞ現在の type-level language 業界の実態</h3>
+<p>でも私は、ここ数年 <a href="https://github.com/konn/equational-reasoning-in-haskell">GHC
+での等式証明</a> や<a href="https://github.com/konn/computational-algebra">依存型を用いた計算代数ライブラリ</a>
+の開発などをやっていた経験から納得がいく。これぞ「<strong><span style="color: red;">Haskell Platform 同梱の GHC
+の型レベル機能がまだまだ足りない現在の GHC の type-level language
+業界の実態</span></strong>」なのだから。</p>
+<p>十分な停止性チェッカーなしに、帰納法のベースケースの証明→帰納部の証明→型検査通った！という状況のなかで、それを使ったコードを書き続ける→実行してみたら無限ループに入った、という状況に山ほど出会ってきた。</p>
+<p><strong><span style="color: red;">そういう状況で、GHC
+で証明をバリバリ書こうというのは無茶である現実</span></strong>ではないか。</p>
+</section>
+<section id="淘汰がない業界" class="level2">
+<h3>淘汰がない業界</h3>
+<p>統計としては母数が少なすぎる（<a href="http://fumieval.hatenablog.com/entry/2013/03/19/165737">-∞桁</a>程度）「し」、母集団を変えれば別の所感が得られるだろう。<br>
+しかしながら、ヤバいのは GHC の型レベル機能がまだまだ buggy な事だ。特に
+GHC 7.4.1 ではリコンパイルしようとしただけで panic が起きるから、すぐに
+GHC で型レベルプログラミングをしようという気がなくなってしまう<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。<br>
+このところ景気がいいらしいが、実家の収入が減って学費に困っている私にとってはそんなもん糞喰らえと思う。それはさておき、GHC
+の型レベル機能がどんどん強化されて、例えば組込みの型レベル自然数の計算がもっとリッチになるなどして、その機能をふんだんに使って開発ができたらどれだけ良いことだろう。</p>
+<p>結果として、GHC の開発陣には余計に負担がかかるだろうなと思う。</p>
+<p>いままで僕は楽観主義者だから、</p>
+<blockquote class="blockquote">
+<p>GHC
+の型レベル言語は今まで型なしだったけど、これからは型付きになっていく。<br>
+必然的に依存型の時代になり、より堅牢なプログラムが書けるようになるだろう。</p>
+</blockquote>
+<p>と思っていた。</p>
+<p>しかし<strong><span style="color: red;">現実は、もっと凄惨な世界を経て時代が進んでいく</span></strong>ようだ。</p>
+</section>
+<section id="元ネタ" class="level2">
+<h3>元ネタ</h3>
+<ul>
+<li><a href="http://d.hatena.ne.jp/iad_otomamay/20130318/1363596244">８つの質問で、Java
+SI業界の現状を知る</a></li>
+</ul>
+<p>あわせて読みたい：</p>
+<ul>
+<li><a href="http://fumieval.hatenablog.com/entry/2013/03/19/165737">8つの質問で、Lazy
+K業界の現状を知る</a></li>
+<li><a href="http://ymotongpoo.hatenablog.com/entry/2013/03/18/224753">8つの質問で、Go業界の現状を知る</a></li>
+<li><a href="http://d.hatena.ne.jp/shiumachi/20130318/1363618321">8つの質問で、Hadoop業界の現状を知る</a></li>
+<li><a href="http://www.affility.co.jp/archives/1317">8つの質問で、筋トレ業界の現状を知る</a></li>
+<li><a href="https://gist.github.com/Gab-km/5194199">8つの質問で、F#業界の現状を知る</a></li>
+</ul>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>GHC 7.6.1
+以降ではこうした問題は修正されており、いくぶん快適な型レベルプログラミングが行える。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/articles/2013-03-20-eight-questions-for-typelevel-programmer.html";
+          this.page.identifier = "/articles/2013-03-20-eight-questions-for-typelevel-programmer.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/articles/2013-03-20-eight-questions-for-typelevel-programmer.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

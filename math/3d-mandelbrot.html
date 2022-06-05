@@ -1,0 +1,214 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>空から Mandelbrot 集合を見てみよう - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="数学,娯楽数学,フラクタル,マンデルブロ集合,Mandelbrot集合,Mandelbrot set,ステレオグラム,visualisation,visualization,ヴィジュアライゼーション,可視化,コラム"><meta name="description" content="Mandelbrot 集合はよく知られたフラクタル図形ですが、これを「上から」（あるいは「下から」）見てみたらどう見えるのか、というお話。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/math/3d-mandelbrot.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  <link rel="stylesheet" href="/css/math.css">
+
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/math/3d-mandelbrot.html">
+  <meta property="og:title" content="空から Mandelbrot 集合を見てみよう">
+  <meta property="og:description" content="Mandelbrot 集合はよく知られたフラクタル図形ですが、これを「上から」（あるいは「下から」）見てみたらどう見えるのか、というお話。 ">
+  <meta property="og:image" content="https://konn-san.com/site-src/math/3d-mandelbrot/mandelbrot.png">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/math/">数学関係をまとめておくばしょ</a></li>
+  <li class="li breadcrumb-item active">空から Mandelbrot 集合を見てみよう</li>
+</ol>
+
+    <div class="page-header">
+    <h1>空から Mandelbrot 集合を見てみよう <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/math/3d-mandelbrot.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/math/3d-mandelbrot.html" class="hatena-bookmark-button" data-hatena-bookmark-title="空から Mandelbrot 集合を見てみよう - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2015/01/24 02:26:00 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="前説mandelbrot-集合とは" class="level1">
+<h2>前説：Mandelbrot 集合とは？</h2>
+<p><strong>Mandelbrot集合</strong>（マンデルブロー集合）と呼ばれるフラクタル図形がある。こんなやつ<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>：</p>
+<p><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Mandel_zoom_00_mandelbrot_set.jpg/644px-Mandel_zoom_00_mandelbrot_set.jpg" class="thumbnail image-responsive" width="500"></p>
+<p>検索すればゴマンとヒットするのであんまり細かいことは説明しないけれど、「ゼロから始めて自乗しては一定の定数<span class="math inline">\(\xi \in
+\C\)</span>を足す」という操作を繰り返していったときに、何らかの値に収束するような<span class="math inline">\(\xi \in
+\C\)</span>の全体をMandelbrot集合という。この図からもわかる通り、一見相似な図形が色々なスケールで無数に現れていて、大雑把にいえばこういう無限の入れ子構造になった図形の事をフラクタル図形という。因みに、この「相似な図形の入れ子構造」は、このMandelbrot集合の場合、相似に見えるだけで実際には微妙に異なる形が入れ替わり立ち代わり現れている。</p>
+<p>規則がありそうでなさそうな感じ。その感じに多くの人が惹かれて、Mandelbrot集合の好きな部分を拡大して描画するアプリとかを書いて配布していたりする。</p>
+<p>で。集合っていうのは本来色がない筈で、実は世間にある画像の大半は、Mandelbrot集合の「外側」に色を付けたものだ。何を基準に色をつけているのかというと、だいたい発散の速さを基準にしている事が多い。速いほど明るいとか、「発散した」と判定したループ回数の剰余で決めたりとか。まあ発散の速さを元にしてどういう配色をするのかは、結構適当に決めちゃってもサマになることがおおい。
+僕も、以前 <a href="http://hackage.haskell.org/package/diagrams"><code>diagrams</code>
+パッケージ</a>を使って図を描いてみたりしたことがある：</p>
+<p><img width="300" src="./3d-mandelbrot/mandelbrot.png" class="thumbnail image-responsive"></p>
+<p>まあ作った時に diagrams
+の使い方に慣れてなかったので、ちょっとドット絵っぽくてなめらかじゃないけど、それでもそれなりに綺麗っぽく見えているといえるだろう。「発散の速さ」は、「最初に指定した回数反復して、何回で浮動小数の
+<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">\infty</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.43056em;"></span><span class="strut bottom" style="height: 0.43056em; vertical-align: 0em;"></span><span class="base"><span class="mord">∞</span></span></span></span></span></span>
+に発散または大きさが閾値を越えたか？」という方法で測っている。この配色は、ゼロ回反復から時計回りに色相環を辿っていって、指定反復回数上限で一周するように色を選ぶ形になっている。</p>
+</section>
+<section id="本題mandelbrot集合を空から見てみる立体錯視編" class="level1">
+<h2>本題：Mandelbrot集合を空から見てみる（立体錯視編）</h2>
+<p>と、こんなドット絵みたいなやつを見せたいのが今回の本題だったのではない。そこら辺のひとがもっと綺麗な画像を公開してるしね。</p>
+<p>今回の本題は、外ではあまり試みられていない、<strong>Mandelbrot
+集合を空から見てみる</strong>という提案。</p>
+<p>どういうこと？っていうと、そんなに難しいことじゃない。Mandelbrot集合の配色は、発散の速さで決められることが多かった。それを色にマップするのではなくて、<strong>高さを割り当ててみたらどうか？</strong>という趣旨。イマイチ何をいってるのかわからないかもしれないので、とりあえず次の画像を見てみてほしい：</p>
+<p><a href="./3d-mandelbrot/mandelbrot-inv.jpg"><img width="600" src="./3d-mandelbrot/mandelbrot-inv.jpg" class="thumbnail image-responsive"></a></p>
+<p>エッこのノイズだらけの絵がなんだって？と思うかもしれないが、これは所謂<a href="http://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%86%E3%83%AC%E3%82%AA%E3%82%B0%E3%83%A9%E3%83%A0">ステレオグラム</a>というやつだ。マジカルアイとかいって、寄り目になると立体画像が見える！目が良くなる！という触れ込みの本が何年も前に流行ったけど、アレ。寄り目でがんばって眺めていると、上でみたMandelbrot集合の形がウスボンヤリと浮かびあがってくるんじゃないだろうか？</p>
+<p>これは decafish さんの <a href="http://www011.upp.so-net.ne.jp/decafish/STISPlot/STISPlotj.html">STISPlot</a>
+というアプリケーションを使って生成したものだ。STISPlotには標高のデータからこういう立体錯視画像を作ってくれるソフトで、これで色々遊んでいるうちに「Mandelbrot集合の”標高”をこれでプロットしてみたら面白いんじゃないか？」と浮かんで、上のような画像を作ってみたのだった。</p>
+<p>上の画像は、「発散が遅いほど上」に来るようにデータを作ってある<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。また、標高は線型ではなく逆数スケールで勾配を付けてある。これを、そのまま「発散したステップ数」について線型な画像にすると、次のような、より境目のクッキリした急勾配な画像が出来上がる：</p>
+<p><a href="./3d-mandelbrot/mandelbrot-inv.jpg"><img width="600" src="./3d-mandelbrot/mandelbrot-inv-steep.jpg" class="thumbnail image-responsive"></a></p>
+<p>Mandelbrot集合本体の輪郭はわかりやすい。しかし、色々な「標高」の点が複雑な絡み合い方で共存しているのだ、というのは、先程の逆数スケールの方がわかりやすい。</p>
+<p>これを「裏」から見てみたのが次の二枚だ（それぞれ順に逆数スケールと線型スケール）：</p>
+<p><a href="./3d-mandelbrot/mandelbrot-inv.jpg"><img width="600" src="./3d-mandelbrot/mandelbrot-forth-recip.jpg" class="thumbnail image-responsive"></a></p>
+<p><a href="./3d-mandelbrot/mandelbrot-inv.jpg"><img width="600" src="./3d-mandelbrot/mandelbrot-forth-steep.jpg" class="thumbnail image-responsive"></a></p>
+<p>色分けすると「発散」の構造がわかりづらいが、こうして立体視を使うとけっこうわかりやすくていいんじゃないだろうか。</p>
+<p>ふう……寄り目ばかりで疲れた……。ステレオグラムだと目を動かすとなんか一緒に立体部も動いてくれて、それもまた楽しい。</p>
+<p>こうしてやってみると、選んだ範囲をクローズアップしてその部分のステレオグラムを生成するツールとかがほしくなる。STISPlotはプロットするデータを予め自分で用意しないといけないので、そうすると立体錯視画像を生成する部分から自分で作ることになるだろうか。また、錯視のノイズの色も、あるていど「発散の速さ」に応じて変化するとヴィジュアルもよくなるかなと思う。錯視の原理を知らないので何ともいえないけれど。</p>
+<p>あと、ノイズをグッと睨んでいてMandelbrot集合が浮かびあがってきた瞬間は結構気持ち良いのだけど、ずっと寄り目は疲れるし、立体錯視は誰でも出来る訳ではないから、普通に3D画像としてレンダーするのもありかもしれない。これもそのうちやってみたい。立体錯視画像を生成するよりは、そういうツールの方が沢山あるからすぐできるだろう。あとは、その立体画像の上にも色をつけて……とか無限に夢が広がっている。</p>
+<p>とりあえず、現時点はこんな感じで。また何か進展があれば更新する予定。</p>
+<section id="更新履歴" class="level2">
+<h3>更新履歴</h3>
+<ul>
+<li>2015/01/24 03:31:51 JST 初版公開</li>
+</ul>
+</section>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>「<a href="http://ja.wikipedia.org/wiki/%E3%83%9E%E3%83%B3%E3%83%87%E3%83%AB%E3%83%96%E3%83%AD%E9%9B%86%E5%90%88">マンデルブロ集合
+- Wikipedia</a>」より。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>データ生成に使ったプログラムは<a href="https://gist.github.com/konn/67b180ada53878cddb58">Gist</a>にある。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/math/3d-mandelbrot.html";
+          this.page.identifier = "/math/3d-mandelbrot.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/math/3d-mandelbrot.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

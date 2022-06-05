@@ -1,0 +1,351 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>定理証明系 Haskell - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="haskell, theorem prover, 定理証明, 宣伝"><meta name="description" content="Haskell Advent Calendar 2013 および Theorem Prover Advent Calendar 2013 参加記事。Haskell における依存型プログラミングおよび定理証明について解説した数少ない日本語文献です。C85 の TCUG に寄稿させて頂いた Haskell で定理証明を行う記事の販促記事でもあります。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/prog/2013-advent-calendar.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/prog/2013-advent-calendar.html">
+  <meta property="og:title" content="定理証明系 Haskell">
+  <meta property="og:description" content="Haskell Advent Calendar 2013 および Theorem Prover Advent Calendar 2013 参加記事。Haskell における依存型プログラミングおよび定理証明について解説した数少ない日本語文献です。C85 の TCUG に寄稿させて頂いた Haskell で定理証明を行う記事の販促記事でもあります。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/prog/">プログラミング関連</a></li>
+  <li class="li breadcrumb-item active">定理証明系 Haskell</li>
+</ol>
+
+    <div class="page-header">
+    <h1>定理証明系 Haskell <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/prog/2013-advent-calendar.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/prog/2013-advent-calendar.html" class="hatena-bookmark-button" data-hatena-bookmark-title="定理証明系 Haskell - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2013/12/20 00:00:00 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <p>この記事は <a href="http://qiita.com/advent-calendar/2013/haskell">Haskell Advent
+Calendar 2013</a> および <a href="http://qiita.com/advent-calendar/2013/theorem_prover">Theorem
+Prover Advent Calendar 2013</a> 二十日目の記事であり、更にTCUGの新刊「<a href="http://tcug.jp/books/2013-12/">Coqによる定理証明</a>」の<a href="#last">販促記事</a>でもある。</p>
+<section id="type-system-revisited" class="level1">
+<h2>型システム再考</h2>
+<p>Haskell
+は静的型付き言語だ。それだけでなく、強力な型推論や表現力の高い型システムを備えている。</p>
+<p>型とは何だろうか。</p>
+<p>こうした質問に対してよくある答えは、「値の種類を区別するためのタグ」になるだろうか。<code class="sourceCode haskell"><span class="dt">Int</span></code>型は整数だし、<code class="sourceCode haskell"><span class="dt">Bool</span></code>型は真偽値で、<code class="sourceCode haskell">[<span class="dt">Int</span>]</code>型は整数値リストを表す型だ。なるほど、値の種類を区別するものに見える。</p>
+<p>しかし、この答えは間違ってはいないが、もっと相応しい云い方が出来るだろう。それは、「<strong>型は不変条件である</strong>」というものだ<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。この言明は別に私固有の見方というわけではなく、ある程度の型レベルプログラミングをやった事のある人間ならみんな思っているだろう。
+<code class="sourceCode haskell"><span class="dt">Int</span></code>型は「整数である」という不変条件だし、<code class="sourceCode haskell">[<span class="dt">Int</span>]</code>型の値は「要素が全て整数である」という不変条件を満たすリストだ。このような型が不変条件として実際に機能するということが、一般にいう型安全だということだ。実際、C言語やその眷属、あるいは
+<code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Unsafe.Coerce</span></code>
+をしたHaskellのように無制限に cast
+を許すような言語では、簡単に不変条件が破れて安全性を担保出来なくなる。つまり、異なる型が異なる型として区別されて、簡単に変換出来ないようになっていることが大事なのだ。</p>
+</section>
+<section id="invariants-and-dependent-types" class="level1">
+<h2>不変条件と依存型</h2>
+<p>型を「不変条件」と見做せるということを前節では主張してきたが、そこで出している例が
+<code class="sourceCode haskell"><span class="dt">Int</span></code> や
+<code class="sourceCode haskell">[<span class="dt">Int</span>]</code>といった代わり映えしないものばかりだったので今一その旨味がわからなかったかもしれない。というわけで、こうした場合の常套句である<strong>長さ付きベクトル</strong>の例を見てみよう。</p>
+<p>Haskellでは、リストの操作関数として <code class="sourceCode haskell"><span class="fu">head</span></code> や <code class="sourceCode haskell"><span class="fu">tail</span></code>
+といった関数が定義されているが、これらは空リストに対して用いると例外が飛んでしまう。型の上では空リストとそうでないリストの区別が付かないからだ。そこで、いっそのこと型に長さの情報を付加してしまったらどうだろうか？という発想で得られるのが長さ付きベクトルである。Haskell
+における伝統的な方法では、次のようにして定義される：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE GADTs #-}</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Z</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">S</span> n</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Vector</span> a n <span class="kw">where</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Nil</span><span class="ot">  ::</span> <span class="dt">Vector</span> a <span class="dt">Z</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ot">  (:-) ::</span> a <span class="ot">-&gt;</span> <span class="dt">Vector</span> a n <span class="ot">-&gt;</span> <span class="dt">Vector</span> a (<span class="dt">S</span> n)</span></code></pre></div>
+<p>型レベルで自然数を表現する為に、ダミーの型として <code class="sourceCode haskell"><span class="dt">Z</span></code> や <code class="sourceCode haskell"><span class="dt">S</span> n</code>
+を定義し、<code class="sourceCode haskell"><span class="dt">Vector</span></code>
+の長さを表すパラメータとして使っているのだ。これらを使えば、より「型安全」な
+<code class="sourceCode haskell"><span class="fu">head</span></code> や
+<code class="sourceCode haskell"><span class="fu">tail</span></code>
+を書くことが出来る：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span><span class="ot"> ::</span> <span class="dt">Vector</span> a (<span class="dt">S</span> n) <span class="ot">-&gt;</span> <span class="dt">Vector</span> a n</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span> (_ <span class="op">:-</span> as) <span class="ot">=</span> as</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span><span class="ot"> ::</span> <span class="dt">Vector</span> a (<span class="dt">S</span> n) <span class="ot">-&gt;</span> a</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> (a <span class="op">:-</span> _) <span class="ot">=</span> a</span></code></pre></div>
+<p>このように書くことで、空リストを <code class="sourceCode haskell"><span class="fu">tail</span></code> や <code class="sourceCode haskell"><span class="fu">head</span></code>
+に喰わせようとしても、コンパイル時に型エラーとして弾かれるようになる：</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> <span class="dt">Nil</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>interactive<span class="op">&gt;:</span><span class="dv">4</span><span class="op">:</span><span class="dv">24</span><span class="op">:</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Couldn&#39;t</span> match <span class="kw">type</span> <span class="dt">Z</span> with <span class="dt">S</span> n0</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Expected</span> <span class="kw">type</span><span class="op">:</span> <span class="dt">Vector</span> a0 (<span class="dt">S</span> n0)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Actual</span> <span class="kw">type</span><span class="op">:</span> <span class="dt">Vector</span> a0 <span class="dt">Z</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">In</span> the first argument <span class="kw">of</span> <span class="ot">`head&#39;, namely `</span><span class="dt">Nil&#39;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">In</span> the expression<span class="op">:</span> <span class="fu">head</span> <span class="dt">Nil</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> <span class="fu">tail</span> <span class="dt">Nil</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>interactive<span class="op">&gt;:</span><span class="dv">5</span><span class="op">:</span><span class="dv">24</span><span class="op">:</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Couldn&#39;t</span> match <span class="kw">type</span> <span class="dt">&#39;Z</span> with <span class="dt">&#39;S</span> n0</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Expected</span> <span class="kw">type</span><span class="op">:</span> <span class="dt">Vector</span> a0 (<span class="dt">&#39;S</span> n0)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Actual</span> <span class="kw">type</span><span class="op">:</span> <span class="dt">Vector</span> a0 <span class="dt">&#39;Z</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">In</span> the first argument <span class="kw">of</span> <span class="fu">tail</span>, namely <span class="dt">Nil</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">In</span> the expression<span class="op">:</span> <span class="fu">tail</span> <span class="dt">Nil</span></span></code></pre></div>
+<p>だが、一般に長さがそこまで自明でないようなリストを扱わなくてはならない時はどうすればよいだろうか？つまり、GHCの側にとっては
+<code class="sourceCode haskell"><span class="dt">Vector</span> a n</code>
+型の値がわたってくるということしかわからないような場合だ。勿論、これが空リストも取り得る場合については、弾かれて当然だ。では、そのリストが空でない事を証明出来るときには、どのようにしてGHCにその事実を教えてやればよいのだろうか？</p>
+<p>また、上では <code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Z</span></code>
+や <code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">S</span> n</code>
+などと定義して型レベル自然数を定義したが、<code class="sourceCode haskell"><span class="dt">Vector</span></code>
+の第二引数は他の値も取り得る。例えば、<code class="sourceCode haskell"><span class="dt">Vector</span> <span class="dt">Int</span> <span class="dt">Bool</span></code>
+や <code class="sourceCode haskell"><span class="dt">Vector</span> a ()</code>
+のような型も（値は持たないが）Haskell
+としては合法な型になってしまう。</p>
+<p>まず二番目の問題について解決してみよう。問題は、型がちゃんと「型付け」されていないことである。いいかえれば、本来異なる型である筈のものがきちんと区別されていないことが問題なのだ。値に関する不変条件を型で解決したように、型に関する不変条件は「型の型」をつけて解決したい。ちなみに、Haskellでは、「型の型」のことを<strong>種</strong>（<em>kind</em>）と呼ぶ。</p>
+<p>たとえば、もし値レベルで自然数とそれ以外を区別したいのなら、次のように自然数を表す型
+<code class="sourceCode haskell"><span class="dt">Nat</span></code>
+を定義してしまえばよい：</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Nat</span> <span class="ot">=</span> <span class="dt">Z</span> <span class="op">|</span> <span class="dt">S</span> <span class="dt">Nat</span></span></code></pre></div>
+<p>では、これと同じことを型レベルでも出来ないだろうか？CoqやAgda、idrisといった定理証明系では<strong>依存型</strong>という機構を用いてこれを可能にしている。これらの処理系では型と値の区別は実質ほとんどないといってよく、型のパラメータとして値を取ったり、型それ自身を値として扱うようなプログラムを記述することが出来る。他方、通常のHaskellにおいてはそうしたプログラムを書くことはできない。これは、依存型を導入すると強力な型推論を犠牲にしなくてはならないとか、そういった実用上の設計選択によるものだ。</p>
+<p>残念、Haskellでも使えればよかったのに──と諦めるのはまだ早い。完全な依存型ではなく、それをエミュレートすることが出来る機能が最近GHCに実装された。それが<strong>データ型の昇格</strong>および<strong>多相種</strong>である。これらはそれぞれ<code class="sourceCode haskell"><span class="dt">DataKinds</span></code>および<code class="sourceCode haskell"><span class="dt">PolyKinds</span></code>言語拡張を指定することにより有効化出来る。</p>
+<p><code class="sourceCode haskell"><span class="dt">DataKinds</span></code>
+拡張は、上のように定義した代数的データ型を型レベルに持ち上げることが出来る言語拡張である。より厳密には、<code class="sourceCode haskell"><span class="dt">Nat</span></code>型を種レベルに持ち上げた<code class="sourceCode haskell"><span class="dt">Nat</span></code>種と、その種に属する型コンストラクタ<code class="sourceCode haskell"><span class="dt">Z</span><span class="ot"> ::</span> <span class="dt">Nat</span></code>および<code class="sourceCode haskell"><span class="dt">S</span><span class="ot"> ::</span> <span class="dt">Nat</span> <span class="ot">-&gt;</span> <span class="dt">Nat</span></code>
+がGHCによって自動的に定義されるようになるのだ。これらは全く同型なものであるため、あたかも<code class="sourceCode haskell"><span class="dt">Nat</span></code>データ型の値が、型レベルに昇格されたように見える訳である。これを使えば、先程のベクトルの例は次のように書き直せる：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE GADTs, DataKinds #-}</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Nat</span> <span class="ot">=</span> <span class="dt">Z</span> <span class="op">|</span> <span class="dt">S</span> <span class="dt">Nat</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Vector</span> a n <span class="kw">where</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Nil</span><span class="ot">  ::</span> <span class="dt">Vector</span> a <span class="dt">Z</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ot">  (:-) ::</span> a <span class="ot">-&gt;</span> <span class="dt">Vector</span> a n <span class="ot">-&gt;</span> <span class="dt">Vector</span> a (<span class="dt">S</span> n)</span></code></pre></div>
+<p><code class="sourceCode haskell"><span class="dt">Vector</span></code>
+の定義には変更がないが、今まで別個に型として <code class="sourceCode haskell"><span class="dt">Z</span></code> や <code class="sourceCode haskell"><span class="dt">S</span> n</code>
+を定義していた部分がただのデータ型の定義に変わっている。しかし、これによって、<code class="sourceCode haskell"><span class="dt">Vector</span></code>型の第二引数の種は
+<code class="sourceCode haskell"><span class="dt">Nat</span></code>
+だけに限定されるようになっている。それを確かめるには、ghci
+を使ってその種を確認してみればよい：</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> <span class="op">:</span>k <span class="dt">Vector</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Vector</span><span class="ot"> ::</span> <span class="op">*</span> <span class="ot">-&gt;</span> <span class="dt">Nat</span> <span class="ot">-&gt;</span> <span class="op">*</span></span></code></pre></div>
+<p>最初の例を読み込ませてみると <code class="sourceCode haskell"><span class="dt">Vector</span><span class="ot"> ::</span> <span class="op">*</span> <span class="ot">-&gt;</span> <span class="op">*</span> <span class="ot">-&gt;</span> <span class="op">*</span></code>
+となることがわかるので、どうやら先程よりもよりしっかりと種が付いていることがわかる。ここで、<code class="sourceCode haskell"><span class="op">*</span></code>という種は値を持つ型を表す種である。</p>
+<p><code class="sourceCode haskell"><span class="dt">PolyKinds</span></code>
+拡張は、その名の通り多相的な種を持つ型を許すようにするものだ。この時点においてはまだ余り有難味がわからないかもしれないが、データ型の昇格をより総称的に扱うには、種に多相性を許したほうが統一性が取れるのだ<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
+</section>
+<section id="invariants-proofs-and-singletons" class="level1">
+<h2>不変条件、証明、Singleton</h2>
+<p>さて、これで型の不変条件を種として表現するための道具は揃った。残る問題は、不変条件に関する証明をどのようにして記述するかということだ。一般に、型レベルの値についてその性質を証明しようと思ったら、その値に対するパターンマッチを行いたくなる。しかし、Haskellは型を値に「降格」するための機構は標準では用意されていない。<code class="sourceCode haskell"><span class="dt">DataKinds</span></code>で可能になるのは値→型方向の「昇格」だけだ。何か手はないだろうか？</p>
+<p>これを解決するのが<strong>Singleton パターン</strong>だ。Singleton
+の基本的な考え方は、型と一対一に対応する同型なデータ型を作ってやることだ。たとえば、<code class="sourceCode haskell"><span class="dt">Nat</span></code>
+のSingleton は次のようになる：</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">SNat</span> n <span class="kw">where</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SZ</span><span class="ot"> ::</span> <span class="dt">SNat</span> <span class="dt">Z</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SS</span><span class="ot"> ::</span> <span class="dt">SNat</span> n <span class="ot">-&gt;</span> <span class="dt">SNat</span> (<span class="dt">S</span> n)</span></code></pre></div>
+<p>データ型の定義をつぶさに分析すれば、<code class="sourceCode haskell"><span class="dt">SNat</span> n</code>
+型の値は唯一つだけ存在して、それは<code class="sourceCode haskell">n</code>と同型になっていることがわかる。例えば
+<code class="sourceCode haskell"><span class="dt">SNat</span> <span class="dt">Z</span></code>
+に属する値は <code class="sourceCode haskell"><span class="dt">SZ</span><span class="ot"> ::</span> <span class="dt">SNat</span> <span class="dt">Z</span></code>
+だけであり、<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">n = 3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.64444em;"></span><span class="strut bottom" style="height: 0.64444em; vertical-align: 0em;"></span><span class="base"><span class="mord mathit">n</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mrel">=</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mord">3</span></span></span></span></span></span> の時は <code class="sourceCode haskell"><span class="dt">SS</span> (<span class="dt">SS</span> (<span class="dt">SS</span> <span class="dt">SZ</span>))<span class="ot"> ::</span> <span class="dt">SNat</span> (<span class="dt">S</span> (<span class="dt">S</span> (<span class="dt">S</span> <span class="dt">Z</span>)))</code>
+が唯一の <code class="sourceCode haskell"><span class="dt">SNat</span> (<span class="dt">S</span> (<span class="dt">S</span> (<span class="dt">S</span> <span class="dt">Z</span>)))</code>
+の要素である、といった具合だ。</p>
+<p>シングルトン自然数に対する加法や順序関係なども定義することが出来る：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TypeOperators, TypeFamilies #-}</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="kw">family</span>   (<span class="op">+</span>) (<span class="ot">n ::</span> <span class="dt">Nat</span>) (<span class="ot">m ::</span> <span class="dt">Nat</span>)<span class="ot"> ::</span> <span class="dt">Nat</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="kw">instance</span> <span class="dt">Z</span>   <span class="op">+</span> m <span class="ot">=</span> m</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="kw">instance</span> <span class="dt">S</span> n <span class="op">+</span> m <span class="ot">=</span> <span class="dt">S</span> (n <span class="op">+</span> m)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="ot">(%:+) ::</span> <span class="dt">SNat</span> n <span class="ot">-&gt;</span> <span class="dt">SNat</span> m <span class="ot">-&gt;</span> <span class="dt">SNat</span> (n <span class="op">+</span> m)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="dt">SZ</span>   <span class="op">%:+</span> m <span class="ot">=</span> m</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="dt">SS</span> n <span class="op">%:+</span> m <span class="ot">=</span> <span class="dt">SS</span> (n <span class="op">%:+</span> m)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> (<span class="op">&lt;=</span>) n m <span class="kw">where</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">LeqZero</span><span class="ot"> ::</span> <span class="dt">Z</span> <span class="op">&lt;=</span> m</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">LeqSucc</span><span class="ot"> ::</span> n <span class="op">&lt;=</span> m <span class="ot">-&gt;</span> <span class="dt">S</span> n <span class="op">&lt;=</span> <span class="dt">S</span> m</span></code></pre></div>
+<p>こうした算術や述語を使った証明を書くためには、先程いったように型レベルの値<code>n</code>
+に対するパターンマッチが必要になる。しかし、各 <code class="sourceCode haskell">n</code> に対して <code class="sourceCode haskell"><span class="dt">SNat</span> n</code>
+型の値を返す型クラスを帰納的に定めてやれば、型に対するパターンマッチを実現出来る：</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="dt">Singleton</span> (<span class="ot">n ::</span> <span class="dt">Nat</span>) <span class="kw">where</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ot">  sing ::</span> <span class="dt">SNat</span> n</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Singleton</span> <span class="dt">Z</span> <span class="kw">where</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  sing <span class="ot">=</span> <span class="dt">SZ</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Singleton</span> n <span class="ot">=&gt;</span> <span class="dt">Singleton</span> (<span class="dt">S</span> n) <span class="kw">where</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  sing <span class="ot">=</span> <span class="dt">SS</span> (<span class="ot">sing ::</span> <span class="dt">SNat</span> n)</span></code></pre></div>
+<p>これを使えば、自由に自然数の性質を証明してやることが出来るようになる。</p>
+</section>
+<section id="last" class="level1">
+<h2>宣伝 〜買ってくれたら、それはとっても嬉しいなって〜</h2>
+<p>以上のようにして、Haskell
+においても依存型を用いたプログラムや定理証明を行うことが出来る。とはいっても、Haskell
+は定理証明系ではないので、普通に定理を証明したいだけであれば Coq や Agda
+を使った方がよい。勿論、頑張れば Haskell でも Coq や Agda
+の代わりを勤めることは出来ないでもないのだが。寧ろ、Haskell
+で定理を証明する必要がある時というのは、依存型を用いたプログラムにおいて、実行時の安全性を担保したいときである。</p>
+<p>ここではかなり駆け足で Haskell
+でも定理の証明が可能であることを説明してきた。より詳しい方法に関しては、C85で頒布するTCUG『Coq
+による定理証明』第三章でかなり細かく説明した。なので、興味を持たれた方は是非お買い求め頂きたい。Haskellで依存型プログラミングを実現し定理証明系として用いる方法を解説した、恐らく唯一の日本語文献であろうと思う。</p>
+<p>ここに書かなかったこととしては、例えば Haskell
+で等式証明を快適に書くための技法についても紹介している。例えば、この本を読むと次のようにして「<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo>(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mo>)</mo><mo>=</mo><mi>n</mi><mo>+</mo><mi>S</mi><mi>m</mi></mrow><annotation encoding="application/x-tex">S (n + m) = n + S
+m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.75em;"></span><span class="strut bottom" style="height: 1em; vertical-align: -0.25em;"></span><span class="base"><span style="margin-right: 0.05764em;" class="mord mathit">S</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mord mathit">m</span><span class="mclose">)</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mrel">=</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mord mathit">n</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span style="margin-right: 0.05764em;" class="mord mathit">S</span><span class="mord mathit">m</span></span></span></span></span></span>」ということを証明出来るようになる：</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ot">plusSR ::</span> <span class="dt">SNat</span> n <span class="ot">-&gt;</span> <span class="dt">SNat</span> m <span class="ot">-&gt;</span> <span class="dt">S</span> (n <span class="op">:+:</span> m) <span class="op">:=:</span> n <span class="op">:+:</span> <span class="dt">S</span> m</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plusSR n m <span class="ot">=</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  start (sS (n <span class="op">%+</span> m))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>     <span class="op">===</span> (n <span class="op">%+</span> m) <span class="op">%+</span> sOne  <span class="ot">`because`</span> sAndPlusOne (n <span class="op">%+</span> m)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>     <span class="op">===</span> n <span class="op">%+</span> (m <span class="op">%+</span> sOne)  <span class="ot">`because`</span> symmetry (plusAssociative n m sOne)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>     <span class="op">===</span> n <span class="op">%+</span> sS m         <span class="ot">`because`</span> plusCongL n (symmetry (sAndPlusOne m))</span></code></pre></div>
+<p>本書は他にもCoqで証明を書くための技がいっぱい詰まっているので、Haskellに興味はないが定理証明には興味があるという方も是非<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>。そんなワクワクが詰まった書籍の詳細は以下の通り：</p>
+<dl>
+<dt>書名</dt>
+<dd>
+『<a href="http://tcug.jp/books/2013-12/">Coq
+による定理証明</a>』（第三章をわたしが書きました；<a href="http://tcug.jp/books/2013-12/sample.pdf">サンプル</a>） サークル名
+</dd>
+<dd>
+<a href="http://tcug.jp/">Tsukuba Coq Users’ Group</a> 頒布イベント
+</dd>
+<dd>
+コミックマーケット85（ぼくはいません） 配置
+</dd>
+<dd>
+12/31 火曜日(3日目) 西し33-a 価格
+</dd>
+<dd>
+800円
+</dd>
+</dl>
+<p>著者（@<a href="http://twitter.com/pi8027">pi8027</a>さんとか@<a href="http://twitter.com/pirapira">pirapira</a>さんとかわたしとか）に直接云って貰っても、在庫を持ってれば多分売れます。買ってやってください
+m(_ _)m</p>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>ここでいう「不変条件」というのは、「関数呼び出しの前後で不変な条件」だけではなく、事前条件や事後条件も乱暴含めている。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>他にも、多相種によって今までわかれていた <code class="sourceCode haskell"><span class="dt">Typeable</span>, <span class="dt">Typeable1</span>, <span class="dt">Typeable2</span>, <span class="op">...</span></code>
+といった型クラスを一つのクラスとして統一したり、更には <code class="sourceCode haskell"><span class="dt">Monad</span></code> と <code class="sourceCode haskell"><span class="dt">Monoid</span></code>
+を一つのクラスで扱えるようにもなったりする。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>そういえばこれは <a href="http://qiita.com/advent-calendar/2013/theorem_prover">Theorem
+Prover Advent Calendar 2013</a> の記事でもあった。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/prog/2013-advent-calendar.html";
+          this.page.identifier = "/prog/2013-advent-calendar.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/prog/2013-advent-calendar.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

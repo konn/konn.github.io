@@ -1,0 +1,182 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>古典的実現可能性モデルノート - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="集合論,選択公理,ロジック,数理論理学,数学基礎論,実現可能性モデル,古典的実現可能性モデル,継続,call/cc"><meta name="description" content="古典的実現可能性モデル（classical realisability）の手法は，Curry--Howard対応を拡張する形でZFのモデルを与える方法であり，Krivineによって導入された． 強制法を特別な場合として含むが，ZFCから開始してもZF + ¬ACのモデルが得られるという点で強制法を真に一般化するものになっている．
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/math/realisability.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  <link rel="stylesheet" href="/css/math.css">
+
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/math/realisability.html">
+  <meta property="og:title" content="古典的実現可能性モデルノート">
+  <meta property="og:description" content="古典的実現可能性モデル（classical realisability）の手法は，Curry–Howard対応を拡張する形でZFのモデルを与える方法であり，Krivineによって導入された． 強制法を特別な場合として含むが，ZFCから開始してもZF + ¬ACのモデルが得られるという点で強制法を真に一般化するものになっている． ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/math/">数学関係をまとめておくばしょ</a></li>
+  <li class="li breadcrumb-item active">古典的実現可能性モデルノート</li>
+</ol>
+
+    <div class="page-header">
+    <h1>古典的実現可能性モデルノート <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/math/realisability.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/math/realisability.html" class="hatena-bookmark-button" data-hatena-bookmark-title="古典的実現可能性モデルノート - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2020/10/21 21:30:00 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="概要" class="level1">
+<h2>概要</h2>
+<p>古典的実現可能性モデル（classical
+realisability）の手法は，Curry–Howard対応を拡張する形で<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{ZF}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.68333em;"></span><span class="strut bottom" style="height: 0.68333em; vertical-align: 0em;"></span><span class="base"><span class="mord"><span class="mord mathrm">Z</span><span class="mord mathrm">F</span></span></span></span></span></span></span>のモデルを与える方法であり，Krivineによって導入された．
+強制法を特別な場合として含むが，<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">C</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{ZFC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.68333em;"></span><span class="strut bottom" style="height: 0.68333em; vertical-align: 0em;"></span><span class="base"><span class="mord"><span class="mord mathrm">Z</span><span class="mord mathrm">F</span><span class="mord mathrm">C</span></span></span></span></span></span></span>から開始しても<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi></mrow><mo>+</mo><mi mathvariant="normal">¬</mi><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">C</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{ZF}+\neg
+\mathrm{AC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.68333em;"></span><span class="strut bottom" style="height: 0.76666em; vertical-align: -0.08333em;"></span><span class="base"><span class="mord"><span class="mord mathrm">Z</span><span class="mord mathrm">F</span></span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mord">¬</span><span class="mord"><span class="mord mathrm">A</span><span class="mord mathrm">C</span></span></span></span></span></span></span>のモデルが得られるという点で強制法を真に一般化するものになっている．</p>
+<p>Krivineの着想は，旧来の直観主義・構成的数学の実現可能性モデルに，Peirce’s
+Law と対応することが広く知られている <code>call/cc</code>
+プリミティヴを加えれば古典論理上の集合論のモデルが得られる筈である，というものである．
+この達成のため，Krivine はBCKW論理に call/cc
+を加えた体系を，Krivine機械と呼ばれるある種のスタックマシンを用いて解釈するという方法を採っている．</p>
+<p>本稿は，元々は2017年に早稲田大学で行われた集合論セミナーでの筆者（石井）の発表の資料である．
+強制法との関係をなるべく明らかにすることを目的に書き始められ，Krivineが原論文で採用したものよりも現代的な強制法の定式化に近い形で再定式化を与えたが，現時点では完全に目的を達するに至ってはいない．誰かがその道に至る道標になれば幸いである．</p>
+</section>
+<section id="本文リンク" class="level1">
+<h2>本文リンク</h2>
+<p><a href="./realisability.pdf">PDFはこちら</a></p>
+<p>元となったレジュメは6部に及ぶかなり膨大な TeX であり、TikZ
+をふんだんに用いているため現時点ではHTML化が出来ていない。
+従って、当面は PDF のみの提供とさせて頂く。</p>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/math/realisability.html";
+          this.page.identifier = "/math/realisability.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/math/realisability.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>F4, F5 アルゴリズムに関するサーベイ（A survey on F_4 and F_5 algorithms） - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="数学, 計算機代数, GSoC 2014, Gröbner基底"><meta name="description" content="Gröbner基底の効率的な計算法である F4, F5 アルゴリズムに関するサーベイ、メモ（A note on F4 and F5 algorithms to efficiently compute Gröbner bases）。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/math/gsoc-f4-f5-survey.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  <link rel="stylesheet" href="/css/math.css">
+
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/math/gsoc-f4-f5-survey.html">
+  <meta property="og:title" content="F4, F5 アルゴリズムに関するサーベイ（A survey on F_4 and F_5 algorithms）">
+  <meta property="og:description" content="Gröbner基底の効率的な計算法である F4, F5 アルゴリズムに関するサーベイ、メモ（A note on F4 and F5 algorithms to efficiently compute Gröbner bases）。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/math/">数学関係をまとめておくばしょ</a></li>
+  <li class="li breadcrumb-item active">F4, F5 アルゴリズムに関するサーベイ（A survey on F_4 and F_5 algorithms）</li>
+</ol>
+
+    <div class="page-header">
+    <h1>F4, F5 アルゴリズムに関するサーベイ（A survey on F_4 and F_5 algorithms） <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/math/gsoc-f4-f5-survey.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/math/gsoc-f4-f5-survey.html" class="hatena-bookmark-button" data-hatena-bookmark-title="F4, F5 アルゴリズムに関するサーベイ（A survey on F_4 and F_5 algorithms） - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2014/07/19 02:27:08 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="f_5-algorithm" class="level1">
+<h2>F_5 algorithm</h2>
+<section id="plan" class="level2">
+<h3>Plan</h3>
+<ol type="1">
+<li>Because <a href="http://www.risc.jku.at/Groebner-Bases-Bibliography/gbbib_files/publication_502.pdf">the
+original paper</a> includes many errors and lacks strictness, read <a href="https://eprint.iacr.org/2006/404.pdf">Steger’s thesis</a> instead
+first.</li>
+<li>Then read <a href="http://arxiv.org/pdf/0906.2967.pdf">F5C</a> paper
+to improve it.</li>
+<li>Read <a href="http://arxiv.org/pdf/1006.0318v4.pdf">the paper on
+termination</a> and apply its argument to F5C.</li>
+</ol>
+</section>
+<section id="current-progress" class="level2">
+<h3>Current progress</h3>
+<ul>
+<li>Reading <a href="https://eprint.iacr.org/2006/404.pdf">Steger’s
+thesis</a>. (2014/04/29)</li>
+<li>Implementing F_5, but is not yet working correctly. (2014/05/25)
+<ul>
+<li>It turns out that F_5 is for homogeneous ideals, so I’m planning to
+read <a href="http://arxiv.org/pdf/1203.6186.pdf">Eder</a> and implement
+similar algorithm for inhomogeneous ideals.</li>
+</ul></li>
+<li>To make situation clear, I’m reading the articles on general
+signature-based algorithms (such as Eder’s papers (<a href="http://arxiv.org/pdf/1203.6186.pdf">1</a>, <a href="http://arxiv.org/abs/1201.6472">2</a>) and <a href="http://www.math.clemson.edu/~sgao/papers/GGV10.pdf">G2V</a>)</li>
+</ul>
+</section>
+<section id="papers" class="level2">
+<h3>Papers</h3>
+<dl>
+<dt><a href="http://arxiv.org/abs/1201.6472">Improving incremental
+signature-based Gröbner basis algorithms</a></dt>
+<dd>
+Paper on the improvements for signature-based algorithms. <a href="http://www.math.clemson.edu/~sgao/papers/GGV10.pdf">A New
+Incremental Algorithm for Computing Groebner Bases</a>
+</dd>
+<dd>
+The signature-based algorithm for general ideals (called G2V algorithm).
+<a href="http://arxiv.org/pdf/0804.2033v4.pdf">On the Criteria of the F5
+Algorithm</a>
+</dd>
+<dd>
+Paper on correctness of Rewritten criteria and involves implementation
+in SINGULAR. <a href="http://www.math.usm.edu/perry/Research/CorrectAlgorithm.pdf">Faugère’s
+F5 Algorithm</a>
+</dd>
+<dd>
+Pseudocode of F5 by co-implementor of SINGULAR implementation presented
+in <a href="http://arxiv.org/pdf/0804.2033v4.pdf">Eder</a>’s paper. <a href="http://arxiv.org/pdf/1203.6186.pdf">An analysis of inhomogeneous
+signature-based Gröbner basis computations</a>
+</dd>
+<dd>
+Paper on signature-based Gröbner basis computation algorithms. <a href="http://www.risc.jku.at/Groebner-Bases-Bibliography/gbbib_files/publication_502.pdf">A
+new efﬁcient algorithm for computing Gröbner bases without reduction to
+zero (F5)</a>
+</dd>
+<dd>
+Original paper. This includes some errors and have an issue on the proof
+of termination. <a href="https://eprint.iacr.org/2006/404.pdf">Faugère’s
+F5 Algorithm Revisited</a>
+</dd>
+<dd>
+More accurate and comprehensive description on F_5 algorithm. This paper
+notes on termination, but doesn’t guarantee termination for general
+inputs. <a href="http://arxiv.org/pdf/0906.2967.pdf">F5C: a variant of
+Faugère’s F5 algorithm with reduced Gröbner bases</a>
+</dd>
+<dd>
+Improved version of F5 algorithm, which computes reduced bases in
+internal computation. This algorithm is not proven to be terminate for
+general input cases. <a href="http://www.mathematik.uni-kl.de/~ederc/download/cased_talk.pdf">Faugère’s
+F5 algorithm: variants and termination issues</a>
+</dd>
+<dd>
+A short slide on F5 algorithm. This discusses on improvements and how to
+make F5 algorithm to terminate for general cases. <a href="http://arxiv.org/pdf/1006.0318v4.pdf">Modifying Faugère’s F5
+Algorithm to Ensure Termination</a>
+</dd>
+<dd>
+This paper discusses several ways to make F5 algorithm terminate for not
+only regular sequences but also general cases.
+</dd>
+</dl>
+</section>
+</section>
+<section id="f_4-algorithm" class="level1">
+<h2>F_4 algorithm</h2>
+<p>A naive implementation has been done before GSoC starts. As we have
+to implement more efficient matrix triangulation, I’ll read the
+following papers:</p>
+<dl>
+<dt><a href="http://www-polsys.lip6.fr/~jcf/Papers/F99a.pdf">A new
+efficient algorithm for computing Groebner basis F4</a></dt>
+<dd>
+Original paper. Current implementation is based on this paper. <a href="https://etd.ohiolink.edu/ap/10?0::NO:10:P10_ACCESSION_NUM:ucin1277120935#abstract-files">An
+Implementation of Faugèere’s F4 Algorithm for Computing Gröbner
+Bases</a>
+</dd>
+<dd>
+Paper on the detail of the implementation of F4. Maybe informative for
+matrix triangulation methods.
+</dd>
+</dl>
+<section id="structured-gaussian-elimination" class="level3">
+<h4>structured Gaussian Elimination</h4>
+<p><a href="https://etd.ohiolink.edu/ap/10?0::NO:10:P10_ACCESSION_NUM:ucin1277120935#abstract-files">Cabarcas</a>’s
+paper suggests that it’d be better to use the simplified version of
+structured Gaussian Elimination but not describe the detail of its
+algorithm (for example, how to determine columns “light” or
+“heavy”).</p>
+<p>Here is some references which might be useful:</p>
+<ul>
+<li><a href="http://www.farcaster.com/papers/crypto-solve/node5.html">Solving
+Large Sparse Linear Systems Over Finite Fields</a></li>
+<li><a href="http://algo.inria.fr/seminars/sem98-99/bender1.html#LaOd90a">An
+Approximate Probabilistic Model for Structured Gaussian
+Elimination</a></li>
+</ul>
+</section>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/math/gsoc-f4-f5-survey.html";
+          this.page.identifier = "/math/gsoc-f4-f5-survey.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/math/gsoc-f4-f5-survey.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

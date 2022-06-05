@@ -1,0 +1,284 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>プログラミング関連 - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="Haskell,Ruby,オートマトン,IRC"><meta name="description" content="GitHub などへの外部リンクと昔につくったプロダクトの紹介。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/prog">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/prog">
+  <meta property="og:title" content="プログラミング関連">
+  <meta property="og:description" content="GitHub などへの外部リンクと昔につくったプロダクトの紹介。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/prog/">プログラミング関連</a></li>
+  <li class="li breadcrumb-item active">プログラミング関連</li>
+</ol>
+
+    <div class="page-header">
+    <h1>プログラミング関連 <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/prog" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/prog" class="hatena-bookmark-button" data-hatena-bookmark-title="プログラミング関連 - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2018/02/24 01:24:34 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <p>ソフトウェアやプログラミング関連の記事を溜めておく場所です。</p>
+<div class="row-fluid">
+<div class="span9">
+<section id="記事一覧" class="level1">
+<h2>記事一覧</h2>
+<dl id="#children">
+<dt><a href="/prog/generic-input-method-and-latex-in-vscode.html">VSCode で YaTeX のイメージ補完やユニコード数式記号を入力する為の拡張をつくった</a>
+ - 2018/11/17 03:54:00 JST
+<span class="star-here"></span>
+</dt>
+<dd><p>VSCode で YaTeX のイメージ補完相当の機能を実現したり、Agda や Lean
+などの定理証明系で必要となるユニコード数式記号の入力を補助するための機能拡張を作った話しです。</p></dd><dt><a href="/prog/migrating-emacs-to-vscode.html">Emacs から Visual Studio Code に乗り換える作業のメモ</a>
+ - 2018/10/16 00:05:00 JST
+<span class="star-here"></span>
+</dt>
+<dd><p>Emacs にそろそろ辟易してきたので、VSCode
+に乗り換えようとしています。その作業記録。</p></dd><dt><a href="/prog/rust-memo.html">Haskellerの私的Rustチートシート</a>
+ - 2018/08/29 18:47:20 JST
+<span class="star-here"></span>
+</dt>
+<dd><p>Rustに入門したので、適宜HaskellのこれはRustのこれ、ということをここに蓄積していって、個人的なチートシートにする。</p></dd><dt><a href="/prog/rust/type-level-naturals-and-vectors-in-rust.html">欲望の赴くままRustで型レベルPeano自然数とサイズ付きベクトルを書いた</a>
+ - 2018/08/29 18:45:17 JST
+<span class="star-here"></span>
+</dt>
+<dd><p>あるていど強い型システムを持った言語を見ると、<strong>型レベルペアノ自然数</strong>と<strong>サイズ付きベクトル</strong>を書きたくなる、というのは<strong>人類普遍の欲求</strong>だと思います。
+という訳で欲求に忠実であることとし、<strong>型レベルPeano自然数とサイズ付きベクトルRustで実装</strong>しました。実用性？皆無です。</p></dd><dt><a href="/prog/chaging-terminal-bg.html">zsh hooks を使って ssh / mosh の接続先によって Terminal.app のテーマを変える
+</a>
+ - 2015/08/04 00:00:00 JST
+<span class="star-here"></span>
+</dt>
+<dd><p><strong>この記事はQiitaからの移行記事です</strong>。情報は古いので、記録以上の価値はありません。</p></dd><dt><a href="/prog/why-not-latexmk.html">latexmk で楽々 TeX タイプセットの薦め（＆ biblatex+biberで先進的な参考文献処理）</a>
+ - 2015/01/06 23:48:54 JST
+<span class="star-here"></span>
+</dt>
+<dd><p>TeX
+ファイルの変更を監視して、必要な回数だけ自動タイプセットしてくれる
+latexmk の紹介です。OMake はもう古い。あとbibtexの代替である biber と
+biblatex についても紹介。</p></dd><dt><a href="/prog/haskell/haskell-introduction-to-cocoa.html">Haskell ではじめるふわとろ Cocoa アプリ開発</a>
+ - 2014/12/29 23:27:30 JST
+<span class="star-here"></span>
+</dt>
+<dd><p>Haskell による Cocoa アプリ開発の実際についての記事。Haskell Advent
+Calendar 2014 参加記事です。</p></dd><dt><a href="/prog/2013-advent-calendar.html">定理証明系 Haskell</a>
+ - 2013/12/20 00:00:00 JST
+<span class="star-here"></span>
+</dt>
+<dd><p>Haskell Advent Calendar 2013 および Theorem Prover Advent Calendar
+2013 参加記事。Haskell
+における依存型プログラミングおよび定理証明について解説した数少ない日本語文献です。C85
+の TCUG に寄稿させて頂いた Haskell
+で定理証明を行う記事の販促記事でもあります。</p></dd><dt><a href="/prog/haskell/extensible-effects.html">Extensible Effects はモナド変換子に対する救世主になり得るか？</a>
+ - 2013/07/21 21:26:00 JST
+<span class="star-here"></span>
+</dt>
+<dd><p>Oleg らによる、モナド変換子に対する大体手法、Extensible Effects
+の論文を読んだ感想紹介記事です。</p></dd><dt><a href="/prog/never-understood-monad-tutorial.html">絶対に理解出来ないモナドチュートリアル</a>
+ - 2013/06/28 02:04:09 JST
+<span class="star-here"></span>
+</dt>
+<dd><p>絶対に理解出来ないモナドチュートリアルです。</p></dd><dt><a href="/prog/haskell/lk-proof-assistant-in-haskell.html">Haskell で Gentzen の LK</a>
+ - 2012/05/24 00:00:00 JST
+<span class="star-here"></span>
+</dt>
+<dd><p><strong>この記事はQiitaからの移転記事です</strong>。
+大昔に書いた、シーケント計算をHaskellの型システムを使って上手くエンコードした実装の記事ですが、正直何も整理されていないので、記録以上の意味はありません。</p></dd>
+
+</dl>
+</section>
+<section id="プロジェクト関連" class="level1">
+<h2>プロジェクト関連</h2>
+<dl>
+<dt><a href="http://konn.github.io/computational-algebra/">computational-algebra</a></dt>
+<dd>
+Haskellの先進的な機能をフルに使って実装された計算代数ライブラリ。
+</dd>
+<dt><a href="https://github.com/konn/MathChrome">MathChrome</a></dt>
+<dd>
+<a href="http://www.forkosh.com/mimetex.html">mimetex</a> や <a href="https://developers.google.com/chart/">Google Chart</a>
+で書かれた数式を <a href="http://www.mathjax.org/">MathJax</a>
+を用いて描画するようにする Google Chrome 拡張機能。<code>.crx</code>
+をダウンロードしたら、拡張機能ウインドウを開いてドラッグ・アンド・ドロップすれば使えます。
+</dd>
+</dl>
+</section>
+<section id="外部リンク" class="level1">
+<h2>外部リンク</h2>
+<p>大抵のものは外部にある感じです。</p>
+<dl>
+<dt><a href="https://github.com/konn/">GitHub</a></dt>
+<dd>
+<p>プロジェクトは主にここでホストしている。gist
+にも割と面白いコードが転がっている筈。ここで管理している主要なソフトウェアは以下の通り。</p>
+<ul>
+<li><a href="https://github.com/konn/Yablog">Yablog</a> - Yesod
+で書かれた blog エンジン。<a href="http://blog.konn-san.com">これは圏です</a>
+はこれで動いている。</li>
+<li><a href="https://github.com/konn/gitolist">gitolist</a> - Yesod
+で書かれた Git Web Front-end。余りまだ機能がない。</li>
+<li><a href="https://github.com/konn/computational-algebra">algebra</a>
+- Gröbner 基底などの代数計算用のライブラリ。</li>
+<li><a href="https://github.com/yesodweb/yesod/tree/master/yesod-auth-oauth">yesod-auth-oauth</a>
+- ウェブフレームワーク Yesod の OAuth 認証プラグイン</li>
+<li><a href="https://github.com/yesodweb/authenticate/tree/master/authenticate-oauth">authenticate-oauth</a>
+- http-conduit を使って OAuth API を叩くためのライブラリ。</li>
+<li><a href="https://github.com/konn/lk-proof-assistant">lk-proof-assistant</a>
+- LK での証明をアシストして、結果の証明図を LaTeX
+で出力してくれる子。色々実験的な機能を使っているけどやや buggy。<a href="http://blog.konn-san.com/article/20120530/lk-proof-assistant-in-haskell">解説記事</a>。</li>
+</ul>
+</dd>
+<dt><a href="http://qiita.com/users/mr_konn">Qiita</a></dt>
+<dd>
+Qiita に登録しているけど、最近はあまり使ってない。
+</dd>
+<dt><a href="http://blog.konn-san.com">これは圏です</a></dt>
+<dd>
+ブログ。技術記事はここに集めてある。
+</dd>
+</dl>
+</section>
+<section id="デモ系" class="level1">
+<h2>デモ系</h2>
+<dl>
+<dt><a href="./automaton/">有限オートマトン・シミュレータ</a></dt>
+<dd>
+Haskell で書かれたオートマトン・シミュレータ。Haskell から JavaScript
+へとコンパイルしてくれる <a href="http://fay-lang.org/">Fay</a>
+というものがあり、そのデモ。<a href="http://blog.konn-san.com/article/20121225/fay-introduction">詳しい解説記事</a>。
+</dd>
+</dl>
+</section>
+<section id="過去の遺産" class="level1">
+<h2>過去の遺産</h2>
+<p>中高時代に開発していた過去の遺物。あの頃は Ruby を使っていたので Ruby
+1.8 製。今も動くかは知らん。</p>
+<ul>
+<li><a href="./ruby/werewolf/">WereWolf</a> - Ruby
+製の汎用人狼系ゲームエンジン、らしい。</li>
+<li><a href="./ruby/rupircd">rupircd</a> - リレーしない IRC
+サーバ。上のと組み合わせて、人狼が組み込まれている IRC
+サーバを作ろうとしていたがその目的は忘れ去られた。今は <a href="https://github.com/konn/rupircd">GitHub</a>
+を見た方がまだいい。</li>
+<li><a href="./ruby/gionbot/">偽音</a> - IRC
+人狼bot。今あるのかはしらないがむかし人狼 BBS と云うものが流行って、IRC
+上でも人狼をしたいと云う人達がいた。IRC人狼には真音（マロン）という bot
+があって、それは CHOCOA
+とかじゃないと動かなかったのでクローンを作った。上の WereWolf
+を使って書かれている。UO人狼のルールとかも実装してたんじゃなかったかなぁ。</li>
+</ul>
+<p>いずれも古い Ruby
+環境で作られたものなので今も動くかは知らない。多分動かない。</p>
+</section>
+</div>
+<div class="span3">
+<a class="qiita-timeline" href="https://qiita.com/users/mr_konn" data-qiita-username="mr_konn">mr_konnのtips</a>
+<script src="//qiita-widget.suin.org/widget.js"></script>
+</div>
+</div>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/prog">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

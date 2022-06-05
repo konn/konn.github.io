@@ -1,0 +1,398 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>latexmk で楽々 TeX タイプセットの薦め（＆ biblatex+biberで先進的な参考文献処理） - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="TeX, LaTeX, upLaTeX, biblatex, biber, latexmk"><meta name="description" content="TeX ファイルの変更を監視して、必要な回数だけ自動タイプセットしてくれる latexmk の紹介です。OMake はもう古い。あとbibtexの代替である biber と biblatex についても紹介。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/prog/why-not-latexmk.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/prog/why-not-latexmk.html">
+  <meta property="og:title" content="latexmk で楽々 TeX タイプセットの薦め（＆ biblatex+biberで先進的な参考文献処理）">
+  <meta property="og:description" content="TeX ファイルの変更を監視して、必要な回数だけ自動タイプセットしてくれる latexmk の紹介です。OMake はもう古い。あとbibtexの代替である biber と biblatex についても紹介。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/prog/">プログラミング関連</a></li>
+  <li class="li breadcrumb-item active">latexmk で楽々 TeX タイプセットの薦め（＆ biblatex+biberで先進的な参考文献処理）</li>
+</ol>
+
+    <div class="page-header">
+    <h1>latexmk で楽々 TeX タイプセットの薦め（＆ biblatex+biberで先進的な参考文献処理） <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/prog/why-not-latexmk.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/prog/why-not-latexmk.html" class="hatena-bookmark-button" data-hatena-bookmark-title="latexmk で楽々 TeX タイプセットの薦め（＆ biblatex+biberで先進的な参考文献処理） - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2015/01/06 23:48:54 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="omake-はもう古いlatexmk-で快適-tex-コンパイルのススメ" class="level1">
+<h2>OMake はもう古い！latexmk で快適 TeX コンパイルのススメ</h2>
+<p>TeX
+のタイプセットって面倒ですよね。数式番号をちゃんと出力するには二、三回タイプセットする必要がありますし、参考文献を自動処理しようとすると、<code>latex</code>
+と <code>bibtex</code>
+を交互に呼んだりしないといけなくなります。こういう手順を自動化できたら便利ですよね。あと、ファイルを保存する度にいちいち手動で一からコンパイル仕直すのも手間です。ファイルを変更したら自動的に
+PDF を生成してくれるような仕組みがあったら楽なんですけどねえ。</p>
+<p>……というような用途だと、昔は <a href="http://omake-japanese.sourceforge.jp/">OMake</a> が有名で、OMake
+を使ったら <a href="http://d.hatena.ne.jp/hayamiz/20081208/1228727272">身長が5cm伸びて彼女が出来た</a>
+というような記事までありました。すごいですね！</p>
+<p>しかし、OMake は最近あまりメンテナンスされていなくて、bib
+ファイルや目次が変更された際にちゃんと正しい回数コンパイルしてくれず、正しい
+PDF が得られないという問題があります。また、TeXファイルごとに OMakefile
+を書かないといけないので面倒です。</p>
+<p>どうしたものか……と悩んでいたのですが、 <a href="http://users.phys.psu.edu/~collins/software/latexmk-jcc/">latexmk</a>
+というツールを使えば、こうした悩みは全部一挙に解決してしまうことがわかりました！しかも、OMake
+と違い、latexmk は標準的な TeX ディストリビューション（TeXLive とか
+MacTeX）にはデフォルトで付いてくるので、何も準備せずに使うことが出来るのです！</p>
+<p>以下では簡単に latexmk
+の使い方を紹介したいと思います。あと、折角なので biblatex と biber
+についても紹介します。</p>
+<section id="latexmk-の設定" class="level2">
+<h3>latexmk の設定</h3>
+<p>latexmk
+を使うには、まず設定ファイルを書いてやる必要があります。書かなくてもコマンドライン引数で全部指定出来るんですが、書いた方が楽です。まず、以下の内容を
+<code>~/.latexmkrc</code> に保存してください：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode perl"><code class="sourceCode perl"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">#!/usr/bin/env perl</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">$latex</span>            = <span class="ot">&#39;</span><span class="ss">platex -synctex=1 -halt-on-error</span><span class="ot">&#39;</span>;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">$latex_silent</span>     = <span class="ot">&#39;</span><span class="ss">platex -synctex=1 -halt-on-error -interaction=batchmode</span><span class="ot">&#39;</span>;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">$bibtex</span>           = <span class="ot">&#39;</span><span class="ss">pbibtex</span><span class="ot">&#39;</span>;</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">$dvipdf</span>           = <span class="ot">&#39;</span><span class="ss">dvipdfmx %O -o %D %S</span><span class="ot">&#39;</span>;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="dt">$makeindex</span>        = <span class="ot">&#39;</span><span class="ss">mendex %O -o %D %S</span><span class="ot">&#39;</span>;</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="dt">$max_repeat</span>       = <span class="dv">5</span>;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="dt">$pdf_mode</span>	  = <span class="dv">3</span>; <span class="co"># generates pdf via dvipdfmx</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Prevent latexmk from removing PDF after typeset.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># This enables Skim to chase the update in PDF automatically.</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="dt">$pvc_view_file_via_temporary</span> = <span class="dv">0</span>;</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Use Skim as a previewer</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="dt">$pdf_previewer</span>    = <span class="ot">&quot;</span><span class="st">open -ga /Applications/Skim.app</span><span class="ot">&quot;</span>;</span></code></pre></div>
+<p>これは何をしているのか順に説明しましょう。</p>
+<p>まず <code class="sourceCode perl"><span class="dt">$latex</span></code>
+の値はその名の通り .tex ファイルのコンパイルに使う <code>latex</code>
+コマンドを指定しています。ちなみに<code>-synctex=1</code>というオプションを付けておくと、SyncTeX
+が有効になり、SyncTeX対応のPDFビューワ（Skimとか）を使っていると、PDFの文章から
+tex
+ファイルの対応する部分に即座に飛ぶことが出来るようになります。便利です。</p>
+<p>また、<code>-halt-on-error</code>
+オプションを付けておくと、文法エラーやらコマンド未定義やらでコンパイルに失敗した時、あの鬱陶しいプロンプトが出ずにそのまま
+TeX エンジンが終了してくれます。これは、後述の <code>-pvc</code>
+コマンドと組合せたときに、コンパイルに失敗してもいちいち C-d
+を送ったりする必要がなく、単にファイルを修正して保存しなおせば再度コンパイルが走ってくれるようになるので便利です。</p>
+<p><code>$bibtex</code> とか <code>$dvipdf</code>、<code>$mendex</code>
+とかもその他のツールを指定しているだけです。</p>
+<p><code>$pdf_mode	  = 3;</code>ってえのは、「latex で .dvi
+ファイルを生成してから dvipdf を使って PDF
+を生成するんだぜ」と云う意味です。日本語のTeX環境で直接PDFを吐かせる実用的な方法はまだない（XeTeXとかLuaTeXとかがあるにはありますが）ので、この方法を指定している訳です。</p>
+<p><code>$pdf_previewer  = &quot;open -ga /Applications/Skim.app&quot;;</code>
+ではPDFプレビューの方法を指定してます。僕はOSX使いなので、<a href="http://skim-app.sourceforge.net/">Skim</a>を使っています。Skim
+はPDFファイルの変更を自動的に検知して表示を自動的に更新してくれる他、先述のように
+SyncTeX 機能を使って PDF から TeX
+ソースの当該個所に直にジャンプ出来たりします。スライドショー向けの機能もついていたりして、かなり便利なビューワです。</p>
+<p>これと関連して必要になるのが
+<code>$pvc_view_file_via_temporary = 0;</code> の設定です。latexmk
+はデフォルトではタイプセットする度に古い PDF を削除してから新しい PDF
+を生成します。しかし、この方式だと Skim
+がファイルの変更を検知できず、折角の自動更新が無効になってしまいます。そこで、「古いPDFファイルを削除せず上書きする」という風に設定を変更することで、Skim
+の自動更新機能を使えるようにしているのです。 例えば Skim ではなく
+Preview.app
+を使う場合だったらこの設定は要らず、その代わりに<code>$pdf_update_command = &quot;open -ga Preview %S&#39;;</code>とかしておけば勝手に更新されるようになる筈。</p>
+</section>
+<section id="latexmk-を使う" class="level2">
+<h3>latexmk を使う</h3>
+<p>ここまで整えればもう一瞬です<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。コマンドラインで</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> latexmk my-great-work.tex</span></code></pre></div>
+<p>とかやればあとは全部一瞬でよしなにやってくれます。また、</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> latexmk <span class="at">-pvc</span> my-great-work.tex</span></code></pre></div>
+<p>とすると、一度タイプセットしただけでは終了せず、<code>my-great-work.tex</code>
+や、それが依存するファイルに変更があるたびに latexmk
+が必要な回数だけ走って、自動的に PDF
+が更新されます。依存するファイルというのは、そのファイル自身以外にも
+.bib ファイルや .sty ファイル、include されている他の tex
+ファイルなどです。texmf
+に配置してあるグローバルなスタイルファイルやbibファイルの変更までも追い掛けて、更新があったらタイプセットしなおしてくれます。OMake
+ではここまでやってくれませんでした。これはべんり！</p>
+<p>また、文書によっては違う設定をしたいときがあると思います。そういう時は
+<code>latexmk</code>
+に直接オプションを渡してやったり、そのディレクトリに新たに
+<code>.latexmkrc</code>
+を作成しておけばそっちの設定を優先してくれます。たとえば XeLaTeX
+でタイプセットしたいんだったら、</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> latexmk <span class="at">-xelatex</span> <span class="at">-pvc</span> my-great-work.tex</span></code></pre></div>
+<p>とかすれば良い。他にも <code>--help</code>
+を見れば色々と有用な情報が書いてあります。設定するパラメータについては、latexmk
+本体を読むと色々わかります。</p>
+<p>そうそう、本来の用途からは外れますが、例えばタイプセットに成功する度に
+<code>git commit -am</code> したいというような場合は、</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode perl"><code class="sourceCode perl"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">$pdf_update_command</span> = <span class="ot">&quot;</span><span class="st">git commit -am&#39;update&#39;</span><span class="ot">&quot;</span>;</span></code></pre></div>
+<p>とか書いておけば、PDFのアップデートコマンドが走るタイミングでコミットされて
+<code>git</code> で自動的にバックアップが取れます。</p>
+</section>
+</section>
+<section id="uplatex-を使う" class="level1">
+<h2>uplatex を使う</h2>
+<p>オマケとして upLaTeX と biber+biblatex の紹介を書いておきます。</p>
+<p>upLaTex
+っていうのは、<code>platex</code>の内部をユニコードに対応させたヴァージョンで、詳細は<a href="http://zrbabbler.sp.land.to/uplatex.html">ZRさんの記事</a>を参照。pLaTeX
+から upLaTeX に乗り換えるのは簡単で、<code>jarticle</code> とか
+<code>jbook</code> とかのドキュメントクラスを使っている場合は
+<code>ujarticle</code> や <code>ujbook</code>
+を代わりに使えば良いだけです。<code>jsarticle</code>などの<code>js*</code>系の場合は、</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">\documentclass</span>[a4j,twocolumn,uplatex,dvipdfmx]{<span class="ex">jsarticle</span>}</span></code></pre></div>
+<p>みたいに、<code>uplatex</code>を引数に渡せばそのままコンパイルが通るようになります。latexmk
+でこいつを使うようにするには、<code>-latex=uplatex</code>などとしてコマンドライン引数の形で指定するか、<code>.latexmkrc</code>
+をいじって</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode perl"><code class="sourceCode perl"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">$latex</span>            = <span class="ot">&#39;</span><span class="ss">uplatex -synctex=1</span><span class="ot">&#39;</span>;</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="dt">$latex_silent</span>     = <span class="ot">&#39;</span><span class="ss">uplatex -synctex=1 -interaction=batchmode</span><span class="ot">&#39;</span>;</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="dt">$bibtex</span>           = <span class="ot">&#39;</span><span class="ss">upbibtex</span><span class="ot">&#39;</span>;</span></code></pre></div>
+<p>などとしておけばよいです。<code>upbibtex</code> というのは
+<code>pbibtex</code> の内部ユニコード版です。</p>
+</section>
+<section id="biber-と-biblatex" class="level1">
+<h2>biber と biblatex</h2>
+<p>つぎに biblatex と biber の話をしましょう。biblatex というのは bibtex
+の後継で、より柔軟な運用が可能な文献管理・処理パッケージです。目で見て判りやすいところでは、例えばデフォルトで英字の書名は斜体、ユニコード文字の書名は太字で出力されるようになったりします<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。MacTeX や TeXLive
+であれば、これらは最初から何もしなくとも勝手に入っています。
+もちろん見た目だけではなくって、例えば文献一覧のソート順を柔軟に指定出来たり、様々な実用的なフィールドが追加されていたりします。詳しい仕様については<a href="ftp://ftp.kddilabs.jp/CTAN/info/translations/biblatex/de/biblatex-de.pdf">biblatex.pdf</a>
+を参考にしてください。</p>
+<p>実際に BibLaTeX の使い方を見てみましょう。例えば今まで pBibTeX
+なんかでは日本人の名前をちゃんとソートするのに <code>Yomi</code>
+フィールドを指定していましたが、BibLaTeX では次のように
+<code>sortname</code>
+フィールドを指定すれば、後はよしなにやってくれます：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bibtex"><code class="sourceCode bibtex"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="va">@book</span>{<span class="ot">Takeuti:2001</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Author</span> = {竹内 外史},</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Keywords</span> = {集合論, 数学, 数学基礎論, 数理論理学},</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Publisher</span> = {講談社ブルーバックス},</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Title</span> = {新装版 集合とはなにか},</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Year</span> = {2001},</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Sortname</span> = {Gaisi Takeuti}}</span></code></pre></div>
+<p>また、例えば次のようにして <code>translator</code> や
+<code>Origlanguage</code>
+によって訳者、元言語などを指定することも出来ます：</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bibtex"><code class="sourceCode bibtex"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="va">@book</span>{<span class="ot">Kunen:2008</span>,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Author</span> = {Kenneth Kunen},</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Keywords</span> = {集合論, 数学, 数理論理学, 数学基礎論, 強制法},</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Language</span> = {Japanese},</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Note</span> = {<span class="ch">\cite</span>{Kunen:1980} の邦訳},</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Origlanguage</span> = {english},</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Publisher</span> = {日本評論社},</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Title</span> = {集合論―独立性証明への案内},</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Translator</span> = {藤田博司},</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>	<span class="dt">Year</span> = {2008}}</span></code></pre></div>
+<p>biblatex を使うには、preamble に次のように書きます：</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>[backend=bibtex, style=numeric]{<span class="ex">biblatex</span>}</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">\addbibresource</span>{myreference.bib}</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">\addbibresource</span>{biblio.bib}</span></code></pre></div>
+<p>ここでは、裏でファイル処理などを行ってくれるバックエンドとして今まで通り
+<code>bibtex</code>
+を使っています。今までは文献一覧を印字したいところに<code class="sourceCode latex"><span class="bu">\bibliography</span>{<span class="ex">myreference.bib,biblio.bib</span>}</code>などと指定していましたが、BibLaTeX
+では preamble で <code>\addbibresouce</code>
+を使って一つずつ追加していきます。</p>
+<p>本文で参考文献を表示したい時には次のようにします：</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">\printbibliography</span>[title=参考文献]</span></code></pre></div>
+<p>今までは <code>\bibliography{..}</code> を使っていましたが、BibLaTeX
+では <code>\printbibliography</code> です。BibLaTeX
+はまだ日本語にローカライズされていないので、単に<code>\printbibliography</code>
+だけだと「参考文献」の代わりに「Bibliography」が節題になってしまいます。それを避けるために、<code>[title=参考文献]</code>として強制的に節題を指定している訳です。</p>
+<p>biblatex にバックエンドとして bibtex
+と組み合わせて使う際には、一つ注意があります。どうした訳か
+<code>upbibtex</code> は <code>biblatex</code> の吐いた aux
+ファイルを処理しようとするとフリーズしてしまいます。ですので、latexmk
+での設定では</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode perl"><code class="sourceCode perl"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">$bibtex</span> = <span class="ot">&#39;</span><span class="ss">pbibtex</span><span class="ot">&#39;</span>;</span></code></pre></div>
+<p>と pbibtex
+を利用するように指定してやりましょう。そうすればちゃんと動きます。</p>
+<p>さて。biblatex は、biber
+と組み合わせれば文献のソート順も変えることが出来ます。<a href="http://texdoc.net/texmf-dist/doc/bibtex/biber/biber.pdf">biber</a>
+というのは（コマンドラインツールとしての）bibtex
+の代替で、biblatexのバックエンドとして使うことを想定して開発されているものです。</p>
+<p>例えば preamble に次のように書いたとします：</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>[backend=biber, style=numeric]{<span class="ex">biblatex</span>}</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">\DeclareSortingScheme</span>{mysorting}{</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\sort</span>{<span class="fu">\citeorder</span>}</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\sort</span>{<span class="fu">\field</span>{sortname} <span class="fu">\field</span>{author} <span class="fu">\field</span>{translator} <span class="fu">\field</span>{editor}}</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\sort</span>{year}</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\sort</span>{title}</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\ExecuteBibliographyOptions</span>{sorting=mysorting}</span></code></pre></div>
+<p>すると、参考文献は次のようにソートされます：</p>
+<ol type="1">
+<li>まず本文での出現順にソート</li>
+<li>次に
+<code>sortname</code>、<code>author</code>、<code>translator</code>、<code>editor</code>
+フィールドを順に見て云って、存在したらその値を使ってソート。</li>
+<li>続いて発表年でソートして</li>
+<li>最後にタイトルでソート</li>
+</ol>
+<p>こんな具合に、biber と biblatex
+を組み合わせると色々と柔軟な設定が出来るようになります。 ただ、単に
+backend を biber に指定しただけでは uplatex
+でちゃんと参考文献一覧を印字出来ません。latexmk
+の設定を次のように弄るひつようがあります：</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode perl"><code class="sourceCode perl"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="dt">$biber</span> = <span class="ot">&#39;</span><span class="ss">biber --bblencoding=utf8 -u -U --output_safechars</span><span class="ot">&#39;</span>;</span></code></pre></div>
+<p>これは、「.bblファイルのエンコードは UTF-8、入出力も共に UTF-8
+を使って、アクセント記号とかちょっとヤバめの記号は TeX
+にエンコードする」という意味の設定です。最後の「ヤバめ」云々というのがちょっと判りづらいですね。例えば
+biber はデフォルトのままだと bib ファイルで <code>G{\&quot;o}del</code>
+のように書かれているものを、自動的に <code>Gödel</code> に変更して bbl
+に出力します。欧米では既にUTF-8をサポートしたTeXのエンジンが広く用いられているのでこれで問題がないのですが、upLaTeX
+はユニコード文字は全て和文だと判断して処理します。すると、上の文字は<code>G ö del</code>のように字間や書体が変な形で印字されてしまうのです。それを避けるために、アクセント記号をはじめとしたユニコード文字は
+LaTeX
+の命令を使ってエンコードした形で出力させる必要があります。それに必要なのが
+<code>--output_safechars</code> オプションという訳です。</p>
+<p>こんな具合に、biber や biblatex を使えば従来の BibTeX
+では手のまわらなかった細かいところまで柔軟に設定することが出来ます。まだ日本語環境にローカライズされていなかったりしますが、それでも実用には耐え得るものになっていると云えると思います。</p>
+<section id="変更履歴" class="level2">
+<h3>変更履歴</h3>
+<ul>
+<li>2015/01/06 23:48:54 JST <code>-halt-on-error</code>
+についての説明を追加。</li>
+<li>2014/01/31 21:21:58 JST （多分）初版公開。</li>
+</ul>
+</section>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>本当は設定書かなくても平気なんですけど、platexとかの設定はちゃんと書いといた方が一々コマンドラインで指定しなくてよくて楽です。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>これは BibLaTeX がデフォルトでは
+<code>\emph{}</code>
+コマンドを使って書名を強調する仕様になっているからです。biblatex.pdf
+によればこの辺りのフォーマット方法とかも柔軟に設定出来るようですが、まだそこまで確かめていないです。また、和文と洋文とで異なる書体が混在しているのは気持ち悪いという事がありますが、その場合は
+<code>\emph{}</code>
+の定義を上書きしてしまえば、両方とも太字に統一出来たりします。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/prog/why-not-latexmk.html";
+          this.page.identifier = "/prog/why-not-latexmk.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/prog/why-not-latexmk.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>さらば愛しき JavaScript —— 愛と欲望の果てに Haskell は fay と出逢う。 - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content><meta name="description" content="Haskell のプログラムからJavaScriptを自動生成する Fay という言語処理系についての紹介記事。Haskell Advent Calendar 2012 の七日目の記事。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/articles/2012-12-25-fay-introduction.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/articles/2012-12-25-fay-introduction.html">
+  <meta property="og:title" content="さらば愛しき JavaScript —— 愛と欲望の果てに Haskell は fay と出逢う。">
+  <meta property="og:description" content="Haskell のプログラムからJavaScriptを自動生成する Fay という言語処理系についての紹介記事。Haskell Advent Calendar 2012 の七日目の記事。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/articles/">Blog</a></li>
+  <li class="li breadcrumb-item active">さらば愛しき JavaScript —— 愛と欲望の果てに Haskell は fay と出逢う。</li>
+</ol>
+
+    <div class="page-header">
+    <h1>さらば愛しき JavaScript —— 愛と欲望の果てに Haskell は fay と出逢う。 <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/articles/2012-12-25-fay-introduction.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/articles/2012-12-25-fay-introduction.html" class="hatena-bookmark-button" data-hatena-bookmark-title="さらば愛しき JavaScript —— 愛と欲望の果てに Haskell は fay と出逢う。 - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2012/12/25 14:11:11 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <p>これは <a href="http://partake.in/events/45a01d39-af5e-42f1-91c7-e8fcc91db244">Haskell
+Advent Calendar 2012</a> の七日目の記事です<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
+<section id="導入javascript-problem" class="level2">
+<h3>導入：JavaScript Problem</h3>
+<p><a href="http://www.haskell.org/haskellwiki/The_JavaScript_Problem">JavaScript
+Problem</a>
+と呼ばれるウェブ開発上の問題があり、手短にまとめてそれは概ね次のようなパラドックスの形を取る。</p>
+<ul>
+<li>JavaScript はクソである。</li>
+<li>JavaScript は必要である。</li>
+</ul>
+<p>何を云うのだ、JavaScript は決してクソなどではない、そんなことを云う
+Haskell
+の方こそがクズなのだと云う方も居られるだろう。しかし、これを云ったのは私ではないし、私はフレーム合戦を始めるためにこの文章を書こうという訳では勿論ない。</p>
+<p>上の要約を存在命題の形に言い直せば、幾分わかりやすくなるかもしれない。</p>
+<blockquote class="blockquote">
+<p>JavaScript の代わりに Haskell
+でプログラムを書けたら幸せになる人種は、確かにこの世に存在する。</p>
+</blockquote>
+<p>そして、この記事はそのような人種に向けてかかれたものだ。</p>
+</section>
+<section id="fay-とは" class="level2">
+<h3>Fay とは？</h3>
+<p>JavaScript Problem に対する一つの解として、ここでは <a href="http://fay-lang.org/">Fay</a>
+を採り上げる。公式サイトによれば、Fay の特徴は概ね次の通りだ。</p>
+<ul>
+<li>Haskell の構文的・意味論的サブセット
+<ul>
+<li>静的型付き、遅延評価、純粋</li>
+</ul></li>
+<li>JavaScript にコンパイルされる</li>
+<li>JS と互換性のある基本的データ型のサポート</li>
+<li>簡単な FFI 機構</li>
+<li>GHC を用いた型検査</li>
+</ul>
+<p>つまりは、「JavaScript の代わりにほぼ Haskell
+を用いることが出来る」と云うことだ。この<strong>ほぼ</strong>と云うのがどの辺りにあるのかを明らかにするのが、本稿の目的の一つだ。</p>
+<p>以下では、<a href="http://konn-san.com/haskell/automaton/">有限オートマトンシミュレータの例</a>を使って、Fay
+についての簡単な紹介をしていく。<a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs">GitHub
+にソースコード</a>がある。一通り遊べるような段階まで作ったつもりであるので、以下の記事を読むのがかったるいと云うような場合には、こいつで日がな一日ひたすら遊び倒すと云うのも一興ではないだろうか。</p>
+<section id="余談オートマトンとは" class="level3">
+<h4>余談：オートマトンとは</h4>
+<p>オートマトンと云うのは正規表現のことだと思って頂いて間違いはない。間違いはないのだが、まあそうは見えないだろう。噛み砕いて、菱形の頂点から出発して入力された文字に従って枝を辿っていったとき、最後に二重線で囲まれた頂点に居れば勝ち、そうでなければ負け、と云うようなゲームだと思えばよい。例えば、初期状態で
+“10010” を入力して “Run”
+を押せば、左下から出発して「0→1→2→4→3→0」と辿ることになり、最後に二重四角に辿り着いているので勝ち。“1011001”
+なら「0→1→2→5→5→4→2→5」となりただの丸で終わるので負け。シミュレータで実行した場合、緑色のマスが今いる頂点で、最終的に赤で止まれば負け、青で止まれば勝ちとなる。適当に文字列を入力したり、図を組替えたりして遊ぶ内にどういうものかうっすらとでもおわかり頂けるのではないかと思う。</p>
+<p>閑話休題。そろそろオートマトンの記事なのか Fay
+の記事なのか解らなくなってきたところで、本編に移ろう。</p>
+</section>
+</section>
+<section id="fay-の概観" class="level2">
+<h3>Fay の概観</h3>
+<p>まずは</p>
+<pre><code>$ cabal install fay</code></pre>
+<p>として <code>fay</code> をインストールしよう。</p>
+<p>どんな感じでプログラムが書けるのかと云うところに関しては、<a href="https://github.com/konn/fay-automaton-demo/blob/master/Automaton.hs">ソースコード</a>の方を見て貰うのが早いと思う。至って普通の
+Haskell プログラムに見える。これを <code>fay</code>
+コマンドに喰わせると、<a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.js">このような
+JavaScript</a> が生成されて、あとはこれを HTML で読み込めば良い。</p>
+<p>Fay を使った開発のワークフローとしては、</p>
+<ol type="1">
+<li>お気に入りのエディタを起動する</li>
+<li>一見 Haskell っぽいプログラムを書く</li>
+<li>GHCi に読み込ませて型検査をする</li>
+<li><code>$ fay Hoge.hs</code> などとして JavaScript に変換する</li>
+<li>ブラウザや Node.js を使って動作を検証するre</li>
+</ol>
+<p>と云う流れになる。GHCi
+は型検査にしか使わないところが要なのだが、詳細は後程ということにして、早速コードを見ていこう。まず大まかにコードの設計について紹介しよう。主なデータ型の意味は以下の通り。</p>
+<dl>
+<dt><a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs#L626"><code class="sourceCode haskell"><span class="dt">Trans</span></code></a></dt>
+<dd>
+<p>状態遷移を表す。図で云う矢印。遷移前の状態(<code class="sourceCode haskell">transFrom</code>)、入力、遷移後の状態を持つ。</p>
+</dd>
+<dt><a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs#L624"><code class="sourceCode haskell"><span class="dt">State</span></code></a></dt>
+<dd>
+<p>内部状態を表す。図で云う菱形や丸の部分。<code class="sourceCode haskell"><span class="dt">Int</span></code>
+の別名。</p>
+</dd>
+<dt><a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs#L635"><code class="sourceCode haskell"><span class="dt">Automaton</span></code></a></dt>
+<dd>
+<p>オートマトンを表す。状態遷移のリスト(<code class="sourceCode haskell">transs</code>)、図では菱形で表される初期状態(<code class="sourceCode haskell">initial</code>)、二重線で囲まれた受理状態のリスト（<code class="sourceCode haskell">accepts</code>）を持つ。</p>
+</dd>
+<dt><a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs#L587"><code class="sourceCode haskell"><span class="dt">AutomatonState</span></code></a></dt>
+<dd>
+<p>オートマトンのレイアウトや、選択中の頂点・辺の情報、実行中の場合は現在の状態などを持つ。</p>
+</dd>
+</dl>
+<p>では早速最初の方から見ていこう。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE EmptyDataDecls, NamedFieldPuns, NoImplicitPrelude #-}</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE RecordWildCards                                   #-}</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# OPTIONS_GHC -fno-warn-incomplete-patterns  #-}</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Automaton</span> (main) <span class="kw">where</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.Fay.FFI</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.Fay.Prelude</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">MyPrelude</span></span></code></pre></div>
+<p>はおまじないみたいなものだ。Fay では <code class="sourceCode haskell"><span class="dt">Prelude</span></code>
+の代わりに <code class="sourceCode haskell"><span class="dt">Language.Fay.Prelude</span></code>
+を使うので、<code class="sourceCode haskell"><span class="dt">NoImplicitPrelude</span></code>
+言語拡張を用いる必要がある。また、<code class="sourceCode haskell"><span class="dt">EmptyDataDecls</span></code>
+拡張はJavaScript 側のデータに対応する型を作るのに使われる<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。どういうことか。例えば <a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs#L680">680
+行目</a>以降を見てみよう。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Element</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Foreign</span> <span class="dt">Element</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Show</span> <span class="dt">Element</span></span></code></pre></div>
+<p>ここで、Element は JavaScript の DOM （ないしは jQuery）API での HTML
+の要素を表わすデータ型だ。Haskell
+側ではこの子の定義をしらないので、型の名前だけ作って、中身は空にしている。JavaScript
+では関数に型が付いていないので、存在しない関数を呼ぶと実行時エラーになるが、こうして
+Fay の側で型を分けておけばそういったエラーをある程度排除出来る。</p>
+<p><code class="sourceCode haskell"><span class="dt">Foreign</span></code> は
+Haskell と JavaScript
+とやり取りが出来る、と云う印のようなものと思っておけばよい。<code class="sourceCode haskell"><span class="dt">Show</span></code>
+インスタンスの関数定義がないように見えるが、これは通常の <code class="sourceCode haskell"><span class="dt">Show</span></code>
+クラスとは若干違うもので、JavaScript
+の側で印字出来る、ということを表しているにすぎない。印字は JavaScript
+で行われるので、一度JavaScript にコンパイルされてしまえば、全ては Object
+なので自然に印字出来るから、<code class="sourceCode haskell"><span class="fu">show</span></code>
+関数などを実装する必要はない。そうそう、Show の結果は JavaScript
+の方式に則ってなされる。そもそも <code class="sourceCode haskell"><span class="dt">Fay.Prelude</span></code>
+では <code class="sourceCode haskell"><span class="dt">Show</span></code>
+のメンバ関数はエクスポートされていない。GHC であるていどの Printf
+デバッグがしたいと思ったら、<code class="sourceCode haskell"><span class="kw">deriving</span></code>
+節を使えばよい。</p>
+<p>さて、<code class="sourceCode haskell"><span class="dt">Element</span></code>
+と云う型を定義したからには、それを弄る DOM 関数を定義したい。それには
+Fay の ffi 機構を使えば簡単に出来る。例えば、イベントハンドラを登録する
+<code class="sourceCode haskell">bind</code> という jQuery
+の関数があるが、これを呼び出す関数 <code class="sourceCode haskell">bind</code> は次のように実装出来る（<a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs#L690">690行目</a>）。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">bind ::</span> <span class="dt">Element</span> <span class="ot">-&gt;</span> <span class="dt">String</span> <span class="ot">-&gt;</span> (<span class="dt">Event</span> <span class="ot">-&gt;</span> <span class="dt">Fay</span> <span class="dt">Bool</span>) <span class="ot">-&gt;</span> <span class="dt">Fay</span> ()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>bind <span class="ot">=</span> ffi <span class="st">&quot;%1.bind(%2, %3)&quot;</span></span></code></pre></div>
+<p><code class="sourceCode haskell">ffi</code> 関数は、GHC
+側から見れば実体としては <code class="sourceCode haskell"><span class="fu">undefined</span></code>
+と同じだ。これが意味を持つのは fay
+に処理させた時で、型注釈から引数の数を推定して、<code>%1</code>,
+<code>%2</code>, <code>%3</code> などのプレースホルダに入れた状態の
+JavaScript
+を生成してくれる。関数や文字列なども自動的に変換してくれる。<code class="sourceCode haskell"><span class="dt">Fay</span></code> は <code class="sourceCode haskell"><span class="dt">IO</span></code>
+モナドの代わりのようなもので、副作用を伴うような操作はすべて <code class="sourceCode haskell"><span class="dt">Fay</span></code>
+モナドに包まれている。だから、<code class="sourceCode haskell">main</code> 関数の型も、ここでは <code class="sourceCode haskell"><span class="dt">Fay</span> ()</code>
+になっている。<code class="sourceCode haskell">bind</code>
+の使用例は例えば、<code class="sourceCode haskell">run</code>
+関数を見てみよう（<a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs#L16">16行目</a>）。</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">run ::</span> <span class="dt">Event</span> <span class="ot">-&gt;</span> <span class="dt">Fay</span> <span class="dt">Bool</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>run _ <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- set up canvas</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  canvas <span class="ot">&lt;-</span> jQuery <span class="st">&quot;canvas&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  cxt <span class="ot">&lt;-</span> <span class="fu">flip</span> getContext <span class="st">&quot;2d&quot;</span> <span class="op">=&lt;&lt;</span> getIndex canvas <span class="dv">0</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  mps <span class="ot">&lt;-</span> newRef defAutomatonState</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  renderAutomaton cxt mps</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  bind canvas <span class="st">&quot;mousedown&quot;</span> (onMouseDown mps cxt)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  bind canvas <span class="st">&quot;mousemove&quot;</span> (onMouseMove mps cxt)</span></code></pre></div>
+<p>こんな感じに、本当に普通の関数のように呼べる。呼ばれている <code class="sourceCode haskell">onMouseDown</code> 関数を見てみると、</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">onMouseDown ::</span> <span class="dt">Ref</span> <span class="dt">AutomatonState</span> <span class="ot">-&gt;</span> <span class="dt">Context</span> <span class="ot">-&gt;</span> <span class="dt">Event</span> <span class="ot">-&gt;</span> <span class="dt">Fay</span> <span class="dt">Bool</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>onMouseDown rps cxt ev <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  ps <span class="ot">&lt;-</span> readRef rps</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  pos <span class="ot">&lt;-</span> getMousePos ev</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> state <span class="ot">=</span> getStateAt ps pos</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      trans <span class="ot">=</span> getTransAt ps pos</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> <span class="fu">not</span> (<span class="fu">null</span> trans)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">then</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> mouseState ps <span class="op">==</span> <span class="dt">TransSelected</span> trans</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">then</span> setMouseIdle rps</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      <span class="kw">else</span> setTransSelected trans rps</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">else</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> state <span class="kw">of</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Just</span> q  <span class="ot">-&gt;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>          <span class="kw">if</span> mouseState ps <span class="op">==</span> <span class="dt">StateSelected</span> q</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>          <span class="kw">then</span> setMouseIdle rps</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>          <span class="kw">else</span> setMouseState rps (<span class="dt">PointAtState</span> q)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Nothing</span> <span class="ot">-&gt;</span> setMouseIdle rps</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  renderAutomaton cxt rps</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> <span class="dt">False</span></span></code></pre></div>
+<p>こんな感じになっていて、これも普通の Haskell
+のコードそのものだ。<code class="sourceCode haskell"><span class="dt">Ref</span></code>
+と云うのが出て来ているが、これは可変参照を表す型で、さっき出て来た <code class="sourceCode haskell"><span class="dt">Foreign</span></code>
+のインスタンスの値を仕舞っておく事が出来る。<code class="sourceCode haskell"><span class="dt">Ref</span></code> は Fay
+の側で提供されている訳ではなく、こちらでその API
+を呼び出してやる必要がある。その辺りの実装は <a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs#L647">647行目</a>以降にある。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Ref</span> a</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Foreign</span> a <span class="ot">=&gt;</span> <span class="dt">Foreign</span> (<span class="dt">Ref</span> a)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- | Make a new mutable reference.</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ot">newRef ::</span> <span class="dt">Foreign</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Fay</span> (<span class="dt">Ref</span> a)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>newRef <span class="ot">=</span> ffi <span class="st">&quot;new Fay$$Ref(%1)&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- | Replace the value in the mutable reference.</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="ot">writeRef ::</span> <span class="dt">Foreign</span> a <span class="ot">=&gt;</span> <span class="dt">Ref</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Fay</span> ()</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>writeRef <span class="ot">=</span> ffi <span class="st">&quot;Fay$$writeRef(%1,%2)&quot;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">-- | Get the referred value from the mutable value.</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="ot">readRef ::</span> <span class="dt">Foreign</span> a <span class="ot">=&gt;</span> <span class="dt">Ref</span> a <span class="ot">-&gt;</span> <span class="dt">Fay</span> a</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>readRef <span class="ot">=</span> ffi <span class="st">&quot;Fay$$readRef(%1)&quot;</span></span></code></pre></div>
+<p>Fay では <code class="sourceCode haskell"><span class="dt">State</span></code> や <code class="sourceCode haskell"><span class="dt">Reader</span></code>
+は使えないので、この <code class="sourceCode haskell"><span class="dt">Ref</span></code>
+を使って、状態を引き回すことになる。他の関数を見ると、アプリの内部状態や
+canvas の文脈を引数として引き回しているのが判ると思う。</p>
+<p>Fay では、Haskell のデータ型と JavaScript
+のデータ型をシームレスに連携させる事が出来る。文字列・配列・数値型などは
+Haskell のをそのまま使える。例えば、矢印の描画位置を計算している <a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs#L437"><code class="sourceCode haskell">getTransShape</code>
+関数</a>を見てみよう（438行目）。</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ot">getTransShape ::</span> <span class="dt">AutomatonState</span> <span class="ot">-&gt;</span> <span class="dt">Trans</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">TransShape</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>getTransShape <span class="dt">AutomatonState</span>{<span class="op">..</span>} <span class="dt">Trans</span>{transFrom <span class="ot">=</span> src, transTo <span class="ot">=</span> targ} <span class="ot">=</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> (<span class="fu">lookup</span> src stateMap, <span class="fu">lookup</span> targ stateMap) <span class="kw">of</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">Just</span> p0<span class="op">@</span>(x, y), <span class="dt">Just</span> p1<span class="op">@</span>(x&#39;, y&#39;)) <span class="ot">-&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> p0 <span class="op">==</span> p1</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">then</span> <span class="dt">Just</span> (<span class="dt">Arc</span> p0)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">else</span> <span class="kw">let</span> theta <span class="ot">=</span> <span class="kw">if</span> x <span class="op">&lt;=</span> x&#39; <span class="kw">then</span> <span class="fu">atan</span> ((y<span class="op">-</span>y&#39;) <span class="op">/</span> (x<span class="op">-</span>x&#39;)) <span class="kw">else</span> <span class="fu">pi</span> <span class="op">+</span> <span class="fu">atan</span> ((y<span class="op">-</span>y&#39;) <span class="op">/</span> (x<span class="op">-</span>x&#39;))</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">in</span> <span class="kw">if</span> <span class="fu">any</span> (\t <span class="ot">-&gt;</span> transFrom t <span class="op">==</span> targ <span class="op">&amp;&amp;</span> transTo t <span class="op">==</span> src) (transs automaton)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">then</span> <span class="dt">Just</span> <span class="op">$</span> <span class="dt">Line</span> (p0 <span class="op">%+</span> stateRadius <span class="op">%*</span> angle (theta <span class="op">+</span> <span class="fu">pi</span><span class="op">/</span><span class="dv">8</span>))</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                       (p1 <span class="op">%-</span> stateRadius <span class="op">%*</span> angle (theta <span class="op">-</span> <span class="fu">pi</span><span class="op">/</span><span class="dv">8</span>))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      <span class="kw">else</span> <span class="dt">Just</span> <span class="op">$</span> <span class="dt">Line</span> (p0 <span class="op">%+</span> stateRadius <span class="op">%*</span> angle theta)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                       (p1 <span class="op">%-</span> stateRadius <span class="op">%*</span> angle theta)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    _ <span class="ot">-&gt;</span> <span class="dt">Nothing</span></span></code></pre></div>
+<p>ここでやっているのは、</p>
+<ol type="1">
+<li>自分自身への矢印は円形を描く。</li>
+<li>反対向きの矢印がなければ、頂点の半径の分だけ間を開けて線を引く。</li>
+<li>もし反対向きの矢印があれば、更に15度ずつズラして線を引く。</li>
+</ol>
+<p>という計算だ。<code class="sourceCode haskell"><span class="fu">atan</span></code> や <code class="sourceCode haskell"><span class="fu">pi</span></code>
+を使って幾何の計算をしている。これを GHCi
+で読み込んで実行しようとすると、</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ghci<span class="op">&gt;</span> getTransShape defAutomatonState (<span class="dt">Trans</span> <span class="dv">0</span> <span class="ch">&#39;0&#39;</span> <span class="dv">1</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Just</span> (<span class="dt">Line</span> (<span class="op">***</span> <span class="dt">Exception</span><span class="op">:</span> Language.Fay.FFI.foreignFay<span class="op">:</span> <span class="dt">Used</span> foreign function <span class="fu">not</span> <span class="kw">in</span> a <span class="dt">JS</span> engine context<span class="op">.</span></span></code></pre></div>
+<p>と叱られる。これは、内部的には <code class="sourceCode haskell"><span class="fu">atan</span></code> や <code class="sourceCode haskell"><span class="fu">pi</span></code> は <code class="sourceCode haskell">ffi</code>
+関数（の仲間）を使って定義してあるためで、これらのデバッグをしようと思ったらブラウザや
+Node.js を使うか、或いは一旦 <code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Language.Fay.Prelude</span></code>
+をコメントアウトして、<code class="sourceCode haskell"><span class="dt">Prelude</span></code>
+を読み込むようにする必要がある。必要な計算がわかっている場合は、最初は
+GHC だけで開発して、最終的に Fay
+に合うように書き換えると云う手段も取れるだろう。</p>
+<p>データ型の変換で注意する必要があるのが、文字列の取り扱いだ。Haskell
+のリストはリンクドリストに変換されていて、String
+は文字列型にマップされている。この辺りの齟齬が出て来るのは、例えば文字列を
+<code class="sourceCode haskell"><span class="fu">map</span></code>
+で書き換えたり、文字を集めてリストとして文字列を作ったときだ。例えば、<code class="sourceCode haskell">setTransSelected</code> 関数を見てみよう（<a href="https://github.com/konn/fay-automaton-demo/blob/fb4528c424977891fe6ae726f665e3feb35d33f3/Automaton.hs#L248">248行目</a>）。</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ot">setTransSelected ::</span> [<span class="dt">Trans</span>] <span class="ot">-&gt;</span> <span class="dt">Ref</span> <span class="dt">AutomatonState</span> <span class="ot">-&gt;</span> <span class="dt">Fay</span> ()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>setTransSelected ts asRef <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  as <span class="ot">&lt;-</span> readRef asRef</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  writeRef asRef as { mouseState <span class="ot">=</span> <span class="dt">TransSelected</span> ts }</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  hideInspectors</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  expose <span class="op">=&lt;&lt;</span> jQuery <span class="st">&quot;#trans-inspector&quot;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  [tFrom, tInps, tTo] <span class="ot">&lt;-</span> <span class="fu">mapM</span> jQuery [<span class="st">&quot;#trans-info-from&quot;</span>, <span class="st">&quot;#trans-info-inputs&quot;</span>, <span class="st">&quot;#trans-info-to&quot;</span>]</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  setValue tFrom (<span class="fu">show</span> <span class="op">$</span> transFrom <span class="op">$</span> <span class="fu">head</span> ts)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  setValue tTo (<span class="fu">show</span> <span class="op">$</span> transTo <span class="op">$</span> <span class="fu">head</span> ts)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  setValue tInps <span class="op">=&lt;&lt;</span> arrToStr (<span class="fu">map</span> transAlphabet ts)</span></code></pre></div>
+<p>これは、クリックされた所にある矢印のリストを受け取って、それらを選択状態にする関数だ。選択したらその情報をテキストフィールドに反映する必要がある。<code class="sourceCode haskell"><span class="ot">transAlphabet ::</span> <span class="dt">Trans</span> <span class="ot">-&gt;</span> <span class="dt">Char</span></code>
+と云う型なので、矢印（<code class="sourceCode haskell"><span class="dt">Trans</span></code>）のリストに対して
+<code class="sourceCode haskell"><span class="fu">map</span> transAlphabet ts</code>
+としてやれば、文字のリストが得られて、Haskell
+ではこれが文字列になる訳だが、JavaScript レベルではこれは
+<strong>文字の配列</strong> であって文字列ではない。なので、 <code class="sourceCode haskell">arrToStr</code>
+と云う便利関数を定義して、これで変換している。Haskell
+上では型があっているので <code class="sourceCode haskell">arrToStr</code>
+がなくても検査は通るのだが、最後の行を</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>  setValue tInps (<span class="fu">map</span> transAlphabet ts)</span></code></pre></div>
+<p>などとすると、<code>abc</code> と表示されるべきところ、
+<code>[Object object]</code> のような形になってしまう。因みに、<code class="sourceCode haskell">arrToStr</code> は</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ot">arrToStr ::</span> [<span class="dt">Char</span>] <span class="ot">-&gt;</span> <span class="dt">Fay</span> <span class="dt">String</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>arrToStr <span class="ot">=</span> ffi <span class="st">&quot;%1.join(&#39;&#39;)&quot;</span></span></code></pre></div>
+<p>と云う風に <code class="sourceCode haskell">ffi</code> を使って <code class="sourceCode javascript">join</code>
+を呼び出す形で定義している。</p>
+<p>あとのプログラムの詳細については、どちらかと云うと jQuery
+の使い方や幾何計算の説明になってしまうので、プログラムについてはこの辺りにしておく。</p>
+</section>
+<section id="fay-を使ってみて" class="level2">
+<h3>Fay を使ってみて</h3>
+<p>以上を踏まえて、Fay を使ってみた感想を書いてみたい。</p>
+<p>Fay は基本的には Haskell のサブセットなので、普段 Haskell
+を書くように Fay
+を書けば問題はない。これは非常に嬉しい。しかし、サブセットである悲しさとして、以下のような違いがある。</p>
+<section id="prelude-の代わりに-language.fay.prelude-を使う" class="level3">
+<h4><code class="sourceCode haskell"><span class="dt">Prelude</span></code>
+の代わりに <code class="sourceCode haskell"><span class="dt">Language.Fay.Prelude</span></code>
+を使う</h4>
+<p><code class="sourceCode haskell"><span class="dt">Prelude</span></code>
+関数とほぼ同等か、それ以外にも <code class="sourceCode haskell"><span class="dt">Data.List</span></code> や
+<code class="sourceCode haskell"><span class="dt">Data.Maybe</span></code>
+などから引っ張ってきた関数もエクスポートされているが、やはり足りないので、必要な関数はコピペしてやる必要がある。
+上の例では、<a href="https://github.com/konn/fay-automaton-demo/blob/master/MyPrelude.hs">MyPrelude.hs</a>にそのような欠けている関数のコピペ群がある。</p>
+<p>また、<code class="sourceCode haskell"><span class="dt">Read</span></code>
+クラスもちゃんと動かないので、数値などをパーズしようと思ったら、<a href="https://github.com/konn/fay-automaton-demo/blob/master/MyPrelude.hs#L45"><code class="sourceCode haskell">parseInt</code> 関数</a> のように、ffi でJS
+の対応するパーズ関数を読んでやる必要がある。</p>
+<p>ローカルのモジュールは読み込むことが出来るので、頻繁に使うような関数は、<code>MyPrelude.hs</code>
+みたいな形で切り出して用意しておくと良いだろう。</p>
+</section>
+<section id="外部パッケージに依存出来ない" class="level3">
+<h4>外部パッケージに依存出来ない。</h4>
+<p>上でもちらっと触れたが、全てを JavaScript
+にコンパイルする都合上、<code class="sourceCode haskell"><span class="op">Language.Fay.*</span></code>
+のモジュールと、ローカルのモジュール以外の外部ライブラリのモジュールはインポート出来ない。外部ライブラリと云うのは、<code>base</code>
+パッケージなど基本的なものも含めてインポート出来ない。これは割と不便だ。Monadic
+だったり Applicative
+でないものに関しては、上で云ったようにコピペすればいいが、では <code class="sourceCode haskell"><span class="dt">Monad</span></code>
+は……詳細後述。</p>
+</section>
+<section id="モナドはほぼ-fay-限定" class="level3">
+<h4>モナドはほぼ <code class="sourceCode haskell"><span class="dt">Fay</span></code> 限定</h4>
+<p>現時点では、<code class="sourceCode haskell"><span class="dt">Fay</span></code>
+以外のモナドは実質使えない。</p>
+<p>Fay で提供されている <code class="sourceCode haskell">(<span class="op">&gt;&gt;=</span>)</code>,
+<code class="sourceCode haskell"><span class="fu">return</span></code>
+などは全て <code class="sourceCode haskell"><span class="dt">Fay</span></code>
+モナドに特化した形に書き換えられている。<code class="sourceCode haskell"><span class="kw">do</span></code>
+構文はどのモナドに対しても使えるのだが、<code class="sourceCode haskell"><span class="fu">return</span></code>
+が使えないので余り意味を成さない。</p>
+<p>この制限は正直かなしかった。特に、今回のように <code class="sourceCode haskell">canvas</code>
+を引き回して描画命令を出す必要がある場合、<code class="sourceCode haskell"><span class="dt">Reader</span></code>
+モナドが使えないと正直書きづらくてしょうがないし、<code class="sourceCode haskell"><span class="dt">Maybe</span></code> も <code class="sourceCode haskell"><span class="fu">lookup</span></code> を
+<code class="sourceCode haskell"><span class="op">&gt;&gt;=</span></code>
+でチェーンしたり、<code class="sourceCode haskell">(,) <span class="op">&lt;$&gt;</span> <span class="fu">lookup</span> a hoge <span class="op">&lt;*&gt;</span> <span class="fu">lookup</span> b fuga</code>
+のような書き方が出来ないのは割と辛いものがある。<code class="sourceCode haskell"><span class="dt">Reader</span></code> や
+<code class="sourceCode haskell"><span class="dt">State</span></code>
+は諦めて <code class="sourceCode haskell"><span class="dt">Ref</span></code>
+を噛ませて引数として引き回すしかない。</p>
+</section>
+<section id="ghc-で型検査は出来るが実行は出来ない関数がある" class="level3">
+<h4>GHC で型検査は出来るが、実行は出来ない関数がある。</h4>
+<p>前節でも触れたが、 GHC
+では実行出来ない関数がある。主に数値計算や文字列処理の辺りだ。これらは
+ffi を用いて実装されていて、GHC 内部では <code class="sourceCode haskell"><span class="fu">undefined</span></code>
+扱いなので、こういった操作を行おうとすると失敗する。したがって、ブラウザで実行しながらがんばって
+printf デバッグをするか、或いは一旦 <code class="sourceCode haskell"><span class="dt">Language.Fay.Prelude</span></code>
+をコメントアウトして <code class="sourceCode haskell"><span class="dt">Prelude</span></code>
+を読み込むなどして動かしてみて試すしかない。間違っても吐き出された JS
+のソーコードを読もうと思ってはいけない。というか読めない。<code class="sourceCode bash"><span class="ex">$</span> fay Automaton.hs <span class="at">--pretty</span></code>
+と云う具合に <code>--pretty</code>
+オプションを付ければちょっとは読み易くはなり、公式サイトのほうにシンボルの読み方等はあることにはある。</p>
+<p>このような関数をデバッグするのは、ちょっと慣れないと大変だ。</p>
+</section>
+<section id="使えない言語拡張がある" class="level3">
+<h4>使えない言語拡張がある。</h4>
+<p>サブセットなので、全ての言語拡張を使える訳ではない。 Template Haskell
+系の拡張はまあ残念ながら全滅。PatternGuards
+も無理だった。また、NamedFieldPuns
+などは使えるようだが、レコード構文がネストすると上手くパーズ出来ないようだ。DoAndIfThenElse
+とかも上手く動かない。あと、</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">case</span> hoge <span class="kw">of</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Fuga</span> a <span class="op">|</span> a <span class="ot">`elem`</span> target <span class="ot">-&gt;</span> <span class="op">....</span></span></code></pre></div>
+<p>のような構文もサポートされていないらしい。どの構文がサポートされていてどれがサポートされていないかは、<code class="sourceCode bash"><span class="ex">fay</span></code>
+コマンドにソースを通すと判るので、適宜それを使わないように書き換えていく必要がある。</p>
+</section>
+</section>
+<section id="他の候補" class="level2">
+<h3>他の候補</h3>
+<p>ここでは「JavaScript の代わりに Haskell を使いたい」と云う欲望の形で
+JavaScript Porblem
+を紹介したが、ようは「リッチな型システムや柔軟性といったものを追加した
+Better JavaScript
+がほしい」と云う要望としても表現出来る。というかそうした立場のほうが一般的だ。そうした視点も加味して、以下のような選択肢もあるらしい<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>。</p>
+<dl>
+<dt><a href="http://roy.brianmckenna.org/">Roy</a></dt>
+<dd>
+<p>型推論や函数型言語的な要素を含んだ言語。</p>
+</dd>
+<dt><a href="http://coffeescript.org/">CoffeeScript</a></dt>
+<dd>
+<p>Ruby のような感じで JavaScript を書けるらしい。</p>
+</dd>
+<dt><a href="http://www.typescriptlang.org/">TypeScript</a></dt>
+<dd>
+<p>JavaScript のような構文に、型注釈や型推論を追加した言語。</p>
+</dd>
+<dt><a href="http://haxe.org/">Haxe</a></dt>
+<dd>
+<p>型推論や subtyping
+などの強力な型システムやクロージャなどを備えた言語。JavaScript 以外にも
+swf や C++、PHP へのコンパイルも可能なもよう（2012/12/26 追記）。</p>
+</dd>
+<dt><a href="http://ocsigen.org/js_of_ocaml/">js_of_ocaml</a></dt>
+<dd>
+<p>Haskell と双璧をなす函数型言語、<a href="http://caml.inria.fr/">OCaml</a> のバイトコードから JavaScript
+へのコンパイラ（2012/12/26 追記）。</p>
+</dd>
+</dl>
+<p>もっと Haskell っぽい選択肢、となると以下のようなものがある。</p>
+<dl>
+<dt><a href="https://github.com/ghcjs/ghcjs">GHCJS</a></dt>
+<dd>
+<p>JavaScript を吐くように改造された
+GHC。やばい。まだ未完成ではあるが、完成すれば Fay よりも凄いだろう。GHC
+を本当に改造したバージョンと、GHC API
+を使うバージョンの二つがあるが、インストール作業がかなり時間が掛かる。残念ながら時間がなかったので筆者はインストールを断念した。今後に期待。</p>
+</dd>
+<dt><a href="http://uu-computerscience.github.com/uhc-js/">UHC</a></dt>
+<dd>
+<p>GHC に次ぐ有力な Haskell Compiler、UHC の JavaScript
+バックエンド。</p>
+</dd>
+<dt><a href="http://elm-lang.org/">Elm</a></dt>
+<dd>
+<p>Haskell
+にかなり近い構文を持った、函数型リアクティヴ言語。まだちゃんと試してみたことはないが、より
+JavaScript
+の機能を使い易いように注力しているようだ。意味論的には正格言語で、遅延評価はないので、厳密なサブセットではない。</p>
+</dd>
+</dl>
+<p>あるいは、JavaScript
+を生成するようなライブラリも沢山ある。それを使うのも一つの手か。</p>
+</section>
+<section id="結論" class="level2">
+<h3>結論</h3>
+<p>Fay を使えば、ほとんど JavaScript を書かずに Haskell
+で済ませることが出来る。 ほとんど、と云うのは、まだ Fay 上に構築された
+jQuery などのラッパーが十分に開発されていないため、自分で <code class="sourceCode haskell">ffi</code> 関数で JavaScript
+のコード断片を書く必要があるということだ。コード断片を書く必要があると云うことは、JavaScript
+について調べなくてはならず、そこが揃っていないと結局 JavaScript
+を書いているような気分になってしまう。まあ、この辺りはライブラリが充実してくれば大丈夫だろう。というわけなので、表題の「さらば愛しき
+JavaScript」と云うのは嘘だ。おさらばは出来ない。というかそこまで愛しくなかった。</p>
+<p>[2012/12/26 追記] まだ Hackage に登録はされていないようだが、GitHub
+に <a href="https://github.com/faylang/fay-jquery">fay-jquery</a>
+というレポジトリーがあった。まだ設計を試行錯誤している最中のようだが、完成すればかなり便利だろう。GitHub
+には、他にも <a href="https://github.com/faylang/fay-dom">DOM API
+のラッパー</a>もあった。また、今回の例では canvas
+のラッパーを頑張ってこちらで書いたが、GitHub の examples 以下にも <a href="https://github.com/faylang/fay/blob/master/examples/CodeWorld.hs">canvas
+を有効活用している例</a>があって、ここから持ってくるのもよいかもしれない。</p>
+<p>ただ、Fay の FFI
+インターフェースはシンプルだが使い勝手がよいと思う。きちんと引数の数が合っているかも
+<code>fay</code> コンパイラがチェックしてくれるし。<code class="sourceCode haskell">ffi</code> でしっかり API
+を組んでおけば、あとはそれを使うだけでよい。もっとも、ここで設計をミスると
+JavaScript の方でエラーが起きるので注意が必要だ。また、特定の JavaScript
+環境に依存しない形になっているので、お気に入りの JavaScript
+ライブラリと組み合わせて使うことが出来る。<a href="http://www.yesodweb.com/blog/2012/10/yesod-fay-js">Yesod Blog</a>
+では、 AngularJS と組み合わせる方法が紹介されていた。</p>
+<p>あと、やはり Fay
+以外のモナドも自由に扱えたほうが嬉しい。何度も云うようだが、ここで <code class="sourceCode haskell"><span class="dt">Reader</span></code>
+モナドが使えればすっきり書けるのに……と云ったような場面によく遭遇した。また、<code class="sourceCode haskell">ffi</code> を使っている関数でも、基本的な
+Prelude 関数とかは GHC
+で読み込んで実行出来ると、手軽にデバッグ出来ると嬉しいなあと思う。JavaScript
+コンソールや Node.js に読み込ませる方法もあるが、Haskell
+で定義した関数が呼べたり呼べなかったりするのでちょっと難しい。</p>
+<p>また、ここでは紹介出来なかったが、<a href="http://hackage.haskell.org/package/yesod-fay">yesod-fay</a>
+パッケージを使うと、<a href="http://www.yesodweb.com/">Yesod</a>
+アプリとブラウザ間で Ajax 通信を行う時に、どちらの処理も Haskell
+で書けて、しかもデータ型を共有出来るというスゴイ旨みがある。他の Yesod
+の要素と同じように継続ビルド環境もある。詳細はパッケージの説明を参照して貰いたい。Yesod
+の開発者である Michael も Fay と ghcjs
+に大きな期待を寄せているようだ。</p>
+<p>私も同じ気持ちで、GHCJS
+が発展してくれたらこんなに嬉しいことはない。まずはインストールが簡単になってほしい。もちろん、GHCJS
+を新たに入れ直すのとかは面倒なので、簡単なものは Fay
+を使えばいいと思う。</p>
+<p>という訳で、結論としては JavaScript
+とおさらばすることは出来ないが、Better JavaScript としての Haskell<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>
+としては、そろそろ役者が揃って実用出来る段階に入ってきていると思う。今回のプログラムは900行弱だが、コンパイルした
+JS もあまりもっさりせず軽快に動く。Haskeller 諸氏におかれましては、何か
+JavaScript を書く必要に迫られた際に、是非 fay を試してみてほしい。</p>
+<p>それでは。Happy Haskelling!</p>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>日付がおかしいと云う向きもあろうが、それは私の正格性解析器が壊れていたせいであり、私自身の責任ではない。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>他の言語拡張については、書くのが楽だから指定してあるだけだ。Fay
+では全ての言語拡張が使える訳ではないので注意。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>らしい、と云うのはまだ試していないので。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>なんだか牛刀めいた表現だなあ。<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/articles/2012-12-25-fay-introduction.html";
+          this.page.identifier = "/articles/2012-12-25-fay-introduction.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/articles/2012-12-25-fay-introduction.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

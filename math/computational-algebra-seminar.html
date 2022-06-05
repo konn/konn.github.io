@@ -1,0 +1,317 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>計算機代数ゼミ発表資料 - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="数学,計算機代数,代数幾何,Gröbner基底,グレブナー基底,数値計算,Groebner基底,代数学,アルゴリズム,Haskell,プログラミング"><meta name="description" content="2013年度の計算機代数ゼミの発表資料です。主にGröbner基底の基礎理論から、それを応用した消去理論、連立代数方程式の解法などについてを取り扱っています。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/math/computational-algebra-seminar.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  <link rel="stylesheet" href="/css/math.css">
+
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/math/computational-algebra-seminar.html">
+  <meta property="og:title" content="計算機代数ゼミ発表資料">
+  <meta property="og:description" content="2013年度の計算機代数ゼミの発表資料です。主にGröbner基底の基礎理論から、それを応用した消去理論、連立代数方程式の解法などについてを取り扱っています。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/math/">数学関係をまとめておくばしょ</a></li>
+  <li class="li breadcrumb-item active">計算機代数ゼミ発表資料</li>
+</ol>
+
+    <div class="page-header">
+    <h1>計算機代数ゼミ発表資料 <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/math/computational-algebra-seminar.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/math/computational-algebra-seminar.html" class="hatena-bookmark-button" data-hatena-bookmark-title="計算機代数ゼミ発表資料 - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2014/01/24 18:52:02 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="説明" class="level1">
+<h2>説明</h2>
+<p>2013年度の研究室ゼミで発表した計算機代数関連の資料一覧です。主にGröbner基底の基礎理論から、それを応用した消去理論、連立代数方程式の解法などについてを取り扱っています。ここでの成果は
+<a href="http://github.com/konn/computational-algebra">computational-algebra</a>
+パッケージとして実装・公開しています。</p>
+<section id="資料一覧と説明" class="level2">
+<h3>資料一覧と説明</h3>
+<dl>
+<dt><a href="./computational-algebra-seminar/2013-04-07.pdf">第1回
+Buchberger アルゴリズムの改良法</a></dt>
+<dd>
+<p>初回。Buchberger 判定法の復習などからはじめて、ナイーブな Buchberger
+アルゴリズムの速度を syzygy やSugar Strategy を使って改善する話題。</p>
+<ul>
+<li>追加資料（ベンチマーク）
+<ul>
+<li><a href="./computational-algebra-seminar/2013-04-07-bench-syz-sug.html">ナイーブなBuchberger、syzygy判定、sugar
+strategyの速度比較</a>。</li>
+<li><a href="./computational-algebra-seminar/2013-04-07-bench-sugar.html">Sugar
+Strategy の原論文のデータを用いたベンチマーク</a>。<a href="./computational-algebra-seminar/2013-04-07-bench-sugar-simple.html">簡略版</a>（グラフがわかりやすいように最後のケースだけ除外）。</li>
+</ul></li>
+</ul>
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-04-15.pdf">第2回
+消去理論：消去定理と一変数版拡張定理</a></dt>
+<dd>
+<p>Gröbner基底を用いて多項式系から文字を消去する方法について。基礎概念である消去順序・消去型について紹介後、基本的な定理である消去定理の証明を紹介。</p>
+<ul>
+<li>追加資料（ベンチマーク）：<a href="./computational-algebra-seminar/2013-04-15-bench.html">各消去順序の性能比較</a>。</li>
+</ul>
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-05-13.pdf">第3回
+消去定理：部分解と完全解、一変数版拡張定理</a></dt>
+<dd>
+前回積み残した一変数版拡張定理を示す。これにより、変数消去により得られた部分解から完全解が得られる条件などがわかる。消去型順序と消去順序に関する注意など。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-05-20.pdf">第4回
+消去理論：拡張定理の別証明と応用例、消去理論の幾何的意味</a></dt>
+<dd>
+一変数版拡張定理の特別な場合について別証明を与える。実際に与えられた連立代数方程式の解を求めてみる。後半では、消去・拡張定理の幾何的意味について説明する。完全解と部分解の間のギャップに付いて述べる閉包定理について紹介する。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-06-03.pdf">第5回
+消去理論の幾何：零点定理と閉包定理</a></dt>
+<dd>
+前回紹介した閉包定理の証明のため、Hilbert
+の零点定理の証明を与える。弱閉包定理の証明を行い、強閉包定理に必要となる多変数版の拡張定理の証明も紹介する。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-06-10.pdf">第6回
+消去理論の幾何：閉包定理の証明</a></dt>
+<dd>
+一般拡張定理の証明を踏まえて、強閉包定理の証明を完遂する（証明は逆向きの整礎帰納法で行われる）。代数閉体でない場合の閉包定理の反例についても紹介する。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-06-24.pdf">第7回
+消去理論の応用：陰関数表示</a></dt>
+<dd>
+前回までの消去定理を応用し、パラメタ表示された代数的集合に対し、それを定義する定義方程式を求める方法を開発する。パラメタ表示された図形と、それを含む最小の代数的集合の間のギャップについても考察する。ねじれ三次曲線や
+Enneper Surface、Whitney の傘などを例に出す。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-07-01.pdf">第8回
+消去理論の応用：有理写像の陰関数表示</a></dt>
+<dd>
+前回は多項式によりパラメタ表示された図形の陰関数表示を得る方法を取り扱ったが、今回はそれを有理写像に一般化する。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-07-08.pdf">第9回
+消去理論の応用：代数曲線の特異点</a></dt>
+<dd>
+消去理論を応用し、代数曲線の特異点を消去理論を用いて求める方法について考察する。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-07-15.pdf">第10回
+消去理論の応用：曲線族の包絡線</a></dt>
+<dd>
+消去理論を用いて、与えられた曲線族に対する包絡線を求める方法を開発する。包絡線とは曲線族に属する全ての曲線族と接するような曲線のことである。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-10-02.pdf">第11回
+消去理論と終結式</a></dt>
+<dd>
+終結式の概念を定義し、共通因子判定問題を解く方法などを開発し、消去理論との関係を考察する。行列式を経ずに終結式を求めるアルゴルリズムも与える。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-10-09.pdf">第12回
+終結式と拡張定理</a></dt>
+<dd>
+多変数の終結式を用いて拡張定理の別証明を与える。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-10-23.pdf">第13回
+消去による連立代数方程式の解法とNewton法</a></dt>
+<dd>
+今回から “Using Algebraic Geometry”
+第二章に移る。特に、消去理論などを応用して連立代数方程式を解く方法について考察していく。今回は、今までに開発した消去定理を用いた素朴な解法と高次方程式の解法に必要となる簡単な数値計算法について紹介する。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-10-30.pdf">第14回
+剰余環の構造：有限次元代数</a></dt>
+<dd>
+より洗練された解法を開発するため、特に <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>V</mi><mo>(</mo><mi>I</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">V(I)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.75em;"></span><span class="strut bottom" style="height: 1em; vertical-align: -0.25em;"></span><span class="base"><span style="margin-right: 0.22222em;" class="mord mathit">V</span><span class="mopen">(</span><span style="margin-right: 0.07847em;" class="mord mathit">I</span><span class="mclose">)</span></span></span></span></span></span>
+が有限の場合の剰余環の代数（多元環）としての構造について詳しく分析していく。<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi><mo>[</mo><mrow><mi mathvariant="double-struck">X</mi></mrow><mo>]</mo><mi mathvariant="normal">/</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">k[\mathbb{X}]/I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.75em;"></span><span class="strut bottom" style="height: 1em; vertical-align: -0.25em;"></span><span class="base"><span style="margin-right: 0.03148em;" class="mord mathit">k</span><span class="mopen">[</span><span class="mord"><span class="mord mathbb">X</span></span><span class="mclose">]</span><span class="mord">/</span><span style="margin-right: 0.07847em;" class="mord mathit">I</span></span></span></span></span></span>が有限次元となる場合の条件に関する有限性定理を証明する。このようなイデアルを零次元イデアルと云う。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-11-06.pdf">第15回
+零次元イデアルに関するアルゴリズム (1)</a></dt>
+<dd>
+零次元イデアルに関するアルゴリズムについて紹介する。ここでは、各消去イデアル<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>I</mi><mo>∩</mo><mi>k</mi><mo>[</mo><msub><mi>x</mi><mi>i</mi></msub><mo>]</mo></mrow><annotation encoding="application/x-tex">I \cap
+k[x_i]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.75em;"></span><span class="strut bottom" style="height: 1em; vertical-align: -0.25em;"></span><span class="base"><span style="margin-right: 0.07847em;" class="mord mathit">I</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">∩</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span style="margin-right: 0.03148em;" class="mord mathit">k</span><span class="mopen">[</span><span class="mord"><span class="mord mathit">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.31166399999999994em;"><span class style="top: -2.5500000000000003em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"></span></span></span></span></span><span class="mclose">]</span></span></span></span></span></span>のモニックな生成元を求めるアルゴリズムと、零次元イデアルの根基を計算するための方法を与える。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-11-20.pdf">第16回
+零次元イデアルに関するアルゴリズム (2)</a></dt>
+<dd>
+零次元イデアルの根基と解の個数の関係や、直積環としての構造について考察する。根基の判定法についても紹介する。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-11-27.pdf">第17回
+FGLMアルゴリズム：零次元イデアルのGröbner基底変換</a></dt>
+<dd>
+消去理論を応用する際には辞書式順序が役に立つが、一般に直接辞書式順序に関する
+Gröbner
+基底を計算するのは高価である。今回は、零次元イデアルの場合は他の順序に関する
+Gröbner
+基底が与えられた際に、それを辞書式順序に関する基底に効率的に変換する方法を紹介する
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-12-04.pdf">第18回
+FGLMアルゴリズムの一般化</a></dt>
+<dd>
+前回紹介したFGLMアルゴリズムを一般化し、像が有限次元となるような一般の線型写像に対し、その核の辞書式順序に関するGröbner基底と像のベクトル空間としての基底を計算する方法を与える。
+</dd>
+<dt><a href="./computational-algebra-seminar/2013-12-11.pdf">第19回
+固有値による連立代数方程式の解法</a></dt>
+<dd>
+前回までの知識を踏まえ、固有値問題を用いて連立代数方程式の解を求める方法について紹介する。
+</dd>
+<dt><a href="./computational-algebra-seminar/2014-01-08.pdf">第20回
+固有値の計算法と左固有ベクトル法</a></dt>
+<dd>
+固有値問題の数値的解法を紹介した後、固有値のみならず固有ベクトルも連立代数方程式の解法に大きな役割を果すことを紹介する。
+</dd>
+<dt><a href="./computational-algebra-seminar/2014-01-22.pdf">第21回
+線型代数を用いた他の求解法と比較</a></dt>
+<dd>
+<p>前回までの方法の他に、変数の冪の張る部分空間や、第<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.43056em;"></span><span class="strut bottom" style="height: 0.43056em; vertical-align: 0em;"></span><span class="base"><span class="mord mathit">n</span></span></span></span></span></span>座標が皆異なる場合の解法について紹介し、それぞれの結果について比較する。本来高速な筈の左固有ベクトル法が上手くいかなかった理由についても少し考察する。</p>
+<ul>
+<li>追加資料（ベンチマーク）：<a href="./computational-algebra-seminar/2014-01-22-bench.html">各手法の速度比較</a>。</li>
+</ul>
+</dd>
+</dl>
+</section>
+</section>
+<section id="参考文献" class="level1">
+<h2>参考文献</h2>
+<ul>
+<li>D. Cox, J. Little, and D. O’Shea. <a href="http://www.amazon.co.jp/dp/0387356509?tag=konn06-22">Ideals,
+Varieties, and Algorithms: An Introduction to Computational Algebraic
+Geometry and Commutative Algebra</a>. 3rd. Springer-Verlag, 2007.</li>
+<li>D. Cox, J. Little, and D. O’Shea. <a href="http://www.amazon.co.jp/dp/0387207333?tag=konn06-22">Using
+Algebraic Geometry</a>. 2nd. Springer, 2005.</li>
+<li>Alessandro Giovini et al. ““One sugar cube, please” or Selection
+strategies in the Buchberger algorithm”. In: Proceedings of the
+ISSAC’91, ACM Press. 1991, pp. 5-4.</li>
+<li>楫元. “グレブナー基底は面白い！ ──「代数幾何学入門」への入門──”.
+講義録. 2013.</li>
+</ul>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/math/computational-algebra-seminar.html";
+          this.page.identifier = "/math/computational-algebra-seminar.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/math/computational-algebra-seminar.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

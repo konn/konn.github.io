@@ -1,0 +1,502 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>欲望の赴くままRustで型レベルPeano自然数とサイズ付きベクトルを書いた - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="Rust,型レベルプログラミング,type-level programming,依存型"><meta name="description" content="あるていど強い型システムを持った言語を見ると、型レベルペアノ自然数とサイズ付きベクトルを書きたくなる、というのは人類普遍の欲求だと思います。 という訳で欲求に忠実であることとし、型レベルPeano自然数とサイズ付きベクトルRustで実装しました。実用性？皆無です。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/prog/rust/type-level-naturals-and-vectors-in-rust.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/prog/rust/type-level-naturals-and-vectors-in-rust.html">
+  <meta property="og:title" content="欲望の赴くままRustで型レベルPeano自然数とサイズ付きベクトルを書いた">
+  <meta property="og:description" content="あるていど強い型システムを持った言語を見ると、型レベルペアノ自然数とサイズ付きベクトルを書きたくなる、というのは人類普遍の欲求だと思います。 という訳で欲求に忠実であることとし、型レベルPeano自然数とサイズ付きベクトルRustで実装しました。実用性？皆無です。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/prog/">プログラミング関連</a></li>
+  <li class="li breadcrumb-item active">欲望の赴くままRustで型レベルPeano自然数とサイズ付きベクトルを書いた</li>
+</ol>
+
+    <div class="page-header">
+    <h1>欲望の赴くままRustで型レベルPeano自然数とサイズ付きベクトルを書いた <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/prog/rust/type-level-naturals-and-vectors-in-rust.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/prog/rust/type-level-naturals-and-vectors-in-rust.html" class="hatena-bookmark-button" data-hatena-bookmark-title="欲望の赴くままRustで型レベルPeano自然数とサイズ付きベクトルを書いた - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2018/08/29 18:45:17 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="はじめに欲求に忠実" class="level1">
+<h2>はじめに：欲求に忠実</h2>
+<p>最近は研究の傍ら<a href="https://www.rust-lang.org">Rust言語</a>を勉強していて、<a href="/prog/rust-memo.html">Haskeller観点からのチートシート</a>などを書きつつ日常の小品みたいなものを書いたりしています。</p>
+<p>Rust
+に触ってみたのは、主に所有権の概念やスコープの考え方が、線型型やアファイン型とリージョンモナドの考え方に近く、それらを実用的なレベルに持ってきてGCとかをなくしている、という話に興味をそそられたからです。
+そうした resource-sensitive な思想の下で設計されながら、Haskell
+などの関数型言語で言うところの代数的データ型のようなものもあり、静的解析で正しさを可能な限り保証しようとするというのですから、触ってみない訳にはいきません。</p>
+<p>そうやって触っていると、どうも <strong>Rust
+の型システムは結構強力</strong>なようだ、という事がわかりました。
+で、十分強力な型システムを見ると、<strong>型レベル自然数とサイズ付きベクトルを実装したくなる</strong>というのは<strong>人類普遍の欲求である</strong>といって差し支えないでしょう。
+というわけで、欲望に忠実に生きることにしている私は、早速 <strong>Rust
+で型レベル自然数とサイズ付きベクトルを実装</strong>してみることにしました。</p>
+<p>完全なコードは Gist にアップしてあります：</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://gist.github.com/konn/f43a3ed710f61e17d12d64d979a292ab">
+</iframe>
+
+    </div>
+
+</section>
+<section id="普通に-array-じゃだめなの" class="level1">
+<h2>普通に Array じゃだめなの？</h2>
+<p>ところで Rust には <em>array</em>
+と呼ばれる固定長配列の型が予め用意されていて、<code class="sourceCode rust"><span class="kw">let</span> a<span class="op">:</span> [<span class="dt">i64</span><span class="op">;</span> <span class="dv">5</span>] <span class="op">=</span> [<span class="dv">1</span><span class="op">,</span><span class="dv">2</span><span class="op">,</span><span class="dv">3</span><span class="op">,</span><span class="dv">4</span><span class="op">,</span><span class="dv">5</span>]</code>のような形で利用出来ます。</p>
+<p>これでいいんじゃね？と思う訳で、まあ部分的にはそれでいいんですが、でもやっぱりそれでは駄目です。</p>
+<p>というのも、Rustはどうやら<strong>標準の型レベル自然数に対する四則演算がない</strong>、というか、そもそも型やジェネリクスの引数として<strong>型レベル自然数を取ることが出来ない</strong>ようです。
+これは、標準的な型レベル自然数では、例えば次のような<strong>連結関数すら書きようがない</strong>、ということになります。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> append<span class="op">&lt;</span>T<span class="op">,</span> n<span class="op">,</span> m<span class="op">&gt;</span>(left<span class="op">:</span> [T<span class="op">;</span> n]<span class="op">,</span> right<span class="op">:</span> [T<span class="op">;</span> m])  <span class="co">// n, m ってなんだよ</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   <span class="op">-&gt;</span> [T<span class="op">;</span> n <span class="op">+</span> m]                                 <span class="co">// n + m とは？？？？</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>折角型レベル自然数っぽいのがあるのにこれは悲しいですね……。
+そんなに悲しくないという方も、空気を読んでここは悲しんでください。悲しいですね。</p>
+</section>
+<section id="そこで自前自然数" class="level1">
+<h2>そこで自前自然数</h2>
+<p>という訳で、連結関数や平坦化関数を書きたいので、自前で型レベル自然数を実装することを考えましょう。
+こういう時は<strong>Peano数項</strong>として自然数を表現するのが常套手段です。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> Zero <span class="op">{}</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> Succ<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{}</span></span></code></pre></div>
+<p>などとあった時に、<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.64444em;"></span><span class="strut bottom" style="height: 0.64444em; vertical-align: 0em;"></span><span class="base"><span class="mord">0</span></span></span></span></span></span>に当るのが<code class="sourceCode rust">Zero</code>で、<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>3</mn><mo>=</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>0</mn><mo>=</mo><mi>S</mi><mo>(</mo><mi>S</mi><mo>(</mo><mi>S</mi><mo>(</mo><mn>0</mn><mo>)</mo><mo>)</mo><mo>)</mo></mrow><annotation encoding="application/x-tex">3 = 1
++ 1 + 1 + 0 = S(S(S(0)))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.75em;"></span><span class="strut bottom" style="height: 1em; vertical-align: -0.25em;"></span><span class="base"><span class="mord">3</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mrel">=</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mord">1</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mord">1</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mord">1</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mord">0</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mrel">=</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span style="margin-right: 0.05764em;" class="mord mathit">S</span><span class="mopen">(</span><span style="margin-right: 0.05764em;" class="mord mathit">S</span><span class="mopen">(</span><span style="margin-right: 0.05764em;" class="mord mathit">S</span><span class="mopen">(</span><span class="mord">0</span><span class="mclose">)</span><span class="mclose">)</span><span class="mclose">)</span></span></span></span></span></span>に当るのが<code class="sourceCode rust">Succ<span class="op">&lt;</span>Succ<span class="op">&lt;</span>Succ<span class="op">&lt;</span>Zero<span class="op">&gt;&gt;&gt;</span></code>ですね。</p>
+<p>あとは、型レベルの足し算があれば嬉しく、例えば GHC
+だったら次のように書きます：</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="kw">family</span> <span class="dt">Plus</span> (<span class="ot">n ::</span> <span class="dt">Nat</span>) (<span class="ot">m ::</span> <span class="dt">Nat</span>) <span class="kw">where</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Plus</span> <span class="dt">Zero</span>     m <span class="ot">=</span> m</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Plus</span> (<span class="dt">Succ</span> n) m <span class="ot">=</span> <span class="dt">Succ</span> (<span class="dt">Plus</span> n m)</span></code></pre></div>
+<p>つまり、第一引数をみていって、<code>Succ</code>
+を一枚ずつ剥しては外側に持っていく、というのが足し算の定義です。
+これは、以下の要因から、そのままでは Rust には移植出来ません。</p>
+<ul>
+<li>Rustでは Haskell の閉じた型族に当る機能がない。
+<ul>
+<li>型上の「パターンマッチ」をして直に型関数を定義出来ない。</li>
+</ul></li>
+<li>Haskellのようなデータ型の昇格もなく、依存型の機能もない。
+<ul>
+<li>値を型レベル、型を種レベルに持ち上げて<code class="sourceCode haskell"><span class="ot">::</span> <span class="dt">Nat</span></code>
+のようなことは出来ない。</li>
+</ul></li>
+<li>Rust のトレイトは一つの型引数しか持てない。
+<ul>
+<li>なので、たとえば <code class="sourceCode rust"><span class="kw">impl</span> Plus <span class="cf">for</span> N<span class="op">,</span> M</code>
+のような書き方は出来ない。</li>
+</ul></li>
+</ul>
+<p>これらを乗り越えるには幾つかやりようがあると思いますが、ここでは以下のような作戦を取ることにしました：</p>
+<ul>
+<li>まず自然数の計算を扱う<strong>抽象構文木に当るダミーの型</strong>を沢山用意する。</li>
+<li>「Peano数項に簡約可能」を表すトレイト <code class="sourceCode rust">Nat</code>
+を使い、これをあたかも自然数に対応する種（Kind）であるかのように扱う。
+<ul>
+<li><code class="sourceCode rust">Nat</code>
+には「計算結果」を表す<strong>関連型</strong> <code class="sourceCode rust">Eval</code> と、対応する整数の値を返す <code class="sourceCode rust"><span class="kw">fn</span> as_int() <span class="op">-&gt;</span> <span class="dt">usize</span></code>
+を持たせておく。</li>
+</ul></li>
+<li>トレイトの <code class="sourceCode rust"><span class="kw">where</span></code>
+節を使って必要な帰納法の仮定を書き下し、特定の形の型に対して <code class="sourceCode rust">Nat</code> トレイトを実装する。</li>
+</ul>
+<section id="実際の実装" class="level2">
+<h3>実際の実装</h3>
+<p>まずは、上で言ったように「ペアノ数項に簡約される」型のトレイト <code class="sourceCode rust">Nat</code> を定義しておきます。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">trait</span> Nat <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">type</span> Eval<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> as_int() <span class="op">-&gt;</span> <span class="dt">usize</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>まず、一番簡単な「ゼロ」に当る型 <code class="sourceCode rust">Zero</code> は次のようになります：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> Zero <span class="op">{}</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span> Nat <span class="cf">for</span> Zero <span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">type</span> Eval <span class="op">=</span> Zero<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> as_int() <span class="op">-&gt;</span> <span class="dt">usize</span> <span class="op">{</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>では次に <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>+</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">1 + n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.64444em;"></span><span class="strut bottom" style="height: 0.72777em; vertical-align: -0.08333em;"></span><span class="base"><span class="mord">1</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mord mathit">n</span></span></span></span></span></span> に当る型、<code class="sourceCode rust">Succ<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
+を見てみます：</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    _maker<span class="op">:</span> PhantomData<span class="op">&lt;</span><span class="kw">fn</span>() <span class="op">-&gt;</span> N<span class="op">&gt;,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span><span class="op">&lt;</span>N<span class="op">:</span> Nat<span class="op">&gt;</span> Nat <span class="cf">for</span> MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">type</span> Eval <span class="op">=</span> MkSucc<span class="op">&lt;&lt;</span>N <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>Eval<span class="op">&gt;;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> as_int() <span class="op">-&gt;</span> <span class="dt">usize</span> <span class="op">{</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span> <span class="op">+</span> <span class="op">&lt;</span>N <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>as_int()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">type</span> Succ<span class="op">&lt;</span>N<span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span>MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span> <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>Eval<span class="op">;</span></span></code></pre></div>
+<p>ここでは二種類の型 <code class="sourceCode rust">MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
+と <code class="sourceCode rust">Succ<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
+が定義されていますね。 前者は単に抽象構文木上で「<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>+</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">1 + N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.68333em;"></span><span class="strut bottom" style="height: 0.76666em; vertical-align: -0.08333em;"></span><span class="base"><span class="mord">1</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span style="margin-right: 0.10903em;" class="mord mathit">N</span></span></span></span></span></span>
+っぽい何か」を表す構築子になっていて、<code class="sourceCode rust">Succ<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
+は「<code class="sourceCode rust">MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span></code>を実際に
+<code class="sourceCode rust">Eval</code>を呼んで簡約させた型」を返すようになっています。
+実際、<code class="sourceCode rust">Nat</code> トレイトの <code class="sourceCode rust">as_int()</code> の実装を見ると、「内側の
+<code>N</code> の値を計算して <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.64444em;"></span><span class="strut bottom" style="height: 0.64444em; vertical-align: 0em;"></span><span class="base"><span class="mord">1</span></span></span></span></span></span>
+を足す」ものになっています。 <code class="sourceCode rust">Eval</code>
+も同様ですが、一つだけ注意しないといけないのは、完全に簡約しないといけないので、<strong>まず
+<code class="sourceCode rust">N</code> を簡約してから <code class="sourceCode rust">MkSucc</code>を包む</strong>ようになっている、ということです。</p>
+<p>ところで、<code>MkSucc&lt;N&gt;</code>
+は型としての意味しかないので、フィールドを持たない筈ですが、ここでは
+<code class="sourceCode rust">PhantomData</code>
+型のフィールドを持っています。
+これはダミーのフィールドで、かいつまんでいえば型引数の <code class="sourceCode rust">N</code>
+が所有権に何の影響も及ぼさないことをコンパイラに伝えるためのものです。
+詳しくは以下の qnighy
+さんの記事に載っていますので、そっちを御覧ください：</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://qnighy.hatenablog.com/entry/2018/01/14/220000">
+</iframe>
+
+    </div>
+
+</section>
+<section id="コンストラクタの実装" class="level2">
+<h3>コンストラクタの実装</h3>
+<p>ここまでで、<code class="sourceCode rust"><span class="bu">Sized</span><span class="pp">::</span>new(arg)</code>
+関数が実装できます。 これは、<code class="sourceCode rust"><span class="dt">Vec</span><span class="op">&lt;</span>T<span class="op">&gt;</span></code>
+型の引数を取って、長さが型レベル自然数と等しければ包んで返し、そうでなければ
+<code class="sourceCode rust"><span class="cn">None</span></code>
+を返すものです：</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span><span class="op">&lt;</span>N<span class="op">:</span> Nat<span class="op">,</span> T<span class="op">&gt;</span> <span class="bu">Sized</span><span class="op">&lt;</span>N<span class="op">,</span> T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> new(v<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span>T<span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="bu">Sized</span><span class="op">&lt;</span>N<span class="op">,</span> T<span class="op">&gt;&gt;</span> <span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">&lt;</span>N <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>as_int() <span class="op">!=</span> v<span class="op">.</span>len() <span class="op">{</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="cn">None</span><span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>            <span class="cn">Some</span>(<span class="bu">Sized</span> <span class="op">{</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                _maker<span class="op">:</span> PhantomData<span class="op">,</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                _vector<span class="op">:</span> v<span class="op">,</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> size(<span class="op">&amp;</span><span class="kw">self</span>) <span class="op">-&gt;</span> <span class="dt">usize</span> <span class="op">{</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">&lt;</span>N <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>as_int()</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>ではこれを実行してみましょう：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode main.rs"><code class="sourceCode rust"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">extern</span> <span class="kw">crate</span> type_naturals<span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">type_naturals::</span><span class="op">*;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> mfive<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="bu">Sized</span><span class="op">&lt;</span>Five<span class="op">,</span> _<span class="op">&gt;&gt;</span> <span class="op">=</span> <span class="bu">Sized</span><span class="pp">::</span>new(<span class="pp">vec!</span>[<span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span>])<span class="op">;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">&quot;Sized&lt;Five, _&gt; = {:?}&quot;</span><span class="op">,</span> mfive)<span class="op">;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> mthree<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="bu">Sized</span><span class="op">&lt;</span>Three<span class="op">,</span> _<span class="op">&gt;&gt;</span> <span class="op">=</span> <span class="bu">Sized</span><span class="pp">::</span>new(<span class="pp">vec!</span>[<span class="dv">6</span><span class="op">,</span> <span class="dv">7</span><span class="op">,</span> <span class="dv">8</span>])<span class="op">;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">&quot;Sized&lt;Three, _&gt; = {:?}&quot;</span><span class="op">,</span> mthree)<span class="op">;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cargo run</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Sized</span><span class="op">&lt;</span>Five, _<span class="op">&gt;</span> = Some<span class="op">(Sized { _maker:</span><span class="va"> PhantomData, _vector</span><span class="op">:</span><span class="va"> [1, 2, 3, 4, 5] }</span><span class="op">)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Sized</span><span class="op">&lt;</span>Three, _<span class="op">&gt;</span> = Some<span class="op">(Sized { _maker:</span><span class="va"> PhantomData, _vector</span><span class="op">:</span><span class="va"> [6, 7, 8] }</span><span class="op">)</span></span></code></pre></div>
+<p>たとえば、これで <code>mthree</code>
+の定義を以下のように書き換えると、<code class="sourceCode rust"><span class="cn">None</span></code>
+が返ります：</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode main.rs"><code class="sourceCode rust"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> mthree<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="bu">Sized</span><span class="op">&lt;</span>Three<span class="op">,</span> _<span class="op">&gt;&gt;</span> <span class="op">=</span> <span class="bu">Sized</span><span class="pp">::</span>new(<span class="pp">vec!</span>[<span class="dv">6</span><span class="op">,</span> <span class="dv">7</span>])<span class="op">;</span> <span class="co">// to short!</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cargo run</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Sized</span><span class="op">&lt;</span>Five, _<span class="op">&gt;</span> = Some<span class="op">(Sized { _maker:</span><span class="va"> PhantomData, _vector</span><span class="op">:</span><span class="va"> [1, 2, 3, 4, 5] }</span><span class="op">)</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Sized</span><span class="op">&lt;</span>Three, _<span class="op">&gt;</span> = None</span></code></pre></div>
+</section>
+<section id="足し算の実装" class="level2">
+<h3>足し算の実装</h3>
+<p>では次に足し算を実装してみたいと思います。</p>
+<p>まずは、足し算を表現する型 <code class="sourceCode rust">MkPlus</code> と、その最終的な簡約結果に当る
+<code class="sourceCode rust">Plus</code>を定義します：</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    _maker<span class="op">:</span> PhantomData<span class="op">&lt;</span><span class="kw">fn</span>() <span class="op">-&gt;</span> (N<span class="op">,</span> M)<span class="op">&gt;,</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">type</span> Plus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span>MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span> <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>Eval<span class="op">;</span></span></code></pre></div>
+<p>さて、ではあとは <code class="sourceCode rust">as_int()</code> と
+<code class="sourceCode rust">Eval</code> を実装しましょう。</p>
+<p>上で見たように、ペアノ自然数の足し算は、第一引数についてパターンマッチをして再帰的に計算していきます。
+まずは第一引数が <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.64444em;"></span><span class="strut bottom" style="height: 0.64444em; vertical-align: 0em;"></span><span class="base"><span class="mord">0</span></span></span></span></span></span>
+の自明な場合を書きましょう。</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span><span class="op">&lt;</span>M<span class="op">:</span> Nat<span class="op">&gt;</span> Nat <span class="cf">for</span> MkPlus<span class="op">&lt;</span>Zero<span class="op">,</span> M<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">type</span> Eval <span class="op">=</span> <span class="op">&lt;</span>M <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>Eval<span class="op">;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> as_int() <span class="op">-&gt;</span> <span class="dt">usize</span> <span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        <span class="op">&lt;</span>M <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>as_int()</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>これは簡単ですね。次に帰納法のステップで、第一引数が
+<code>MkSucc&lt;N&gt;</code> の形をしている場合です：</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span><span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span> Nat <span class="cf">for</span> MkPlus<span class="op">&lt;</span>MkSucc<span class="op">&lt;</span>N<span class="op">&gt;,</span> M<span class="op">&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">where</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    N<span class="op">:</span> Nat<span class="op">,</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    M<span class="op">:</span> Nat<span class="op">,</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;:</span> Nat<span class="op">,</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">type</span> Eval <span class="op">=</span> <span class="op">&lt;</span>MkSucc<span class="op">&lt;</span>MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;&gt;</span> <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>Eval<span class="op">;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> as_int() <span class="op">-&gt;</span> <span class="dt">usize</span> <span class="op">{</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">&lt;</span>MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span> <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>as_int() <span class="op">+</span> <span class="op">&lt;</span>M <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>as_int()</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><code class="sourceCode rust"><span class="kw">where</span></code>
+節に <code class="sourceCode rust">MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;:</span> Nat</code>
+という制約がありますね。 我々からすれば、<code class="sourceCode rust">N<span class="op">,</span> M<span class="op">:</span> Nat</code>
+だけあれば十分動くように見えますが、他の型があとから <code>MkPlus</code>
+の引数に入ってくる可能性もあり、これだけで場合が取り尽せている、ということは、コンパイラには伺い知れず、<code class="sourceCode rust">MkSucc<span class="op">&lt;</span>MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span></code>の<code class="sourceCode rust">Nat</code>トレイトを見付けさせるには、このように明示的に
+<code class="sourceCode rust"><span class="kw">where</span></code>
+節に指定する必要があるようです。</p>
+<p>他の方法を採用すれば何か巧いこといくのかもしれません。有識者の意見を待ちます。</p>
+</section>
+<section id="ベクトルの結合" class="level2">
+<h3>ベクトルの結合</h3>
+<p>いずれにせよ、これで足し算が出来たので、上記の <code>append</code>
+が書けますね。書きましょう。</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> append<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">,</span> T<span class="op">&gt;</span>(l<span class="op">:</span> <span class="bu">Sized</span><span class="op">&lt;</span>N<span class="op">,</span> T<span class="op">&gt;,</span> r<span class="op">:</span> <span class="bu">Sized</span><span class="op">&lt;</span>M<span class="op">,</span> T<span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="bu">Sized</span><span class="op">&lt;</span>Plus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;,</span> T<span class="op">&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">where</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;:</span> Nat<span class="op">,</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="bu">Sized</span> <span class="op">{</span> _vector<span class="op">:</span> <span class="kw">mut</span> l<span class="op">,</span> <span class="op">..</span> <span class="op">}</span> <span class="op">=</span> l<span class="op">;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="bu">Sized</span> <span class="op">{</span> _vector<span class="op">:</span> <span class="kw">mut</span> r<span class="op">,</span> <span class="op">..</span> <span class="op">}</span> <span class="op">=</span> r<span class="op">;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    l<span class="op">.</span>append(<span class="op">&amp;</span><span class="kw">mut</span> r)<span class="op">;</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Sized</span> <span class="op">{</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        _vector<span class="op">:</span> l<span class="op">,</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        _maker<span class="op">:</span> PhantomData<span class="op">,</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>試してみましょうか。</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode main.rs"><code class="sourceCode rust"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// snipped ...</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Some</span>(five) <span class="op">=</span> mfive <span class="op">{</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">let</span> <span class="cn">Some</span>(three) <span class="op">=</span> mthree <span class="op">{</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>            <span class="kw">let</span> eight <span class="op">=</span> append(five<span class="op">,</span> three)<span class="op">;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>            <span class="pp">println!</span>(<span class="st">&quot;Five + Three = {:?}, of size {}&quot;</span><span class="op">,</span> eight<span class="op">,</span> eight<span class="op">.</span>size())<span class="op">;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">&quot;Must be None: {:?}&quot;</span><span class="op">,</span> <span class="bu">Sized</span><span class="pp">::</span><span class="op">&lt;</span>Five<span class="op">,</span> ()<span class="op">&gt;</span><span class="pp">::</span>new(<span class="pp">vec!</span>[]))<span class="op">;</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>ところが、これをコンパイルしようとすると……</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cargo run</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="va">error</span><span class="op">[</span>E0275<span class="op">]</span><span class="ex">:</span> overflow evaluating the requirement <span class="kw">`</span><span class="ex">_:</span> std::marker::Sized<span class="kw">`</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--</span><span class="op">&gt;</span> src/main.rs:13:25</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>   <span class="kw">|</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="ex">13</span> <span class="kw">|</span>             <span class="bu">let</span> <span class="va">eight</span> <span class="kw">=</span> <span class="va">append</span><span class="op">(fi</span>ve<span class="op">,</span> three);</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>   |                         ^^^^^^</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>   |</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>   = help: consider adding a `#![recursion_limit=&quot;128&quot;]` attribute to your crate</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>   = note: required because of the requirements on the <span class="op">impl of </span>`type_naturals::Nat`<span class="op"> fo</span>r `type_naturals::MkPlus&lt;type_naturals::MkSucc&lt;_&gt;<span class="op">,</span> _&gt;`</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>   = note: required because <span class="op">of </span>the<span class="op"> req</span>uirements on the impl of <span class="kw">`</span><span class="ex">type_naturals::Nat</span><span class="kw">`</span> for <span class="kw">`</span><span class="ex">type_naturals::MkPlus</span><span class="op">&lt;</span>type_naturals::MkSucc<span class="op">&lt;</span>type_naturals::MkSucc<span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>, _<span class="op">&gt;</span><span class="kw">`</span></span></code></pre></div>
+<p>ギャオス！なんかよくわからないけどエラーが出ます。 どうやら、<code class="sourceCode rust">MkPlus</code> がトレイト <code class="sourceCode rust">Eval</code>
+に属するかどうかの条件を列挙しようとして無限ループに陥っているようで。
+<code class="sourceCode rust">five</code> や <code class="sourceCode rust">three</code>
+の型はもう決まっているし、それが決まれば <code class="sourceCode rust">Plus</code>
+の値も決まる筈ですから、なんかそこの定義をズバっと持ってくれば良さそうな気がするのですが、トレイトの解決が内部でどう実装されているのかわからないので、今一なんでこうなるのかわかりません。
+<strong>Rust有識者の解説をお待ち</strong>しています！！！</p>
+<p>いずれにせよ、これは以下のようにそれぞれの型を明示すると通るようになります：</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>            <span class="kw">let</span> eight <span class="op">=</span> <span class="pp">append::</span><span class="op">&lt;</span>Five<span class="op">,</span> Three<span class="op">,</span> _<span class="op">&gt;</span>(five<span class="op">,</span> three)<span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cargo run</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span> snip ...</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Five</span> + Three <span class="kw">=</span> Sized { _maker: PhantomData, _vector: <span class="pp">[</span><span class="st">1, 2, 3, 4, 5, 6, 7, 8</span><span class="pp">]</span> }, of size 8</span></code></pre></div>
+<p>ここでは <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>5</mn><mo>+</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">5 + 3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.64444em;"></span><span class="strut bottom" style="height: 0.72777em; vertical-align: -0.08333em;"></span><span class="base"><span class="mord">5</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mord">3</span></span></span></span></span></span> でちゃんと <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>8</mn></mrow><annotation encoding="application/x-tex">8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.64444em;"></span><span class="strut bottom" style="height: 0.64444em; vertical-align: 0em;"></span><span class="base"><span class="mord">8</span></span></span></span></span></span>
+要素を持つ、ということが計算できているようです。
+試しに、返値の型を結局<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>8</mn></mrow><annotation encoding="application/x-tex">8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.64444em;"></span><span class="strut bottom" style="height: 0.64444em; vertical-align: 0em;"></span><span class="base"><span class="mord">8</span></span></span></span></span></span>に簡約されるけど違う式で置き換えてみましょう。</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>            <span class="kw">let</span> eight<span class="op">:</span> <span class="bu">Sized</span><span class="op">&lt;</span>Plus<span class="op">&lt;</span>Four<span class="op">,</span> Four<span class="op">&gt;,</span> _<span class="op">&gt;</span> <span class="op">=</span> <span class="pp">append::</span><span class="op">&lt;</span>Five<span class="op">,</span> Three<span class="op">,</span> _<span class="op">&gt;</span>(five<span class="op">,</span> three)<span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cargo run</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span> snip ...</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Five</span> + Three <span class="kw">=</span> Sized { _maker: PhantomData, _vector: <span class="pp">[</span><span class="st">1, 2, 3, 4, 5, 6, 7, 8</span><span class="pp">]</span> }, of size 8</span></code></pre></div>
+<p>ちゃんと同じ結果が出ていますね！</p>
+</section>
+<section id="ここから先" class="level2">
+<h3>ここから先</h3>
+<p>同様にして、掛け算やネストされたリストを均す <code>flatten</code>
+も実装出来ます：</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> MkMult<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    _maker<span class="op">:</span> PhantomData<span class="op">&lt;</span><span class="bu">Fn</span>() <span class="op">-&gt;</span> (N<span class="op">,</span> M)<span class="op">&gt;,</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> Mult<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span>MkMult<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span> <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>Eval<span class="op">;</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> flatten<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">,</span> T<span class="op">&gt;</span>(vs<span class="op">:</span> <span class="bu">Sized</span><span class="op">&lt;</span>N<span class="op">,</span> <span class="bu">Sized</span><span class="op">&lt;</span>M<span class="op">,</span> T<span class="op">&gt;&gt;</span>) <span class="op">-&gt;</span> <span class="bu">Sized</span><span class="op">&lt;</span>Mult<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;,</span> T<span class="op">&gt;</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="kw">where</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    MkMult<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;:</span> Nat<span class="op">,</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="bu">Sized</span> <span class="op">{</span> _vector<span class="op">:</span> vs<span class="op">,</span> <span class="op">..</span> <span class="op">}</span> <span class="op">=</span> vs<span class="op">;</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> v<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;</span> <span class="op">=</span> vs<span class="op">.</span>into_iter()<span class="op">.</span>flat_map(<span class="op">|</span>a<span class="op">|</span> a<span class="op">.</span>_vector<span class="op">.</span>into_iter())<span class="op">.</span>collect()<span class="op">;</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Sized</span> <span class="op">{</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        _vector<span class="op">:</span> v<span class="op">,</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>        _maker<span class="op">:</span> PhantomData<span class="op">,</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode main.rs"><code class="sourceCode rust"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... snip ...</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> nested<span class="op">:</span> <span class="bu">Sized</span><span class="op">&lt;</span>Three<span class="op">,</span> <span class="bu">Sized</span><span class="op">&lt;</span>Four<span class="op">,</span> _<span class="op">&gt;&gt;</span> <span class="op">=</span> <span class="bu">Sized</span><span class="pp">::</span>new(<span class="pp">vec!</span>[</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Sized</span><span class="pp">::</span>new(<span class="pp">vec!</span>[<span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span>])<span class="op">.</span>unwrap()<span class="op">,</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Sized</span><span class="pp">::</span>new(<span class="pp">vec!</span>[<span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">,</span> <span class="dv">7</span><span class="op">,</span> <span class="dv">8</span>])<span class="op">.</span>unwrap()<span class="op">,</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Sized</span><span class="pp">::</span>new(<span class="pp">vec!</span>[<span class="dv">9</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">11</span><span class="op">,</span> <span class="dv">12</span>])<span class="op">.</span>unwrap()<span class="op">,</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    ])<span class="op">.</span>unwrap()<span class="op">;</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">&quot;Flatting {:?} of size {} to...&quot;</span><span class="op">,</span> nested<span class="op">,</span> nested<span class="op">.</span>size())<span class="op">;</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> fla <span class="op">=</span> <span class="pp">flatten::</span><span class="op">&lt;</span>Three<span class="op">,</span> Four<span class="op">,</span> _<span class="op">&gt;</span>(nested)<span class="op">;</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// let fla = flatten(nested);</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">&quot;...flattened into {:?}, with length {}&quot;</span><span class="op">,</span> fla<span class="op">,</span> fla<span class="op">.</span>size())<span class="op">;</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cargo run</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Flatting</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Sized</span> { _maker: PhantomData,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>          <span class="ex">_vector:</span> <span class="pp">[</span><span class="st">Sized { _maker: PhantomData, _vector: [1, 2, 3, 4</span><span class="pp">]</span> },</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                    <span class="ex">Sized</span> { _maker: PhantomData, _vector: <span class="pp">[</span><span class="st">5, 6, 7, 8</span><span class="pp">]</span> },</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                    <span class="ex">Sized</span> { _maker: PhantomData, _vector: <span class="pp">[</span><span class="st">9, 10, 11, 12</span><span class="pp">]</span> }]</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>        <span class="er">}</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="ex">of</span> size 3 to...</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="ex">...flattened</span> into</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Sized</span> { _maker: PhantomData, _vector: <span class="pp">[</span><span class="st">1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12</span><span class="pp">]</span> },</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="ex">with</span> length 12</span></code></pre></div>
+<p><code class="sourceCode rust"><span class="bu">Iterator</span></code>
+の <code class="sourceCode rust">size_hint</code> とか <code class="sourceCode rust"><span class="bu">ExactSizeIterator</span></code>
+とかも <code>N</code> の情報を適宜使って書ける気がしますが、複雑すぎると
+<code class="sourceCode rust">as_int()</code>の計算コストがかかってあまり嬉しくない気もする。</p>
+</section>
+</section>
+<section id="まとめ" class="level1">
+<h2>まとめ</h2>
+<p>なんかこの辺りで面倒になってきたので終わりにしますが、Rust
+の型システムは型レベルのPeano自然数を表現出来、それを使った長さ付きベクトル演算が定義出来る程度には強力である、ということがわかりましたね！
+とはいえ、これ全部 Peano
+自然数で表現してますし、とても効率が悪く、コンパイル時にスタックが溢れたりすると思うので実用には向かないでしょう。</p>
+<p>もし Rust
+に型レベル自然数引数がちゃんと入って、加減乗あたりが入る予定があるのなら、この辺りの話は要らなくなりますが、実際どうなんでしょうか。
+任意の型を持ち上げあられるように……ではなく、自然数ぐらいなら何とかなるんじゃないでしょうか。識者の解説を（ry</p>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/prog/rust/type-level-naturals-and-vectors-in-rust.html";
+          this.page.identifier = "/prog/rust/type-level-naturals-and-vectors-in-rust.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/prog/rust/type-level-naturals-and-vectors-in-rust.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>

@@ -1,0 +1,892 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <meta charset="utf-8">
+  <title>Haskell ではじめるふわとろ Cocoa アプリ開発 - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="haskell, cocoa, programming"><meta name="description" content="Haskell による Cocoa アプリ開発の実際についての記事。Haskell Advent Calendar 2014 参加記事です。
+">
+  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/prog/haskell/haskell-introduction-to-cocoa.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/prog/haskell/haskell-introduction-to-cocoa.html">
+  <meta property="og:title" content="Haskell ではじめるふわとろ Cocoa アプリ開発">
+  <meta property="og:description" content="Haskell による Cocoa アプリ開発の実際についての記事。Haskell Advent Calendar 2014 参加記事です。 ">
+  <meta property="og:image" content="https://konn-san.com/img/dbend.png">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/prog/">プログラミング関連</a></li>
+  <li class="li breadcrumb-item active">Haskell ではじめるふわとろ Cocoa アプリ開発</li>
+</ol>
+
+    <div class="page-header">
+    <h1>Haskell ではじめるふわとろ Cocoa アプリ開発 <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/prog/haskell/haskell-introduction-to-cocoa.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/prog/haskell/haskell-introduction-to-cocoa.html" class="hatena-bookmark-button" data-hatena-bookmark-title="Haskell ではじめるふわとろ Cocoa アプリ開発 - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2014/12/29 23:27:30 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <p>この記事は<a href="http://qiita.com/advent-calendar/2014/haskell">Haskell Advent
+Calendar 2014</a> の 13日目の記事です<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。前日は<a href="http://qiita.com/minpou/items/20ba354b32af89b20c64">arrowM
+さんの「Haskell rest フレームワークでREST
+API設計をサボる」</a>、翌日は<a href="http://solorab.net/blog/2014/12/14/how-to-use-lens-a/">solorabさんの「Haskellのlensの使い方」</a>です。</p>
+<p>HaskellでCocoaアプリ開発、したいですよね？したくない人は存在しないと仮定しても一般性を失わない筈なので、存在しないとして以下議論しましょう。というわけで、対象読者は、これから
+Cocoa アプリ開発で Haskell を使いたいと思っている Haskell
+プログラマです。Objective-C
+（以下、Obj-C）がなんとなく読めればよりよいでしょうが、私じしんそこまで
+Obj-C
+は得意ではないので、まあ読めなくても何とかなるでしょう。また、本稿では
+OS X 向けの Cocoa 開発を対象とし、iOS アプリの開発は扱いません<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。また、以下で扱う<code>language-c-inline</code>は専ら
+Obj-Cとの連携に注力されていますが、普通のC言語との交ぜ書きも同じ要領で出来る筈なので、OS
+Xとか知らねーし！みたいな不逞の輩（！）な皆さんの参考にもなるのではないかと思います。</p>
+<p>以下で採り上げる例は、全て<a href="https://github.com/konn/objc-tutor">GitHubで閲覧可能</a>です。</p>
+<section id="haskell-で-cocoaアプリ開発" class="level1">
+<h2>Haskell で Cocoaアプリ開発？</h2>
+<p>その昔、HaskellでCocoaアプリ開発をするためのライブラリとして、<a href="http://hoc.sourceforge.net/">HOC</a>というものがありました。これはCocoa
+APIに対する包括的なラッパーライブラリを提供することを企図したものでしたが、現在ではもうメンテナンスされておらず、Haskell
+/ Obj-C 双方の変化に追随出来ていません。</p>
+<p>今回以下で紹介するのは<a href="http://hackage.haskell.org/package/language-c-inline"><code>language-c-inline</code></a>を用いる方法です。名前に
+<em>inline</em>
+と入っている事からも推察出来るように、今回採る方法は巨大なラッパライブラリを利用するのではなく、Haskellのプログラムの中に
+Obj-C のコードを交ぜ書きするスタイルです。</p>
+<p>ですので、Obj-Cを自分で書かなければならないという点ではラッパライブラリを用いるのに較べて少し手間かもしれません。しかし、ラッパを使うにしてもちゃんとしたプログラムを書くには、CocoaのAPIリファレンスを読まなくてはいけない訳ですし、さして必要な労力は変わらないでしょう。</p>
+<p>また、<code>language-c-inline</code>じたいは、HOCが提供していたような、Obj-Cのオブジェクト・システムを再現するための機構は提供していません。しかし、GHC
+の最近の型機能を使えば、その必要な部分だけをエミュレートするような型システムを簡単に設計することが出来ます。そもそも、Obj-CのAPIを呼んだり、コントローラを書いたりする部分以外は関数型のパラダイムを使ってプログラミングする訳ですから、Obj-Cが提供するような高度なオブジェクト・システムすべてが使える必要はなく、単純な継承とアップキャスト、（unsafe
+な）ダウンキャスト、<code class="sourceCode objectivec">id</code>型くらいがあれば十分な訳です。以下ではその技法も含めて解説出来ればな、という感じです。</p>
+<p>また、オブジェクト・システムを模倣する上で、現在 Hackage
+に上がっている
+<code>language-c-inline</code>（<code>0.7</code>系統）には無い機能を使っています。なので、以下の作業をする上では<a href="https://github.com/mchakravarty/language-c-inline/">GitHubから直接最新版を取ってくる</a>のが一番やりやすいと思います。そのうち最新版がリリースされる筈ですが、作者の方が忙しいので、Hackage
+に上がるのはもう暫く待ったほうが良いようです。</p>
+</section>
+<section id="tutorial" class="level1">
+<h2>開発チュートリアル</h2>
+<section id="hello-world" class="level2">
+<h3>Hello, World!</h3>
+<p>色々と能書きを述べてきましたが、まあ取り敢えず Hello, World
+をやってみましょう。</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE QuasiQuotes, TemplateHaskell #-}</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.C.Inline.ObjC</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.C.Quote.ObjC</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>objc_import [<span class="st">&quot;&lt;Foundation/Foundation.h&gt;&quot;</span>]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ot">nsLog ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>nsLog msg <span class="ot">=</span> <span class="op">$</span>(objc [&#39;msg <span class="op">:&gt;</span> &#39;<span class="dt">&#39;String</span>] <span class="op">$</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>              void [cexp| NSLog(@&quot;%@&quot;, msg) |])</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>objc_emit</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  objc_initialise</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  nsLog <span class="st">&quot;Hello, from Haskell-Cocoa!&quot;</span></span></code></pre></div>
+<p>一つずつ解説していきましょう。まず四行目の <code class="sourceCode haskell">objc_import</code> は Template Haskell
+マクロで、裏で生成されるヘッダファイル等が <code class="sourceCode objectivec">import</code>
+するファイルを指定しています。今回は単にCocoaの機能を使って文字列を出力したいだけなので、<code>Foundation</code>を読み込ませています。</p>
+<p>続く <code class="sourceCode haskell">nsLog</code> の部分では、<code class="sourceCode haskell">objc</code>
+マクロが呼ばれています。これは、引数の名前とその型のヒントのリスト、返値のアノテーションが付いた定義部を取って、しかるべきCラッパ関数と
+Haskell の FFI
+宣言を生成するマクロです。ここでは、次の形のラッパ関数が定義されています：</p>
+<ul>
+<li><code class="sourceCode haskell"><span class="dt">String</span></code>
+型の引数 <code>msg</code> を取り、</li>
+<li>定義が <code class="sourceCode c">NSLog<span class="op">(</span><span class="st">&quot;%@&quot;</span><span class="op">,</span> msg<span class="op">)</span></code>
+であり、</li>
+<li>返値は <code class="sourceCode c"><span class="dt">void</span></code> であるような C
+関数。</li>
+</ul>
+<p>しかし、ここで生成されているのはあくまで「定義」であって、FFI
+宣言が実際にスプライスされたり、関数がヘッダファイルや<code>.m</code>ファイルとして書き出されるのは次の行の
+<code class="sourceCode haskell">objc_emit</code>
+が呼ばれた段階です。逆に云えば、いくら <code>objc</code>
+マクロなどを使って Obj-C コードを埋め込んでも、<code>objc_emit</code>
+が呼び出されていなければそれらが機能することはないので気を付けましょう。</p>
+<p>その後の <code>main</code> 関数の所では、まず
+<code>objc_initialise</code> を呼んで上で定義した FFI や
+<code>nsLog</code>
+がちゃんと機能するような前処理を行っています。その後、<code>nsLog</code>
+を呼んでログを出力してめでたしめでたしという訳です。</p>
+<p>では、これで動くかどうか実際にコンパイル&amp;実行してみましょう。<code>hello.hs</code>などという名前で保存されているとすると、これをコンパイルするには、次のようにします：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ghc <span class="at">-c</span> hello.hs</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cc <span class="at">-fobjc-arc</span> <span class="at">-I</span>/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/include <span class="at">-I</span>/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/../../includes <span class="at">-c</span> <span class="at">-o</span> hello_objc.o hello_objc.m</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ghc <span class="at">-o</span> hello hello.o hello_objc.o <span class="at">-package</span> language-c-quote <span class="at">-package</span> language-c-inline <span class="at">-framework</span> Foundation </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./hello</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">2014-12-13</span> 00:00:00.000 hello<span class="pp">[</span><span class="st">88135:507</span><span class="pp">]</span> Hello, from Haskell-Cocoa!</span></code></pre></div>
+<p>気をつけるべき所は、まずは普段通りに <code>ghc (--make)</code>
+を呼ぶの<strong>ではなく</strong>、<code>ghc -c</code>を呼んでオブジェクトファイルを生成するに留めておくことです。これは、最初に<code>ghc</code>を呼んだ段階では未だ
+Obj-C
+ヘッダファイルや、それに付随するオブジェクトファイルが生成されていないので、リンクしようと思っても出来ないからです。なので、一旦
+<code>ghc -c</code> を走らせて Template Haskell の処理を行わせて、Obj-C
+ヘッダ・ソースファイルを生成させているのです。実際、この後にディレクトリの内容を確認してみると、以下の四つのファイルが増えていることがわかります：</p>
+<pre><code>hello_objc.h  hello_objc.m  hello.hi  hello.o</code></pre>
+<p>名前からもわかるとおり、この内で <code>*_objc.[hm]</code>
+という名前の物が今回生成された Obj-C
+ファイルです。このように、生成されるファイルは
+<code>元のファイル名_objc.[hm]</code>
+という名前で生成されるので、これと被るようなファイル名は使わないようにしましょう（また、どういうタイミングで生成されるのかもよくわからないのですが、<code>元のファイル名_stub.[hm]</code>という名前のヘッダファイルが出力されることもあります）。バージョン名は場合によっては異なることもあると思うので、適宜修正してください。たぶん
+<code>locate HsFFI.h</code> とかやれば見付かる筈です。</p>
+<p>続いて、今回生成されたObj-Cファイルをコンパイルしてやる必要があります。そこで<code>cc</code>コマンド（実際には<code>clang</code>？）を呼び出してリンクしている訳です。ここで、<code>-I/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64</code>
+とか
+<code>-I/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/../../includes</code>
+といったオプションが指定されているのは、Haskell の FFI
+で値をやり取りするのに必要なヘッダファイル（<code>HsFFI.h</code>）を見付ける為です。</p>
+<p>最後に、今までに生成したオブジェクトファイルをリンクして、実行ファイルを作成します。その際には
+Haskell 側で使っているパッケージを <code>-package</code>
+オプションで、Obj-C 側で使っているフレームワーク（今回の場合は
+<code>Foundation</code>）を <code>-framework</code>
+オプションでそれぞれ指定してやる必要があります。</p>
+<section id="再コンパイルに御用心" class="level4">
+<h5><img src="/img/dbend.png"> 再コンパイルに御用心</h5>
+<p>生成される Obj-C ファイルで使われるラッパ関数名は、Template Haskell
+が走る度に異なる名前になります。ファイルの幾つかを変更して再コンパイルすると、「関数が見付からないよ！」と怒られる場合があります。その場合は、生成された
+<code>.hi</code>, <code>.o</code>, <code>_objc.[hm]</code>
+ファイルをすべて削除して、もういちど最初からやり直してみてください。</p>
+</section>
+</section>
+<section id="currency-converter-オブジェクト指向界の-hello-world-を-haskell-で" class="level2">
+<h3>Currency Converter – オブジェクト指向界の Hello, World! を Haskell
+で</h3>
+<section id="はじめの一歩原始的な-gui" class="level3">
+<h4>はじめの一歩：原始的な GUI</h4>
+<p>Hello, World!
+はうまくいきましたね。それではもう少しマトモなアプリケーションを書いてみましょう。OOPにおける
+Hello, World! とでもいうべき Currency Converter
+（通貨換算器）を作ってみましょう。</p>
+<p>まず、Xcodeを開いて新しい “Cocoa Application”
+プロジェクトを作成します（そんなの面倒くさい！とか Xcode
+の使い方なんて知らん！という場合、<a href="/t/CurrencyConverter-01.zip">こちらに既に用意</a>してあります！）。<code>MainMenu.xib</code>
+を開いて、次のような感じでウインドウにコントロールを配置し、<code class="sourceCode objectivec">AppDelegate</code>
+との間にアウトレット、アクションを設定してください：</p>
+<figure>
+<img src="../imgs/currency-first.jpg" alt="ウインドウの初期配置とAppDelegateの設定">
+<figcaption aria-hidden="true">ウインドウの初期配置と<code class="sourceCode objectivec">AppDelegate</code>の設定</figcaption>
+</figure>
+<p>ロジックなどはまだ実装していませんが、この段階でいちど
+<code>Release</code>
+をターゲットにしてアプリケーションをビルドします。ビルドが完了したら、出来上がった実行ファイルを適当な場所にコピーしておいてください。</p>
+<p>続いて、Haskell でアプリケーションのロジックを記述します。</p>
+<p><code>Main.hs</code>ファイルを作成して、必要なモジュールやObj-C側のフレームワークの読み込みをしておきます：</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE DeriveDataTypeable, QuasiQuotes, TemplateHaskell #-}</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.Typeable</span>          (<span class="dt">Typeable</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.C.Inline.ObjC</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.C.Quote.ObjC</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>objc_import [<span class="st">&quot;&lt;Cocoa/Cocoa.h&gt;&quot;</span>]</span></code></pre></div>
+<p>では、メインロジックである変換関数<code>convert</code>を実装してみましょう。
+通貨換算器という大仰な名前でも、結局やることは</p>
+<ol type="1">
+<li>換算前の価格（<code>dollarsField</code>）と為替レート（<code>rateField</code>）の値を取得し、</li>
+<li>両者を掛け算して、</li>
+<li>その結果を表示（<code>resultField</code>）する。</li>
+</ol>
+<p>ということだけで、実質掛け算するだけです。Cocoa
+のリファレンスマニュアルなどと首っぴきになれば、テキストフィールドの値の取得・設定は<code class="sourceCode objectivec"><span class="op">-(</span><span class="dt">int</span><span class="op">)</span> intValue</code>や<code class="sourceCode objectivec"><span class="op">-(</span><span class="dt">double</span><span class="op">)</span> doubleValue</code>、<code class="sourceCode objectivec"><span class="op">-(</span><span class="dt">void</span><span class="op">)</span> setIntValue<span class="op">:(</span><span class="dt">double</span><span class="op">)</span> val</code>などを使えばよさそうなので、メインロジックである<code>convert</code>の実装は次のように書けば良さそうです：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">convert ::</span> <span class="dt">AppDelegate</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>convert app <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  input <span class="ot">&lt;-</span> intValue    <span class="op">=&lt;&lt;</span> dollarsField app</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  rate  <span class="ot">&lt;-</span> doubleValue <span class="op">=&lt;&lt;</span> rateField app</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  setIntValue (<span class="fu">floor</span> <span class="op">$</span> <span class="fu">fromIntegral</span> input <span class="op">*</span> rate) <span class="op">=&lt;&lt;</span> resultField app</span></code></pre></div>
+<p>このあとすべき事が幾つかあります：</p>
+<ol type="1">
+<li><code>AppDelegate</code>や<code>NSTextField</code>などに対応する型をHaskell側で定義する</li>
+<li><code class="sourceCode haskell">intValue</code>, <code class="sourceCode haskell">doubleValue</code>, <code class="sourceCode haskell">setIntValue</code> の実装</li>
+<li>Obj-C 側の<code>AppDelegate</code>クラスの<code class="sourceCode objectivec">convert<span class="op">:</span></code>
+アクションと上で実装した<code>convert</code>関数との紐付けと<code class="sourceCode c">main</code>関数の実装</li>
+<li>アプリケーションバンドルの作成</li>
+</ol>
+<p>それぞれ順に見ていきましょう。</p>
+</section>
+<section id="obj-c-のオブジェクトを-haskell-で扱うには" class="level3">
+<h4>Obj-C のオブジェクトを Haskell で扱うには？</h4>
+<p><code>language-c-inline</code>では、基本型（<code class="sourceCode c"><span class="dt">int</span></code>, <code class="sourceCode objectivec">BOOL</code>, <code class="sourceCode c"><span class="dt">char</span></code>など）以外のObj-Cの値は、<code class="sourceCode haskell"><span class="dt">ForeignPtr</span></code>を<code class="sourceCode haskell"><span class="kw">newtype</span></code>で包んだ型で表現されます。たとえば、<code class="sourceCode haskell"><span class="dt">AppDelegate</span></code>
+に対応するHaskellの型は、</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">AppDelegate</span> <span class="ot">=</span> <span class="dt">AppDelegate</span> (<span class="dt">ForeignPtr</span> <span class="dt">AppDelegate</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                      <span class="kw">deriving</span> (<span class="dt">Typeable</span>)</span></code></pre></div>
+<p>のように宣言されます。型コンストラクタの名前が、そのまま<code>Obj-C</code>での型名として扱われます。現時点における<code>language-c-inline</code>ライブラリの内部実装では動的キャストを使っているため、<code class="sourceCode haskell"><span class="dt">Typeable</span></code>
+のインスタンスを導出させておく必要があります。また、これも内部実装の制約から、<code>newtype</code>宣言はレコード型ではなく、このようなコンストラクタのみの形で宣言される必要があることに注意してください。</p>
+<p>実際には、<code class="sourceCode haskell"><span class="dt">AppDelegate</span></code>の値をやりとりするには、次のような行を追加しておく必要があります：</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">marshalAppDel ::</span> <span class="dt">AppDelegate</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">AppDelegate</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>marshalAppDel <span class="ot">=</span> <span class="fu">return</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>objc_marshaller &#39;marshalAppDel &#39;marshalAppDel</span></code></pre></div>
+<p>字面からなんとなくわかるかもしれませんが、ここでは<code>AppDelegate</code>型の値をHaskellとObj-Cの間でやりとりする際のマーシャリング関数を定義しています。<code class="sourceCode haskell">objc_marshaller</code>マクロは、それぞれ<code class="sourceCode haskell"><span class="dt">A</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">B</span></code>
+と <code class="sourceCode haskell"><span class="dt">B</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">A</span></code>という形の型を持つ関数の名前をとって、<code>A</code>,
+<code>B</code>型の値を相互変換するための情報を保存します。このマーシャリングの情報はモジュールごとに保存されるので、モジュールを変えるたびに<code>objc_marshaller</code>を呼び出して関数を登録してやる必要があることに注意してください。</p>
+<p>今回の場合は、単にポインタに包まれた値をやりとりするだけなので、<code>A = B = AppDelegate</code>として何もせずに<code class="sourceCode haskell"><span class="fu">return</span></code>するだけの関数を登録しています。</p>
+<p>同様にして、<code class="sourceCode objectivec">NSTextField</code>を表す型も定義できます：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">NSTextField</span> <span class="ot">=</span> <span class="dt">NSTextField</span> (<span class="dt">ForeignPtr</span> <span class="dt">NSTextField</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                      <span class="kw">deriving</span> (<span class="dt">Typeable</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ot">marshalNSTextField ::</span> <span class="dt">NSTextField</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">NSTextField</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>marshalNSTextField <span class="ot">=</span> <span class="fu">return</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>objc_marshaller &#39;marshalNSTextField &#39;marshalNSTextField</span></code></pre></div>
+<section id="定義順に御用心" class="level4">
+<h5><img src="/img/dbend.png"> 定義順に御用心</h5>
+<p>ここで、一つ注意があります。こうしたラッパ型や、次の節で定義するラッパ関数は、<strong>それを呼び出す関数の定義より前にもってくる</strong>必要があります。Haskellでは通常関数の定義順に注意する必要はありませんが、<code>language-c-inline</code>ではTemplateHaskellのマクロをふんだんに使っているので、マクロが走る時点において型・関数の情報が必要となるため、このような制約があります。</p>
+</section>
+</section>
+<section id="ラッパ関数の定義" class="level3">
+<h4>ラッパ関数の定義</h4>
+<p><code>intValue</code>や<code>setIntValue</code>、あるいは<code>dollarsField</code>アウトレットなどを取得するためのHaskell関数は、Hello,
+World!の例で<code>NSLog</code>のラッパ関数を定義した時と同様にして、<code class="sourceCode haskell">objc</code>
+マクロを使って定義してやれば十分です。ためしに<code>intValue</code>,
+<code>rateField</code>,
+<code>setIntValue</code>の定義を見てみましょう：</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ot">intValue ::</span> <span class="dt">NSTextField</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>intValue txt <span class="ot">=</span> <span class="op">$</span>(objc [&#39;txt <span class="op">:&gt;</span> &#39;<span class="dt">&#39;NSTextField</span>] <span class="op">$</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                 &#39;<span class="dt">&#39;Int</span> <span class="op">&lt;:</span> [cexp| [txt intValue] |])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ot">rateField ::</span> <span class="dt">AppDelegate</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">NSTextField</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>rateField app <span class="ot">=</span> <span class="op">$</span>(objc [&#39;app <span class="op">:&gt;</span> &#39;<span class="dt">&#39;AppDelegate</span>] <span class="op">$</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                     <span class="dt">Class</span> &#39;<span class="dt">&#39;NSTextField</span> <span class="op">&lt;:</span> [cexp| app.rateField |])</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ot">setIntValue ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">NSTextField</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>setIntValue i txt <span class="ot">=</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">$</span>(objc [&#39;i <span class="op">:&gt;</span> &#39;<span class="dt">&#39;Int</span>, &#39;txt <span class="op">:&gt;</span> &#39;<span class="dt">&#39;NSTextField</span>] <span class="op">$</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    void [cexp| [txt setIntValue: i] |])</span></code></pre></div>
+<p>ここで、<code class="sourceCode haskell"><span class="dt">Class</span></code>という見慣れないコンストラクタが出現しています。そもそも、<code class="sourceCode haskell">(<span class="op">:&gt;</span>)</code>や<code class="sourceCode haskell">(<span class="op">&lt;:</span>)</code>の引数として異なる型の値が渡されているように見えます。これはどういうことなのでしょう？</p>
+<p>というところで、<code class="sourceCode haskell">(<span class="op">:&gt;</span>)</code>や<code class="sourceCode haskell"><span class="dt">Class</span></code>の定義を見てみましょう：</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Annotated</span> e <span class="kw">where</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ot">  (:&gt;)  ::</span> <span class="dt">Hint</span> hint <span class="ot">=&gt;</span> e    <span class="ot">-&gt;</span> hint <span class="ot">-&gt;</span> <span class="dt">Annotated</span> e</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Typed</span><span class="ot"> ::</span>              <span class="dt">Name</span>         <span class="ot">-&gt;</span> <span class="dt">Annotated</span> <span class="dt">Name</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ot">(&lt;:) ::</span> <span class="dt">Hint</span> hint <span class="ot">=&gt;</span> hint <span class="ot">-&gt;</span> e <span class="ot">-&gt;</span> <span class="dt">Annotated</span> e</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>(<span class="op">&lt;:</span>) <span class="ot">=</span> <span class="fu">flip</span> (<span class="op">:&gt;</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Class</span> <span class="kw">where</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Class</span><span class="ot"> ::</span> <span class="dt">IsType</span> t <span class="ot">=&gt;</span> t <span class="ot">-&gt;</span> <span class="dt">Class</span></span></code></pre></div>
+<p>まず、<code class="sourceCode haskell">(<span class="op">:&gt;</span>)</code>はどうやら<code class="sourceCode haskell"><span class="dt">Annotated</span></code>型のコンストラクタだったようです。<code class="sourceCode haskell"><span class="dt">Annotated</span></code>
+型は、その名の通り値を型の相互変換に関するヒントで注釈したものです。そのヒントとなりうる型はライブラリで定義されていて変更出来ませんが、<code class="sourceCode haskell"><span class="dt">TypeQ</span></code>, <code class="sourceCode haskell"><span class="dt">Name</span></code>, <code class="sourceCode haskell"><span class="dt">Class</span></code>
+型などがあります。<code class="sourceCode haskell"><span class="dt">Class</span></code>型は、<code>ForeignPtr</code>で包まれたObj-Cのオブジェクトである、という意味のヒントのようですね。</p>
+<p>こうしたことを踏まえて上の定義を見てみれば、あとはそんなに驚くようなことはやっていないと思います。
+これらに習って、<code>doubleValue</code>や<code>dollarField</code>,
+<code>resultField</code>など必要な関数のラッパを定義してみてください。</p>
+</section>
+<section id="アクションと-haskell-関数の紐付けおよびmain関数" class="level3">
+<h4>アクションと Haskell 関数の紐付け、および<code>main</code>関数</h4>
+<p>以上で、Haskell側の<code>convert</code>関数の実装は完了しました。これを
+Obj-C 側から呼び出すにはどうすればいいでしょうか？</p>
+<p>まず、Obj-Cのヘッダファイルの情報を生成してやる必要があります。
+そこで、次のコードを、<code class="sourceCode haskell"><span class="dt">AppDelegate</span></code>のマーシャリング関数を定義する<strong>行より前</strong>に追加してください：</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">objc_interface [cunit|</code>
+<code class="sourceCode objectivec"><span class="kw">@interface</span> AppDelegate : NSObject &lt;NSApplicationDelegate&gt;
+@property (weak) typename NSTextField *dollarsField;
+@property (weak) typename NSTextField *rateField;
+@property (weak) typename NSTextField *resultField;
+
+- (<span class="dt">void</span>)convert:(id)sender;
+<span class="kw">@end</span></code>
+<code class="sourceCode haskell"> |]</code></pre>
+<p>幾つか説明が必要でしょう。まず、これを<code>objc_marshal</code>より前に持ってくる必要があるのは、生成する対象のObj-C（というかC言語）が関数・型の定義順にうるさい言語だからで、<code>objc_marshall</code>が生成するマーシャル関数のプロトタイプ宣言に<code>AppDelegate</code>という型名があるため、それより前で<code>AppDelegate</code>クラスを定義しておく必要があるからです。</p>
+<p>また、Obj-Cではこんな変な市に<code>typename</code>などというキーワードが来ることはなかった筈です。このキーワードは、<code>languace-c-quote</code>独自のもので、Cのコードをパーズするのにあらかじめ型の情報が必要となるため用意されています。<code class="sourceCode c"><span class="dt">int</span></code>や<code class="sourceCode c"><span class="dt">double</span></code>, <code class="sourceCode c"><span class="dt">char</span></code>などの基本型は<code>language-c-quote</code>も知っているので大丈夫ですが、<code>NSTextField</code>は知りせん。なので、「この後に型名がくるよ！」という事を明示するために、<code class="sourceCode c">typename</code>キーワードでそれを明示している訳です。<code>typename</code>キーワードが必要になるのは、今回のような変数・プロパティの宣言の他に、関数の引数や返値の型宣言などの部分でも必要になります。</p>
+<p>さて、これでヘッダファイルの情報は十分です。実際に<code>convert:</code>アクションからHaskellの<code>convert</code>関数を呼び出すようにするには、次のコードを書く必要があります：</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">objc_implementation [<span class="dt">Typed</span> <span class="ch">&#39;convert</span>] [cunit|</code>
+<code class="sourceCode objectivec"><span class="kw">@implementation</span> AppDelegate
+- (<span class="dt">void</span>) convert: (id)sender
+{
+  convert(<span class="kw">self</span>);
+}
+<span class="kw">@end</span></code><code class="sourceCode haskell">
+ |]</code></pre>
+<p>このコードは、<code>convert</code>関数が<strong>定義されている行よりも下</strong>に書いてください。これも、TemplateHaskellの制限によるものです。</p>
+<p><code class="sourceCode haskell">objc_implementation</code>マクロは、その名の通り実際のObj-Cの実装ファイル（<code>.m</code>）のトップレベル宣言を定義するマクロです。
+<code class="sourceCode haskell">objc_interface</code>マクロはObj-Cの式だけを取りましたが、<code class="sourceCode haskell">objc_implementation</code>マクロは、実装内部で使われるHaskell関数のヒント付き名前の一覧も引数に取ります。ここでは<code class="sourceCode haskell">[<span class="dt">Typed</span> &#39;convert]</code>がそれに当ります。<code class="sourceCode haskell"><span class="dt">Typed</span></code>は、上でも出て来た<code class="sourceCode haskell"><span class="dt">Annotated</span></code>型のコンストラクタで、「この名前の関数は定義済みだから適当に型推論しといて」という意味です。同じ名前の<code>convert</code>が出て来て混乱するかもしれませんが、<code class="sourceCode objectivec"><span class="op">-(</span><span class="dt">void</span><span class="op">)</span> convert<span class="op">:(</span>id<span class="op">)</span>sender</code>の定義部で呼ばれている<code>convert</code>は、Haskellにおける<code>convert</code>関数を指しています。実際には、この裏で一意な名前を持つラッパ関数の呼び出しに置き換えられますが、ナイーヴには<code>convert</code>
+Haskell関数を呼び出していると思えばよいです。</p>
+<p>最後に <code>main</code>
+関数を実装しましょう。以下の行をファイルの最後に追加してください：</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ot">nsApplicationMain ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>nsApplicationMain <span class="ot">=</span> <span class="op">$</span>(objc [] <span class="op">$</span> void [cexp| NSApplicationMain(0, NULL) |])</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>objc_emit</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  objc_initialise</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  nsApplicationMain</span></code></pre></div>
+<p>まず、<code>objc_initialise</code>を呼び出してObj-Cラッパーを初期化した後、おもむろに
+<code>NSApplicationMain</code>関数を呼び出して、<code>.xib</code>ファイルからオブジェクトを初期化したりといったCocoaの側の初期化をよしなにやってもらっています。</p>
+<p>これで<code>Main.hs</code>の内容は完成です（<a href="https://github.com/konn/objc-tutor/blob/master/CurrencyConverter-01/Main.hs">完全なソースコードはこちら</a>）。</p>
+</section>
+<section id="アプリケーションバンドルの作成" class="level3">
+<h4>アプリケーションバンドルの作成</h4>
+<p>では、アプリケーションバンドルを作成しましょう。まず、<code>Main.hs</code>を今まで通りコンパイルします：</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ghc <span class="at">-c</span> Main.hs</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cc <span class="at">-fobjc-arc</span> <span class="at">-I</span>/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/include <span class="at">-I</span>/Library/Frameworks/GHC.framework/Versions/7.8.3-x86_64/usr/lib/ghc-7.8.3/../../includes   <span class="at">-c</span> <span class="at">-o</span> Main_objc.o Main_objc.m</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ghc <span class="at">-o</span> CurrencyConverter Main.o Main_objc.o <span class="at">-package</span> language-c-quote <span class="at">-package</span> language-c-inline <span class="at">-framework</span> Cocoa</span></code></pre></div>
+<p>問題なくコンパイルできていれば、<code>CurrencyConverter</code>バイナリが出来ている筈です。そこで、これを一番最初にXcodeで作成しておいた
+<code>CurrencyConverter.app</code>
+のしかるべき場所にコピーします（<code>CurrencyConverter.app</code>は同じディレクトリに配置されていると仮定します）：</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cp CurrencyConverter CurrencyConverter.app/Contents/MacOS/CurrencyConverter</span></code></pre></div>
+<p>これで完了です！早速起動してみましょう：</p>
+<p><img src="../imgs/currency-01-running.jpg"></p>
+<p>値を入力して、<code>Convert</code>ボタンを押せば、ちゃんと期待通りの動作をすることが確認できました。やったね！</p>
+</section>
+</section>
+<section id="寄り道-オブジェクトシステムを模倣する" class="level2">
+<h3>寄り道： オブジェクトシステムを模倣する</h3>
+<p>今までは各クラス毎に対応する <code class="sourceCode haskell"><span class="kw">newtype</span></code>
+を宣言して、それらを使った型を引数に取るようなラッパ関数を使っていました。
+通貨変換器のような簡単なものであればそれで十分ですが、この方針ではクラスの継承関係などが絡んでくるとサブクラスごとに異なるラッパ関数を定義することになり不便です。</p>
+<p>そこで、本節では少し寄り道して、GHCの型システムを使って軽量なオブジェクトシステムを構築してみることにします。
+以下で実装する簡易オブジェクトシステムは<a href="https://github.com/konn/objc-messaging">GitHub</a>にアップされています。</p>
+<p>ロジックはすべてHaskellで書くとすれば、何もObj-Cのオブジェクトシステムを完全に模倣する必要はなさそうです。
+要は、Obj-C
+のAPIを呼び出す時に継承を考慮してアップキャストが出来れば十分なので、単純な継承関係とメッセージをコード出来ればよいでしょう。</p>
+<section id="継承関係とインスタンスの表現" class="level3">
+<h4>継承関係とインスタンスの表現</h4>
+<p>まずクラス間の継承関係ですが、これは次のように型クラスで表現するのが自然でしょう：</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE PolyKinds, TypeOperators, MultiParamTypeClasses #-}</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> (<span class="ot">super ::</span> k) <span class="op">:&gt;</span> (<span class="ot">sub ::</span> k2)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> a <span class="op">:&gt;</span> a</span></code></pre></div>
+<p>要は、型レベルの不等号<code class="sourceCode haskell">(<span class="op">:&gt;</span>)</code>によってそのまま継承関係を定義してやる訳です。Obj-Cには通常の継承関係の他にも多重継承にあたるようなプロトコルの機能がありますが、それについても適当に
+<code class="sourceCode haskell">(<span class="op">:&gt;</span>)</code>
+でコードしてやれば呼び出す分には問題ないでしょう。</p>
+<p>では、Obj-Cでのオブジェクトの継承関係をこれを使って実際に表現していくことにしましょう。取り敢えず、<code>klass</code>
+クラスのインスタンスを表す型として、<code class="sourceCode haskell"><span class="dt">Object</span></code>型を定義しましょう：</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Object</span> (<span class="ot">klass ::</span> k) <span class="ot">=</span> <span class="dt">Object</span> (<span class="dt">ForeignPtr</span> ())</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                              <span class="kw">deriving</span> (<span class="dt">Typeable</span>, <span class="dt">Show</span>, <span class="dt">Eq</span>, <span class="dt">Ord</span>)</span></code></pre></div>
+<p><code class="sourceCode haskell"><span class="dt">ForeignPtr</span></code>を包む
+<code class="sourceCode haskell"><span class="kw">newtype</span></code>
+は、Haskellにおける型名と同じ名前のクラスと同一視されるのでした。そこで、たとえば
+<code>NSString</code> を表すためには</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">NSString</span> <span class="ot">=</span> <span class="dt">Object</span> <span class="st">&quot;NSString&quot;</span></span></code></pre></div>
+<p>のように <code class="sourceCode haskell"><span class="dt">Object</span></code>
+の型パラメータを埋めた型シノニムを定義して、それを用いることにします。これで巧くいくためには、GitHub上の最新の<code>language-c-inline</code>が必要です。これは、型シノニムの名前を使ってObj-C側のクラス名を解決しつつ、<code class="sourceCode haskell"><span class="dt">ForeignPtr</span></code>に行き着くまで型を展開する、という挙動が、Hackageに上がっている版にはまだ実装されていないからです。</p>
+<p>また型の文脈に文字列リテラルのようなものが出て来てびっくりするかもしれませんが、これは<code class="sourceCode haskell"><span class="dt">Symbol</span></code>カインドという型レベルの文字列のようなものです。<code>Symbol</code>を使うようにすると、一々クラス名を表すダミーの型を定義せずに済むので楽です。</p>
+<p>このようにすると、アップキャストは単にコンストラクタを付け替えるだけで出来るようになります：</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ot">cast ::</span> (a <span class="op">:&gt;</span> b) <span class="ot">=&gt;</span> <span class="dt">Object</span> b <span class="ot">-&gt;</span> <span class="dt">Object</span> a</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cast (<span class="dt">Object</span> ptr) <span class="ot">=</span> <span class="dt">Object</span> ptr</span></code></pre></div>
+<p>ダウンキャストも同様に実装出来ますが、まあ安全ではないので
+<code>unsafeDownCast</code> とかいう名前にしておきましょう。</p>
+</section>
+<section id="メッセージの表現" class="level3">
+<h4>メッセージの表現</h4>
+<p>Obj-Cはオブジェクト指向言語の中でも、Smalltalkに大きな影響を受けたメッセージベースのオブジェクトシステムを採用しています。
+そこで、次はオブジェクトに対するメッセージを扱えるようにしましょう。Obj-C
+ではメッセージの名前をセレクタと呼ぶので、セレクタを表す型クラスを定義してみましょう：</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="dt">Selector</span> cls msg <span class="op">|</span> msg <span class="ot">-&gt;</span> cls <span class="kw">where</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">data</span> <span class="dt">Message</span> (<span class="ot">msg ::</span> k&#39;)<span class="ot"> ::</span> <span class="op">*</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">type</span> <span class="dt">Returns</span><span class="ot"> msg ::</span> <span class="op">*</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="ot">  send&#39; ::</span> <span class="dt">Object</span> cls <span class="ot">-&gt;</span> <span class="dt">Message</span> msg <span class="ot">-&gt;</span> <span class="dt">Returns</span> msg</span></code></pre></div>
+<p>いまいち意味が見えづらいかもしれません。たとえば、<code class="sourceCode objectivec">NSControl</code>クラスの<code>-(void) setObjectValue:(id) obj</code>に当るセレクタは次のように定義します：</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Selector</span> <span class="st">&quot;NSControl&quot;</span> <span class="st">&quot;setObjectValue&quot;</span> <span class="kw">where</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">data</span> <span class="dt">Message</span> <span class="st">&quot;setObjectValue&quot;</span> <span class="ot">=</span> <span class="dt">SetIntValue</span> <span class="dt">NSObject</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">type</span> <span class="dt">Returns</span> <span class="st">&quot;setObjectValue&quot;</span> <span class="ot">=</span> <span class="dt">IO</span> ()</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  send&#39; ctrl (<span class="dt">SetObjectValue</span> num) <span class="ot">=</span> <span class="op">$</span>(objc [&#39;ctrl <span class="op">:&gt;</span> <span class="dt">Class</span> &#39;<span class="dt">&#39;NSControl</span>, &#39;obj <span class="op">:&gt;</span> <span class="dt">Class</span> &#39;<span class="dt">&#39;NSObject</span>] <span class="op">$</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                                      void [cexp| [ctrl setObjectValue: obj] |])</span></code></pre></div>
+<p>つまり、<code class="sourceCode haskell"><span class="dt">Selector</span></code>の関連データ型である
+<code class="sourceCode haskell"><span class="dt">Message</span></code>
+はメッセージを送るのに必要な引数を保持するデータ型であり、<code class="sourceCode haskell"><span class="dt">Return</span></code>関連型はその操作の結果のHaskellにおける返値の型に対応している訳です。書きやすいように、中置演算子版も用意しましょう：</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">infixl</span> <span class="dv">4</span> <span class="op">#</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ot">(#) ::</span> (a <span class="op">:&gt;</span> b, <span class="dt">Selector</span> a msg, <span class="dt">Returns</span> msg <span class="op">~</span> <span class="dt">IO</span> c, <span class="dt">MonadIO</span> m) <span class="ot">=&gt;</span> <span class="dt">Object</span> b <span class="ot">-&gt;</span> <span class="dt">Message</span> msg <span class="ot">-&gt;</span> m c</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>obj <span class="op">#</span> f <span class="ot">=</span> liftIO <span class="op">$</span> send&#39; obj f</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="kw">infixl</span> <span class="dv">4</span> <span class="op">#.</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="ot">(#.) ::</span> (a <span class="op">:&gt;</span> b, <span class="dt">Selector</span> a msg, <span class="dt">Returns</span> msg <span class="op">~</span> <span class="dt">IO</span> c, <span class="dt">MonadIO</span> m) <span class="ot">=&gt;</span> <span class="dt">IO</span> (<span class="dt">Object</span> b) <span class="ot">-&gt;</span> <span class="dt">Message</span> msg <span class="ot">-&gt;</span> m c</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>recv <span class="op">#.</span> sel <span class="ot">=</span> liftIO <span class="op">$</span> recv <span class="op">&gt;&gt;=</span> <span class="fu">flip</span> send&#39; sel</span></code></pre></div>
+<p><code class="sourceCode haskell">(<span class="op">#</span>)</code>が中置演算子版で、のものは、メソッドチェーンにして呼び出していくときに、便利なように定義されたものです。</p>
+</section>
+<section id="継承ツリーをちゃんと機能させるために" class="level3">
+<h4>継承ツリーをちゃんと機能させるために</h4>
+<p>ところで、今までに定義してきた継承関係の推論規則には、反射律（A は A
+自身のサブクラス）しか入っていません。このままだと、サブクラスのサブクラスが元のスーパークラスのサブになりません<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>。では、推移律を条件に入れてはどうでしょうか？</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> (a <span class="op">:&gt;</span> b, b <span class="op">:&gt;</span> c) <span class="ot">=&gt;</span> a <span class="op">:&gt;</span> c</span></code></pre></div>
+<p>残念ながら、これはうまくいきません。<code class="sourceCode haskell">a <span class="op">:&gt;</span> c</code>のインスタンスを得るのに、間に出て来る
+<code>b</code> をどう扱えば良いかわからないからです。
+これには、たとえば、単純な継承関係をやめて、例えば継承関係を一段ずつ型レベルリストにして型パラメータで持たせるといった方法が考えられます。しかし、なんだかそれは余りにもオーバーキルです。他にも型機能を駆使して実現する方法もあるかもしれませんが、ここでは違う方針を取ります。</p>
+<p>どうするのかというと、直接 <code class="sourceCode haskell">(<span class="op">:&gt;</span>)</code>
+のインスタンスを宣言するのではなく、それまでの型情報を使って、スーパークラスのスーパークラス、更にそのスーパークラス……と辿っていって、推移律を満たすのに必要なインスタンスを宣言するような
+Template Haskell マクロを実装してしまうことにします。</p>
+<p>という訳でそのように実装されているのが、<code class="sourceCode haskell">defineClass</code>および<code class="sourceCode haskell">definePhantomClass</code>マクロです（それぞれ<a href="https://github.com/konn/objc-messaging/blob/master/src/Messaging/Macros.hs#L21">Messaging.Macro</a>で定義されています）。たとえば、<code class="sourceCode objectivec">NSObject</code>, <code class="sourceCode objectivec">NSString</code>, <code class="sourceCode objectivec">NSMutableString</code>などの継承関係を定義するには、次のようにすれば、万事面倒を見てくれます：</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>defineClass <span class="st">&quot;NSObject&quot;</span> <span class="dt">Nothing</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>defineClass <span class="st">&quot;NSString&quot;</span> <span class="op">$</span> <span class="dt">Just</span> &#39;<span class="dt">&#39;NSObject</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>defineClass <span class="st">&quot;NSMutableString&quot;</span> <span class="op">$</span> <span class="dt">Just</span> &#39;<span class="dt">&#39;NSString</span></span></code></pre></div>
+<p>つまり、<code class="sourceCode haskell"><span class="dt">NSObject</span> <span class="op">:&gt;</span> <span class="dt">NSString</span></code>,
+<code class="sourceCode haskell"><span class="dt">NSString</span> <span class="op">:&gt;</span> <span class="dt">NSMutableString</span></code>,
+<code class="sourceCode haskell"><span class="dt">NSObject</span> <span class="op">:&gt;</span> <span class="dt">NSMutableString</span></code>といった、必要な<code>(:&gt;)</code>のインスタンスがこれにより全て生成され、<code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">NSObject</span> <span class="ot">=</span> <span class="dt">Object</span> <span class="st">&quot;NSObject&quot;</span></code>などの型シノニムも定義されます。</p>
+<p><code class="sourceCode haskell">definePhantomClass</code>
+は、更に幽霊型を引数にもつように定義してくれます。たとえば、</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>definePhantomClass <span class="dv">1</span> <span class="st">&quot;NSArray&quot;</span> <span class="op">$</span> <span class="dt">Just</span> &#39;<span class="dt">&#39;NSObject</span></span></code></pre></div>
+<p>のようにすると、<code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">NSArray</span> a <span class="ot">=</span> <span class="dt">Object</span> <span class="st">&quot;NSArray&quot;</span></code>
+といったような、型シノニムが宣言されるのです。ただ、これは今のところ共変性や反変性とかを全く考慮していないので、あんまり嬉しくないかもしれません。</p>
+<p>これで必要な継承関係は面倒を見てくれるようになりましたが、このままだと折角継承関係を定義したのに、手動でアップキャストしたりしながらメッセージを送らないといけません。そこで、まずは受け手を自動でアップキャストしてくれるような
+<code>send</code> を実装しましょう：</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ot">send ::</span> (a <span class="op">:&gt;</span> b, <span class="dt">Selector</span> a msg) <span class="ot">=&gt;</span> <span class="dt">Object</span> b <span class="ot">-&gt;</span> <span class="dt">Message</span> msg <span class="ot">-&gt;</span> <span class="dt">Returns</span> msg</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>send <span class="ot">=</span> send&#39; <span class="op">.</span> cast</span></code></pre></div>
+<p>単に<code>cast</code>を前に合成してやればいいだけですね。問題は、メッセージの引数のアップキャストですが、各メッセージに対してたとえば以下のようにして<code>Object</code>型の引数を取る引数に<code>cast</code>を被せた便利関数を定義すればよさそうです：</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ot">setObjectValue ::</span> (<span class="st">&quot;NSObject&quot;</span> <span class="op">:&gt;</span> a) <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Message</span> <span class="st">&quot;setObjectValue&quot;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>setObjectValue obj <span class="ot">=</span> <span class="dt">SetObjectValue</span> (cast obj)</span></code></pre></div>
+<p>こうしたものを一々定義するのは面倒なので、これもマクロで解決してしまいましょう。ということで、造られたのが
+<a href="https://github.com/konn/objc-messaging/blob/master/src/Messaging/Macros.hs#L88">defineSelector</a>関数です。これを使うと、たとえば<code>setObjectValue</code>
+の定義は次のようになります：</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>defineSelector newSelector { selector <span class="ot">=</span> <span class="st">&quot;setObjectValue&quot;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                           , reciever <span class="ot">=</span> (&#39;<span class="dt">&#39;NSControl</span>, <span class="st">&quot;ctrl&quot;</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                           , arguments <span class="ot">=</span> [<span class="st">&quot;obj&quot;</span> <span class="op">:&gt;&gt;:</span> <span class="dt">Class</span> &#39;<span class="dt">&#39;NSObject</span>]</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                           , definition <span class="ot">=</span> [cexp| [ctrl setObject: obj] |]</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                           }</span></code></pre></div>
+<p><code class="sourceCode haskell"><span class="op">:&gt;&gt;:</span></code>は、<code>language-c-inline</code>の<code>:&gt;:</code>を模倣して定義した型です。模倣したのは、<code>language-c-inline</code>の<code class="sourceCode haskell"><span class="dt">Hint</span></code>回りのインスタンス等を後付けで増やせなかったからです。多分。また、<code class="sourceCode haskell"><span class="dt">Name</span></code>ではなく<code class="sourceCode haskell"><span class="dt">String</span></code>型の値を取るようになっていることに注意してください。</p>
+<p>ここまでやれば、だいたい Haskell から呼び出す分の Obj-C
+のオブジェクトシステムは模倣出来ることになるでしょう。</p>
+<section id="symbol-型の利用について" class="level4">
+<h5><img src="/img/dbend.png"> <code class="sourceCode haskell"><span class="dt">Symbol</span></code>
+型の利用について</h5>
+<p>上の説明では簡単のため <code>Symbol</code>カインドの型で Obj-C
+のクラス名を表しましたが、<code>language-c-inline</code>の制約上、現れる型はすべて<code class="sourceCode haskell"><span class="dt">Typeable</span></code>のインスタンスである必要があります。GHC
+7.8系では<code>Symbol</code>カインドの型は<code class="sourceCode haskell"><span class="dt">Typeable</span></code>のインスタンスになっていないので、GitHubに上がっている版では、<code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">NSObjectClass</span></code>のように定義部を持たないダミーの型をよういして、それを<code>DataKinds</code>で型レベルに持ち上げて
+<code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">NSObject</span> <span class="ot">=</span> <span class="dt">Object</span> <span class="dt">NSObjectClass</span></code>
+と定義することで回避しています。</p>
+<p>他方、セレクタについてはマーシャリングの時に出て来ないので、<code>Symbol</code>カインドの型レベル文字列を使って表しています。</p>
+<p>GHC 7.10 からは型レベル文字列や型レベル数値も <code class="sourceCode haskell"><span class="dt">Typeable</span></code>
+のインスタンスになるので、素直に両方共 <code>Symbol</code>
+を使った実装にできる予定です。</p>
+</section>
+</section>
+</section>
+<section id="currency-converter-をもう少しそれっぽくする-frp-との出会い" class="level2">
+<h3>Currency Converter をもう少しそれっぽくする – FRP との出会い</h3>
+<p>閑話休題。話を Currency Converter に戻しましょう。</p>
+<p>取り敢えず動くものはできましたが、人間というのは怠惰なもので（Haskellerならなおさらlazy!）、「Convertボタン押すの面倒くさいなあ」と思います。思いますよね。</p>
+<p>そこで、テキストフィールドの値が変化したら、リアルタイムで再計算されるようにしてみましょう。Objective-Cではこういう場合、<strong>Cocoa
+Bindings</strong>を使うのが定石ですが、ここでは Haskell の FRP
+ライブラリを使って同様のことを実現してみます<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>。具体的には、<code class="sourceCode haskell"><span class="dt">AppDelegate</span></code>クラスに対して、<code class="sourceCode haskell"><span class="dt">NSTextField</span></code>のデリゲートの役割も担わせて、変更があるたびに再計算させてやれ、という戦略です。</p>
+<p>また、上で折角オブジェクトシステムを構築したので、これを使って書き直すこともやってみましょう。</p>
+<section id="準備とディレクトリ構成の変更" class="level3">
+<h4>準備とディレクトリ構成の変更</h4>
+<p>ところで、いちいち<code>ghc</code>とか<code>cc</code>を適切な順番で呼ぶのって面倒ですよね。フレームワークや必要なパッケージの情報は
+Cabal
+ファイルにまとめておいて、あとは適宜必要なモジュールや生成されたObj-Cファイルなどを再帰的にコンパイルしてるえたら便利です。</p>
+<p>という訳で、コーディングに入る前にここをまず自動化してしまうことにします。まず、以下のようなディレクトリ構成にします：</p>
+<pre><code>  +- src
+  |   |
+  |   +- Main.hs
+  |   |
+  |   +- AppDelegate.hs
+  |   |
+  |   +- Messaging.hs
+  |   |
+  |   +- Messaging/Core.hs, Messaging/Macros.hs
+  |
+  +- xcodeproj
+  |   |
+  |   +- CurrencyConverter
+  |       |
+  |       +- CurrencyConverter.xcodeproj
+  |       |
+  |       +- CurrencyConverter
+  |       |
+  |       +- build
+  |       |
+  |       ⋮
+  |
+  +- CurrencyConverter.cabal
+  |
+  +- Builder.hs</code></pre>
+<p><a href="https://github.com/konn/objc-tutor/blob/master/CurrencyConverter-02/Builder.hs">CurrencyConverter.cabal</a>と<a href="https://github.com/konn/objc-tutor/blob/master/CurrencyConverter-02/CurrencyConverter.cabal">Builder.hs</a>はそれぞれ左のリンクから取得しておいてください。また、<code>Messaging</code>関連は<a href="https://github.com/konn/objc-messaging">objc-messaging</a>のレポジトリからダウンロードして、<code>src</code>に放り込んでおいてください。</p>
+<p><code>Builder.hs</code>を動かすには、<a href="http://hackage.haskell.org/package/shake">shake</a>ビルドシステムが必要なので、<code>cabal install shake</code>としておいてください。この記事はShakeの入門記事ではないので、<code>Builder.hs</code>の内容についてはとくに立ち入らないことにします。</p>
+</section>
+<section id="はじめの一歩" class="level3">
+<h4>はじめの一歩</h4>
+<p>ツールの整備を強引に終わらせたので、まずは次のように<code>.xib</code>ファイルを変更しましょう：</p>
+<figure>
+<img src="../imgs/currency-second.jpg" alt="ボタンとアクションを削除し、代わりにAppDelegateを各フィールドのデリゲートに指定する">
+<figcaption aria-hidden="true">ボタンとアクションを削除し、代わりにAppDelegateを各フィールドのデリゲートに指定する</figcaption>
+</figure>
+<p>今回は <code>main</code>
+関数の部分と、<code>AppDelegate</code>の実装を分離することにします。上のディレクトリ構成図通り<code>src</code>ディレクトリに<code>Main.hs</code>と<code>AppDelegate.hs</code>を作成して、<code>Main.hs</code>の内容を以下のように簡略化しておきます：</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE DeriveDataTypeable, QuasiQuotes, TemplateHaskell #-}</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.Typeable</span>          (<span class="dt">Typeable</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.C.Inline.ObjC</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.C.Quote.ObjC</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">AppDelegate</span> <span class="kw">as</span> <span class="dt">Delegate</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>objc_import [<span class="st">&quot;&lt;Cocoa/Cocoa.h&gt;&quot;</span>]</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="ot">nsApplicationMain ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>nsApplicationMain <span class="ot">=</span> <span class="op">$</span>(objc [] <span class="op">$</span> void [cexp| NSApplicationMain(0, NULL) |])</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>objc_emit</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>  objc_initialise</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>  Delegate.objc_initialise</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>  nsApplicationMain</span></code></pre></div>
+<p>Haskell側の初期化はモジュール毎におこなう必要があるため、<code>main</code>関数内で<code>AppDelegate</code>モジュールの<code>objc_initialise</code>を呼んでやる必要のあることに注意してください。</p>
+<p>さて、これから<code>AppDelegate.hs</code>にメインのロジックを記述していく訳ですが、取り敢えず今はダミーのコードを書いておきましょう：</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}</span>
+<span class="ot">{-# LANGUAGE QuasiQuotes, TemplateHaskell, TypeFamilies                   #-}</span>
+<span class="kw">module</span> <span class="dt">AppDelegate</span> <span class="kw">where</span>
+<span class="kw">import </span><span class="dt">Data.Typeable</span>          (<span class="dt">Typeable</span>)
+<span class="kw">import </span><span class="dt">Language.C.Inline.ObjC</span>
+<span class="kw">import </span><span class="dt">Language.C.Quote.ObjC</span>
+
+objc_import [<span class="st">&quot;&lt;Cocoa/Cocoa.h&gt;&quot;</span>]
+
+<span class="kw">newtype</span> <span class="dt">AppDelegate</span> <span class="fu">=</span> <span class="dt">AppDelegate</span> (<span class="dt">ForeignPtr</span> <span class="dt">AppDelegate</span>)
+                      <span class="kw">deriving</span> (<span class="dt">Typeable</span>)
+
+<span class="ot">marshalAppDel ::</span> <span class="dt">AppDelegate</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">AppDelegate</span>
+marshalAppDel <span class="fu">=</span> return
+
+objc_marshaller <span class="ch">&#39;marshalAppDel</span> <span class="ch">&#39;marshalAppDel</span>
+
+<span class="ot">nsLog ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+nsLog str <span class="fu">=</span> <span class="fu">$</span>(objc [<span class="ch">&#39;str</span> :&gt; <span class="ch">&#39;&#39;String</span>] $ void [cexp| NSLog(@&quot;%@&quot;, str) |] )
+
+<span class="ot">changed ::</span> <span class="dt">AppDelegate</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+changed app <span class="fu">=</span> nsLog <span class="st">&quot;dummy!&quot;</span>
+
+objc_interface [cunit<span class="fu">|</span></code>
+<code class="sourceCode objectivec"><span class="kw">@interface</span> AppDelegate : NSResponder &lt;NSApplicationDelegate, NSControlTextEditingDelegate&gt;
+@property (weak) typename NSTextField *dollarsField;
+@property (weak) typename NSTextField *rateField;
+@property (weak) typename NSTextField *resultField;
+
+- (<span class="dt">void</span>)controlTextDidChange:(typename NSNotification *)obj;
+<span class="kw">@end</span></code>
+<code class="sourceCode haskell"> <span class="fu">|</span>]
+
+
+objc_implementation [<span class="dt">Typed</span> <span class="ch">&#39;changed</span>] [cunit|</code>
+<code class="sourceCode objectivec"><span class="kw">@implementation</span> AppDelegate
+- (<span class="dt">void</span>) controlTextDidChange:(typename NSNotification*) aNotification
+{
+  changed(<span class="kw">self</span>);
+}
+
+<span class="kw">@end</span></code>
+<code class="sourceCode haskell"> <span class="fu">|</span>]
+
+objc_emit</code></pre>
+<p>コンパイルしてみます。</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> runhaskell ./Builder.hs</span></code></pre></div>
+<p>簡単！起動してみると、まあ単に何も起きないウィンドウ一枚だけのアプリになってます。それでもConsole.appでログを見てみると、入力するたびに
+<code>controlTextDidChange:</code>
+のログが残っていることがわかるでしょう。</p>
+</section>
+<section id="初期化更新ロジックの実装" class="level3">
+<h4>初期化・更新ロジックの実装</h4>
+<p>宣言通り、FRPを使ってメインロジックを実装します。特に、今回は<a href="http://hackage.haskell.org/package/sodium">sodium</a>を使うので、適宜インストールしておいてください。</p>
+<p>まずは、初期化処理を書きましょう。現在の状態を保存するための<code class="sourceCode haskell"><span class="dt">Session</span></code>型を定義し、それを誂える為の関数
+<code class="sourceCode haskell">newSession</code> を定義します：</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Dollars</span> <span class="ot">=</span> <span class="dt">Int</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Rate</span>    <span class="ot">=</span> <span class="dt">Double</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Session</span> <span class="ot">=</span> <span class="dt">Session</span> {<span class="ot"> pushDollars ::</span> <span class="dt">Dollars</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                       ,<span class="ot"> pushRate    ::</span> <span class="dt">Rate</span>    <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>                       ,<span class="ot"> application ::</span> <span class="dt">AppDelegate</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>                       } <span class="kw">deriving</span> (<span class="dt">Typeable</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="ot">newSession ::</span> <span class="dt">AppDelegate</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Session</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>newSession app <span class="ot">=</span> sync <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  (dolBh, dolL) <span class="ot">&lt;-</span> newBehaviour <span class="dv">0</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  (ratBh, ratL) <span class="ot">&lt;-</span> newBehaviour <span class="dv">0</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  _ <span class="ot">&lt;-</span> listen (value <span class="op">$</span> (<span class="op">*</span>) <span class="op">&lt;$&gt;</span> dolBh <span class="op">&lt;*&gt;</span> ratBh) <span class="op">$</span> \val <span class="ot">-&gt;</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    app <span class="op">#</span> resultField <span class="op">#.</span> setIntValue (<span class="fu">floor</span> val)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> <span class="op">$</span> <span class="dt">Session</span> (sync <span class="op">.</span> dolL <span class="op">.</span> <span class="fu">fromIntegral</span>) (sync <span class="op">.</span> ratL) app</span></code></pre></div>
+<p>まず、内部状態を表す<code class="sourceCode haskell"><span class="dt">Session</span></code>型はドル欄とレート欄の変化を通知する関数<code>pushDollars</code>および<code>pushRate</code>、そして現在走っている<code>AppDelegate</code>の三つ組として定義しています。フィールド内容の変更が通知されたら、これらの関数を通してFRPエンジン側に変更を伝達する訳です。</p>
+<p>そうした通知関数を作成しているのが <code class="sourceCode haskell">newSession</code>
+関数です。FRPにおいてはBehaviorというのは連続的に変化する値を表します。<code>newSession</code>の二、三行目で、それぞれドル値とレート値を表現するBehaivourと変更通知関数を生成しています。</p>
+<p>それらの変更があった時に実際に結果を更新する設定をしているのが、<code>listen</code>を呼んでいる続く二行です。<code class="sourceCode haskell">(<span class="op">#</span>)</code>や<code class="sourceCode haskell">(<span class="op">#.</span>)</code>は先程定義したメッセージ送信用の中置演算子です。ここで使われているメッセージやクラスは次のように定義されています：</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>defineClass <span class="st">&quot;NSObject&quot;</span> <span class="dt">Nothing</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>objc_interface [cunit|</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>@interface AppDelegate : NSResponder &lt;NSApplicationDelegate, NSControlTextEditingDelegate&gt;</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>@property (weak) typename NSTextField *dollarsField;</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>@property (weak) typename NSTextField *rateField;</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>@property (weak) typename NSTextField *resultField;</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>- (void)controlTextDidChange:(typename NSNotification *)obj;</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>@end</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a> |]</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>defineClass <span class="st">&quot;AppDelegate&quot;</span> (<span class="dt">Just</span> &#39;<span class="dt">&#39;NSObject</span>)</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>idMarshaller &#39;<span class="dt">&#39;AppDelegate</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>defineClass <span class="st">&quot;NSTextField&quot;</span> (<span class="dt">Just</span> &#39;<span class="dt">&#39;NSObject</span>)</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>idMarshaller &#39;<span class="dt">&#39;NSTextField</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>defineSelector newSelector { selector <span class="ot">=</span> <span class="st">&quot;setIntValue&quot;</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>                           , reciever <span class="ot">=</span> (&#39;<span class="dt">&#39;NSTextField</span>, <span class="st">&quot;field&quot;</span>)</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>                           , arguments <span class="ot">=</span> [<span class="st">&quot;num&quot;</span> <span class="op">:&gt;&gt;:</span> &#39;<span class="dt">&#39;Int</span>]</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>                           , definition <span class="ot">=</span> [cexp| [field setIntValue: num] |]</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>                           }</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>defineSelector newSelector { selector <span class="ot">=</span> <span class="st">&quot;resultField&quot;</span></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>                           , reciever <span class="ot">=</span> (&#39;<span class="dt">&#39;AppDelegate</span>, <span class="st">&quot;app&quot;</span>)</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>                           , definition <span class="ot">=</span> [cexp| [app resultField] |]</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>                           , returnType <span class="ot">=</span> <span class="dt">Just</span> [t| NSTextField |]</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>                           }</span></code></pre></div>
+<p>ここで <code>idMarshaller</code>
+という関数が呼びだされています。これは先程説明したオブジェクトシステム生成用のマクロについてくるオマケみたいなもので、一々<code>return</code>の型を詳しくしただけのマーシャリング関数を定義しなくても、勝手に良い感じにしてくれるようにしたものです。
+厳密には、<code>defineClass</code>の段階で<code>return</code>の型を特価させただけのマーシャリング関数が生成され、<code>idMarshaller</code>が呼ばれるることで、それを実際にマーシャリング用の辞書に登録しています。どうせなら<code>deinfeClass</code>呼んだだけで登録するまでやってくれれば良い気がしますが、これは<code>language-c-inline</code>の現在の内部実装の都合上分けざるを得ないのです。</p>
+<p>さて、これで初期化ロジックは出来たので、これを Obj-C
+から呼び出すようにします。<code class="sourceCode haskell">objc_implemenatation</code>の部分を次のように書き換えてください：</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">objc_implementation [<span class="dt">Typed</span> <span class="ch">&#39;changed</span>, <span class="dt">Typed</span> <span class="ch">&#39;newSession</span>] [cunit<span class="fu">|</span></code>
+<code class="sourceCode objectivec"><span class="kw">@interface</span> AppDelegate ()
+@property (assign) typename HsStablePtr session;
+
+<span class="kw">@end</span>
+
+<span class="kw">@implementation</span> AppDelegate
+
+- (<span class="dt">void</span>)applicationDidFinishLaunching:(typename NSNotification *)aNotification
+{
+  <span class="kw">self</span>.session = newSession(<span class="kw">self</span>);
+}
+
+- (<span class="dt">void</span>) controlTextDidChange:(typename NSNotification*) aNotification
+{
+  changed(<span class="kw">self</span>);
+}
+
+<span class="kw">@end</span></code>
+<code class="sourceCode haskell"> <span class="fu">|</span>]</code></pre>
+<p><code>AppDelegate</code>に内部状態を保持する<code>session</code>変数を追加して、アプリケーションの起動が完了した時点で先程の<code>newSession</code>関数を呼び、初期化された内部状態をそこに代入するようにしています。そんなに真新しいことはやっていませんね。</p>
+</section>
+<section id="通知ロジックの実装" class="level3">
+<h4>通知ロジックの実装</h4>
+<p>それでは、通知ロジックを実装しましょう。</p>
+<p><code class="sourceCode objectivec">controlTextDidChange<span class="op">:</span></code>に渡された<code class="sourceCode objectivec">NSNotification</code>の情報を元に、どのフィールドが変更されたのかを判定して、適切な通知関数を呼んでやれば良さそうです。Haskellでは、ポインタの番地を比較することが簡単にできるので、<code>changed</code>を次の様にかきかえれば良さそうです：</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ot">changed ::</span> <span class="dt">Session</span> <span class="ot">-&gt;</span> <span class="dt">NSNotification</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>changed session notif <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  sendF <span class="ot">&lt;-</span> notif <span class="op">#</span> sender</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  rateF <span class="ot">&lt;-</span> application session <span class="op">#</span> rateField</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  dollF <span class="ot">&lt;-</span> application session <span class="op">#</span> dollarsField</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> sendF <span class="op">==</span> rateF</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">then</span> pushRate    session <span class="op">=&lt;&lt;</span> rateF <span class="op">#</span> doubleValue</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">else</span> pushDollars session <span class="op">=&lt;&lt;</span> dollF <span class="op">#</span> intValue</span></code></pre></div>
+<p>上で述べたロジックをそのまま書いているだけですね。 必要な<code class="sourceCode haskell"><span class="dt">NSNotification</span></code>および<code class="sourceCode haskell">sender</code>の定義は以下の通りです（<code>AppDelegate.hs</code>の適切な位置に挿入しておいてください）：</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>defineClass <span class="st">&quot;NSNotification&quot;</span> (<span class="dt">Just</span> &#39;<span class="dt">&#39;NSObject</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>idMarshaller &#39;<span class="dt">&#39;NSNotification</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>defineSelector newSelector { selector <span class="ot">=</span> <span class="st">&quot;sender&quot;</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                           , reciever <span class="ot">=</span> (&#39;<span class="dt">&#39;NSNotification</span>, <span class="st">&quot;notif&quot;</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                           , returnType <span class="ot">=</span> <span class="dt">Just</span> [t| NSTextField |]</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>                           , definition <span class="ot">=</span> [cexp| [notif object] |]</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>                           }</span></code></pre></div>
+<p>他の<code>hogeField</code>系や<code>hogeValue</code>系の定義はだいたい他の関数から類推出来ると思うので割愛します。</p>
+<p>最後に、<code>objc_implemenatation</code>中の<code>controlTextDidChange:</code>の実装を以下のように変更すれば、万事OKです：</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode objectivec"><code class="sourceCode objectivec"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="op">-</span> <span class="op">(</span><span class="dt">void</span><span class="op">)</span> controlTextDidChange<span class="op">:(</span>typename NSNotification<span class="op">*)</span> aNotification</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  changed<span class="op">(</span><span class="kw">self</span><span class="op">.</span>session<span class="op">,</span> aNotification<span class="op">);</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>以上で完成です（<a href="https://github.com/konn/objc-tutor/blob/master/CurrencyConverter-02/src/AppDelegate.hs">完成したコード</a>）。</p>
+<p>あとはさっき作っておいた<code>Builder.hs</code>を使ってコンパイルすれば良いだけですね：</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> runhaskell Builer.hs clean <span class="kw">&amp;&amp;</span> <span class="ex">runhaskell</span> Builder.hs</span></code></pre></div>
+<p>起動すれば、望む通りの挙動をするようになっています！やりました！</p>
+<p><img src="../imgs/currency-converter-demo.gif"></p>
+</section>
+</section>
+<section id="補遺マーシャラの書き方レコード型専用構文" class="level2">
+<h3>補遺：マーシャラの書き方、レコード型専用構文</h3>
+<p>今まで駆け足で Haskell による Cocoa
+アプリの開発法を紹介してきましたが、恒等変換以外のマーシャラを書かないで来ました。あるていどメモリ管理などに対する勘が働くなら、マーシャラは普通に書くことが出来ます。</p>
+<p>たとえば、<code class="sourceCode objectivec">NSString</code>を要素に持つ<code class="sourceCode objectivec">NSArray</code>型の値と、<code class="sourceCode haskell">[<span class="dt">String</span>]</code>を相互変換したいと思ったら以下のようなコードを書けばよいです：</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">NSString</span> <span class="ot">=</span> <span class="dt">NSString</span> (<span class="dt">ForeignPtr</span> ())</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">NSArray</span> <span class="ot">=</span> <span class="dt">NSArray</span> (<span class="dt">ForeignPtr</span> ())</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">NSMutableArray</span> <span class="ot">=</span> <span class="dt">NSMutableArray</span> (<span class="dt">ForeignPtr</span> ())</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>objc_typecheck</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="ot">nsArrToListOfStrings ::</span> <span class="dt">NSArray</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> [<span class="dt">String</span>]</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>nsArrToListOfStrings arr <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  len <span class="ot">&lt;-</span> <span class="op">$</span>(objc [&#39;arr <span class="op">:&gt;</span> <span class="dt">Class</span> &#39;<span class="dt">&#39;NSArray</span>] <span class="op">$</span> &#39;<span class="dt">&#39;Int</span> <span class="op">&lt;:</span> [cexp| [arr count] |])</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  forM [<span class="dv">0</span><span class="op">..</span>len <span class="op">-</span><span class="dv">1</span>] <span class="op">$</span> \ i <span class="ot">-&gt;</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">$</span>(objc [&#39;arr <span class="op">:&gt;</span> <span class="dt">Class</span> &#39;<span class="dt">&#39;NSArray</span>, &#39;i <span class="op">:&gt;</span> &#39;<span class="dt">&#39;Int</span>] <span class="op">$</span> &#39;<span class="dt">&#39;String</span> <span class="op">&lt;:</span> [cexp| [arr objectAtIndex: i] |])</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="ot">listOfStringsToNSArr ::</span> [<span class="dt">String</span>] <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">NSArray</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>listOfStringsToNSArr strs <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>  marr <span class="ot">&lt;-</span> <span class="op">$</span>(objc [] <span class="op">$</span> <span class="dt">Class</span> &#39;<span class="dt">&#39;NSMutableArray</span> <span class="op">&lt;:</span> [cexp| [NSMutableArray array] |])</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>  forM_ strs <span class="op">$</span> \str <span class="ot">-&gt;</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">$</span>(objc [&#39;marr <span class="op">:&gt;</span> <span class="dt">Class</span> &#39;<span class="dt">&#39;NSMutableArray</span>, &#39;str <span class="op">:&gt;</span> &#39;<span class="dt">&#39;String</span>] <span class="op">$</span></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>      void [cexp| [marr addObject: str] |])</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">$</span>(objc [&#39;marr <span class="op">:&gt;</span> <span class="dt">Class</span> &#39;<span class="dt">&#39;NSMutableArray</span>] <span class="op">$</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>           <span class="dt">Class</span> &#39;<span class="dt">&#39;NSArray</span> <span class="op">&lt;:</span> [cexp| marr |])</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>objc_marshaller &#39;listOfStringsToNSArr &#39;nsArrToListOfStrings</span></code></pre></div>
+<p>大して難しいことはありませんね。マーシャル関数を定義する前に <code class="sourceCode haskell">objc_typecheck</code>
+というマクロを呼んでいるところだけ目新しいですが、これは実際には<strong>何もしないマクロ</strong>です。なぜこんなものがあるのかというと、強制的に「何もしない」マクロを展開させることで、そこまで定義された型の情報をそれ以下のマクロ定義で使えるようにするためです。上の<code>objc_typecheck</code>をコメントアウトすると、「<code class="sourceCode haskell"><span class="dt">NSArray</span></code>なんて型しらないよ！！」と叱られる筈です。</p>
+<p>さて、このように定義すれば、Haskell側の <code class="sourceCode haskell">[<span class="dt">String</span>]</code>型と、Obj-C側の<code class="sourceCode objectivec">NSArray</code>クラスは以後同一視され、自動的に変換されるようになります。ここで大事なのは、Haskellの型とObj-Cのクラスが一対一に対応するようにすることです。つまり、ここで定義した以外に
+<code>NSArray</code> と <code>[Int]</code>
+のマーシャラを定義することは出来ない、ということです。</p>
+<p>これを回避するには、<code>NSArray</code> を <code>NSArray e</code>
+として、要素の型を表すダミーの幽霊型を引数に持つようにして、<code>NSArray Int</code>と<code>[Int]</code>、<code>NSArray String</code>と<code>[String]</code>の間のマーシャラを別個に定義してやれば問題ないです。</p>
+<p>また、Haskellのレコード型とObj-Cの値を一対一にマップするための特別なマクロも用意されています。これについては今回は面倒臭くなってきたので（！）詳しくは触れませんが、<code>language-c-inline</code><a href="https://github.com/mchakravarty/language-c-inline/tree/master/tests/objc/record">レポジトリにあるサンプル</a>をみてみるとだいたい感じが掴めるんじゃないかと思います。おわり。</p>
+</section>
+</section>
+<section id="おわりに" class="level1">
+<h2>おわりに</h2>
+<p>ここまで、簡単なアプリケーションの開発を通して、HaskellによるCocoaアプリ開発の手法を概観して来ました。
+いささか簡単すぎるので、これで本当に良い感じの Cocoa
+アプリが開発出来るの？と疑問に思われる方もおられるかもしれません。</p>
+<p>そうした疑問に対する答えとして、私が適当に開発中の Haskell による OSX
+向け SKK 実装、<a href="https://github.com/konn/hskk/">λSKK</a>
+を挙げておきます。あ、時と場合によってデバッグ用途でキー入力をログに出力していたりして、ちょっとしたキーロガーみたいになってしまう場合があるので、これ使う時は<strong>パスワードとか大事な文字列を入力しないように</strong>してくださいね。とまれ、ビルドして使ってみると、まあまだバグはありますが結構ふつうに使えるアプリになっているのがわかると思います。</p>
+<p>ひとまず、<code>language-c-inline</code>を使えば、一応実用的なCocoaアプリが作れることがわかったと思います。とはいえ、マーシャル関数をモジュールを跨いで共有出来ないとか、まだまだ改善点はあると思います。また、出来れば<code>AppDelegate</code>と<code>Session</code>も同一視できるといいなあと思うんですが、なんか上手くいきませんでした。</p>
+<p>また、ここで構築した簡易オブジェクトシステムについて改善出来るところを考えてみると、以下のような感じになるかな、と思います：</p>
+<ul>
+<li><code class="sourceCode objectivec">id</code>型への対応</li>
+<li>コンテナ型の要素に関する共変性・不変性・反変性などの指定</li>
+<li>HaskellのFRP ライブラリと Cocoa Bindings の連携</li>
+</ul>
+<p>まあ、<code>id</code>については常に全ての型のサブクラスになっているように定義すればいいでしょう。</p>
+<p>型パラメータの共変性等の指定については、ちょっとマクロが煩雑にならないように色々と考えてやる必要性がありそうです。そもそも、これをちゃんとやろうと思ったら、幽霊型の部分も含めて継承関係に含めなければいけないような気がするので、ちょっと骨が折れそうですね。</p>
+<p>最後のHaskellのFRP ライブラリと Cocoa Bindings
+の連携については、ぼくはどちらにも詳しくないのでまだよくわからないです。ただ、パラダイムとしては
+Cocoa Bindings と FRP
+の考え方は似ているように思うので、なんらかのグルーコードを一度書いてしまえばうまいこと連携できるんじゃないかなー、などと考えています。また、ぼくはまったく触ってみたことがないのですが、よりFRP
+の影響を顕著に受けた Reactive Cocoa
+というObj-Cフレームワークがあるらしいので、そちらの方も頃合いを見て調べられたらなと思ってます。</p>
+<p>というわけでやたら長々と Haskell による Cocoa
+アプリ開発の実際を説明してきましたが、如何だったでしょうか？後半かなり失速した感がありますが、いちおうこれで開発に必要な知識は纏められたと思います。是非何かしらの
+Cocoa
+アプリを実装してみて、面白いものが出来たら（面白くなくても）おしえてください。</p>
+<p>それでは、Happy Haskell-Cocoa Development and Have a nice year!</p>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>発表日は遅延評価されました（常套句）。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>理論上は ghc-ios と FFI を使えば iOS
+アプリを開発することも可能ですが、ghc-ios は執筆時点で Template Haskell
+に対応していないため、以下で説明する方法はまだ使えません。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>お前は何をいってるんだ。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>Cocoa Bindings も原始的な FRP
+みたいなものなので、Haskell側のFRPライブラリと上手いこと連携が取れるとよいなあ、と思っているのですが、今のところあんまり良い方法が思い付いてません。<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/prog/haskell/haskell-introduction-to-cocoa.html";
+          this.page.identifier = "/prog/haskell/haskell-introduction-to-cocoa.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/prog/haskell/haskell-introduction-to-cocoa.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+	<a href="https://www.mathjax.org">MathJax</a>,
+        and <a href="http://nginx.org/">Nginx</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2018
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+      var _gaq=[['_setAccount','UA-29894567-2'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+
+
+</body></html>
