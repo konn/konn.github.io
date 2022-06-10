@@ -36,7 +36,7 @@ import Citeproc.Pandoc
 import Control.Applicative ((<|>))
 import Control.Concurrent (newChan, readChan, threadDelay)
 import Control.Concurrent.Async (concurrently_)
-import Control.Exception (throwIO)
+import Control.Exception (SomeException, throwIO)
 import Control.Lens
   ( both,
     iforM_,
@@ -277,18 +277,16 @@ runShake = shakeArgs myShakeOpts $ do
   "build" ~> need ["site"]
 
   "deploy" ~> do
-    ign <- T.lines <$> readTextFile' (destD </> ".ignore")
+    cmd_ (Cwd "_site") "git" "commit" "-amupdated"
+      `actionCatch` \(_ :: SomeException) -> pure ()
+    cmd_ (Cwd "_site") "git" "push"
+      `actionCatch` \(_ :: SomeException) -> pure ()
     () <-
-      cmd_
-        "rsync"
-        "--delete-excluded"
-        "--checksum"
-        "-av"
-        (map (T.unpack . ("--exclude=" <>)) ign)
-        "_site/"
-        "sakura-vps:~/mighttpd/public_html/"
-    () <- cmd_ "git" "add" "templates" "config" "site-src" "app"
-    () <- cmd_ "git" "commit" "-amupdated"
+      cmd_ "git" "add" "templates" "config" "site-src" "app"
+        `actionCatch` \(_ :: SomeException) -> pure ()
+    () <-
+      cmd_ "git" "commit" "-amupdated"
+        `actionCatch` \(_ :: SomeException) -> pure ()
     cmd_ "git" "push" "origin" "master"
 
   withRouteRules siteConf routing $ do
