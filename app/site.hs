@@ -27,16 +27,10 @@ module Main where
 
 import Blaze.ByteString.Builder (toByteString)
 import Breadcrumb
-import Citeproc
-  ( Reference,
-    Style,
-    parseStyle,
-  )
-import Citeproc.Pandoc
 import Control.Applicative ((<|>))
 import Control.Concurrent (newChan, readChan, threadDelay)
 import Control.Concurrent.Async (concurrently_)
-import Control.Exception (SomeException, throwIO)
+import Control.Exception (SomeException, try)
 import Control.Lens
   ( both,
     iforM_,
@@ -63,7 +57,6 @@ import Data.Aeson
   )
 import qualified Data.Aeson.Key as AK
 import qualified Data.Aeson.KeyMap as KM
-import qualified Data.ByteString.Char8 as BS
 import qualified Data.CaseInsensitive as CI
 import Data.Char hiding (Space)
 import Data.Data (Data)
@@ -83,8 +76,7 @@ import Data.Maybe
     mapMaybe,
     maybeToList,
   )
-import Data.Monoid ((<>))
-import Data.Ord (Down (Down), comparing)
+import Data.Ord (Down (..))
 import qualified Data.Store as S
 import Data.String
 import qualified Data.Text as T
@@ -92,7 +84,7 @@ import qualified Data.Text.Encoding as ET
 import qualified Data.Text.ICU.Normalize as UNF
 import qualified Data.Text.IO as T
 import qualified Data.Text.Lazy as LT
-import Data.Text.Lens (packed, unpacked)
+import Data.Text.Lens (unpacked)
 import Data.Time
 import Data.Yaml (object, (.=))
 import GHC.Generics
@@ -116,7 +108,6 @@ import Skylighting hiding (Context (..), ListItem (..), Style)
 import System.Directory
   ( canonicalizePath,
     createDirectoryIfMissing,
-    getCurrentDirectory,
     getHomeDirectory,
     getModificationTime,
     renameFile,
@@ -137,12 +128,7 @@ import Text.LaTeX.Base (render)
 import Text.LaTeX.Base.Parser
 import Text.LaTeX.Base.Syntax hiding ((<>))
 import qualified Text.Mustache as Mus
-import Text.Pandoc hiding
-  ( Item (..),
-    getModificationTime,
-    runIO,
-  )
-import qualified Text.Pandoc as Pandoc
+import Text.Pandoc hiding (getModificationTime, runIO)
 import Text.Pandoc.Builder hiding ((<>))
 import qualified Text.Pandoc.Builder as Pan
 import Text.Pandoc.Citeproc
@@ -185,7 +171,7 @@ siteConf@SakeConf
   , sourceDir = srcD
   , cacheDir = cacheD
   } =
-    def
+    Text.Pandoc.def
       { destinationDir = "_site"
       , sourceDir = "site-src"
       , cacheDir = "_cache"
@@ -221,7 +207,7 @@ watch args = do
             { ssIndices = [unsafeToPiece "index.html"]
             }
     builder chan = do
-      withArgs args runShake
+      try @SomeException $ withArgs args runShake
       forever $ do
         _ <- readChan chan
         putStrLn "Changed!"
@@ -445,6 +431,7 @@ runShake = shakeArgs myShakeOpts $ do
             if (destD </> "articles") `L.isPrefixOf` out
               then mdOrHtmlToHtml out
               else copyFile' srcPath out
+          | otherwise -> error $ "Unknown extension: " <> takeFileName srcPath
     (cacheD </> "talks.bin") %> \out -> do
       talks <- readFromYamlFile' @_ @[Talk] "site-src/talks.yaml"
       writeBinaryFile out talks
@@ -520,10 +507,10 @@ texToHtml out = do
       =<< procSchemes
       =<< myProcCites style bibs
       =<< liftIO (texToMarkdown defMacs out latexSource)
-  let html = "{{=<% %>=}}\n" <> fromPure (writeHtml5String writerConf ipan)
+  let html = "{{=<% %>=}}\n" <> fromPure (Text.Pandoc.writeHtml5String writerConf ipan)
       panCtx =
         pandocContext $
-          ipan & _Pandoc . _2 %~ (RawBlock "html" "{{=<% %>=}}\n" :)
+          ipan & _Pandoc . _2 %~ (Text.Pandoc.RawBlock "html" "{{=<% %>=}}\n" :)
   writeTextFile out . itemBody
     =<< applyDefaultTemplate panCtx . fmap ("{{=<% %>=}}\n" <>)
     =<< applyAsMustache panCtx (setItemBody html i0)
@@ -539,19 +526,19 @@ mdOrHtmlToHtml' cxt out =
 
 type CSLPath = FilePath
 
-newtype RefMeta = RefMeta Pan.Meta
+newtype RefMeta = RefMeta Text.Pandoc.Meta
   deriving newtype (Semigroup, Monoid)
 
 instance Readable RefMeta where
-  readFrom_ fp = runIOorExplode do
-    fmap (\(Pandoc m _) -> RefMeta m) . readBibLaTeX def
+  readFrom_ fp = Text.Pandoc.runIOorExplode do
+    fmap (\(Text.Pandoc.Pandoc m _) -> RefMeta m) . Text.Pandoc.readBibLaTeX Text.Pandoc.def
       =<< liftIO (T.readFile fp)
 
 cslAndBib :: FilePath -> Action (CSLPath, RefMeta)
 cslAndBib fp = do
   let cslPath = srcD </> fp -<.> "csl"
-      bibPath = srcD </> fp -<.> "bib"
-  {- mbib <-
+  {-  bibPath = srcD </> fp -<.> "bib"
+  mbib <-
     tryWithFile bibPath $
       readFromFile' bibPath -}
   -- gbib <- readFromFile' globalBib
@@ -563,23 +550,23 @@ cslAndBib fp = do
   let bibs = mempty -- fromMaybe mempty mbib <> gbib
   return (finalCslPath, bibs)
 
-pandocContext :: Pandoc -> Context a
-pandocContext (Pandoc meta _)
-  | Just abst <- lookupMeta "abstract" meta =
+pandocContext :: Text.Pandoc.Pandoc -> Context a
+pandocContext (Text.Pandoc.Pandoc meta _)
+  | Just abst <- Text.Pandoc.lookupMeta "abstract" meta =
     constField "abstract" $
       T.unpack $
         fromPure $
-          writeHtml5String writerConf $ Pandoc meta (mvToBlocks abst)
+          Text.Pandoc.writeHtml5String writerConf $ Text.Pandoc.Pandoc meta (mvToBlocks abst)
   | otherwise = mempty
 
 listDrafts :: FilePath -> Action [Item T.Text]
 listDrafts fp =
   filter (not . isPublished) <$> listChildren False fp
 
-addPDFLink :: FilePath -> Pandoc -> Pandoc
-addPDFLink plink (Pandoc meta body) = Pandoc meta body'
+addPDFLink :: FilePath -> Text.Pandoc.Pandoc -> Text.Pandoc.Pandoc
+addPDFLink plink (Text.Pandoc.Pandoc meta body) = Text.Pandoc.Pandoc meta body'
   where
-    Pandoc _ body' =
+    Text.Pandoc.Pandoc _ body' =
       doc $
         mconcat
           [ para $ mconcat ["[", link' plink "PDF版" "PDF版", "]"]
@@ -657,19 +644,19 @@ feedConf =
     , feedUrl = "/feed.xml"
     }
 
-writerConf :: WriterOptions
+writerConf :: Text.Pandoc.WriterOptions
 writerConf =
-  def
+  Text.Pandoc.def
     { -- We can't change this to KaTeX,
       -- as this sacrifices the conversion logic.
-      writerHTMLMathMethod = MathJax "https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"
+      writerHTMLMathMethod = Text.Pandoc.MathJax "https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"
     , writerHighlightStyle = Just pygments
     , writerSectionDivs = True
-    , writerExtensions = disableExtension Ext_tex_math_dollars myExts
+    , writerExtensions = Text.Pandoc.disableExtension Text.Pandoc.Ext_tex_math_dollars myExts
     }
 
-readerConf :: ReaderOptions
-readerConf = def {readerExtensions = myExts}
+readerConf :: Text.Pandoc.ReaderOptions
+readerConf = Text.Pandoc.def {readerExtensions = myExts}
 
 myPandocCompiler :: FilePath -> Action (Item T.Text)
 myPandocCompiler out = do
@@ -805,8 +792,8 @@ shortDescrCtx :: Context a
 shortDescrCtx = field_ "short_description" $ \i ->
   let descr = fromMaybe "" $ lookupMetadata "description" i
    in either (const "") (T.unpack . T.replace "\n" " ") $
-        runPure $
-          writePlain def . bottomUp unicodiseMath =<< readMarkdown readerConf descr
+        Text.Pandoc.runPure $
+          Text.Pandoc.writePlain Text.Pandoc.def . Text.Pandoc.bottomUp unicodiseMath =<< Text.Pandoc.readMarkdown readerConf descr
 
 noTopStar :: Context b
 noTopStar = field_ "no-top-star" $ \i ->
@@ -820,12 +807,12 @@ metaTags = field "meta" $ \i -> do
         fromMaybe "" $ lookupMetadata k i
   let desc =
         fromPure $
-          writePlain
+          Text.Pandoc.writePlain
             writerConf
-              { writerHTMLMathMethod = PlainMath
-              , writerWrapText = WrapNone
+              { writerHTMLMathMethod = Text.Pandoc.PlainMath
+              , writerWrapText = Text.Pandoc.WrapNone
               }
-            =<< readMarkdown readerConf (T.pack desc0)
+            =<< Text.Pandoc.readMarkdown readerConf (T.pack desc0)
   return $
     renderHtml $ do
       H5.meta ! H5.name "Keywords" ! H5.content (H5.toValue tags)
@@ -840,6 +827,7 @@ procKaTeX = liftAction . fmap T.pack . prerenderKaTeX . T.unpack
 
 prerenderKaTeX :: String -> Action String
 prerenderKaTeX src = do
+  need ["prerender-katex" </> "prerender" <.> "js"]
   Stdout out <-
     cmd
       (Cwd "prerender-katex")
@@ -889,8 +877,8 @@ addRequiredClasses t = t
 uriAuthToString_ :: URIAuth -> String
 uriAuthToString_ (URIAuth a b c) = concat [a, b, c]
 
-procSchemes :: Pandoc -> Action Pandoc
-procSchemes = bottomUpM procSchemes0
+procSchemes :: Text.Pandoc.Pandoc -> Action Text.Pandoc.Pandoc
+procSchemes = Text.Pandoc.bottomUpM procSchemes0
 
 procSchemesUrl :: Schemes -> T.Text -> T.Text
 procSchemesUrl (Schemes dic) =
@@ -908,7 +896,7 @@ procSchemesUrl (Schemes dic) =
            in prefix <> T.pack body <> fromMaybe "" postfix
       _ -> u
 
-procSchemes0 :: Inline -> Action Inline
+procSchemes0 :: Text.Pandoc.Inline -> Action Text.Pandoc.Inline
 procSchemes0 inl =
   case inl ^? linkUrl of
     Nothing -> return inl
@@ -919,23 +907,23 @@ procSchemes0 inl =
               asum $
                 imap
                   ( \k v ->
-                      fmap (sandwitched (prefix v) (fromMaybe "" $ postfix v)) $
-                        T.stripPrefix (k <> ":") url
+                      sandwitched (prefix v) (fromMaybe "" $ postfix v)
+                        <$> T.stripPrefix (k <> ":") url
                   )
                   dic
       return $ inl & linkUrl .~ url'
   where
     sandwitched s e t = s <> t <> e
 
-addAmazonAssociateLink :: T.Text -> Pandoc -> Pandoc
-addAmazonAssociateLink = bottomUp . procAmazon
+addAmazonAssociateLink :: T.Text -> Text.Pandoc.Pandoc -> Text.Pandoc.Pandoc
+addAmazonAssociateLink = Text.Pandoc.bottomUp . procAmazon
 
 addAmazonAssociateLink' :: T.Text -> T.Text -> T.Text
 addAmazonAssociateLink' tag = withUrls (attachTo tag)
 
-procAmazon :: T.Text -> Inline -> Inline
-procAmazon tag (Link atts is (url, ttl)) = Link atts is (attachTo tag url, ttl)
-procAmazon tag (Image atts is (url, ttl)) = Image atts is (attachTo tag url, ttl)
+procAmazon :: T.Text -> Text.Pandoc.Inline -> Text.Pandoc.Inline
+procAmazon tag (Text.Pandoc.Link atts is (url, ttl)) = Text.Pandoc.Link atts is (attachTo tag url, ttl)
+procAmazon tag (Text.Pandoc.Image atts is (url, ttl)) = Text.Pandoc.Image atts is (attachTo tag url, ttl)
 procAmazon _ il = il
 
 attachTo :: T.Text -> T.Text -> T.Text
@@ -961,7 +949,7 @@ ccTLDs = ["jp"]
 getActive :: [(T.Text, String)] -> FilePath -> String
 getActive _ "archive.md" = "/archive.html"
 getActive _ "profile.md" = "/profile.html"
-getActive cDic ident = fromMaybe "/" $ listToMaybe $ filter p $ map snd cDic
+getActive cDic ident = fromMaybe "/" $ find p $ map snd cDic
   where
     p "/" = False
     p ('/' : inp) = fromString (inp ++ "//*") ?== ident
@@ -1108,8 +1096,8 @@ renderPostList posts = do
             refs = buildRefInfo $ itemBody item
             fp = replaceDir srcD destD (runIdentifier ident) -<.> "html"
          in fromPure $
-              writeHtml5String writerConf . bottomUp (remoteCiteLink (T.pack fp) refs)
-                =<< readMarkdown readerConf descr
+              Text.Pandoc.writeHtml5String writerConf . Text.Pandoc.bottomUp (remoteCiteLink (T.pack fp) refs)
+                =<< Text.Pandoc.readMarkdown readerConf descr
 
       iCtxs =
         mconcat
@@ -1173,50 +1161,50 @@ itemDate item =
             utcToLocalZonedTime
               =<< getModificationTime (runIdentifier ident)
 
-extractCites :: Data a => a -> [[Citation]]
-extractCites = queryWith collect
+extractCites :: Data a => a -> [[Text.Pandoc.Citation]]
+extractCites = Text.Pandoc.queryWith collect
   where
-    collect (Cite t _) = [t]
+    collect (Text.Pandoc.Cite t _) = [t]
     collect _ = []
 
-extractNoCites :: Data c => c -> [[Citation]]
-extractNoCites = queryWith collect
+extractNoCites :: Data c => c -> [[Text.Pandoc.Citation]]
+extractNoCites = Text.Pandoc.queryWith collect
   where
-    collect (RawInline "latex" src) =
+    collect (Text.Pandoc.RawInline "latex" src) =
       case parseLaTeX src of
         Left _ -> []
-        Right t -> flip queryWith t $ \case
+        Right t -> flip Text.Pandoc.queryWith t $ \case
           TeXComm "nocite" [cs] ->
-            [ [ Citation (trim w) [] [] NormalCitation 0 0
+            [ [ Text.Pandoc.Citation (trim w) [] [] Text.Pandoc.NormalCitation 0 0
               | w <- T.splitOn "," $ T.init $ T.tail $ render cs
               ]
             ]
           _ -> []
     collect _ = []
 
-myProcCites :: CSLPath -> RefMeta -> Pandoc -> Action Pandoc
-myProcCites style (RefMeta bib) p0 = do
+myProcCites :: CSLPath -> RefMeta -> Text.Pandoc.Pandoc -> Action Text.Pandoc.Pandoc
+myProcCites style RefMeta {} p0 = do
   p <-
     liftIO $
-      runIOorExplode $
+      Text.Pandoc.runIOorExplode $
         processCitations $
           p0 & setMeta "reference-section-title" "参考文献"
             & setMeta "csl" style
   pure $
-    bottomUp removeTeXGomiStr $
-      bottomUp linkLocalCite p
+    Text.Pandoc.bottomUp removeTeXGomiStr $
+      Text.Pandoc.bottomUp linkLocalCite p
 
-refBlockToList :: Block -> Block
+refBlockToList :: Text.Pandoc.Block -> Text.Pandoc.Block
 refBlockToList
-  (Div ("refs", ["references"], atts) divs) =
-    RawBlock "html" $
+  (Text.Pandoc.Div ("refs", ["references"], atts) divs) =
+    Text.Pandoc.RawBlock "html" $
       LT.toStrict $
         renderHtml $
           applyAtts (map (both %~ T.unpack) atts) $
             H5.ul ! H5.id "refs" ! H5.class_ "references" $
               mapM_ listise divs
     where
-      listise (Div (ident, cls, map (both %~ T.unpack) -> ats) [Para (Str lab : dv)]) =
+      listise (Text.Pandoc.Div (ident, cls, map (both %~ T.unpack) -> ats) [Text.Pandoc.Para (Text.Pandoc.Str lab : dv)]) =
         applyAtts ats $
           H5.li ! H5.id (H5.textValue ident)
             ! H5.class_ (H5.textValue $ T.unwords $ "ref" : cls)
@@ -1225,9 +1213,9 @@ refBlockToList
               H5.span ! H5.class_ "ref-label" $ H5.text lab
               H5.span ! H5.class_ "ref-body" $
                 fromRight' $
-                  runPure $
-                    writeHtml5 writerConf $
-                      Pandoc nullMeta [Plain $ dropWhile (== Space) dv]
+                  Text.Pandoc.runPure $
+                    Text.Pandoc.writeHtml5 writerConf $
+                      Text.Pandoc.Pandoc Text.Pandoc.nullMeta [Text.Pandoc.Plain $ dropWhile (== Text.Pandoc.Space) dv]
       listise _ = ""
 refBlockToList d = d
 
@@ -1236,27 +1224,27 @@ applyAtts ats elt =
   let as = map (\(k, v) -> H5.customAttribute (fromString k) (fromString v)) ats
    in foldl (!) elt as
 
-linkLocalCite :: Inline -> Inline
-linkLocalCite (Cite cs@(_ : _) bdy) =
-  Cite cs [Link ("", [], []) bdy ("#ref-" <> citationId (head cs), "")]
+linkLocalCite :: Text.Pandoc.Inline -> Text.Pandoc.Inline
+linkLocalCite (Text.Pandoc.Cite cs@(_ : _) bdy) =
+  Text.Pandoc.Cite cs [Text.Pandoc.Link ("", [], []) bdy ("#ref-" <> Text.Pandoc.citationId (head cs), "")]
 linkLocalCite i = i
 
-remoteCiteLink :: T.Text -> HM.HashMap T.Text RefInfo -> Inline -> Inline
-remoteCiteLink base refInfo (Cite cs _) =
+remoteCiteLink :: T.Text -> HM.HashMap T.Text RefInfo -> Text.Pandoc.Inline -> Text.Pandoc.Inline
+remoteCiteLink base refInfo (Text.Pandoc.Cite cs _) =
   let ctLinks =
         [ maybe
-          (Strong [Str citationId])
-          (\RefInfo {..} -> Link ("", [], []) [Str refLabel] (base <> "#" <> refAnchor, ""))
+          (Text.Pandoc.Strong [Text.Pandoc.Str citationId])
+          (\RefInfo {..} -> Text.Pandoc.Link ("", [], []) [Text.Pandoc.Str refLabel] (base <> "#" <> refAnchor, ""))
           mres
-        | Citation {..} <- cs
+        | Text.Pandoc.Citation {..} <- cs
         , let mres = HM.lookup citationId refInfo
         ]
-   in Span ("", ["citation"], [("data-cites", T.intercalate "," $ map citationId cs)]) $
-        concat [[Str "["], ctLinks, [Str "]"]]
+   in Text.Pandoc.Span ("", ["citation"], [("data-cites", T.intercalate "," $ map Text.Pandoc.citationId cs)]) $
+        concat [[Text.Pandoc.Str "["], ctLinks, [Text.Pandoc.Str "]"]]
 remoteCiteLink _ _ i = i
 
-isReference :: Block -> Bool
-isReference (Div (_, ["references"], _) _) = True
+isReference :: Text.Pandoc.Block -> Bool
+isReference (Text.Pandoc.Div (_, ["references"], _) _) = True
 isReference _ = False
 
 data RefInfo = RefInfo {refAnchor :: T.Text, refLabel :: T.Text}
@@ -1279,21 +1267,21 @@ unbracket (T.stripPrefix "[" -> Just l)
   | otherwise = l
 unbracket lab = lab
 
-removeTeXGomiStr :: Inline -> Inline
-removeTeXGomiStr (Str p) = Str $ bakaReplace p
-removeTeXGomiStr (Emph is) = Emph $ map removeTeXGomiStr is
-removeTeXGomiStr (Strong is) = Strong $ map removeTeXGomiStr is
-removeTeXGomiStr (Strikeout is) = Strikeout $ map removeTeXGomiStr is
-removeTeXGomiStr (Superscript is) = Superscript $ map removeTeXGomiStr is
-removeTeXGomiStr (Subscript is) = Subscript $ map removeTeXGomiStr is
-removeTeXGomiStr (SmallCaps is) = SmallCaps $ map removeTeXGomiStr is
-removeTeXGomiStr (Quoted ty is) = Quoted ty $ map removeTeXGomiStr is
-removeTeXGomiStr (Cite cs is) = Cite cs $ map removeTeXGomiStr is
-removeTeXGomiStr (Math ty m) = Math ty $ bakaReplace m
-removeTeXGomiStr (Link att is t) = Link att (map removeTeXGomiStr is) t
-removeTeXGomiStr (Image att is t) = Image att (map removeTeXGomiStr is) t
-removeTeXGomiStr (Note bs) = Note $ bottomUp removeTeXGomiStr bs
-removeTeXGomiStr (Span ats is) = Span ats (map removeTeXGomiStr is)
+removeTeXGomiStr :: Text.Pandoc.Inline -> Text.Pandoc.Inline
+removeTeXGomiStr (Text.Pandoc.Str p) = Text.Pandoc.Str $ bakaReplace p
+removeTeXGomiStr (Text.Pandoc.Emph is) = Text.Pandoc.Emph $ map removeTeXGomiStr is
+removeTeXGomiStr (Text.Pandoc.Strong is) = Text.Pandoc.Strong $ map removeTeXGomiStr is
+removeTeXGomiStr (Text.Pandoc.Strikeout is) = Text.Pandoc.Strikeout $ map removeTeXGomiStr is
+removeTeXGomiStr (Text.Pandoc.Superscript is) = Text.Pandoc.Superscript $ map removeTeXGomiStr is
+removeTeXGomiStr (Text.Pandoc.Subscript is) = Text.Pandoc.Subscript $ map removeTeXGomiStr is
+removeTeXGomiStr (Text.Pandoc.SmallCaps is) = Text.Pandoc.SmallCaps $ map removeTeXGomiStr is
+removeTeXGomiStr (Text.Pandoc.Quoted ty is) = Text.Pandoc.Quoted ty $ map removeTeXGomiStr is
+removeTeXGomiStr (Text.Pandoc.Cite cs is) = Text.Pandoc.Cite cs $ map removeTeXGomiStr is
+removeTeXGomiStr (Text.Pandoc.Math ty m) = Text.Pandoc.Math ty $ bakaReplace m
+removeTeXGomiStr (Text.Pandoc.Link att is t) = Text.Pandoc.Link att (map removeTeXGomiStr is) t
+removeTeXGomiStr (Text.Pandoc.Image att is t) = Text.Pandoc.Image att (map removeTeXGomiStr is) t
+removeTeXGomiStr (Text.Pandoc.Note bs) = Text.Pandoc.Note $ Text.Pandoc.bottomUp removeTeXGomiStr bs
+removeTeXGomiStr (Text.Pandoc.Span ats is) = Text.Pandoc.Span ats (map removeTeXGomiStr is)
 removeTeXGomiStr i = i
 
 bakaReplace :: T.Text -> T.Text
@@ -1306,39 +1294,39 @@ bakaReplace =
     . T.replace "\\\\printbibliography" "\\xxxxxxpbbl"
     . T.replace "\\RequirePackage{luatex85}" ""
 
-unicodiseMath :: Inline -> Inline
-unicodiseMath m@(Math mode eqn) =
+unicodiseMath :: Text.Pandoc.Inline -> Text.Pandoc.Inline
+unicodiseMath m@(Text.Pandoc.Math mode eqn) =
   let mmode
-        | InlineMath <- mode = UM.DisplayInline
+        | Text.Pandoc.InlineMath <- mode = UM.DisplayInline
         | otherwise = UM.DisplayBlock
       inls = either (const [m]) (fromMaybe [] . UM.writePandoc mmode) $ UM.readTeX eqn
-   in Span ("", ["math"], []) inls
+   in Text.Pandoc.Span ("", ["math"], []) inls
 unicodiseMath i = i
 
-fromPure :: IsString a => PandocPure a -> a
-fromPure = fromRight "" . runPure
+fromPure :: IsString a => Text.Pandoc.PandocPure a -> a
+fromPure = fromRight "" . Text.Pandoc.runPure
 
-myExts :: Extensions
-myExts = disableExtension Ext_latex_macros $ mconcat [extensionsFromList exts, pandocExtensions]
+myExts :: Text.Pandoc.Extensions
+myExts = Text.Pandoc.disableExtension Text.Pandoc.Ext_latex_macros $ mconcat [Text.Pandoc.extensionsFromList exts, Text.Pandoc.pandocExtensions]
   where
     exts =
-      [ Ext_backtick_code_blocks
-      , Ext_definition_lists
-      , Ext_fenced_code_attributes
-      , Ext_footnotes
-      , Ext_raw_html
-      , Ext_raw_tex
-      , Ext_tex_math_dollars
-      , Ext_emoji
+      [ Text.Pandoc.Ext_backtick_code_blocks
+      , Text.Pandoc.Ext_definition_lists
+      , Text.Pandoc.Ext_fenced_code_attributes
+      , Text.Pandoc.Ext_footnotes
+      , Text.Pandoc.Ext_raw_html
+      , Text.Pandoc.Ext_raw_tex
+      , Text.Pandoc.Ext_tex_math_dollars
+      , Text.Pandoc.Ext_emoji
       ]
 
 protocol :: T.Text -> Maybe T.Text
 protocol url = T.pack . P.init . uriScheme <$> parseURI (T.unpack url)
 
-linkCard :: Pandoc -> Action Pandoc
-linkCard = bottomUpM $ \case
-  Para bs | Just us <- checkCard bs, not (null us) -> toCards us
-  Plain bs | Just us <- checkCard bs, not (null us) -> toCards us
+linkCard :: Text.Pandoc.Pandoc -> Action Text.Pandoc.Pandoc
+linkCard = Text.Pandoc.bottomUpM $ \case
+  Text.Pandoc.Para bs | Just us <- checkCard bs, not (null us) -> toCards us
+  Text.Pandoc.Plain bs | Just us <- checkCard bs, not (null us) -> toCards us
   b -> return b
   where
     toCards us = do
@@ -1346,17 +1334,17 @@ linkCard = bottomUpM $ \case
       (gaths, protos, frams) <- unzip3 <$> mapM toCard us
       let gathered = and gaths && and (zipWith (==) protos (tail protos))
       return $
-        RawBlock "html" $
+        Text.Pandoc.RawBlock "html" $
           LT.toStrict $
             Mus.renderMustache tmpl $
               object
                 [ "gather" .= gathered
                 , "frames" .= frams
                 ]
-    myStringify Link {} = "LINK"
+    myStringify Text.Pandoc.Link {} = "LINK"
     myStringify l = stringify l
     checkCard = mapM isCard . filter (not . T.all isSpace . myStringify)
-    isCard (Link _ [] (url, ""))
+    isCard (Text.Pandoc.Link _ [] (url, ""))
       | not $ T.null url = Just url
     isCard _ = Nothing
     toCard origUrl = do
@@ -1412,7 +1400,7 @@ renderTalks mlen = do
   let talks =
         map addItemInfo
           . maybe id take mlen
-          . sortBy (flip $ comparing date)
+          . sortOn (Down . date)
           <$> talks0
       cxt =
         mconcat
