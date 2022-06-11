@@ -857,23 +857,6 @@ addRequiredClasses (TagOpen "table" attr) = TagOpen "table" (("class", "table") 
 addRequiredClasses (TagOpen "blockquote" attr) = TagOpen "blockquote" (("class", "blockquote") : attr)
 addRequiredClasses t = t
 
--- deploy :: t -> IO ExitCode
--- deploy _config = handle h $ shelly $ do
---   ign0 <- T.lines <$> readfile "_site/.ignore"
---   let (gign, ign) = unzip $ map parseIgnorance ign0
---   echo $ "ignoring: " <> T.intercalate "," ign
---   writefile ".git/info/exclude" $ T.unlines gign
---   run_ "rsync" $ "--delete-excluded" : "--checksum" : "-av" : map ("--exclude=" <>) ign
---               ++ ["_site/", "sakura-vps:~/mighttpd/public_html/"]
---   cmd "git" "add" "img" "math" "writing" "prog" "config"
---   cmd "git" "commit" "-amupdated"
---   cmd "git" "push" "origin" "master"
-
---   return ExitSuccess
---   where
---     h :: IOException -> IO ExitCode
---     h _ = return $ ExitFailure 1
-
 uriAuthToString_ :: URIAuth -> String
 uriAuthToString_ (URIAuth a b c) = concat [a, b, c]
 
