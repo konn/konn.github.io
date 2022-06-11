@@ -1362,7 +1362,8 @@ linkCard = bottomUpM $ \case
     myStringify Link {} = "LINK"
     myStringify l = stringify l
     checkCard = mapM isCard . filter (not . T.all isSpace . myStringify)
-    isCard (Link _ [] (url, "")) = Just url
+    isCard (Link _ [] (url, ""))
+      | not $ T.null url = Just url
     isCard _ = Nothing
     toCard origUrl = do
       Cards {..} <- readFromYamlFile' "config/cards.yml"
