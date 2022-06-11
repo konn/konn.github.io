@@ -616,7 +616,7 @@ G \neq \emptyset\)</span>.</p></li>
 D\)</span>のいずれか一方のみが成り立たなくてはならない． <span class="math inline">\(x\)</span>の選択は任意であったから，<span class="math inline">\(D\)</span>は<span class="math inline">\(\mathbb{B}\)</span>で稠密である．</p>
 <p>以上を踏まえれば，もしジェネリックフィルター<span class="math inline">\(G\)</span>が<span class="math inline">\(V\)</span>に属したとすると，<span class="math inline">\(D \mathrel{:=} \mathbb{B} \setminus G \in
 V\)</span>は稠密集合となり，<span class="math inline">\(D \cap G \neq
-\emptyset\)</span>となってしまうが，これは矛盾である． 0◻ ◻</p>
+\emptyset\)</span>となってしまうが，これは矛盾である．</p>
 </div>
 <p>よって，十分複雑な<span class="math inline">\(\mathbb{B}\)</span>についてはジェネリックフィルターは非自明なものであることがわかりました．
 このことから，次の補題により，「新しい元」が<span class="math inline">\(V^{\mathbb{B}}\)</span>に付け加わっていると思うことが出来ます：</p>
@@ -652,7 +652,7 @@ V\)</span>を稠密集合とすると， <span class="math display">\[\left\|
 \in D} \left\| d \in \dot{G} \right\|_{\,} = \sum D =
 \mathbb{1}.\]</span> よって<span class="math inline">\(V^{\mathbb{B}}
 \models \text{“}\dot{G}: V\text{ 上
-}\mathbb{B}\text{-ジェネリック}\text{”}\)</span>. 0◻ ◻</p>
+}\mathbb{B}\text{-ジェネリック}\text{”}\)</span>.</p>
 </div>
 <p>このようにして，<span class="math inline">\(V^{\mathbb{B}}\)</span>の中では，<span class="math inline">\(V\)</span>に存在しないジェネリックフィルターが存在しているかのように見えていることがわかりました．
 更に，実は<span class="math inline">\(V^{\mathbb{B}}\)</span>は自分が<span class="math inline">\(\check{V}\)</span>と<span class="math inline">\(\dot{G}\)</span>を含む最小の<span class="math inline">\(\mathrm{ZFC}\)</span>のモデルであると信じている事もわかります．</p>
@@ -673,7 +673,7 @@ F)\)</span>を帰納的に次のように定める： <span class="math display"
 </div>
 <div class="proof">
 <p><em>Proof.</em> <span class="math inline">\(N\)</span>が推移的で<span class="math inline">\(M \subseteq N\)</span>かつ<span class="math inline">\(G \in N\)</span>なら<span class="math inline">\(M^{\mathbb{B}} \subseteq
-N\)</span>となることは明らか． <span class="math inline">\(\mathop{\mathrm{val}}\)</span>の値も明らかに推移的モデルについては絶対的なので，<span class="math inline">\(M[G] \subseteq N\)</span>となる． 0◻ ◻</p>
+N\)</span>となることは明らか． <span class="math inline">\(\mathop{\mathrm{val}}\)</span>の値も明らかに推移的モデルについては絶対的なので，<span class="math inline">\(M[G] \subseteq N\)</span>となる．</p>
 </div>
 <div class="theorem">
 <p>任意の<span class="math inline">\(\tau \in
@@ -683,7 +683,7 @@ V^{\mathbb{B}}\)</span>に対し，<span class="math inline">\(V^{\mathbb{B}} \m
 x \in \check{V}[\dot{G}]\)</span>が成り立ち，<span class="math inline">\(V^{\mathbb{B}}\)</span>は自分自身の事を<span class="math inline">\(\check{V}[\dot{G}]\)</span>だと思い込んでいる．</p>
 </div>
 <div class="proof">
-<p><em>Proof.</em> <span class="math inline">\(\tau\)</span>のランクに関する帰納法． 0◻ ◻</p>
+<p><em>Proof.</em> <span class="math inline">\(\tau\)</span>のランクに関する帰納法．</p>
 </div>
 <span class="img-fluid"><object class="img-thumbnail media-object" type="image/svg+xml" data="/math/boolean-valued-model-and-forcing/image-0.svg"><img src="/math/boolean-valued-model-and-forcing/image-0.png" alt="Diagram"></object></span>
 <p>よって以上から，<span class="math inline">\(V^{\mathbb{B}}\)</span>を<span class="math inline">\(V[G]\)</span>と同一視して，あたかも<span class="math inline">\(V\)</span>上のジェネリックフィルター<span class="math inline">\(G\)</span>が取れているかのように考えても差し支えないということがわかります．
@@ -806,12 +806,7 @@ i_*(i^*(\sigma))\)</span>, <span class="math inline">\(V^{\mathbb{Q}}
 <p>Posetの場合は真偽値の計算は出来ませんが，強制関係の計算によって何が成り立つのかを調べる事が出来ます．
 そうした計算上で，次の補題はよく使われます：</p>
 <div class="lemma">
-    <div class="embed w-100 my-4 justify-content-center row py-0">
-      
-
-
-    </div>
-
+<p><a href id="lem:aux-lem"></a></p>
 <ul>
 <li><p><span class="math inline">\(p \Vdash \varphi \iff \left\{\:
 q  \;\middle|\;  q \Vdash \varphi \:\right\}\)</span>が<span class="math inline">\(p\)</span>以下で稠密．</p></li>
@@ -864,7 +859,7 @@ q  \;\middle|\;  q \Vdash \varphi \:\right\}\)</span>が<span class="math inline
 \mathop{\mathsf{Add}}(\kappa)  \;\middle|\;  \alpha \in \mathrm{dom}(p)
 \:\right\}\;(\alpha &lt; \kappa)\]</span> よって，各<span class="math inline">\(\alpha &lt; \kappa\)</span>について<span class="math inline">\(G \cap D_\alpha \neq \emptyset\)</span>.
 以上より<span class="math inline">\(\kappa = \mathrm{dom}(\bigcup
-G)\)</span>. 0◻ ◻</p>
+G)\)</span>.</p>
 </div>
 <p><span class="math inline">\(\kappa\)</span>が正則基数のとき<span class="math inline">\(\mathop{\mathsf{Add}}(\kappa)\)</span>の組合せ論的性質として，次が成り立つことがわかる：</p>
 <div class="definition">
@@ -888,7 +883,7 @@ p_\alpha  \; \middle|\;  \alpha &lt; \gamma
 &lt; \gamma} \mathrm{dom}(p_\alpha) &lt; \kappa\)</span>. よって<span class="math inline">\(p^* \mathrel{:=} \bigcup_{\alpha &lt; \gamma} p_a
 \in \mathop{\mathsf{Add}}(\kappa)\)</span>がこの降鎖の下界となる．</p>
 <p><span class="math inline">\(\mathop{\mathsf{Add}}(\kappa,
-\gamma)\)</span>の方も同様． 0◻ ◻</p>
+\gamma)\)</span>の方も同様．</p>
 </div>
 <p>なぜこのような性質を考えるのかというと，<span class="math inline">\(\kappa\)</span>-閉なposetによる強制法は<span class="math inline">\(\kappa\)</span>以下の基数を保つからです．
 より具体的に次が成り立ちます：</p>
@@ -910,14 +905,13 @@ V\)</span>.</p>
 \check{V}\text{”}\)</span>となるので<span class="math inline">\(q^* \in
 D\)</span>が求めるもの．</p>
 <p>以上から<span class="math inline">\(V[G] \models {}^{&lt; \kappa} {V}
-\subseteq V\)</span>. ◻</p>
+\subseteq V\)</span>.</p>
 </div>
 <div class="corollary">
 <p><span class="math inline">\(\mathbb{P}\)</span>が<span class="math inline">\(\kappa\)</span>-閉なら<span class="math inline">\(\mathbb{P}\)</span>は<span class="math inline">\(\kappa\)</span>以下の基数を保つ．</p>
 </div>
 <div class="proof">
-<p><em>Proof.</em> <span class="math inline">\(\mathbb{P}\)</span>での強制によって短い列は増えないので，基数の壊れようがない．
-0◻ ◻</p>
+<p><em>Proof.</em> <span class="math inline">\(\mathbb{P}\)</span>での強制によって短い列は増えないので，基数の壊れようがない．</p>
 </div>
 <div class="lemma">
 <p><span class="math inline">\(\kappa\)</span>が正則で<span class="math inline">\(G\)</span>が<span class="math inline">\(V\)</span>上<span class="math inline">\(\mathop{\mathsf{Add}}(\kappa)\)</span>-ジェネリックなら<span class="math inline">\(V[G] \models 2^{&lt; \kappa } =
@@ -947,7 +941,7 @@ p  \;\middle|\;  \exists \alpha &lt; \kappa \: \forall \gamma \in
 \emptyset\)</span>を満たすので，定義から<span class="math inline">\(s
 \in \mathcal{F}\)</span>となる． よって<span class="math inline">\(2^{&lt;\kappa} \leq |\mathcal{F}| \leq
 \kappa\)</span>であるから，<span class="math inline">\(V[G] \models
-2^{&lt;\kappa} = \kappa\)</span>が成り立つ． 0◻ ◻</p>
+2^{&lt;\kappa} = \kappa\)</span>が成り立つ．</p>
 </div>
 <div class="corollary">
 <p><span class="math inline">\(G\)</span>: <span class="math inline">\(V\)</span>上<span class="math inline">\(\mathop{\mathsf{Add}}(\kappa^+)\)</span>-ジェネリック
@@ -957,8 +951,7 @@ p  \;\middle|\;  \exists \alpha &lt; \kappa \: \forall \gamma \in
 </div>
 <div class="proof">
 <p><em>Proof.</em> 前の補題より<span class="math inline">\(V[G] \models
-2^\kappa = 2^{&lt; \kappa^+} = \kappa^+\)</span>. <span class="math inline">\(\mathop{\mathsf{Add}}(\omega_1)\)</span>は<span class="math inline">\(\omega_1\)</span>-閉なので可算列は増えず，従って実数も足さない．
-0◻ ◻</p>
+2^\kappa = 2^{&lt; \kappa^+} = \kappa^+\)</span>. <span class="math inline">\(\mathop{\mathsf{Add}}(\omega_1)\)</span>は<span class="math inline">\(\omega_1\)</span>-閉なので可算列は増えず，従って実数も足さない．</p>
 </div>
 <p>このように<span class="math inline">\(\mathrm{CH}\)</span>を強制することも出来ますが，元々は強制法は<span class="math inline">\(\mathrm{CH}\)</span>を破るための発明でした．
 それにはどうすればいいでしょうか？
@@ -1001,7 +994,7 @@ z\)</span>となります． この事から，特に対応<span class="math inl
 \mapsto p_y\)</span>は単射なので<span class="math inline">\(|F(x)| \leq
 |A_x|\)</span>となり，更に<span class="math inline">\(A_x\)</span>は反鎖となることがわかります．
 すると，<span class="math inline">\(\kappa\)</span>-c.c.から<span class="math inline">\(|F(x)| \leq |A_x| &lt;
-\kappa\)</span>を得ます．これが示したかったことでした． 0◻ ◻</p>
+\kappa\)</span>を得ます．これが示したかったことでした．</p>
 </div>
 <div class="proof">
 <p><em>Proof of Theorem <a href="#thm:cc-card-pres">8</a>.</em>
@@ -1015,7 +1008,7 @@ z\)</span>となります． この事から，特に対応<span class="math inl
 \in \check{F}(\check{\alpha})\)</span>を満たす関数が存在します．
 今，<span class="math inline">\(\lambda \geq \kappa\)</span>かつ<span class="math inline">\(|F(\alpha)| &lt; \gamma\)</span>であるので，<span class="math inline">\(\lambda\)</span>の正則性より<span class="math inline">\(\xi \mathrel{:=} \sup_{\alpha &lt; \gamma} \sup
 F(\alpha) &lt; \lambda\)</span>となります． すると，各<span class="math inline">\(\alpha &lt; \gamma\)</span>について<span class="math inline">\(p \Vdash \dot{f}(\check{\alpha}) \leq \sup
-\check{F}(\check{\alpha}) \leq \gamma &lt; \lambda\)</span>. 0◻ ◻</p>
+\check{F}(\check{\alpha}) \leq \gamma &lt; \lambda\)</span>.</p>
 </div>
 <div class="fact">
 <p><span class="math inline">\(\mathop{\mathsf{Add}}(\kappa,
@@ -1056,7 +1049,7 @@ p(\beta)(n) \:\right\} \; (\alpha &lt; \beta &lt; \lambda).
 f_\beta\)</span>となるから，<span class="math inline">\(\left\{ f_\alpha
 \right\}_\alpha\)</span>は<span class="math inline">\(\lambda\)</span>の相異なる実数の列である．
 よって<span class="math inline">\(V[G] \models 2^\omega \geq
-\check{\lambda}\)</span>. 0◻ ◻</p>
+\check{\lambda}\)</span>.</p>
 </div>
 <p>よって，<span class="math inline">\(\mathop{\mathsf{Add}}(\omega,
 \aleph_2)\)</span>で強制すれば，<span class="math inline">\(\mathrm{CH}\)</span>を破ることが出来た．
@@ -1081,7 +1074,7 @@ f_\beta\)</span>となるから，<span class="math inline">\(\left\{ f_\alpha
 (\nu^{&lt;\lambda})^\mu = \theta\)</span>. <span class="math inline">\(\mathbb{P} \Vdash \text{“}\dot{x} =
 \dot{y}\text{”}\)</span>ならば<span class="math inline">\(F_{\dot{x}} =
 F_{\dot{y}}\)</span>となるから， よって<span class="math inline">\(\mu\)</span>の部分集合の名称は本質的に<span class="math inline">\(\theta\)</span>個しか存在しないので，<span class="math inline">\(\mathbb{P} \Vdash 2^{\mu} \leq
-\check{\theta}\)</span>. 0◻ ◻</p>
+\check{\theta}\)</span>.</p>
 </div>
 <div class="corollary">
 <p><span class="math inline">\(\mathrm{GCH}\)</span>を仮定する． <span class="math inline">\(\mathrm{cf} \lambda &gt; \omega\)</span>なら<span class="math inline">\(\mathop{\mathsf{Add}}(\omega, \lambda) \Vdash
@@ -1093,7 +1086,7 @@ F_{\dot{y}}\)</span>となるから， よって<span class="math inline">\(\mu\
 \lambda\)</span>. そこで，先の補題において<span class="math inline">\(\lambda \mathrel{:=} \omega_1\)</span>, <span class="math inline">\(\nu \mathrel{:=} \lambda\)</span>, <span class="math inline">\(\mu \mathrel{:=} \omega\)</span>とおけば， <span class="math inline">\(\theta = (\lambda^{&lt;\omega_1})^\omega =
 \lambda^\omega = \lambda\)</span>（最後の<span class="math inline">\(=\)</span>は<span class="math inline">\(\mathrm{GCH}\)</span>および<span class="math inline">\(\mathrm{cf} \lambda &gt; \omega\)</span>より）．
 よって<span class="math inline">\(\mathop{\mathsf{Add}}(\omega, \lambda)
-\Vdash 2^\omega = \check{\lambda}.\)</span> 0◻ ◻</p>
+\Vdash 2^\omega = \check{\lambda}.\)</span></p>
 </div>
 </section>
 <section id="hamkinsの自然主義強制法" class="level1">
@@ -1133,7 +1126,7 @@ j(\mathbb{B})\)</span>-ジェネリックフィルター<span class="math inline
 <p><em>Proof.</em> <span class="math inline">\(\mathcal{U}\)</span>を適当な<span class="math inline">\(\mathbb{B}\)</span>上の超フィルターとして，<span class="math inline">\(\bar{V} \mathrel{:=}
 \check{V}_{\mathcal{U}}\)</span>, <span class="math inline">\(j
 \mathrel{:=} j_{\mathcal{U}}\)</span>，<span class="math inline">\(\bar{G} \mathrel{:=}
-[\dot{G}]_{\mathcal{U}}\)</span>とおけばよい． 0◻ ◻</p>
+[\dot{G}]_{\mathcal{U}}\)</span>とおけばよい．</p>
 </div>
 <p>ここで重要なのは，<span class="math inline">\(\mathcal{U}\)</span>は超フィルターなら<span class="sans-serif"><strong>なんでもいい</strong></span>という事です．
 これは，<span class="math inline">\(V\)</span>は普通の<span class="math inline">\(\in\)</span>-モデルであるのに対して，<span class="math inline">\(\check{V}_{\mathcal{U}}\)</span>などは一般に整礎とは限らない<span class="math inline">\(E\)</span>を所属関係に持ち，更に<span class="math inline">\(\bar{G} \in V\)</span>は（メタ的に<span class="math inline">\(V\)</span>上と見做せるにしても）<span class="math inline">\(\bar{V}\)</span>上のジェネリックフィルターであって<span class="math inline">\(V\)</span>上のものではないためです．</p>
@@ -1167,7 +1160,7 @@ p \cdot q \right\rangle  \;\middle|\;  p \in A, \left\langle \tau, q
 \leq \left\| \varphi(\dot{x}) \right\|_{\,}\)</span>. 一方で<span class="math inline">\(\dot{x} \in
 V^{\mathbb{B}}\)</span>なので定義より<span class="math inline">\(\left\|
 \varphi(\dot{x}) \right\|_{\,} \in S\)</span>となるので，<span class="math inline">\(\left\| \varphi(\dot{x}) \right\|_{\,} \leq \sum S
-= b\)</span>. 0◻ ◻</p>
+= b\)</span>.</p>
 </div>
 <div class="proof">
 <p><em>Proof of Theorem <a href="#thm:los">10</a>.</em>
@@ -1210,8 +1203,8 @@ V^{\mathbb{B}}/\mathcal{U}\)</span>があって， <span class="math display">\[
 \mathcal{U} &amp;&amp; (\mathcal{U}: \text{フィルタ}).
 \end{alignedat}\]</span> よって<span class="math inline">\(\left\|
 \exists x \: \varphi(x) \right\|_{\,} \in \mathcal{U} \iff
-V^{\mathbb{B}}/\mathcal{U} \models \exists x \in \varphi(x)\)</span>.
-0◻ ◻</p>
+V^{\mathbb{B}}/\mathcal{U} \models \exists x \in
+\varphi(x)\)</span>.</p>
 </div>
 <div class="corollary">
 <p><span class="math inline">\(V^{\mathbb{B}}/\mathcal{U} \models
@@ -1251,7 +1244,7 @@ V\)</span>が存在し，更に<span class="math inline">\(\left\| \sigma \in
 \check{a} \right\|_{\,}\)</span>より<span class="math inline">\(x \in
 A\)</span>でなくてはならない． すると<span class="math inline">\(x =
 \left\| x = \sigma \right\|_{\,} \in U\)</span>となり，<span class="math inline">\(x \in A \cap U \neq \emptyset\)</span>を得，
-従って<span class="math inline">\(U\)</span>は<span class="math inline">\(V\)</span>上ジェネリック． 0◻ ◻</p>
+従って<span class="math inline">\(U\)</span>は<span class="math inline">\(V\)</span>上ジェネリック．</p>
 </div>
 </section>
 <section id="通常の超冪とboole超冪の関係" class="level1">
@@ -1340,8 +1333,7 @@ R([f]^*_{\mathcal{U}})\)</span>が言える．</p>
 \right\|_{\,} \neq \mathbb{0} \:\right\}\)</span>として，<span class="math inline">\(f(\left\| \tau = \check{x} \right\|_{\,}) =
 x\)</span>により定めれば，明らかに<span class="math inline">\([\tau] =
 [\tau_{f_\tau}]\)</span>かつ<span class="math inline">\([f_{\tau_f}]^* =
-[f]^*\)</span>を満たす． よってこれらは同型であり，更に<span class="math inline">\([\check{x}]\)</span>と<span class="math inline">\([\hat{x}]\)</span>を互いに写し合うので，初等埋め込みも可換．
-0◻ ◻</p>
+[f]^*\)</span>を満たす． よってこれらは同型であり，更に<span class="math inline">\([\check{x}]\)</span>と<span class="math inline">\([\hat{x}]\)</span>を互いに写し合うので，初等埋め込みも可換．</p>
 </div>
 <div class="theorem">
 <p>通常の<span class="math inline">\(I\)</span>上の超フィルターによる超冪は<span class="math inline">\(\mathop{\mathcal{P}}(I)\)</span>によるBoole超冪と一致する．</p>
@@ -1349,8 +1341,7 @@ x\)</span>により定めれば，明らかに<span class="math inline">\([\tau]
 <div class="proof">
 <p><em>Proof.</em> <span class="math inline">\(\mathop{\mathcal{P}}(I)\)</span>の場合，<span class="math inline">\(\mathcal{A} \mathrel{:=} \left\{\: \left\{ i
 \right\}  \;\middle|\;  i \in I
-\:\right\}\)</span>が最小の極大反鎖となる． ここで<span class="math inline">\(\mathcal{A}\)</span>と<span class="math inline">\(I\)</span>は自然に同一視出来，この同一視の下で超冪はBoole超冪と見做せるし，初等埋め込み写像も自然に同一視出来る．
-0◻ ◻</p>
+\:\right\}\)</span>が最小の極大反鎖となる． ここで<span class="math inline">\(\mathcal{A}\)</span>と<span class="math inline">\(I\)</span>は自然に同一視出来，この同一視の下で超冪はBoole超冪と見做せるし，初等埋め込み写像も自然に同一視出来る．</p>
 </div>
 </section>
 <section id="更新履歴" class="level1">
