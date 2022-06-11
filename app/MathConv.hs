@@ -167,14 +167,15 @@ myReaderOpts :: ReaderOptions
 myReaderOpts =
   def
     { readerExtensions =
-        extensionsFromList exts
-          <> pandocExtensions
+        disableExtension Ext_latex_macros $
+          extensionsFromList exts
+            <> pandocExtensions
     }
   where
     exts =
       [ Ext_raw_html
-      , Ext_latex_macros
-      , Ext_raw_attribute
+      , -- , Ext_latex_macros
+        Ext_raw_attribute
       , Ext_raw_tex
       , Ext_tex_math_dollars
       ]
@@ -225,7 +226,7 @@ texToMarkdown defMacros fp src_ = do
         applyTeXMacro defMacros $
           rewriteBib (takeDirectory absFP) $
             view _Right $
-              parseTeX $ applyMacros macros src_
+              parseTeX $ applyMacros macros $ T.replace "\\qed" "" src_
       initial =
         applyMacros macros $
           render $
@@ -465,6 +466,18 @@ rewriteBeginEnv :: [Block] -> Machine [Block]
 rewriteBeginEnv = concatMapM step
   where
     step :: Block -> Machine [Block]
+    -- fxxk, Pandoc dares to adds \qed at the end of each proof env!!!
+    step (Div atts@(_, cls, _) paras@(_ : _))
+      | "proof" `elem` cls =
+        pure $
+          pure $
+            Div atts $
+              case last paras of
+                Para [Str "\160\9723"] -> init paras
+                Para xs
+                  | Str "\160\9723" <- last xs ->
+                    paras & _last . _Para %~ init
+                _ -> paras
     step (RawBlock "latex" src_)
       | Right (TeXEnv "enumerate!" args body) <- parseTeX src_ =
         pure <$> procEnumerate args body

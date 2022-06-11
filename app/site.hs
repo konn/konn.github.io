@@ -1325,7 +1325,7 @@ fromPure :: IsString a => PandocPure a -> a
 fromPure = fromRight "" . runPure
 
 myExts :: Extensions
-myExts = mconcat [extensionsFromList exts, pandocExtensions]
+myExts = disableExtension Ext_latex_macros $ mconcat [extensionsFromList exts, pandocExtensions]
   where
     exts =
       [ Ext_backtick_code_blocks
