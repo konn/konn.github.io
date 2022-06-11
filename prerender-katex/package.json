@@ -1,0 +1,17 @@
+{
+  "name": "prerender-katex",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Prerenders KaTeX on Server Side",
+  "main": "prerender.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hiromi ISHII",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "jsdom": "^19.0.0",
+    "katex": "^0.16.0"
+  }
+}

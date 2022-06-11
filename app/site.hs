@@ -511,9 +511,7 @@ texToHtml out = do
           )
           images
   putNormal $ "requiring images: " ++ show imgs
-  needed $
-    [destD </> "katex" </> "katex.min.js", out -<.> "pdf"]
-      ++ imgs
+  needed $ (out -<.> "pdf") : imgs
   (style, bibs) <- cslAndBib out
   defMacs <- readFromYamlFile' "config/macros.yml"
   ipan <-
@@ -662,7 +660,9 @@ feedConf =
 writerConf :: WriterOptions
 writerConf =
   def
-    { writerHTMLMathMethod = MathJax "https://konn-san.com/math/mathjax/MathJax.js?config=xypic"
+    { -- We can't change this to KaTeX,
+      -- as this sacrifices the conversion logic.
+      writerHTMLMathMethod = MathJax "https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"
     , writerHighlightStyle = Just pygments
     , writerSectionDivs = True
     , writerExtensions = disableExtension Ext_tex_math_dollars myExts
@@ -840,18 +840,12 @@ procKaTeX = liftAction . fmap T.pack . prerenderKaTeX . T.unpack
 
 prerenderKaTeX :: String -> Action String
 prerenderKaTeX src = do
-  nodePath <- getEnvWithDefault "" "NODE_PATH"
-  wd <- liftIO getCurrentDirectory
-  let katexD = wd </> srcD </> "katex"
-  let paths = L.intercalate ":" $ [katexD </> "contrib", katexD] ++ L.splitOn ":" nodePath
-  putNormal $ "NODE_PATH=" <> paths
   Stdout out <-
     cmd
-      (Cwd "data")
+      (Cwd "prerender-katex")
       "node"
       (EchoStdout False)
       (WithStdout True)
-      (AddEnv "NODE_PATH" paths)
       (Stdin src)
       "prerender.js"
   return out
