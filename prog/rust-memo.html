@@ -4,7 +4,7 @@
   <meta name="author" content="Hiromi ISHII">
   <meta name="Keywords" content="Rust,Haskell,Programming,Tech,Programming Language"><meta name="description" content="Rustに入門したので、適宜HaskellのこれはRustのこれ、ということをここに蓄積していって、個人的なチートシートにする。
 ">
-  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" rel="stylesheet">
   <meta name="viewport" content="width=device-width">
   <link rel="canonical" href="https://konn-san.com/prog/rust-memo.html">
   <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
@@ -18,7 +18,6 @@
   <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
   </script>
   <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
   <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
   <script>
   Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
@@ -320,15 +319,15 @@ GHCの<code class="sourceCode haskell"><span class="dt">TypeApplications</span><
 <li><code class="sourceCode rust"><span class="dt">Option</span></code>
 を <code class="sourceCode rust">panic</code>に変換するには：
 <ul>
-<li><code class="sourceCode haskell">fromJust ma</code> <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.36687em;"></span><span class="strut bottom" style="height: 0.36687em; vertical-align: 0em;"></span><span class="base"><span class="mrel">=</span></span></span></span></span></span> <code>ma.unwrap()</code></li>
+<li><code class="sourceCode haskell">fromJust ma</code> <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code>ma.unwrap()</code></li>
 <li><code class="sourceCode haskell">fromMaybe (<span class="fu">error</span> <span class="st">&quot;unko&quot;</span>) ma</code>
-<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.36687em;"></span><span class="strut bottom" style="height: 0.36687em; vertical-align: 0em;"></span><span class="base"><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust">ma<span class="op">.</span>expect(<span class="st">&quot;unko&quot;</span>)</code></li>
+<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust">ma<span class="op">.</span>expect(<span class="st">&quot;unko&quot;</span>)</code></li>
 </ul></li>
 </ul></li>
 <li><code class="sourceCode haskell"><span class="dt">Either</span> a b</code>
 に対応するのが <code class="sourceCode rust"><span class="dt">Result</span><span class="op">&lt;</span>B<span class="op">,</span> A<span class="op">&gt;</span></code>
 <ul>
-<li><code class="sourceCode haskell"><span class="dt">Right</span> a</code> <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.36687em;"></span><span class="strut bottom" style="height: 0.36687em; vertical-align: 0em;"></span><span class="base"><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust"><span class="cn">Ok</span>(a)</code>, <code class="sourceCode haskell"><span class="dt">Left</span> b</code> <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.36687em;"></span><span class="strut bottom" style="height: 0.36687em; vertical-align: 0em;"></span><span class="base"><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust"><span class="cn">Err</span>(b)</code></li>
+<li><code class="sourceCode haskell"><span class="dt">Right</span> a</code> <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust"><span class="cn">Ok</span>(a)</code>, <code class="sourceCode haskell"><span class="dt">Left</span> b</code> <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust"><span class="cn">Err</span>(b)</code></li>
 <li>ライブラリ毎に <code class="sourceCode rust"><span class="kw">type</span> MyResult<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">=</span> <span class="dt">Result</span><span class="op">&lt;</span>T<span class="op">,</span> MyError<span class="op">&gt;</span></code>
 のような別名を用意している。</li>
 <li><strong>順番に注意</strong>！Haskell
@@ -417,7 +416,6 @@ GHCの<code class="sourceCode haskell"><span class="dt">TypeApplications</span><
         <a href="https://github.com/konn/sake">Sake</a>,
 	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
 	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
-	<a href="https://www.mathjax.org">MathJax</a>,
         and <a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
 	<br>
 	Copyright © Hiromi ISHII 2012-2022

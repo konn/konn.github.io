@@ -4,7 +4,7 @@
   <meta name="author" content="Hiromi ISHII">
   <meta name="Keywords" content="数学,娯楽数学,フラクタル,マンデルブロ集合,Mandelbrot集合,Mandelbrot set,ステレオグラム,visualisation,visualization,ヴィジュアライゼーション,可視化,コラム"><meta name="description" content="Mandelbrot 集合はよく知られたフラクタル図形ですが、これを「上から」（あるいは「下から」）見てみたらどう見えるのか、というお話。
 ">
-  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" rel="stylesheet">
   <meta name="viewport" content="width=device-width">
   <link rel="canonical" href="https://konn-san.com/math/3d-mandelbrot.html">
   <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
@@ -19,7 +19,6 @@
   <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
   </script>
   <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
   <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
   <script>
   Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
@@ -113,9 +112,9 @@
 <h2>前説：Mandelbrot 集合とは？</h2>
 <p><strong>Mandelbrot集合</strong>（マンデルブロー集合）と呼ばれるフラクタル図形がある。こんなやつ<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>：</p>
 <p><img src="http://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Mandel_zoom_00_mandelbrot_set.jpg/644px-Mandel_zoom_00_mandelbrot_set.jpg" class="thumbnail image-responsive" width="500"></p>
-<p>検索すればゴマンとヒットするのであんまり細かいことは説明しないけれど、「ゼロから始めて自乗しては一定の定数<span class="math inline">\(\xi \in
-\C\)</span>を足す」という操作を繰り返していったときに、何らかの値に収束するような<span class="math inline">\(\xi \in
-\C\)</span>の全体をMandelbrot集合という。この図からもわかる通り、一見相似な図形が色々なスケールで無数に現れていて、大雑把にいえばこういう無限の入れ子構造になった図形の事をフラクタル図形という。因みに、この「相似な図形の入れ子構造」は、このMandelbrot集合の場合、相似に見えるだけで実際には微妙に異なる形が入れ替わり立ち代わり現れている。</p>
+<p>検索すればゴマンとヒットするのであんまり細かいことは説明しないけれど、「ゼロから始めて自乗しては一定の定数<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ξ</mi><mo>∈</mo><mstyle mathcolor="#cc0000"><mtext>\C</mtext></mstyle></mrow><annotation encoding="application/x-tex">\xi \in
+\C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span style="margin-right: 0.046em;" class="mord mathnormal">ξ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord text" style="color: rgb(204, 0, 0);"><span class="mord" style="color: rgb(204, 0, 0);">\C</span></span></span></span></span></span></span>を足す」という操作を繰り返していったときに、何らかの値に収束するような<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ξ</mi><mo>∈</mo><mstyle mathcolor="#cc0000"><mtext>\C</mtext></mstyle></mrow><annotation encoding="application/x-tex">\xi \in
+\C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span style="margin-right: 0.046em;" class="mord mathnormal">ξ</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord text" style="color: rgb(204, 0, 0);"><span class="mord" style="color: rgb(204, 0, 0);">\C</span></span></span></span></span></span></span>の全体をMandelbrot集合という。この図からもわかる通り、一見相似な図形が色々なスケールで無数に現れていて、大雑把にいえばこういう無限の入れ子構造になった図形の事をフラクタル図形という。因みに、この「相似な図形の入れ子構造」は、このMandelbrot集合の場合、相似に見えるだけで実際には微妙に異なる形が入れ替わり立ち代わり現れている。</p>
 <p>規則がありそうでなさそうな感じ。その感じに多くの人が惹かれて、Mandelbrot集合の好きな部分を拡大して描画するアプリとかを書いて配布していたりする。</p>
 <p>で。集合っていうのは本来色がない筈で、実は世間にある画像の大半は、Mandelbrot集合の「外側」に色を付けたものだ。何を基準に色をつけているのかというと、だいたい発散の速さを基準にしている事が多い。速いほど明るいとか、「発散した」と判定したループ回数の剰余で決めたりとか。まあ発散の速さを元にしてどういう配色をするのかは、結構適当に決めちゃってもサマになることがおおい。
 僕も、以前 <a href="http://hackage.haskell.org/package/diagrams"><code>diagrams</code>
@@ -123,7 +122,7 @@
 <p><img width="300" src="./3d-mandelbrot/mandelbrot.png" class="thumbnail image-responsive"></p>
 <p>まあ作った時に diagrams
 の使い方に慣れてなかったので、ちょっとドット絵っぽくてなめらかじゃないけど、それでもそれなりに綺麗っぽく見えているといえるだろう。「発散の速さ」は、「最初に指定した回数反復して、何回で浮動小数の
-<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">\infty</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.43056em;"></span><span class="strut bottom" style="height: 0.43056em; vertical-align: 0em;"></span><span class="base"><span class="mord">∞</span></span></span></span></span></span>
+<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">\infty</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord">∞</span></span></span></span></span></span>
 に発散または大きさが閾値を越えたか？」という方法で測っている。この配色は、ゼロ回反復から時計回りに色相環を辿っていって、指定反復回数上限で一周するように色を選ぶ形になっている。</p>
 </section>
 <section id="本題mandelbrot集合を空から見てみる立体錯視編" class="level1">
@@ -194,7 +193,6 @@
         <a href="https://github.com/konn/sake">Sake</a>,
 	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
 	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
-	<a href="https://www.mathjax.org">MathJax</a>,
         and <a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
 	<br>
 	Copyright © Hiromi ISHII 2012-2022

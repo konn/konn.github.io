@@ -4,7 +4,7 @@
   <meta name="author" content="Hiromi ISHII">
   <meta name="Keywords" content="emacs,vscode,env,IDE,intero,Haskero,"><meta name="description" content="Emacs にそろそろ辟易してきたので、VSCode に乗り換えようとしています。その作業記録。
 ">
-  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" rel="stylesheet">
   <meta name="viewport" content="width=device-width">
   <link rel="canonical" href="https://konn-san.com/prog/migrating-emacs-to-vscode.html">
   <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
@@ -18,7 +18,6 @@
   <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
   </script>
   <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
   <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
   <script>
   Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
@@ -153,10 +152,10 @@
 <li><p>永らく LaTeX の執筆環境では YaTeX-mode を利用してきた。<br>
 特に、YaTeX
 にはイメージ補完というのがあって、アスキーで表現された数学記号のイメージに相当する記号を手軽に入力出来る。
-例えば <kbd>;||-</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>⊩</mo></mrow><annotation encoding="application/x-tex">\Vdash</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.69224em;"></span><span class="strut bottom" style="height: 0.69224em; vertical-align: 0em;"></span><span class="base"><span class="mrel amsrm">⊩</span></span></span></span></span></span>
-(<code>\Vdash</code>)、<kbd>;ox</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>⊗</mo></mrow><annotation encoding="application/x-tex">\otimes</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.58333em;"></span><span class="strut bottom" style="height: 0.66666em; vertical-align: -0.08333em;"></span><span class="base"><span class="mord">⊗</span></span></span></span></span></span> (<code>\otimes</code>)、あるいは
-<kbd>:a</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.43056em;"></span><span class="strut bottom" style="height: 0.43056em; vertical-align: 0em;"></span><span class="base"><span style="margin-right: 0.0037em;" class="mord mathit">α</span></span></span></span></span></span>
-(<code>\alpha</code>)、<kbd>:ph-</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>φ</mi></mrow><annotation encoding="application/x-tex">\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.43056em;"></span><span class="strut bottom" style="height: 0.625em; vertical-align: -0.19444em;"></span><span class="base"><span class="mord mathit">φ</span></span></span></span></span></span> (<code>\varphi</code>)
+例えば <kbd>;||-</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⊩</mo></mrow><annotation encoding="application/x-tex">\Vdash</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6922em;"></span><span class="mrel amsrm">⊩</span></span></span></span></span></span>
+(<code>\Vdash</code>)、<kbd>;ox</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⊗</mo></mrow><annotation encoding="application/x-tex">\otimes</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6667em; vertical-align: -0.0833em;"></span><span class="mord">⊗</span></span></span></span></span></span> (<code>\otimes</code>)、あるいは
+<kbd>:a</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span style="margin-right: 0.0037em;" class="mord mathnormal">α</span></span></span></span></span></span>
+(<code>\alpha</code>)、<kbd>:ph-</kbd> で <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>φ</mi></mrow><annotation encoding="application/x-tex">\varphi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.625em; vertical-align: -0.1944em;"></span><span class="mord mathnormal">φ</span></span></span></span></span></span> (<code>\varphi</code>)
 といった具合に。</p>
 <p>僕はもうこれがなければ数式が打てないレベルまで来ているので、この機能の代替が欲しい。
 前 Atom に乗り換えようとした際にも、<a href="https://github.com/konn/atom-latex-shape-completion">Atom
@@ -374,7 +373,6 @@ issue</a>によれば、現行の 1.10.0 でも <code class="sourceCode json"><s
         <a href="https://github.com/konn/sake">Sake</a>,
 	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
 	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
-	<a href="https://www.mathjax.org">MathJax</a>,
         and <a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
 	<br>
 	Copyright © Hiromi ISHII 2012-2022

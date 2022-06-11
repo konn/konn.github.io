@@ -4,7 +4,7 @@
   <meta name="author" content="Hiromi ISHII">
   <meta name="Keywords" content="数学,計算機代数,代数幾何,Gröbner基底,グレブナー基底,数値計算,Groebner基底,代数学,アルゴリズム,Haskell,プログラミング"><meta name="description" content="2013年度の計算機代数ゼミの発表資料です。主にGröbner基底の基礎理論から、それを応用した消去理論、連立代数方程式の解法などについてを取り扱っています。
 ">
-  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" rel="stylesheet">
   <meta name="viewport" content="width=device-width">
   <link rel="canonical" href="https://konn-san.com/math/computational-algebra-seminar.html">
   <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
@@ -19,7 +19,6 @@
   <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
   </script>
   <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
   <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
   <script>
   Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
@@ -201,14 +200,14 @@ Enneper Surface、Whitney の傘などを例に出す。
 <dt><a href="./computational-algebra-seminar/2013-10-30.pdf">第14回
 剰余環の構造：有限次元代数</a></dt>
 <dd>
-より洗練された解法を開発するため、特に <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>V</mi><mo>(</mo><mi>I</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">V(I)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.75em;"></span><span class="strut bottom" style="height: 1em; vertical-align: -0.25em;"></span><span class="base"><span style="margin-right: 0.22222em;" class="mord mathit">V</span><span class="mopen">(</span><span style="margin-right: 0.07847em;" class="mord mathit">I</span><span class="mclose">)</span></span></span></span></span></span>
-が有限の場合の剰余環の代数（多元環）としての構造について詳しく分析していく。<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi><mo>[</mo><mrow><mi mathvariant="double-struck">X</mi></mrow><mo>]</mo><mi mathvariant="normal">/</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">k[\mathbb{X}]/I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.75em;"></span><span class="strut bottom" style="height: 1em; vertical-align: -0.25em;"></span><span class="base"><span style="margin-right: 0.03148em;" class="mord mathit">k</span><span class="mopen">[</span><span class="mord"><span class="mord mathbb">X</span></span><span class="mclose">]</span><span class="mord">/</span><span style="margin-right: 0.07847em;" class="mord mathit">I</span></span></span></span></span></span>が有限次元となる場合の条件に関する有限性定理を証明する。このようなイデアルを零次元イデアルと云う。
+より洗練された解法を開発するため、特に <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo stretchy="false">(</mo><mi>I</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">V(I)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.2222em;" class="mord mathnormal">V</span><span class="mopen">(</span><span style="margin-right: 0.0785em;" class="mord mathnormal">I</span><span class="mclose">)</span></span></span></span></span></span>
+が有限の場合の剰余環の代数（多元環）としての構造について詳しく分析していく。<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo stretchy="false">[</mo><mi mathvariant="double-struck">X</mi><mo stretchy="false">]</mo><mi mathvariant="normal">/</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">k[\mathbb{X}]/I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.0315em;" class="mord mathnormal">k</span><span class="mopen">[</span><span class="mord mathbb">X</span><span class="mclose">]</span><span class="mord">/</span><span style="margin-right: 0.0785em;" class="mord mathnormal">I</span></span></span></span></span></span>が有限次元となる場合の条件に関する有限性定理を証明する。このようなイデアルを零次元イデアルと云う。
 </dd>
 <dt><a href="./computational-algebra-seminar/2013-11-06.pdf">第15回
 零次元イデアルに関するアルゴリズム (1)</a></dt>
 <dd>
-零次元イデアルに関するアルゴリズムについて紹介する。ここでは、各消去イデアル<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>I</mi><mo>∩</mo><mi>k</mi><mo>[</mo><msub><mi>x</mi><mi>i</mi></msub><mo>]</mo></mrow><annotation encoding="application/x-tex">I \cap
-k[x_i]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.75em;"></span><span class="strut bottom" style="height: 1em; vertical-align: -0.25em;"></span><span class="base"><span style="margin-right: 0.07847em;" class="mord mathit">I</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">∩</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span style="margin-right: 0.03148em;" class="mord mathit">k</span><span class="mopen">[</span><span class="mord"><span class="mord mathit">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.31166399999999994em;"><span class style="top: -2.5500000000000003em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"></span></span></span></span></span><span class="mclose">]</span></span></span></span></span></span>のモニックな生成元を求めるアルゴリズムと、零次元イデアルの根基を計算するための方法を与える。
+零次元イデアルに関するアルゴリズムについて紹介する。ここでは、各消去イデアル<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>∩</mo><mi>k</mi><mo stretchy="false">[</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">I \cap
+k[x_i]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span style="margin-right: 0.0785em;" class="mord mathnormal">I</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">∩</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.0315em;" class="mord mathnormal">k</span><span class="mopen">[</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3117em;"><span class style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class></span></span></span></span></span></span><span class="mclose">]</span></span></span></span></span></span>のモニックな生成元を求めるアルゴリズムと、零次元イデアルの根基を計算するための方法を与える。
 </dd>
 <dt><a href="./computational-algebra-seminar/2013-11-20.pdf">第16回
 零次元イデアルに関するアルゴリズム (2)</a></dt>
@@ -242,7 +241,7 @@ FGLMアルゴリズムの一般化</a></dt>
 <dt><a href="./computational-algebra-seminar/2014-01-22.pdf">第21回
 線型代数を用いた他の求解法と比較</a></dt>
 <dd>
-<p>前回までの方法の他に、変数の冪の張る部分空間や、第<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.43056em;"></span><span class="strut bottom" style="height: 0.43056em; vertical-align: 0em;"></span><span class="base"><span class="mord mathit">n</span></span></span></span></span></span>座標が皆異なる場合の解法について紹介し、それぞれの結果について比較する。本来高速な筈の左固有ベクトル法が上手くいかなかった理由についても少し考察する。</p>
+<p>前回までの方法の他に、変数の冪の張る部分空間や、第<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></span></span>座標が皆異なる場合の解法について紹介し、それぞれの結果について比較する。本来高速な筈の左固有ベクトル法が上手くいかなかった理由についても少し考察する。</p>
 <ul>
 <li>追加資料（ベンチマーク）：<a href="./computational-algebra-seminar/2014-01-22-bench.html">各手法の速度比較</a>。</li>
 </ul>
@@ -297,7 +296,6 @@ ISSAC’91, ACM Press. 1991, pp. 5-4.</li>
         <a href="https://github.com/konn/sake">Sake</a>,
 	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
 	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
-	<a href="https://www.mathjax.org">MathJax</a>,
         and <a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
 	<br>
 	Copyright © Hiromi ISHII 2012-2022

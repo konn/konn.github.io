@@ -4,7 +4,7 @@
   <meta name="author" content="Hiromi ISHII">
   <meta name="Keywords" content="vscode,LaTeX,YaTeX,CaTeX"><meta name="description" content="YaTeX の補完機能を Visual Studio Code で実現する CaTeX 機能拡張のご紹介。
 ">
-  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" rel="stylesheet">
   <meta name="viewport" content="width=device-width">
   <link rel="canonical" href="https://konn-san.com/articles/2018-11-26-happy-latex-with-catex.html">
   <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
@@ -18,7 +18,6 @@
   <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
   </script>
   <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
   <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
   <script>
   Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
@@ -134,7 +133,7 @@ LaTeX を編集するのに <a href="http://yatex.org">YaTeX</a>
 というわけで、今回は、CaTeXのアレコレについて説明させて頂こうかなと思います。</p>
 <section id="名称" class="level2">
 <h3>名称</h3>
-<p>YaTeX ファミリーは <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mtext>TX</mtext><mspace width="-0.1667em"></mspace><mpadded voffset="-0.5ex"><mrow><mtext>E</mtext></mrow></mpadded><mspace width="-0.125em"></mspace></mrow></mrow><annotation encoding="application/x-tex">\TeX</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.68333em;"></span><span class="strut bottom" style="height: 0.89883em; vertical-align: -0.2155em;"></span><span class="base"><span class="mord text"><span class="mord textrm">T</span><span class="mord rule" style="margin-right: -0.1667em;"></span><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.46782999999999997em;"><span class style="top: -2.7845em;"><span class="pstrut" style="height: 3em;"></span><span class="mord text"><span class="mord textrm">E</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2155em;"></span></span></span><span class="mord rule" style="margin-right: -0.125em;"></span><span class="mord textrm">X</span></span></span></span></span></span></span>
+<p>YaTeX ファミリーは <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>TeX</mtext></mrow><annotation encoding="application/x-tex">\TeX</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8988em; vertical-align: -0.2155em;"></span><span class="mord text"><span class="mord textrm">T</span><span class="mspace" style="margin-right: -0.1667em;"></span><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.4678em;"><span class style="top: -2.7845em;"><span class="pstrut" style="height: 3em;"></span><span class="mord"><span class="mord textrm">E</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2155em;"><span class></span></span></span></span><span class="mspace" style="margin-right: -0.125em;"></span><span class="mord textrm">X</span></span></span></span></span></span></span>
 が日本語で「てふ」と呼ばれがちなことを逆手にとって、和名として「○○てふ」→「○○鳥」を名乗ることが多いです。
 今回は Visual Studio Code の Code から<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> C
 を採って <em>CaTeX</em>
@@ -374,7 +373,6 @@ backpace control character</a>機能拡張を使うと良いでしょう。
         <a href="https://github.com/konn/sake">Sake</a>,
 	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
 	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
-	<a href="https://www.mathjax.org">MathJax</a>,
         and <a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
 	<br>
 	Copyright © Hiromi ISHII 2012-2022

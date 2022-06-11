@@ -4,7 +4,7 @@
   <meta name="author" content="Hiromi ISHII">
   <meta name="Keywords" content="haskell, theorem prover, 定理証明, 宣伝"><meta name="description" content="Haskell Advent Calendar 2013 および Theorem Prover Advent Calendar 2013 参加記事。Haskell における依存型プログラミングおよび定理証明について解説した数少ない日本語文献です。C85 の TCUG に寄稿させて頂いた Haskell で定理証明を行う記事の販促記事でもあります。
 ">
-  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" rel="stylesheet">
   <meta name="viewport" content="width=device-width">
   <link rel="canonical" href="https://konn-san.com/prog/2013-advent-calendar.html">
   <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
@@ -18,7 +18,6 @@
   <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
   </script>
   <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
   <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
   <script>
   Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
@@ -216,7 +215,7 @@ Prover Advent Calendar 2013</a> 二十日目の記事であり、更にTCUGの�
 型の値は唯一つだけ存在して、それは<code class="sourceCode haskell">n</code>と同型になっていることがわかる。例えば
 <code class="sourceCode haskell"><span class="dt">SNat</span> <span class="dt">Z</span></code>
 に属する値は <code class="sourceCode haskell"><span class="dt">SZ</span><span class="ot"> ::</span> <span class="dt">SNat</span> <span class="dt">Z</span></code>
-だけであり、<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">n = 3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.64444em;"></span><span class="strut bottom" style="height: 0.64444em; vertical-align: 0em;"></span><span class="base"><span class="mord mathit">n</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mrel">=</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mord">3</span></span></span></span></span></span> の時は <code class="sourceCode haskell"><span class="dt">SS</span> (<span class="dt">SS</span> (<span class="dt">SS</span> <span class="dt">SZ</span>))<span class="ot"> ::</span> <span class="dt">SNat</span> (<span class="dt">S</span> (<span class="dt">S</span> (<span class="dt">S</span> <span class="dt">Z</span>)))</code>
+だけであり、<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">n = 3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">3</span></span></span></span></span></span> の時は <code class="sourceCode haskell"><span class="dt">SS</span> (<span class="dt">SS</span> (<span class="dt">SS</span> <span class="dt">SZ</span>))<span class="ot"> ::</span> <span class="dt">SNat</span> (<span class="dt">S</span> (<span class="dt">S</span> (<span class="dt">S</span> <span class="dt">Z</span>)))</code>
 が唯一の <code class="sourceCode haskell"><span class="dt">SNat</span> (<span class="dt">S</span> (<span class="dt">S</span> (<span class="dt">S</span> <span class="dt">Z</span>)))</code>
 の要素である、といった具合だ。</p>
 <p>シングルトン自然数に対する加法や順序関係なども定義することが出来る：</p>
@@ -257,8 +256,8 @@ Prover Advent Calendar 2013</a> 二十日目の記事であり、更にTCUGの�
 でも定理の証明が可能であることを説明してきた。より詳しい方法に関しては、C85で頒布するTCUG『Coq
 による定理証明』第三章でかなり細かく説明した。なので、興味を持たれた方は是非お買い求め頂きたい。Haskellで依存型プログラミングを実現し定理証明系として用いる方法を解説した、恐らく唯一の日本語文献であろうと思う。</p>
 <p>ここに書かなかったこととしては、例えば Haskell
-で等式証明を快適に書くための技法についても紹介している。例えば、この本を読むと次のようにして「<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo>(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mo>)</mo><mo>=</mo><mi>n</mi><mo>+</mo><mi>S</mi><mi>m</mi></mrow><annotation encoding="application/x-tex">S (n + m) = n + S
-m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.75em;"></span><span class="strut bottom" style="height: 1em; vertical-align: -0.25em;"></span><span class="base"><span style="margin-right: 0.05764em;" class="mord mathit">S</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mord mathit">m</span><span class="mclose">)</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mrel">=</span><span class="mord rule" style="margin-right: 0.2777777777777778em;"></span><span class="mord mathit">n</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span style="margin-right: 0.05764em;" class="mord mathit">S</span><span class="mord mathit">m</span></span></span></span></span></span>」ということを証明出来るようになる：</p>
+で等式証明を快適に書くための技法についても紹介している。例えば、この本を読むと次のようにして「<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo stretchy="false">(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mo stretchy="false">)</mo><mo>=</mo><mi>n</mi><mo>+</mo><mi>S</mi><mi>m</mi></mrow><annotation encoding="application/x-tex">S (n + m) = n + S
+m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.0576em;" class="mord mathnormal">S</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">m</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6667em; vertical-align: -0.0833em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span style="margin-right: 0.0576em;" class="mord mathnormal">S</span><span class="mord mathnormal">m</span></span></span></span></span></span>」ということを証明出来るようになる：</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ot">plusSR ::</span> <span class="dt">SNat</span> n <span class="ot">-&gt;</span> <span class="dt">SNat</span> m <span class="ot">-&gt;</span> <span class="dt">S</span> (n <span class="op">:+:</span> m) <span class="op">:=:</span> n <span class="op">:+:</span> <span class="dt">S</span> m</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plusSR n m <span class="ot">=</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  start (sS (n <span class="op">%+</span> m))</span>
@@ -331,7 +330,6 @@ Prover Advent Calendar 2013</a> の記事でもあった。<a href="#fnref3" cla
         <a href="https://github.com/konn/sake">Sake</a>,
 	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
 	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
-	<a href="https://www.mathjax.org">MathJax</a>,
         and <a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
 	<br>
 	Copyright © Hiromi ISHII 2012-2022

@@ -4,7 +4,7 @@
   <meta name="author" content="Hiromi ISHII">
   <meta name="Keywords" content="集合論,選択公理,ロジック,数理論理学,数学基礎論,実現可能性モデル,古典的実現可能性モデル,継続,call/cc"><meta name="description" content="古典的実現可能性モデル（classical realisability）の手法は，Curry--Howard対応を拡張する形でZFのモデルを与える方法であり，Krivineによって導入された． 強制法を特別な場合として含むが，ZFCから開始してもZF + ¬ACのモデルが得られるという点で強制法を真に一般化するものになっている．
 ">
-  <link href="/katex/katex.min.css" type="text/css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" rel="stylesheet">
   <meta name="viewport" content="width=device-width">
   <link rel="canonical" href="https://konn-san.com/math/realisability.html">
   <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
@@ -19,7 +19,6 @@
   <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
   </script>
   <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML" async="async"></script>
   <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
   <script>
   Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
@@ -112,9 +111,9 @@
           <section id="概要" class="level1">
 <h2>概要</h2>
 <p>古典的実現可能性モデル（classical
-realisability）の手法は，Curry–Howard対応を拡張する形で<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{ZF}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.68333em;"></span><span class="strut bottom" style="height: 0.68333em; vertical-align: 0em;"></span><span class="base"><span class="mord"><span class="mord mathrm">Z</span><span class="mord mathrm">F</span></span></span></span></span></span></span>のモデルを与える方法であり，Krivineによって導入された．
-強制法を特別な場合として含むが，<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">C</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{ZFC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.68333em;"></span><span class="strut bottom" style="height: 0.68333em; vertical-align: 0em;"></span><span class="base"><span class="mord"><span class="mord mathrm">Z</span><span class="mord mathrm">F</span><span class="mord mathrm">C</span></span></span></span></span></span></span>から開始しても<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi></mrow><mo>+</mo><mi mathvariant="normal">¬</mi><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">C</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{ZF}+\neg
-\mathrm{AC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height: 0.68333em;"></span><span class="strut bottom" style="height: 0.76666em; vertical-align: -0.08333em;"></span><span class="base"><span class="mord"><span class="mord mathrm">Z</span><span class="mord mathrm">F</span></span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">+</span><span class="mord rule" style="margin-right: 0.2222222222222222em;"></span><span class="mord">¬</span><span class="mord"><span class="mord mathrm">A</span><span class="mord mathrm">C</span></span></span></span></span></span></span>のモデルが得られるという点で強制法を真に一般化するものになっている．</p>
+realisability）の手法は，Curry–Howard対応を拡張する形で<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi></mrow><annotation encoding="application/x-tex">\mathrm{ZF}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord"><span class="mord mathrm">ZF</span></span></span></span></span></span></span>のモデルを与える方法であり，Krivineによって導入された．
+強制法を特別な場合として含むが，<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">C</mi></mrow><annotation encoding="application/x-tex">\mathrm{ZFC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord"><span class="mord mathrm">ZFC</span></span></span></span></span></span></span>から開始しても<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi></mrow><mo>+</mo><mi mathvariant="normal">¬</mi><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">C</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{ZF}+\neg
+\mathrm{AC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7667em; vertical-align: -0.0833em;"></span><span class="mord"><span class="mord mathrm">ZF</span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord">¬</span><span class="mord"><span class="mord mathrm">AC</span></span></span></span></span></span></span>のモデルが得られるという点で強制法を真に一般化するものになっている．</p>
 <p>Krivineの着想は，旧来の直観主義・構成的数学の実現可能性モデルに，Peirce’s
 Law と対応することが広く知られている <code>call/cc</code>
 プリミティヴを加えれば古典論理上の集合論のモデルが得られる筈である，というものである．
@@ -162,7 +161,6 @@ Law と対応することが広く知られている <code>call/cc</code>
         <a href="https://github.com/konn/sake">Sake</a>,
 	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
 	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
-	<a href="https://www.mathjax.org">MathJax</a>,
         and <a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
 	<br>
 	Copyright © Hiromi ISHII 2012-2022
