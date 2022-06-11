@@ -8,380 +8,13 @@
         <name>Hiromi ISHII</name>
         <email>konn.jinro_at_gmail.com</email>
     </author>
-    <updated>2022-03-06T14:05:00+09:00</updated>
-    <entry>
-      <title>Talks</title>
-      <link href="https://konn-san.com/talks.html" />
-      <id>https://konn-san.com/talks.html</id>
-      <published>2022-03-06T14:05:00+09:00</published>
-      <updated>2022-03-06T14:05:00+09:00</updated>
-      <summary type="html"><![CDATA[<section id="講演一覧" class="level1">
-<h2>講演一覧</h2>
-<p>他の詳細な経歴等は<a href="/profile.html">プロファイル</a>を参照。</p>
-<p><ul>
-<li>2022/03/06 
-Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める</b>』（<a href="https://konn-san.com/math/ishii-fibonacci-slides.pdf">Slides</a>）</li>
-<li>2021/09/15 
-<a href="https://www.casc-conference.org/2021/index.html">Computer Algebra in Scientific Computing 2021</a>＠Hybrid (Sochi, Russia and Online)『<b>Automatic differentiation with higher infinitesimals, or computational smooth infinitesimal analysis in Weil algebra</b>』（<a href="https://arxiv.org/abs/2106.14153">Preprint</a>，<a href="https://konn-san.com/math/casc-smooth.pdf">Slides</a>，<a href="https://link.springer.com/book/10.1007/978-3-030-85165-1">Proceedings</a>）</li>
-<li>2021/07/04 
-<a href="https://www.youtube.com/channel/UCSA2iDIY6Z-J9X4pWfdPPnw">alg-d</a>＠YouTube『<b>自動微分とGröbner基底による高次冪零無限小解析（alg_d篇）</b>』（<a href="https://www.youtube.com/watch?v=0xtOjwQaib4">YouTube</a>，<a href="https://arxiv.org/abs/2106.14153">Paper</a>，<a href="https://konn-san.com/math/smooth-algd-talk.pdf">Slides</a>）</li>
-<li>2020/12/22 
-<a href="http://www.nda.ac.jp/cc/masayo/20/rims20.html">Computer Algebra – Theory and its Applications</a>＠Zoom Webinar『<b>自動微分と Gröbner 基底による高次冪零無限小解析</b>』</li>
-<li>2019/11/09 
-<a href="https://techplay.jp/event/727059">Haskell Day 2019</a>＠TECH PLAY SHIBUYA『<b>大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──</b>』（<a href="https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil">Slide URL</a>）</li>
-<li>2018/11/24 
-数学基礎論若手の会＠コテージにらい恩納『<b>集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク</b>』（<a href="https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf">Slide PDF</a>）</li>
-<li>2018/09/19 
-<a href="http://www.casc.cs.uni-bonn.de/2018/">Computer Algebra in Scientific Computing 2018</a>＠University of Lille『<b><a href="/math/casc2018-talk.pdf">A Purely Functional Computer Algebra System Embedded in Haskell</a></b>』</li>
-<li>2018/03/05 
-筑波大学計算機数学グループ 春の合宿 2018＠Nami Kaze Tateyama（旧・筑波大学館山研修所）『<b><a href="/math/tateyama-18-satysfi.pdf">SATySFi を使ってみた</a></b>』</li>
-<li>2017/11/07 
-<a href="http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html">Workshop on Iterated Forcing Theory and Cardinal Invariants</a>＠RIMS『<b><a href="/math/rims2017.pdf">Reflection Principles and Saturated Filters on \(\mathcal{P}_{\omega_1} \lambda\)</a></b>』</li>
-<li>2017/10/27 
-数学基礎論若手の会2017＠大学セミナーハウス『<b>正集合の反映原理と飽和イデアルの構成</b>』（<a href="/math/wakate-2017.pdf">Slide PDF</a>）</li>
-<li>2017/03/06 
-筑波大学計算機数学グループ 春の合宿 2017＠筑波大学館山研修所『<b>ものまね鳥を愛でる 結合子論理と計算</b>』（<a href="https://www.slideshare.net/konn/ss-72840520">SlideShare</a>，<a href="/math/mocking-bird-tateyama.pdf">PDF</a>）</li>
-<li>2016/10/23 
-数学基礎論若手の会2016＠清里高原『<b>On Projective Baire Property</b>』（<a href="/math/projective-baire-fmyg16.pdf">Slide</a>）</li>
-<li>2016/06/04 
-<a href="https://docs.google.com/viewer?a=v&amp;pid=sites&amp;srcid=ZGVmYXVsdGRvbWFpbnxzaGltaWtlbnh8Z3g6MWY5OWFiZDM2NTcyNzljZQ">第4回つくばフレッシュマンセミナー</a>『<b>集合論への招待　〜実数直線の集合論〜</b>』（<a href="/math/freshman-2016-resume.pdf">資料</a>）</li>
-<li>2016/03/08 
-<a href="http://logic.cs.tsukuba.ac.jp/ppl2016/">第18回プログラミングおよびプログラミング言語ワークショップ PPL 2016</a>『<b>Freer Monads, More Extensible Effects</b>』（<a href="http://www.slideshare.net/konn/freer-monads-more-extensible-effects-59411772">SlideShare</a>，<a href="/prog/freer-ppl16.pdf">PDF</a>，<a href="/prog/freer-ppl16.key">Keynote</a>）</li>
-<li>2015/07/27 
-修士論文中間発表『<b>実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について（公開版）</b>』（<a href="http://www.slideshare.net/konn/ss-50957683">Slide</a>）</li>
-<li>2015/03/08 
-筑波大学計算機数学グループ 春の合宿2015＠筑波大学館山研修所『<b>（数式の入った）本をつくる</b>』（<a href="https://www.youtube.com/watch?v=a0NcKmVWKq0">録画</a>，<a href="http://www.slideshare.net/konn/ss-45587178">Slide</a>）</li>
-<li>2014/11/20 
-数学基礎論若手の会2014＠鳥取『<b>Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項</b>』（<a href="http://www.slideshare.net/konn/lebesgue-solovayshelah">Slide</a>）</li>
-<li>2014/03/20 
-PFI社内セミナー『<b>技術者が知るべき Gröbner 基底</b>』（<a href="http://www.ustream.tv/recorded/45083535">UStream [前半]</a>，<a href="http://www.ustream.tv/recorded/45083876">UStream [後半]</a>，<a href="http://www.slideshare.net/konn/grbner">Slide</a>）</li>
-<li>2014/03/08 
-筑波大学計算機数学グループ春の合宿2014＠筑波大学館山研修所『<b>数学プログラムをHaskellで書くべき6の理由</b>』（<a href="https://www.youtube.com/watch?v=S4_7KVNA-Ww">録画</a>，<a href="http://www.slideshare.net/konn/haskell-6-32258528">Slide</a>）</li>
-<li>2013/10/12 
-第四回選択公理オフ『<b>数理論理学の初歩の初歩の初歩の……</b>』（<a href="/math/acoff-04.html">HTML</a>，<a href="/math/acoff-04.pdf">PDF</a>）</li>
-<li>2013/05/04 
-<a href="http://partake.in/events/451a51b0-b18e-4e01-bda4-423bf57f4051">Haskell で計算機代数勉強会</a>『<b>わかったつもりになる Gröbner 基底</b>』（<a href="http://www.slideshare.net/konn/groebner-basisanintroductionreduced">Slide</a>）</li>
-<li>2012/11/22 
-PFI 社内セミナー『<b>Algebraic DP: 動的計画法を書きやすく</b>』（<a href="http://www.ustream.tv/recorded/27196711">Ustream</a>，<a href="http://www.slideshare.net/konn/algebraic-dp">Slide</a>）</li>
-<li>2012/04/22 
-(祝) Yesod 1.0 勉強会『<b>Yesod で Blog Engine をつくってみた</b>』（<a href="http://www.justin.tv/kiwamu/b/315818516">録画</a>，<a href="http://www.slideshare.net/konn/yesod-12637438">Slide</a>）</li>
-<li>2012/04/12 
-PFI 社内セミナー『<b>How wonderful to be (statically) typed 〜型が付くってスバラシイ〜</b>』（<a href="http://www.ustream.tv/recorded/21781769">Ustream</a>，<a href="http://www.slideshare.net/konn/how-wonderful-to-be-statically-typed">Slide</a>）</li>
-<li>2011/09/22 
-PFI 社内セミナー『<b>Alloy Analyzer のこと</b>』（<a href="http://www.ustream.tv/recorded/17430540">Ustream</a>，<a href="http://www.slideshare.net/konn/alloy-analyzer-9379488">Slide</a>）</li>
-</ul>
-</p>
-</section>]]></summary>
-    </entry>
-    <entry>
-      <title>うたにっき20211227</title>
-      <link href="https://konn-san.com/logs/20211227.html" />
-      <id>https://konn-san.com/logs/20211227.html</id>
-      <published>2021-12-27T18:25:37+09:00</published>
-      <updated>2021-12-27T18:25:37+09:00</updated>
-      <summary type="html"><![CDATA[<p>最近なんとなく Twitter
-で即興的に短歌を読むことにハマっているので、去年散発的に詠んだ歌も含めて自動的に
-tumblr に集積しておく場所を作りました：</p>
-    <div class="embed w-100 my-4 justify-content-center row py-0">
-      
-
-
-    </div>
-
-<p>一年くらい遡って自動収集したものなので、うんこちんこみたいな不真面目なネタ短歌もあります。
-うんこちんこを真面目にやれというお叱りは甘受します。今後も自動収集なので、不真面目な歌が当然に混る。そもそも真面目に短歌を詠む気があるのかという問題もある。</p>
-<hr></hr>
-<p>そういえばこの日記はうたったうた（songs I
-sang）を書いておくものとしてはじまったのであったのでそっちのうたの話もする。
-先日久々に友人とカラオケにいったのだけど、かなり喉が衰えていてこれはやばいと思ったので、最近はうまれてはじめてヒトカラに定期的にいくようになった。
-週に1回くらい空いた日を見付けて一時間くらい唄う。
-最近はコロナの憂さ晴らしにいろいろ演劇や映像作品を観たりすることが増え、また何か演劇なり映像作品なりを創りたい、という欲求が高まっていて、なので歌を唄う前に発声練習もするようになった。
-最初はさすがに十年弱のブランクもあり、ヒトカラに慣れていない羞恥心もあったのであんまり長々と出来なかったのだけど、筋少とかたまとか唄いながら、フト、これ外から漏れ聴こえている立場の人間からしたら発声練習もこれらの曲も奇声を上げているという点では変わらんなと思い至り、爾来人目を憚らずにカラオケの個室で発声練習ができるようになった。</p>
-<p>あと最近気付いたんだけど、Queen の We are the Champions とか Princes
-of the Universe って唄うとめっちゃ元気でますね。
-全能感のある曲は精神に良い働きをもたらす。</p>
-
-
-
-
-<p>調子にのって友人とのカラオケで唄ったら、Killer Queen
-を唄ってくれとリクエストがあったので、次に備えて今隙を見て練習している。</p>
-
-
-<p>最初にこれらの曲を聴いたのは親が聴いてたのを横で、という感じなので、歌詞の聞き取りは当時の語彙力に制限されていたため、Killer
-Queen の “Let them eat cake, she says just like Marie Antoinette”
-の部分を “Application says, ”
-だと思っていたりして、直したつもりだが時々そっちに揺り戻されてしまう。
-マリー・アントワネットの所は聴き取れてたんだから、「ケーキを食べればいいのよ」の類推が効いてもよさそうな物だが意味を捉えて聴いてなかったということですね。</p>
-<p>元気の出る曲でいくと、モンティ・パイソンの映画 “Life of Brian”
-の主題歌でいつだったかサッカーでも使われていた “Always Look on the
-Bright Side of Life” はやはり名曲だと思う。</p>
-
-
-<p>Monty Python’s Life of Brian
-は「キリストと間違われた男・ブライアン」の一生（キリストはキリストで別にいる）を喜劇として描いたコント映画なんだけど、最後ブライアンが磔にされてもう人生終わりだ〜！っていう時に一緒に磔にされている受刑者全員でこの歌を歌い出すというエンディング。
-それで「人生なんてクソの塊さ」「無から来て無に還るんだから、失うものなんて何もないでしょ？」「だから人生の明るい面をみていようよ」「人生はショウなんだ、最後までみんなを笑わせていよう」という歌を唄うんだから、今おもうとかなりパンチの効いたラストだと思う。
-人生をショウに喩えるというのは、Queen でいえば The Show Must Go On
-なんかもそうだけれど、The Show〜
-がフレディの病状も踏まえて書かれたこともあってかなり悲壮感があるのに対して、Always
-Look
-on〜は「前向きな」ニヒリズムを原動力に底抜けに明るい仕上りになっているのは面白い好対照だと思う。
-どちらも大好きな名曲だけれど、Always〜のような感じで人生を明るく愉しく生きたいものである。</p>
-
-
-<hr></hr>
-<p>前書いてから期間が経っているのでその間に作ったものの宣伝をしておこう。
-大学時代のサークルの同期・後輩と『游』機関という同人団体を立ち上げ、ボードゲームやマーダーミステリーを創ってます。
-マーダーミステリーというのは、TRPGの簡易版みたいなもので、実際に推理小説の登場人物になって演じながら犯人を突き止めたり或いは自分の犯行を隠蔽したりといった感じの体感型ゲームです。</p>
-<p>第一作は『踊る天狼館の夜』。</p>
-    <div class="embed w-100 my-4 justify-content-center row py-0">
-      
-
-
-    </div>
-
-<p>ある王国の名門公爵家の令嬢と鉄道王の婚約発表パーティの晩、当の公爵本人が殺されてしまい、一同は事件の真相に迫るが、みなそれぞれに思惑を持っており……という作品です。結構盛り沢山に放り込んだので、総プレイ4時間程度、プレイヤー5人＋GMという仕様です。GMなしでもプレイ可能ですが、基本GMあり推奨。DiscordとUdonarium
-が使えればプレイできますのでぜひ。</p>
-<p>第二作は『座敷わらしのいる家で』。</p>
-    <div class="embed w-100 my-4 justify-content-center row py-0">
-      
-
-
-    </div>
-
-<p>中学時代に泊まった屋敷が火事になった際、〈座敷わらし〉に助けて貰った少年少女たち。
-数年を経て同じ屋敷に泊まりにいくが、屋敷の持ち主の息子である歌川が何者かに昏倒させられ──という作品です。
-ざっくりと80年代くらいの晩夏を舞台に、ノスタルジーに浸っていただければと思います。
-こちらはお手軽に二時間半・GM不要の4人プレイとなっております。こちらもぜひお求めを。</p>
-<p>歳の瀬も迫っているので来年の目標を書いておく。アウトプットの年にします。色々なものを創りたいね。
-次のマダミスを創ろうという話もあるし、映像作品を創りたいという思いもある。幾つ叶うかはわからないけど、正夢にしたいですね。</p>
-<p>それではまたいつか。</p>]]></summary>
-    </entry>
-    <entry>
-      <title>プロフィール</title>
-      <link href="https://konn-san.com/profile.html" />
-      <id>https://konn-san.com/profile.html</id>
-      <published>2021-06-29T16:20:00+09:00</published>
-      <updated>2021-06-29T16:20:00+09:00</updated>
-      <summary type="html"><![CDATA[<p><a href="/t/cv.pdf">English CV</a></p>
-<section id="自己紹介" class="level1">
-<h2>自己紹介</h2>
-<p>数学と関数型プログラミングを愛でる博士（理学）。数学（集合論をはじめとした数学基礎論および計算代数）と本格ミステリ、関数型プログラミング。時々パズル。</p>
-<section id="専門と趣味について" class="level2">
-<h3>専門と趣味について</h3>
-<dl>
-<dt>好きな作家（順不同）</dt>
-<dd>
-麻耶雄嵩、円城塔、森川智喜、円居挽、倉知淳。座右の書は麻耶雄嵩『<a href="asin:4062638916">夏と冬の奏鳴曲</a>』と円城塔『<a href="asin:4150310203">Boy’s
-Surface</a>』。パズル作家の芦ヶ原伸之さんのエッセイも好き。
-</dd>
-<dt>数学</dt>
-<dd>
-専攻は集合論を初めとした数理論理学、計算代数、および関数型プログラミング。
-</dd>
-<dt>プログラミング</dt>
-<dd>
-中学の頃くらいからやっている。おおよそ REALbasic → Ruby → Haskell
-という遍歴を辿っている。他にも色々な言語をつまみぐいしてみたりしたが、現在は
-Haskell 一本に落ち着き、飯を食っている。このサイトも Haskell
-で生成・管理しています。
-</dd>
-</dl>
-</section>
-<section id="受賞歴資格等" class="level2">
-<h3>受賞歴・資格等</h3>
-<ul>
-<li>2015年度 第十四回茗渓会賞</li>
-<li>2013年度 早稲田大学基幹理工学部卒業生総代</li>
-<li>2013年度 早稲田大学基幹理工学部長賞最優秀賞（第一回）</li>
-</ul>
-</section>
-<section id="年表" class="level2">
-<h3>年表</h3>
-<ul>
-<li>2019/04〜現在 <a href="https://www.deepflow.co.jp">DeepFlow株式会社</a> 研究開発部</li>
-<li>2019/04〜2020/03 統計数理研究所 外来研究員</li>
-<li>2019/03 筑波大学大学院 数理物質科学研究科 数学専攻
-博士後期課程修了</li>
-<li>2017/04〜2019/03 日本学術振興会特別研究員（DC2）</li>
-<li>2016/04〜 筑波大学大学院 数理物質科学研究科 数学専攻
-博士後期課程</li>
-<li>2016/03 筑波大学大学院 数理物質科学研究科 数学専攻
-博士前期課程修了</li>
-<li>2014/04 Google Summer of Code 2014 採択（Haskell
-による効率的なGröbner基底計算とそのための疎行列アルゴリズムの実装）</li>
-<li>2014/04 筑波大学大学院 数理物質科学研究科 数学専攻入学</li>
-<li>2014/03 同卒業（基幹理工学部総代）</li>
-<li>2011/04 早稲田大学基幹理工学部 数学科配属</li>
-<li>2010/10〜2014/03 <a href="http://preferred.jp/">株式会社 Preferred
-Infrastructure</a> アルバイト</li>
-<li>2010/08〜09 <a href="http://preferred.jp/">株式会社 Preferred
-Infrastructure</a> インターン生</li>
-<li>2010/04 早稲田大学基幹理工学部入学</li>
-<li>2010/03 神奈川県立横浜緑ヶ丘高校卒業</li>
-<li>1992/01/18 生まれる</li>
-</ul>
-</section>
-</section>
-<section id="activity" class="level1">
-<h2>Activity</h2>
-<p>現在・過去の活動記録など。</p>
-<section id="papers" class="level2">
-<h3>Papers</h3>
-<section id="refereed-papers" class="level3">
-<h4>Refereed Papers</h4>
-<ul>
-<li>Hiromi ISHII, “<em>Automatic Differentiation With Higher
-Infinitesimals, or Computational Smooth Infinitesimal Analysis in Weil
-Algebra</em>”, In: Computer Algebra in Scientific Computation 2021,
-pp. 174-191. DOI: <a href="https://doi.org/10.1007/978-3-030-85165-1_11">10.1007/978-3-030-85165-1_11</a>
-(<a href="https://github.com/konn/smooth">Example Repository</a>, <a href="https://arxiv.org/abs/2106.14153">arxiv:2106.14153</a>, <a href="/math/casc-smooth.pdf">Slides</a>).</li>
-<li>Hiromi ISHII, “<em><a href="https://hdl.handle.net/2241/00156881">Bidirectional Interplay
-between Mathematics and Computer Science: Safety and Extensibility in
-Computer Algebra and Haskell</a></em>”, Ph.D. Thesis.</li>
-<li>Hiromi ISHII, “<em>A Purely Functional Computer Algebra System
-Embedded in Haskell</em>” (<a href="https://arxiv.org/abs/1807.01456">preprint</a>), In: Computer
-Algebra in Scientific Computing, pp. 288-303. 20th International
-Workshop, CASC 2018, Lille, France, September 17-21, 2018. DOI: <a href="https://doi.org/10.1007/978-3-319-99639-4_20">10.1007/978-3-319-99639-4_20</a>.</li>
-<li>Hiromi ISHII, “<em><a href="math/regularity-and-inaccessible.html">Regularity Properties of
-Sets of Reals and Inaccessible Cardinals</a></em>”, Master’s
-Thesis.</li>
-<li>Oleg Kiselyov and Hiromi ISHII, “<a href="http://okmij.org/ftp/Haskell/extensible/more.pdf">Freer Monads,
-More Extensible effects</a>”. Haskell Symposium 2015.</li>
-</ul>
-</section>
-<section id="non-refereed-papers" class="level3">
-<h4>Non-refereed Papers</h4>
-<ul>
-<li>Hiromi Ishii, “<em><a href="RIMSca2021-rims">A Succinct Multivariate
-Lazy Multivariate Tower AD for Weil Algebra Computation</a></em>”,
-Computer Algebra – Theory and its Applications, RIMS Kôkyûroku No. 2185
-(2021), pp. 104-112. (<a href="RIMSca2021-arxiv">arxiv:2103.11615</a>)</li>
-</ul>
-</section>
-<section id="preprints-only" class="level3">
-<h4>Preprints-only</h4>
-<ul>
-<li>Hiromi ISHII, “<em><a href="https://arxiv.org/abs/2103.11751">Functional Pearl: Witness Me –
-Constructive Arguments Must Be Guided with Concrete Witness</a></em>”,
-2021.</li>
-</ul>
-</section>
-</section>
-<section id="talks" class="level2">
-<h3>Talks</h3>
-<p>勉強会や社内セミナーなどでの発表記録（直近十件；<a href="/talks.html">全一覧</a>）。</p>
-<p><ul>
-<li>2022/03/06 
-Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める</b>』（<a href="https://konn-san.com/math/ishii-fibonacci-slides.pdf">Slides</a>）</li>
-<li>2021/09/15 
-<a href="https://www.casc-conference.org/2021/index.html">Computer Algebra in Scientific Computing 2021</a>＠Hybrid (Sochi, Russia and Online)『<b>Automatic differentiation with higher infinitesimals, or computational smooth infinitesimal analysis in Weil algebra</b>』（<a href="https://arxiv.org/abs/2106.14153">Preprint</a>，<a href="https://konn-san.com/math/casc-smooth.pdf">Slides</a>，<a href="https://link.springer.com/book/10.1007/978-3-030-85165-1">Proceedings</a>）</li>
-<li>2021/07/04 
-<a href="https://www.youtube.com/channel/UCSA2iDIY6Z-J9X4pWfdPPnw">alg-d</a>＠YouTube『<b>自動微分とGröbner基底による高次冪零無限小解析（alg_d篇）</b>』（<a href="https://www.youtube.com/watch?v=0xtOjwQaib4">YouTube</a>，<a href="https://arxiv.org/abs/2106.14153">Paper</a>，<a href="https://konn-san.com/math/smooth-algd-talk.pdf">Slides</a>）</li>
-<li>2020/12/22 
-<a href="http://www.nda.ac.jp/cc/masayo/20/rims20.html">Computer Algebra – Theory and its Applications</a>＠Zoom Webinar『<b>自動微分と Gröbner 基底による高次冪零無限小解析</b>』</li>
-<li>2019/11/09 
-<a href="https://techplay.jp/event/727059">Haskell Day 2019</a>＠TECH PLAY SHIBUYA『<b>大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──</b>』（<a href="https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil">Slide URL</a>）</li>
-<li>2018/11/24 
-数学基礎論若手の会＠コテージにらい恩納『<b>集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク</b>』（<a href="https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf">Slide PDF</a>）</li>
-<li>2018/09/19 
-<a href="http://www.casc.cs.uni-bonn.de/2018/">Computer Algebra in Scientific Computing 2018</a>＠University of Lille『<b><a href="/math/casc2018-talk.pdf">A Purely Functional Computer Algebra System Embedded in Haskell</a></b>』</li>
-<li>2018/03/05 
-筑波大学計算機数学グループ 春の合宿 2018＠Nami Kaze Tateyama（旧・筑波大学館山研修所）『<b><a href="/math/tateyama-18-satysfi.pdf">SATySFi を使ってみた</a></b>』</li>
-<li>2017/11/07 
-<a href="http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html">Workshop on Iterated Forcing Theory and Cardinal Invariants</a>＠RIMS『<b><a href="/math/rims2017.pdf">Reflection Principles and Saturated Filters on \(\mathcal{P}_{\omega_1} \lambda\)</a></b>』</li>
-<li>2017/10/27 
-数学基礎論若手の会2017＠大学セミナーハウス『<b>正集合の反映原理と飽和イデアルの構成</b>』（<a href="/math/wakate-2017.pdf">Slide PDF</a>）</li>
-</ul>
-<p>
-See <a href="/talks.html">Talks</a> for all talks.
-</p>
-</p>
-</section>
-<section id="pre-publication-reviews" class="level2">
-<h3>Pre-publication Reviews</h3>
-<p>プログラミング関連で幾つか出版前のレビューに協力させて頂きました。</p>
-<dl>
-<dt><a href="asin:4274068854">すごいHaskell楽しく学ぼう！</a></dt>
-<dd>
-主に他の言語での経験のある人に向けて、Haskell
-を一から入門するための本。普通の本やなんかとは一線を画した、肩肘はらない独特の語り口で
-Haskell のキモを学ぶことが出来ます。
-</dd>
-<dt><a href="asin:4274069117">型システム入門
-─プログラミング言語と型の理論─</a></dt>
-<dd>
-型理論入門書の定番・Types and Programming Language
-待望の和訳。豪華監修・執筆陣による非常に読み易い翻訳に仕上がっています。型理論に興味のある方はぜひ。
-</dd>
-<dt><a href="asin:427406896X">関数プログラミング入門 ─Haskell
-で学ぶ技法と原理─</a></dt>
-<dd>
-こちらは Haskell
-を使った関数型プログラミングの入門書。関数型プログラミングを体系的に基礎から勉強していくのに適しています。残念ながら余りレビューに参加出来なかった為、名前は出さないで頂きました。
-</dd>
-<dt><a href="asin:4873116899">Haskellによる並列・並行プログラミング</a></dt>
-<dd>
-Haskell
-で並列・並行プログラミングを行う上で必要な知識が網羅された一冊です。Haskell
-で並列・並行処理を用いたプログラムを書こうと思ったら、まずはこの本は必読書でしょう。低レベルな機能の紹介から始まってそこから抽象度の高いライブラリを設計するところまでを解説しているので、既存のライブラリの裏側を知るのにも役立ちますし、関数型プログラミングの方法論を実感することも出来るでしょう。
-</dd>
-</dl>
-</section>
-<section id="other-publications" class="level2">
-<h3>Other Publications</h3>
-<dl>
-<dt><a href="http://tcug.jp/books/2013-12/">Coqによる定理証明</a></dt>
-<dd>
-Tsukuba Coq Users’ Group による、主に Coq
-による定理証明の技法についての同人誌。わたしの担当は第三章で、Haskell
-を定理証明系として用いる方法を解説する記事を書きました。<a href="/prog/2013-advent-calendar.html">販促記事はこちら</a>。
-</dd>
-<dt><a href="http://longgate.co.jp/books/grimoire-vol3.html">プログラミングの魔導書
-〜Programmers’ Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed
-Programming”</a></dt>
-<dd>
-株式会社ロングゲート様の技術書に、合成性の高い並行処理を実現する STM
-についての入門記事を寄稿させて頂きました。拙稿に限らず、並行・並列処理に関するあらゆる知識の詰まった一冊となっておりますので、是非。
-</dd>
-</dl>
-</section>
-</section>]]></summary>
-    </entry>
-    <entry>
-      <title>古典的実現可能性モデルノート</title>
-      <link href="https://konn-san.com/math/realisability.html" />
-      <id>https://konn-san.com/math/realisability.html</id>
-      <published>2020-10-21T21:30:00+09:00</published>
-      <updated>2020-10-21T21:30:00+09:00</updated>
-      <summary type="html"><![CDATA[<section id="概要" class="level1">
-<h2>概要</h2>
-<p>古典的実現可能性モデル（classical
-realisability）の手法は，Curry–Howard対応を拡張する形で<span class="math inline">\(\mathrm{ZF}\)</span>のモデルを与える方法であり，Krivineによって導入された．
-強制法を特別な場合として含むが，<span class="math inline">\(\mathrm{ZFC}\)</span>から開始しても<span class="math inline">\(\mathrm{ZF}+\neg
-\mathrm{AC}\)</span>のモデルが得られるという点で強制法を真に一般化するものになっている．</p>
-<p>Krivineの着想は，旧来の直観主義・構成的数学の実現可能性モデルに，Peirce’s
-Law と対応することが広く知られている <code>call/cc</code>
-プリミティヴを加えれば古典論理上の集合論のモデルが得られる筈である，というものである．
-この達成のため，Krivine はBCKW論理に call/cc
-を加えた体系を，Krivine機械と呼ばれるある種のスタックマシンを用いて解釈するという方法を採っている．</p>
-<p>本稿は，元々は2017年に早稲田大学で行われた集合論セミナーでの筆者（石井）の発表の資料である．
-強制法との関係をなるべく明らかにすることを目的に書き始められ，Krivineが原論文で採用したものよりも現代的な強制法の定式化に近い形で再定式化を与えたが，現時点では完全に目的を達するに至ってはいない．誰かがその道に至る道標になれば幸いである．</p>
-</section>
-<section id="本文リンク" class="level1">
-<h2>本文リンク</h2>
-<p><a href="./realisability.pdf">PDFはこちら</a></p>
-<p>元となったレジュメは6部に及ぶかなり膨大な TeX であり、TikZ
-をふんだんに用いているため現時点ではHTML化が出来ていない。
-従って、当面は PDF のみの提供とさせて頂く。</p>
-</section>]]></summary>
-    </entry>
+    <updated>2022-06-11T18:00:00+09:00</updated>
     <entry>
       <title>Boole値モデルと強制法</title>
       <link href="https://konn-san.com/math/boolean-valued-model-and-forcing.html" />
       <id>https://konn-san.com/math/boolean-valued-model-and-forcing.html</id>
-      <published>2020-06-22T14:30:00+09:00</published>
-      <updated>2020-06-22T14:30:00+09:00</updated>
+      <published>2022-06-11T18:00:00+09:00</published>
+      <updated>2022-06-11T18:00:00+09:00</updated>
       <summary type="html"><![CDATA[<p>[<a href="/math/boolean-valued-model-and-forcing.pdf" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;download&#39;, &#39;ac&#39;, &#39;/math/boolean-valued-model-and-forcing.pdf&#39;)">PDF版</a>
 ]</p>
 <section id="強制法の基本的な考え方とboole値モデル" class="level1">
@@ -544,7 +177,7 @@ V^{\mathbb{B}} \models \varphi^{\check{V}}[\check{a}_1, \dots,
 上の二つの定理から，次のような手頃な判断基準が得られます：</p>
 <div class="theorem">
 <p>推移的モデルについて絶対的な概念は，強制概念で動かない． 特に<span class="math inline">\(\Delta_1\)</span>-概念は強制法的に絶対．
-特に，有限集合，<span class="math inline">\(\omega\)</span>である，関数である，順序数である，可算である，といった性質は動かない．</p>
+特に，有限集合，<span class="math inline">\(\omega\)</span>である，関数である，順序数である，といった性質は動かない．</p>
 </div>
 <p>「推移的モデルについて絶対的な概念」の具体例については，たとえばこのサイトの「<a href="https://konn-san.com/math/absoluteness-cheatsheet.html">絶対性チートシート</a>」<span class="citation"><a href="#ref-Ishii:2016db" role="doc-biblioref"> [3]</a></span>を御覧ください．</p>
 <p>さて，<span class="math inline">\(V^{\mathbb{B}}\)</span>という物を考えたのは，<span class="math inline">\(V\)</span>にはない元を付加するためでした．
@@ -1350,6 +983,8 @@ x\)</span>により定めれば，明らかに<span class="math inline">\([\tau]
 <li><p>2016/07/11 11:00:00 JST 公開</p></li>
 <li><p>2020/06/22 14:30:00 JST
 パラメータが真のクラスを渡る上限・下限について追記</p></li>
+<li><p>2022/06/11 18:00:00 JST
+推移的モデルについて絶対的な概念として誤って「可算である」を挙げていたので削除。</p></li>
 </ul>
 <p></p>
 </section>
@@ -1397,6 +1032,373 @@ expanded</em>, 3rd ed. Springer-Verlag Berlin Heidelberg New York,
 <ol>
 <li id="fn1" role="doc-endnote"><p>置換公理図式に現れる論理式に<span class="math inline">\(\check{V}\)</span>を入れてよいかどうか？という疑問が沸くかもしれません．ここでは立ち入りませんが，実は<span class="math inline">\(V^{\mathbb{B}}\)</span>で<span class="math inline">\(V\)</span>を定義出来ることが知られています <span class="citation"><a href="#ref-Laver:2007sf" role="doc-biblioref"> [2]</a></span>．なので，置換公理図式の中に<span class="math inline">\(\check{V}\)</span>が入っていても問題はありません．詳細は拙稿『<a href="https://konn-san.com/math/geology-ground-definability.html">集合論の地質学1：概観と基礎モデルの定義可能性</a>』を参照の事．<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
+</section>]]></summary>
+    </entry>
+    <entry>
+      <title>Talks</title>
+      <link href="https://konn-san.com/talks.html" />
+      <id>https://konn-san.com/talks.html</id>
+      <published>2022-03-06T14:05:00+09:00</published>
+      <updated>2022-03-06T14:05:00+09:00</updated>
+      <summary type="html"><![CDATA[<section id="講演一覧" class="level1">
+<h2>講演一覧</h2>
+<p>他の詳細な経歴等は<a href="/profile.html">プロファイル</a>を参照。</p>
+<p><ul>
+<li>2022/03/06 
+Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める</b>』（<a href="https://konn-san.com/math/ishii-fibonacci-slides.pdf">Slides</a>）</li>
+<li>2021/09/15 
+<a href="https://www.casc-conference.org/2021/index.html">Computer Algebra in Scientific Computing 2021</a>＠Hybrid (Sochi, Russia and Online)『<b>Automatic differentiation with higher infinitesimals, or computational smooth infinitesimal analysis in Weil algebra</b>』（<a href="https://arxiv.org/abs/2106.14153">Preprint</a>，<a href="https://konn-san.com/math/casc-smooth.pdf">Slides</a>，<a href="https://link.springer.com/book/10.1007/978-3-030-85165-1">Proceedings</a>）</li>
+<li>2021/07/04 
+<a href="https://www.youtube.com/channel/UCSA2iDIY6Z-J9X4pWfdPPnw">alg-d</a>＠YouTube『<b>自動微分とGröbner基底による高次冪零無限小解析（alg_d篇）</b>』（<a href="https://www.youtube.com/watch?v=0xtOjwQaib4">YouTube</a>，<a href="https://arxiv.org/abs/2106.14153">Paper</a>，<a href="https://konn-san.com/math/smooth-algd-talk.pdf">Slides</a>）</li>
+<li>2020/12/22 
+<a href="http://www.nda.ac.jp/cc/masayo/20/rims20.html">Computer Algebra – Theory and its Applications</a>＠Zoom Webinar『<b>自動微分と Gröbner 基底による高次冪零無限小解析</b>』</li>
+<li>2019/11/09 
+<a href="https://techplay.jp/event/727059">Haskell Day 2019</a>＠TECH PLAY SHIBUYA『<b>大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──</b>』（<a href="https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil">Slide URL</a>）</li>
+<li>2018/11/24 
+数学基礎論若手の会＠コテージにらい恩納『<b>集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク</b>』（<a href="https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf">Slide PDF</a>）</li>
+<li>2018/09/19 
+<a href="http://www.casc.cs.uni-bonn.de/2018/">Computer Algebra in Scientific Computing 2018</a>＠University of Lille『<b><a href="/math/casc2018-talk.pdf">A Purely Functional Computer Algebra System Embedded in Haskell</a></b>』</li>
+<li>2018/03/05 
+筑波大学計算機数学グループ 春の合宿 2018＠Nami Kaze Tateyama（旧・筑波大学館山研修所）『<b><a href="/math/tateyama-18-satysfi.pdf">SATySFi を使ってみた</a></b>』</li>
+<li>2017/11/07 
+<a href="http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html">Workshop on Iterated Forcing Theory and Cardinal Invariants</a>＠RIMS『<b><a href="/math/rims2017.pdf">Reflection Principles and Saturated Filters on \(\mathcal{P}_{\omega_1} \lambda\)</a></b>』</li>
+<li>2017/10/27 
+数学基礎論若手の会2017＠大学セミナーハウス『<b>正集合の反映原理と飽和イデアルの構成</b>』（<a href="/math/wakate-2017.pdf">Slide PDF</a>）</li>
+<li>2017/03/06 
+筑波大学計算機数学グループ 春の合宿 2017＠筑波大学館山研修所『<b>ものまね鳥を愛でる 結合子論理と計算</b>』（<a href="https://www.slideshare.net/konn/ss-72840520">SlideShare</a>，<a href="/math/mocking-bird-tateyama.pdf">PDF</a>）</li>
+<li>2016/10/23 
+数学基礎論若手の会2016＠清里高原『<b>On Projective Baire Property</b>』（<a href="/math/projective-baire-fmyg16.pdf">Slide</a>）</li>
+<li>2016/06/04 
+<a href="https://docs.google.com/viewer?a=v&amp;pid=sites&amp;srcid=ZGVmYXVsdGRvbWFpbnxzaGltaWtlbnh8Z3g6MWY5OWFiZDM2NTcyNzljZQ">第4回つくばフレッシュマンセミナー</a>『<b>集合論への招待　〜実数直線の集合論〜</b>』（<a href="/math/freshman-2016-resume.pdf">資料</a>）</li>
+<li>2016/03/08 
+<a href="http://logic.cs.tsukuba.ac.jp/ppl2016/">第18回プログラミングおよびプログラミング言語ワークショップ PPL 2016</a>『<b>Freer Monads, More Extensible Effects</b>』（<a href="http://www.slideshare.net/konn/freer-monads-more-extensible-effects-59411772">SlideShare</a>，<a href="/prog/freer-ppl16.pdf">PDF</a>，<a href="/prog/freer-ppl16.key">Keynote</a>）</li>
+<li>2015/07/27 
+修士論文中間発表『<b>実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について（公開版）</b>』（<a href="http://www.slideshare.net/konn/ss-50957683">Slide</a>）</li>
+<li>2015/03/08 
+筑波大学計算機数学グループ 春の合宿2015＠筑波大学館山研修所『<b>（数式の入った）本をつくる</b>』（<a href="https://www.youtube.com/watch?v=a0NcKmVWKq0">録画</a>，<a href="http://www.slideshare.net/konn/ss-45587178">Slide</a>）</li>
+<li>2014/11/20 
+数学基礎論若手の会2014＠鳥取『<b>Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項</b>』（<a href="http://www.slideshare.net/konn/lebesgue-solovayshelah">Slide</a>）</li>
+<li>2014/03/20 
+PFI社内セミナー『<b>技術者が知るべき Gröbner 基底</b>』（<a href="http://www.ustream.tv/recorded/45083535">UStream [前半]</a>，<a href="http://www.ustream.tv/recorded/45083876">UStream [後半]</a>，<a href="http://www.slideshare.net/konn/grbner">Slide</a>）</li>
+<li>2014/03/08 
+筑波大学計算機数学グループ春の合宿2014＠筑波大学館山研修所『<b>数学プログラムをHaskellで書くべき6の理由</b>』（<a href="https://www.youtube.com/watch?v=S4_7KVNA-Ww">録画</a>，<a href="http://www.slideshare.net/konn/haskell-6-32258528">Slide</a>）</li>
+<li>2013/10/12 
+第四回選択公理オフ『<b>数理論理学の初歩の初歩の初歩の……</b>』（<a href="/math/acoff-04.html">HTML</a>，<a href="/math/acoff-04.pdf">PDF</a>）</li>
+<li>2013/05/04 
+<a href="http://partake.in/events/451a51b0-b18e-4e01-bda4-423bf57f4051">Haskell で計算機代数勉強会</a>『<b>わかったつもりになる Gröbner 基底</b>』（<a href="http://www.slideshare.net/konn/groebner-basisanintroductionreduced">Slide</a>）</li>
+<li>2012/11/22 
+PFI 社内セミナー『<b>Algebraic DP: 動的計画法を書きやすく</b>』（<a href="http://www.ustream.tv/recorded/27196711">Ustream</a>，<a href="http://www.slideshare.net/konn/algebraic-dp">Slide</a>）</li>
+<li>2012/04/22 
+(祝) Yesod 1.0 勉強会『<b>Yesod で Blog Engine をつくってみた</b>』（<a href="http://www.justin.tv/kiwamu/b/315818516">録画</a>，<a href="http://www.slideshare.net/konn/yesod-12637438">Slide</a>）</li>
+<li>2012/04/12 
+PFI 社内セミナー『<b>How wonderful to be (statically) typed 〜型が付くってスバラシイ〜</b>』（<a href="http://www.ustream.tv/recorded/21781769">Ustream</a>，<a href="http://www.slideshare.net/konn/how-wonderful-to-be-statically-typed">Slide</a>）</li>
+<li>2011/09/22 
+PFI 社内セミナー『<b>Alloy Analyzer のこと</b>』（<a href="http://www.ustream.tv/recorded/17430540">Ustream</a>，<a href="http://www.slideshare.net/konn/alloy-analyzer-9379488">Slide</a>）</li>
+</ul>
+</p>
+</section>]]></summary>
+    </entry>
+    <entry>
+      <title>うたにっき20211227</title>
+      <link href="https://konn-san.com/logs/20211227.html" />
+      <id>https://konn-san.com/logs/20211227.html</id>
+      <published>2021-12-27T18:25:37+09:00</published>
+      <updated>2021-12-27T18:25:37+09:00</updated>
+      <summary type="html"><![CDATA[<p>最近なんとなく Twitter
+で即興的に短歌を読むことにハマっているので、去年散発的に詠んだ歌も含めて自動的に
+tumblr に集積しておく場所を作りました：</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      
+
+
+    </div>
+
+<p>一年くらい遡って自動収集したものなので、うんこちんこみたいな不真面目なネタ短歌もあります。
+うんこちんこを真面目にやれというお叱りは甘受します。今後も自動収集なので、不真面目な歌が当然に混る。そもそも真面目に短歌を詠む気があるのかという問題もある。</p>
+<hr></hr>
+<p>そういえばこの日記はうたったうた（songs I
+sang）を書いておくものとしてはじまったのであったのでそっちのうたの話もする。
+先日久々に友人とカラオケにいったのだけど、かなり喉が衰えていてこれはやばいと思ったので、最近はうまれてはじめてヒトカラに定期的にいくようになった。
+週に1回くらい空いた日を見付けて一時間くらい唄う。
+最近はコロナの憂さ晴らしにいろいろ演劇や映像作品を観たりすることが増え、また何か演劇なり映像作品なりを創りたい、という欲求が高まっていて、なので歌を唄う前に発声練習もするようになった。
+最初はさすがに十年弱のブランクもあり、ヒトカラに慣れていない羞恥心もあったのであんまり長々と出来なかったのだけど、筋少とかたまとか唄いながら、フト、これ外から漏れ聴こえている立場の人間からしたら発声練習もこれらの曲も奇声を上げているという点では変わらんなと思い至り、爾来人目を憚らずにカラオケの個室で発声練習ができるようになった。</p>
+<p>あと最近気付いたんだけど、Queen の We are the Champions とか Princes
+of the Universe って唄うとめっちゃ元気でますね。
+全能感のある曲は精神に良い働きをもたらす。</p>
+
+
+
+
+<p>調子にのって友人とのカラオケで唄ったら、Killer Queen
+を唄ってくれとリクエストがあったので、次に備えて今隙を見て練習している。</p>
+
+
+<p>最初にこれらの曲を聴いたのは親が聴いてたのを横で、という感じなので、歌詞の聞き取りは当時の語彙力に制限されていたため、Killer
+Queen の “Let them eat cake, she says just like Marie Antoinette”
+の部分を “Application says, ”
+だと思っていたりして、直したつもりだが時々そっちに揺り戻されてしまう。
+マリー・アントワネットの所は聴き取れてたんだから、「ケーキを食べればいいのよ」の類推が効いてもよさそうな物だが意味を捉えて聴いてなかったということですね。</p>
+<p>元気の出る曲でいくと、モンティ・パイソンの映画 “Life of Brian”
+の主題歌でいつだったかサッカーでも使われていた “Always Look on the
+Bright Side of Life” はやはり名曲だと思う。</p>
+
+
+<p>Monty Python’s Life of Brian
+は「キリストと間違われた男・ブライアン」の一生（キリストはキリストで別にいる）を喜劇として描いたコント映画なんだけど、最後ブライアンが磔にされてもう人生終わりだ〜！っていう時に一緒に磔にされている受刑者全員でこの歌を歌い出すというエンディング。
+それで「人生なんてクソの塊さ」「無から来て無に還るんだから、失うものなんて何もないでしょ？」「だから人生の明るい面をみていようよ」「人生はショウなんだ、最後までみんなを笑わせていよう」という歌を唄うんだから、今おもうとかなりパンチの効いたラストだと思う。
+人生をショウに喩えるというのは、Queen でいえば The Show Must Go On
+なんかもそうだけれど、The Show〜
+がフレディの病状も踏まえて書かれたこともあってかなり悲壮感があるのに対して、Always
+Look
+on〜は「前向きな」ニヒリズムを原動力に底抜けに明るい仕上りになっているのは面白い好対照だと思う。
+どちらも大好きな名曲だけれど、Always〜のような感じで人生を明るく愉しく生きたいものである。</p>
+
+
+<hr></hr>
+<p>前書いてから期間が経っているのでその間に作ったものの宣伝をしておこう。
+大学時代のサークルの同期・後輩と『游』機関という同人団体を立ち上げ、ボードゲームやマーダーミステリーを創ってます。
+マーダーミステリーというのは、TRPGの簡易版みたいなもので、実際に推理小説の登場人物になって演じながら犯人を突き止めたり或いは自分の犯行を隠蔽したりといった感じの体感型ゲームです。</p>
+<p>第一作は『踊る天狼館の夜』。</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      
+
+
+    </div>
+
+<p>ある王国の名門公爵家の令嬢と鉄道王の婚約発表パーティの晩、当の公爵本人が殺されてしまい、一同は事件の真相に迫るが、みなそれぞれに思惑を持っており……という作品です。結構盛り沢山に放り込んだので、総プレイ4時間程度、プレイヤー5人＋GMという仕様です。GMなしでもプレイ可能ですが、基本GMあり推奨。DiscordとUdonarium
+が使えればプレイできますのでぜひ。</p>
+<p>第二作は『座敷わらしのいる家で』。</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      
+
+
+    </div>
+
+<p>中学時代に泊まった屋敷が火事になった際、〈座敷わらし〉に助けて貰った少年少女たち。
+数年を経て同じ屋敷に泊まりにいくが、屋敷の持ち主の息子である歌川が何者かに昏倒させられ──という作品です。
+ざっくりと80年代くらいの晩夏を舞台に、ノスタルジーに浸っていただければと思います。
+こちらはお手軽に二時間半・GM不要の4人プレイとなっております。こちらもぜひお求めを。</p>
+<p>歳の瀬も迫っているので来年の目標を書いておく。アウトプットの年にします。色々なものを創りたいね。
+次のマダミスを創ろうという話もあるし、映像作品を創りたいという思いもある。幾つ叶うかはわからないけど、正夢にしたいですね。</p>
+<p>それではまたいつか。</p>]]></summary>
+    </entry>
+    <entry>
+      <title>プロフィール</title>
+      <link href="https://konn-san.com/profile.html" />
+      <id>https://konn-san.com/profile.html</id>
+      <published>2021-06-29T16:20:00+09:00</published>
+      <updated>2021-06-29T16:20:00+09:00</updated>
+      <summary type="html"><![CDATA[<p><a href="/t/cv.pdf">English CV</a></p>
+<section id="自己紹介" class="level1">
+<h2>自己紹介</h2>
+<p>数学と関数型プログラミングを愛でる博士（理学）。数学（集合論をはじめとした数学基礎論および計算代数）と本格ミステリ、関数型プログラミング。時々パズル。</p>
+<section id="専門と趣味について" class="level2">
+<h3>専門と趣味について</h3>
+<dl>
+<dt>好きな作家（順不同）</dt>
+<dd>
+麻耶雄嵩、円城塔、森川智喜、円居挽、倉知淳。座右の書は麻耶雄嵩『<a href="asin:4062638916">夏と冬の奏鳴曲</a>』と円城塔『<a href="asin:4150310203">Boy’s
+Surface</a>』。パズル作家の芦ヶ原伸之さんのエッセイも好き。
+</dd>
+<dt>数学</dt>
+<dd>
+専攻は集合論を初めとした数理論理学、計算代数、および関数型プログラミング。
+</dd>
+<dt>プログラミング</dt>
+<dd>
+中学の頃くらいからやっている。おおよそ REALbasic → Ruby → Haskell
+という遍歴を辿っている。他にも色々な言語をつまみぐいしてみたりしたが、現在は
+Haskell 一本に落ち着き、飯を食っている。このサイトも Haskell
+で生成・管理しています。
+</dd>
+</dl>
+</section>
+<section id="受賞歴資格等" class="level2">
+<h3>受賞歴・資格等</h3>
+<ul>
+<li>2015年度 第十四回茗渓会賞</li>
+<li>2013年度 早稲田大学基幹理工学部卒業生総代</li>
+<li>2013年度 早稲田大学基幹理工学部長賞最優秀賞（第一回）</li>
+</ul>
+</section>
+<section id="年表" class="level2">
+<h3>年表</h3>
+<ul>
+<li>2019/04〜現在 <a href="https://www.deepflow.co.jp">DeepFlow株式会社</a> 研究開発部</li>
+<li>2019/04〜2020/03 統計数理研究所 外来研究員</li>
+<li>2019/03 筑波大学大学院 数理物質科学研究科 数学専攻
+博士後期課程修了</li>
+<li>2017/04〜2019/03 日本学術振興会特別研究員（DC2）</li>
+<li>2016/04〜 筑波大学大学院 数理物質科学研究科 数学専攻
+博士後期課程</li>
+<li>2016/03 筑波大学大学院 数理物質科学研究科 数学専攻
+博士前期課程修了</li>
+<li>2014/04 Google Summer of Code 2014 採択（Haskell
+による効率的なGröbner基底計算とそのための疎行列アルゴリズムの実装）</li>
+<li>2014/04 筑波大学大学院 数理物質科学研究科 数学専攻入学</li>
+<li>2014/03 同卒業（基幹理工学部総代）</li>
+<li>2011/04 早稲田大学基幹理工学部 数学科配属</li>
+<li>2010/10〜2014/03 <a href="http://preferred.jp/">株式会社 Preferred
+Infrastructure</a> アルバイト</li>
+<li>2010/08〜09 <a href="http://preferred.jp/">株式会社 Preferred
+Infrastructure</a> インターン生</li>
+<li>2010/04 早稲田大学基幹理工学部入学</li>
+<li>2010/03 神奈川県立横浜緑ヶ丘高校卒業</li>
+<li>1992/01/18 生まれる</li>
+</ul>
+</section>
+</section>
+<section id="activity" class="level1">
+<h2>Activity</h2>
+<p>現在・過去の活動記録など。</p>
+<section id="papers" class="level2">
+<h3>Papers</h3>
+<section id="refereed-papers" class="level3">
+<h4>Refereed Papers</h4>
+<ul>
+<li>Hiromi ISHII, “<em>Automatic Differentiation With Higher
+Infinitesimals, or Computational Smooth Infinitesimal Analysis in Weil
+Algebra</em>”, In: Computer Algebra in Scientific Computation 2021,
+pp. 174-191. DOI: <a href="https://doi.org/10.1007/978-3-030-85165-1_11">10.1007/978-3-030-85165-1_11</a>
+(<a href="https://github.com/konn/smooth">Example Repository</a>, <a href="https://arxiv.org/abs/2106.14153">arxiv:2106.14153</a>, <a href="/math/casc-smooth.pdf">Slides</a>).</li>
+<li>Hiromi ISHII, “<em><a href="https://hdl.handle.net/2241/00156881">Bidirectional Interplay
+between Mathematics and Computer Science: Safety and Extensibility in
+Computer Algebra and Haskell</a></em>”, Ph.D. Thesis.</li>
+<li>Hiromi ISHII, “<em>A Purely Functional Computer Algebra System
+Embedded in Haskell</em>” (<a href="https://arxiv.org/abs/1807.01456">preprint</a>), In: Computer
+Algebra in Scientific Computing, pp. 288-303. 20th International
+Workshop, CASC 2018, Lille, France, September 17-21, 2018. DOI: <a href="https://doi.org/10.1007/978-3-319-99639-4_20">10.1007/978-3-319-99639-4_20</a>.</li>
+<li>Hiromi ISHII, “<em><a href="math/regularity-and-inaccessible.html">Regularity Properties of
+Sets of Reals and Inaccessible Cardinals</a></em>”, Master’s
+Thesis.</li>
+<li>Oleg Kiselyov and Hiromi ISHII, “<a href="http://okmij.org/ftp/Haskell/extensible/more.pdf">Freer Monads,
+More Extensible effects</a>”. Haskell Symposium 2015.</li>
+</ul>
+</section>
+<section id="non-refereed-papers" class="level3">
+<h4>Non-refereed Papers</h4>
+<ul>
+<li>Hiromi Ishii, “<em><a href="RIMSca2021-rims">A Succinct Multivariate
+Lazy Multivariate Tower AD for Weil Algebra Computation</a></em>”,
+Computer Algebra – Theory and its Applications, RIMS Kôkyûroku No. 2185
+(2021), pp. 104-112. (<a href="RIMSca2021-arxiv">arxiv:2103.11615</a>)</li>
+</ul>
+</section>
+<section id="preprints-only" class="level3">
+<h4>Preprints-only</h4>
+<ul>
+<li>Hiromi ISHII, “<em><a href="https://arxiv.org/abs/2103.11751">Functional Pearl: Witness Me –
+Constructive Arguments Must Be Guided with Concrete Witness</a></em>”,
+2021.</li>
+</ul>
+</section>
+</section>
+<section id="talks" class="level2">
+<h3>Talks</h3>
+<p>勉強会や社内セミナーなどでの発表記録（直近十件；<a href="/talks.html">全一覧</a>）。</p>
+<p><ul>
+<li>2022/03/06 
+Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める</b>』（<a href="https://konn-san.com/math/ishii-fibonacci-slides.pdf">Slides</a>）</li>
+<li>2021/09/15 
+<a href="https://www.casc-conference.org/2021/index.html">Computer Algebra in Scientific Computing 2021</a>＠Hybrid (Sochi, Russia and Online)『<b>Automatic differentiation with higher infinitesimals, or computational smooth infinitesimal analysis in Weil algebra</b>』（<a href="https://arxiv.org/abs/2106.14153">Preprint</a>，<a href="https://konn-san.com/math/casc-smooth.pdf">Slides</a>，<a href="https://link.springer.com/book/10.1007/978-3-030-85165-1">Proceedings</a>）</li>
+<li>2021/07/04 
+<a href="https://www.youtube.com/channel/UCSA2iDIY6Z-J9X4pWfdPPnw">alg-d</a>＠YouTube『<b>自動微分とGröbner基底による高次冪零無限小解析（alg_d篇）</b>』（<a href="https://www.youtube.com/watch?v=0xtOjwQaib4">YouTube</a>，<a href="https://arxiv.org/abs/2106.14153">Paper</a>，<a href="https://konn-san.com/math/smooth-algd-talk.pdf">Slides</a>）</li>
+<li>2020/12/22 
+<a href="http://www.nda.ac.jp/cc/masayo/20/rims20.html">Computer Algebra – Theory and its Applications</a>＠Zoom Webinar『<b>自動微分と Gröbner 基底による高次冪零無限小解析</b>』</li>
+<li>2019/11/09 
+<a href="https://techplay.jp/event/727059">Haskell Day 2019</a>＠TECH PLAY SHIBUYA『<b>大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──</b>』（<a href="https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil">Slide URL</a>）</li>
+<li>2018/11/24 
+数学基礎論若手の会＠コテージにらい恩納『<b>集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク</b>』（<a href="https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf">Slide PDF</a>）</li>
+<li>2018/09/19 
+<a href="http://www.casc.cs.uni-bonn.de/2018/">Computer Algebra in Scientific Computing 2018</a>＠University of Lille『<b><a href="/math/casc2018-talk.pdf">A Purely Functional Computer Algebra System Embedded in Haskell</a></b>』</li>
+<li>2018/03/05 
+筑波大学計算機数学グループ 春の合宿 2018＠Nami Kaze Tateyama（旧・筑波大学館山研修所）『<b><a href="/math/tateyama-18-satysfi.pdf">SATySFi を使ってみた</a></b>』</li>
+<li>2017/11/07 
+<a href="http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html">Workshop on Iterated Forcing Theory and Cardinal Invariants</a>＠RIMS『<b><a href="/math/rims2017.pdf">Reflection Principles and Saturated Filters on \(\mathcal{P}_{\omega_1} \lambda\)</a></b>』</li>
+<li>2017/10/27 
+数学基礎論若手の会2017＠大学セミナーハウス『<b>正集合の反映原理と飽和イデアルの構成</b>』（<a href="/math/wakate-2017.pdf">Slide PDF</a>）</li>
+</ul>
+<p>
+See <a href="/talks.html">Talks</a> for all talks.
+</p>
+</p>
+</section>
+<section id="pre-publication-reviews" class="level2">
+<h3>Pre-publication Reviews</h3>
+<p>プログラミング関連で幾つか出版前のレビューに協力させて頂きました。</p>
+<dl>
+<dt><a href="asin:4274068854">すごいHaskell楽しく学ぼう！</a></dt>
+<dd>
+主に他の言語での経験のある人に向けて、Haskell
+を一から入門するための本。普通の本やなんかとは一線を画した、肩肘はらない独特の語り口で
+Haskell のキモを学ぶことが出来ます。
+</dd>
+<dt><a href="asin:4274069117">型システム入門
+─プログラミング言語と型の理論─</a></dt>
+<dd>
+型理論入門書の定番・Types and Programming Language
+待望の和訳。豪華監修・執筆陣による非常に読み易い翻訳に仕上がっています。型理論に興味のある方はぜひ。
+</dd>
+<dt><a href="asin:427406896X">関数プログラミング入門 ─Haskell
+で学ぶ技法と原理─</a></dt>
+<dd>
+こちらは Haskell
+を使った関数型プログラミングの入門書。関数型プログラミングを体系的に基礎から勉強していくのに適しています。残念ながら余りレビューに参加出来なかった為、名前は出さないで頂きました。
+</dd>
+<dt><a href="asin:4873116899">Haskellによる並列・並行プログラミング</a></dt>
+<dd>
+Haskell
+で並列・並行プログラミングを行う上で必要な知識が網羅された一冊です。Haskell
+で並列・並行処理を用いたプログラムを書こうと思ったら、まずはこの本は必読書でしょう。低レベルな機能の紹介から始まってそこから抽象度の高いライブラリを設計するところまでを解説しているので、既存のライブラリの裏側を知るのにも役立ちますし、関数型プログラミングの方法論を実感することも出来るでしょう。
+</dd>
+</dl>
+</section>
+<section id="other-publications" class="level2">
+<h3>Other Publications</h3>
+<dl>
+<dt><a href="http://tcug.jp/books/2013-12/">Coqによる定理証明</a></dt>
+<dd>
+Tsukuba Coq Users’ Group による、主に Coq
+による定理証明の技法についての同人誌。わたしの担当は第三章で、Haskell
+を定理証明系として用いる方法を解説する記事を書きました。<a href="/prog/2013-advent-calendar.html">販促記事はこちら</a>。
+</dd>
+<dt><a href="http://longgate.co.jp/books/grimoire-vol3.html">プログラミングの魔導書
+〜Programmers’ Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed
+Programming”</a></dt>
+<dd>
+株式会社ロングゲート様の技術書に、合成性の高い並行処理を実現する STM
+についての入門記事を寄稿させて頂きました。拙稿に限らず、並行・並列処理に関するあらゆる知識の詰まった一冊となっておりますので、是非。
+</dd>
+</dl>
+</section>
+</section>]]></summary>
+    </entry>
+    <entry>
+      <title>古典的実現可能性モデルノート</title>
+      <link href="https://konn-san.com/math/realisability.html" />
+      <id>https://konn-san.com/math/realisability.html</id>
+      <published>2020-10-21T21:30:00+09:00</published>
+      <updated>2020-10-21T21:30:00+09:00</updated>
+      <summary type="html"><![CDATA[<section id="概要" class="level1">
+<h2>概要</h2>
+<p>古典的実現可能性モデル（classical
+realisability）の手法は，Curry–Howard対応を拡張する形で<span class="math inline">\(\mathrm{ZF}\)</span>のモデルを与える方法であり，Krivineによって導入された．
+強制法を特別な場合として含むが，<span class="math inline">\(\mathrm{ZFC}\)</span>から開始しても<span class="math inline">\(\mathrm{ZF}+\neg
+\mathrm{AC}\)</span>のモデルが得られるという点で強制法を真に一般化するものになっている．</p>
+<p>Krivineの着想は，旧来の直観主義・構成的数学の実現可能性モデルに，Peirce’s
+Law と対応することが広く知られている <code>call/cc</code>
+プリミティヴを加えれば古典論理上の集合論のモデルが得られる筈である，というものである．
+この達成のため，Krivine はBCKW論理に call/cc
+を加えた体系を，Krivine機械と呼ばれるある種のスタックマシンを用いて解釈するという方法を採っている．</p>
+<p>本稿は，元々は2017年に早稲田大学で行われた集合論セミナーでの筆者（石井）の発表の資料である．
+強制法との関係をなるべく明らかにすることを目的に書き始められ，Krivineが原論文で採用したものよりも現代的な強制法の定式化に近い形で再定式化を与えたが，現時点では完全に目的を達するに至ってはいない．誰かがその道に至る道標になれば幸いである．</p>
+</section>
+<section id="本文リンク" class="level1">
+<h2>本文リンク</h2>
+<p><a href="./realisability.pdf">PDFはこちら</a></p>
+<p>元となったレジュメは6部に及ぶかなり膨大な TeX であり、TikZ
+をふんだんに用いているため現時点ではHTML化が出来ていない。
+従って、当面は PDF のみの提供とさせて頂く。</p>
 </section>]]></summary>
     </entry>
     <entry>
