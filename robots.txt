@@ -6,5 +6,6 @@ Disallow: /t/
 Disallow: /articles/2017-11-18-math-and-web.html
 Disallow: /prog/haskell/semigroups-monoids-and-foldables.html
 Disallow: /math/boolean-valued-analysis.html
+Disallow: /articles/2017-09-02-digital-paper-vs-ipad.html
 
 Sitemap: /sitemap.xml
