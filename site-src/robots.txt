@@ -6,5 +6,6 @@ Disallow: /t/
 {{#disallowed}}
 Disallow: {{.}}
 {{/disallowed}}
+Disallow: /articles/2017-09-02-digital-paper-vs-ipad.html
 
 Sitemap: /sitemap.xml
