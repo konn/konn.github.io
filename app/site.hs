@@ -27,56 +27,39 @@ module Main where
 
 import Blaze.ByteString.Builder (toByteString)
 import Breadcrumb
-import Control.Applicative ((<|>))
-import Control.Concurrent (newChan, readChan, threadDelay)
-import Control.Concurrent.Async (concurrently_)
-import Control.Exception (SomeException, try)
-import Control.Lens
-  ( both,
-    iforM_,
-    imap,
-    ix,
-    (%~),
-    (.~),
-    (^?),
-    _2,
-  )
+import Control.Lens (
+  both,
+  iforM_,
+  imap,
+  ix,
+  (%~),
+  (.~),
+  (^?),
+  _2,
+ )
 import Control.Monad hiding (mapM)
 import Control.Monad.State
 import qualified Crypto.Hash.SHA256 as SHA
-import Data.Aeson
-  ( Options,
-    ToJSON (..),
-    Value (..),
-    camelTo2,
-    defaultOptions,
-    fieldLabelModifier,
-    fromJSON,
-    genericToJSON,
-    toJSON,
-  )
+import Data.Aeson (
+  Options,
+  ToJSON (..),
+  Value (..),
+  camelTo2,
+  defaultOptions,
+  fieldLabelModifier,
+  fromJSON,
+  genericToJSON,
+  toJSON,
+ )
 import qualified Data.Aeson.Key as AK
 import qualified Data.Aeson.KeyMap as KM
 import qualified Data.CaseInsensitive as CI
 import Data.Char hiding (Space)
-import Data.Data (Data)
-import Data.Either (fromRight)
-import Data.Foldable (asum)
 import Data.Function
-import Data.Functor.Identity (Identity (..))
 import qualified Data.HashMap.Strict as HM
 import Data.List
 import qualified Data.List as L
 import qualified Data.List.Split as L
-import Data.Maybe
-  ( fromMaybe,
-    isJust,
-    isNothing,
-    listToMaybe,
-    mapMaybe,
-    maybeToList,
-  )
-import Data.Ord (Down (..))
 import qualified Data.Store as S
 import Data.String
 import qualified Data.Text as T
@@ -96,24 +79,25 @@ import MathConv
 import MissingSake
 import Network.HTTP.Types
 import Network.URI
-import Network.Wai.Application.Static
-  ( defaultWebAppSettings,
-    ssIndices,
-    staticApp,
-  )
+import Network.Wai.Application.Static (
+  defaultWebAppSettings,
+  ssIndices,
+  staticApp,
+ )
 import Network.Wai.Handler.Warp (run)
 import PubTalks
+import RIO hiding ((%~), (.~), (^?))
 import Settings
 import Skylighting hiding (Context (..), ListItem (..), Style)
-import System.Directory
-  ( canonicalizePath,
-    createDirectoryIfMissing,
-    getHomeDirectory,
-    getModificationTime,
-    renameFile,
-  )
-import System.Environment
-import System.FSNotify (watchTreeChan, withManager)
+import System.Directory (
+  canonicalizePath,
+  createDirectoryIfMissing,
+  getHomeDirectory,
+  getModificationTime,
+  renameFile,
+ )
+import System.Environment (getArgs)
+import System.FSNotify (Event, watchTree, withManager)
 import System.FilePath.Posix
 import Text.Blaze.Html.Renderer.Text
 import Text.Blaze.Html5 ((!))
@@ -134,7 +118,7 @@ import qualified Text.Pandoc.Builder as Pan
 import Text.Pandoc.Citeproc
 import Text.Pandoc.Shared (stringify, trim)
 import qualified Text.TeXMath as UM
-import Utils
+import Utils hiding (readMaybe)
 import WaiAppStatic.Types (unsafeToPiece)
 import Web.Sake hiding (Env)
 import Web.Sake.Conf
@@ -192,13 +176,23 @@ articleList = "_build" </> ".articles"
 main :: IO ()
 main =
   getArgs >>= \case
-    "watch" : args -> watch args
-    args -> withArgs args runShake
+    "watch" : _ -> watch
+    args -> runShake (guard (not $ null args) >> Just args)
 
-watch :: [String] -> IO ()
-watch args = do
-  chan <- newChan
-  server `concurrently_` watcher chan `concurrently_` builder chan
+withArgs :: MonadUnliftIO m => [String] -> m () -> m ()
+withArgs envs act = withRunInIO $ \unlift ->
+  withArgs envs $ unlift act
+
+watch :: IO ()
+watch = do
+  chan <- newTQueueIO
+  logOpts <-
+    logOptionsHandle stderr True
+      <&> setLogMinLevel LevelDebug
+  withLogFunc logOpts $ \l ->
+    runSimpleApp $ local (logFuncL .~ l) do
+      logInfo "Watch Mode Started"
+      liftIO server `concurrently_` watcher chan `concurrently_` builder chan
   where
     server =
       run 8000 $
@@ -206,17 +200,42 @@ watch args = do
           (defaultWebAppSettings destD)
             { ssIndices = [unsafeToPiece "index.html"]
             }
+    builder :: TQueue Event -> RIO SimpleApp ()
     builder chan = do
-      try @SomeException $ withArgs args runShake
-      forever $ do
-        _ <- readChan chan
-        putStrLn "Changed!"
-        withArgs args runShake
-        putStrLn "Compilation Finished."
-    watcher chan = withManager $ \man -> do
-      src <- canonicalizePath srcD
-      watchTreeChan man src (const True) chan
-      forever $ threadDelay maxBound
+      logInfo "Running first build..."
+      squashExceptions "Builder (preparation)" $ runShake Nothing
+      logInfo "Starting... watch loop."
+      forever $ squashExceptions "Builder" $ do
+        logInfo "Waiting for change..."
+        _ <- atomically $ readTQueue chan
+        logInfo "Changed!"
+        runShake Nothing
+        logInfo "Compilation Finished."
+    watcher :: TQueue Event -> RIO SimpleApp ()
+    watcher chan = handleAny
+      (\e -> logInfo ("Handle killed by " <> displayShow e) >> throwIO e)
+      $ withRunInIO
+      $ \unlift -> withManager $ \man -> unlift $ do
+        logInfo "Starting up watcher..."
+        src <- liftIO $ canonicalizePath srcD
+        logInfo $ "Watching: " <> fromString src
+        stop <- liftIO $ do
+          watchTree man src (const True) $ \evt -> do
+            unlift $ logInfo $ "event incoming: " <> displayShow evt
+            atomically $ writeTQueue chan evt
+        forever
+          (squashExceptions "Watcher" (threadDelay maxBound))
+          `finally` do logInfo "Finalising..."; liftIO stop
+
+squashExceptions :: String -> RIO SimpleApp () -> RIO SimpleApp ()
+squashExceptions label =
+  handleAny
+    ( \e ->
+        logError $
+          fromString label
+            <> " caught exception: "
+            <> displayShow e
+    )
 
 copies :: [Patterns]
 copies =
@@ -246,9 +265,9 @@ copies =
   , "//*.webm"
   ]
 
-runShake :: IO ()
-runShake = shakeArgs myShakeOpts $ do
-  want ["site"]
+runShake :: MonadIO m => Maybe [String] -> m ()
+runShake mtargs = liftIO $ shake myShakeOpts $ do
+  want $ fromMaybe ["site"] mtargs
 
   let routing =
         [ Convert ("//*.md" .||. "//*.html" .||. "//*.tex") (-<.> "html")
@@ -322,7 +341,8 @@ runShake = shakeArgs myShakeOpts $ do
                   itemsCtx
                   items
               ]
-      writeTextFile out . itemBody =<< applyAsMustache ctx
+      writeTextFile out . itemBody
+        =<< applyAsMustache ctx
         =<< loadItem "templates/sitemap.mustache"
 
     (destD </> "archive.html") %> \out -> do
@@ -428,9 +448,9 @@ runShake = shakeArgs myShakeOpts $ do
           | ".tex" `L.isSuffixOf` srcPath -> texToHtml out
           | ".md" `L.isSuffixOf` srcPath -> mdOrHtmlToHtml out
           | ".html" `L.isSuffixOf` srcPath ->
-            if (destD </> "articles") `L.isPrefixOf` out
-              then mdOrHtmlToHtml out
-              else copyFile' srcPath out
+              if (destD </> "articles") `L.isPrefixOf` out
+                then mdOrHtmlToHtml out
+                else copyFile' srcPath out
           | otherwise -> error $ "Unknown extension: " <> takeFileName srcPath
     (cacheD </> "talks.bin") %> \out -> do
       talks <- readFromYamlFile' @_ @[Talk] "site-src/talks.yaml"
@@ -473,7 +493,8 @@ runShake = shakeArgs myShakeOpts $ do
 
 serialPngOrSvg :: FilePath -> Bool
 serialPngOrSvg fp =
-  (fromString (destD </> "math//*.svg") .||. fromString (destD </> "math//*.png")) ?=== fp
+  (fromString (destD </> "math//*.svg") .||. fromString (destD </> "math//*.png"))
+    ?=== fp
     && isJust (takeImageNumber fp)
 
 takeImageNumber :: FilePath -> Maybe Int
@@ -502,7 +523,8 @@ texToHtml out = do
   (style, bibs) <- cslAndBib out
   defMacs <- readFromYamlFile' "config/macros.yml"
   ipan <-
-    linkCard . addPDFLink ("/" </> dropDirectory1 out -<.> "pdf")
+    linkCard
+      . addPDFLink ("/" </> dropDirectory1 out -<.> "pdf")
       . addAmazonAssociateLink "konn06-22"
       =<< procSchemes
       =<< myProcCites style bibs
@@ -553,10 +575,11 @@ cslAndBib fp = do
 pandocContext :: Text.Pandoc.Pandoc -> Context a
 pandocContext (Text.Pandoc.Pandoc meta _)
   | Just abst <- Text.Pandoc.lookupMeta "abstract" meta =
-    constField "abstract" $
-      T.unpack $
-        fromPure $
-          Text.Pandoc.writeHtml5String writerConf $ Text.Pandoc.Pandoc meta (mvToBlocks abst)
+      constField "abstract" $
+        T.unpack $
+          fromPure $
+            Text.Pandoc.writeHtml5String writerConf $
+              Text.Pandoc.Pandoc meta (mvToBlocks abst)
   | otherwise = mempty
 
 listDrafts :: FilePath -> Action [Item T.Text]
@@ -585,8 +608,9 @@ listChildren includeIndices out = do
   let dir = takeDirectory $ destToSrc out
       excludes =
         disjoin $
-          fromString out :
-          concat [["//index.md", "archive.md", "archive.md", "//index.md"] | not includeIndices] ++ copies
+          fromString out
+            : concat [["//index.md", "archive.md", "archive.md", "//index.md"] | not includeIndices]
+            ++ copies
   mapM loadItemToHtml . filter (not . (?===) excludes . dropDirectory1) . map (dir </>)
     =<< globDirectoryFiles dir subContentsWithoutIndex
 
@@ -664,7 +688,8 @@ myPandocCompiler out = do
   loadOriginal siteConf out
     >>= readPandoc readerConf
     >>= mapM
-      ( procSchemes <=< myProcCites csl bib
+      ( procSchemes
+          <=< myProcCites csl bib
           <=< linkCard . addAmazonAssociateLink "konn06-22"
       )
     >>= writePandoc writerConf
@@ -687,7 +712,8 @@ applyDefaultTemplate addCtx item@Item {..} = do
   let r = makeRelative destD $ itemPath item
       imgs =
         map (("https://konn-san.com/" <>) . resolveRelatives (takeDirectory r) . T.unpack) $
-          extractLocalImages $ TS.parseTags itemBody
+          extractLocalImages $
+            TS.parseTags itemBody
       navbar = constField "navbar" nav
       thumb =
         constField "thumbnail" $
@@ -854,7 +880,10 @@ extractLocalImages ts =
 
 addRequiredClasses :: Tag T.Text -> Tag T.Text
 addRequiredClasses (TagOpen "table" attr) = TagOpen "table" (("class", "table") : attr)
-addRequiredClasses (TagOpen "blockquote" attr) = TagOpen "blockquote" (("class", "blockquote") : attr)
+addRequiredClasses t@(TagOpen "blockquote" attr)
+  | Just clss <- lookup "class" attr
+  , "twitter-tweet" `notElem` T.words clss =
+      TagOpen "blockquote" (("class", "blockquote") : attr)
 addRequiredClasses t = t
 
 uriAuthToString_ :: URIAuth -> String
@@ -869,14 +898,14 @@ procSchemesUrl (Schemes dic) =
     case parseURI $ T.unpack u of
       Just URI {..}
         | Just Scheme {..} <- HM.lookup (T.init $ T.pack uriScheme) dic ->
-          let body =
-                mconcat
-                  [ maybe "" uriAuthToString_ uriAuthority
-                  , uriPath
-                  , uriQuery
-                  , uriFragment
-                  ]
-           in prefix <> T.pack body <> fromMaybe "" postfix
+            let body =
+                  mconcat
+                    [ maybe "" uriAuthToString_ uriAuthority
+                    , uriPath
+                    , uriQuery
+                    , uriFragment
+                    ]
+             in prefix <> T.pack body <> fromMaybe "" postfix
       _ -> u
 
 procSchemes0 :: Text.Pandoc.Inline -> Action Text.Pandoc.Inline
@@ -912,15 +941,19 @@ procAmazon _ il = il
 attachTo :: T.Text -> T.Text -> T.Text
 attachTo key url
   | (p@("http:" : "" : amazon : paths), qs) <- decodePath (ET.encodeUtf8 url)
-    , amazon `elem` amazons
-    , let cipath = map CI.mk paths
-    , ["o", "asin"] `isPrefixOf` cipath || "dp" `elem` cipath
-        || ["gp", "product"] `isPrefixOf` cipath
-    , isNothing (lookup "tag" qs) =
-    T.tail $
-      ET.decodeUtf8 $
-        toByteString $
-          encodePath p (("tag", Just $ ET.encodeUtf8 key) : qs)
+  , amazon `elem` amazons
+  , let cipath = map CI.mk paths
+  , ["o", "asin"]
+      `isPrefixOf` cipath
+      || "dp"
+      `elem` cipath
+      || ["gp", "product"]
+      `isPrefixOf` cipath
+  , isNothing (lookup "tag" qs) =
+      T.tail $
+        ET.decodeUtf8 $
+          toByteString $
+            encodePath p (("tag", Just $ ET.encodeUtf8 key) : qs)
 attachTo _ url = url
 
 amazons :: [T.Text]
@@ -1171,7 +1204,8 @@ myProcCites style RefMeta {} p0 = do
     liftIO $
       Text.Pandoc.runIOorExplode $
         processCitations $
-          p0 & setMeta "reference-section-title" "参考文献"
+          p0
+            & setMeta "reference-section-title" "参考文献"
             & setMeta "csl" style
   pure $
     Text.Pandoc.bottomUp removeTeXGomiStr $
@@ -1188,17 +1222,18 @@ refBlockToList
               mapM_ listise divs
     where
       listise (Text.Pandoc.Div (ident, cls, map (both %~ T.unpack) -> ats) [Text.Pandoc.Para (Text.Pandoc.Str lab : dv)]) =
-        applyAtts ats $
-          H5.li ! H5.id (H5.textValue ident)
+        applyAtts ats
+          $ H5.li
+            ! H5.id (H5.textValue ident)
             ! H5.class_ (H5.textValue $ T.unwords $ "ref" : cls)
             ! H5.dataAttribute "ref-label" (H5.textValue $ unbracket lab)
-            $ do
-              H5.span ! H5.class_ "ref-label" $ H5.text lab
-              H5.span ! H5.class_ "ref-body" $
-                fromRight' $
-                  Text.Pandoc.runPure $
-                    Text.Pandoc.writeHtml5 writerConf $
-                      Text.Pandoc.Pandoc Text.Pandoc.nullMeta [Text.Pandoc.Plain $ dropWhile (== Text.Pandoc.Space) dv]
+          $ do
+            H5.span ! H5.class_ "ref-label" $ H5.text lab
+            H5.span ! H5.class_ "ref-body" $
+              fromRight' $
+                Text.Pandoc.runPure $
+                  Text.Pandoc.writeHtml5 writerConf $
+                    Text.Pandoc.Pandoc Text.Pandoc.nullMeta [Text.Pandoc.Plain $ dropWhile (== Text.Pandoc.Space) dv]
       listise _ = ""
 refBlockToList d = d
 
@@ -1241,7 +1276,8 @@ buildRefInfo =
   where
     go ~(TagOpen _ atts) =
       maybe HM.empty (\(r, lab) -> HM.singleton r (RefInfo ("ref-" <> r) lab)) $
-        (,) <$> (T.stripPrefix "ref-" =<< lookup "id" atts)
+        (,)
+          <$> (T.stripPrefix "ref-" =<< lookup "id" atts)
           <*> lookup "data-ref-label" atts
 
 unbracket :: T.Text -> T.Text
@@ -1360,7 +1396,9 @@ toLog i = do
   let logIdent = T.pack $ takeBaseName $ itemPath i
       logLog =
         withTags (rewriteIDs logIdent) $
-          demoteHeaders $ demoteHeaders $ itemBody i
+          demoteHeaders $
+            demoteHeaders $
+              itemBody i
       Just logTitle = lookupMetadata "title" i
   logDate <- itemDateStr i
   return $ Log {..} <$ i
@@ -1368,12 +1406,12 @@ toLog i = do
 rewriteIDs :: T.Text -> Tag T.Text -> Tag T.Text
 rewriteIDs ident (TagOpen "a" atts)
   | Just rest <- T.stripPrefix "#" =<< lookup "href" atts
-    , "fn" `T.isInfixOf` rest =
-    TagOpen "a" $ ("href", mconcat ["#", ident, "-", rest]) : filter ((/= "href") . fst) atts
+  , "fn" `T.isInfixOf` rest =
+      TagOpen "a" $ ("href", mconcat ["#", ident, "-", rest]) : filter ((/= "href") . fst) atts
 rewriteIDs ident (TagOpen t atts)
   | Just name <- lookup "id" atts
-    , "fn" `T.isInfixOf` name =
-    TagOpen t $ ("id", mconcat [ident, "-", name]) : filter ((/= "id") . fst) atts
+  , "fn" `T.isInfixOf` name =
+      TagOpen t $ ("id", mconcat [ident, "-", name]) : filter ((/= "id") . fst) atts
 rewriteIDs _ t = t
 
 renderTalks :: MonadSake m => Maybe Int -> m (Item T.Text)
