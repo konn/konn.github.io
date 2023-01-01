@@ -881,8 +881,8 @@ extractLocalImages ts =
 addRequiredClasses :: Tag T.Text -> Tag T.Text
 addRequiredClasses (TagOpen "table" attr) = TagOpen "table" (("class", "table") : attr)
 addRequiredClasses (TagOpen "blockquote" attr)
-  | Just clss <- lookup "class" attr
-  , "twitter-tweet" `notElem` T.words clss =
+  | maybe True (notElem "twitter-tweet" . T.words) $
+      lookup "class" attr =
       TagOpen "blockquote" (("class", "blockquote") : attr)
 addRequiredClasses t = t
 
