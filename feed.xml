@@ -8,7 +8,267 @@
         <name>Hiromi ISHII</name>
         <email>konn.jinro_at_gmail.com</email>
     </author>
-    <updated>2022-09-16T21:00:00+09:00</updated>
+    <updated>2023-01-01T11:51:18+09:00</updated>
+    <entry>
+      <title>Disco Elysium - 頽廃の都マルティネーズで世界の迷宮に迷い込もう</title>
+      <link href="https://konn-san.com/articles/2023-01-01-disco-elysium-invitation-to-martinaise.html" />
+      <id>https://konn-san.com/articles/2023-01-01-disco-elysium-invitation-to-martinaise.html</id>
+      <published>2023-01-01T11:51:18+09:00</published>
+      <updated>2023-01-01T11:51:18+09:00</updated>
+      <summary type="html"><![CDATA[<section id="新年の挨拶も早々にゲームの布教をする" class="level1">
+<h2>新年の挨拶も早々にゲームの布教をする</h2>
+<p>Disco Elysium というゲームがある。
+2019年に発売されたエストニア産のゲームで、私がその存在を知ったのは確か以下のツイートがRTされてきたのがきっかけだったと思う：</p>
+<blockquote class="twitter-tweet">
+<p lang="ja" dir="ltr">
+記憶喪失の刑事が陰鬱な町で起きた殺人事件の真相を24もの自分のスキルと脳内会議しながら推理するという<br>、ゲーム賞取りまくったオープンワールド怪物ボリュームミステリーRPG「Disco
+Elysium」が翻訳希望投票を始めた！日本はまだ5位！これ遊べないのは大損！皆投票しよう！<a href="https://t.co/z4KlkgwsOF">https://t.co/z4KlkgwsOF</a>
+<a href="https://t.co/UyqcyVhre0">pic.twitter.com/UyqcyVhre0</a>
+</p>
+— タンサンあさと (@tansanasa)
+<a href="https://twitter.com/tansanasa/status/1260812736830689281?ref_src=twsrc%5Etfw">May
+14, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>去る2022年8月に遂に日本語訳が出たので、悪いことは言わないので是非買ってやってほしいというのが、よりにもよって2023年の新年早々に久々にこのサイトを更新した動機になる。新年明けましておめでとうございます。
+翻訳は、エイドリアン・マッキンティの〈刑事ダフィ〉シリーズなどを手掛ける武藤陽生氏が担当しており、しばしば難解と言われる本ゲームの膨大な英語を雰囲気そのままに見事に訳出されているので安心してほしい。</p>
+  <div class="embed w-100 my-4 justify-content-center row py-0">
+    
+
+  </div>
+
+<p>私はといえば、8月にSwitch版を購入して以来、ちまちまと週末に進めたりしていた。
+謎めいた頽廃的な雰囲気が催眠的でたいへん心地良く、とはいえ作品世界に没入するのは体力を使うので、仕事がそこそこ忙しかったのと他の予定があったのもあり、少しだけ進めて数ヶ月放置していた。
+年末年始にまとまった休みをとることにしたので、じゃあ帰省に合わせて一週間くらいかけてゆっくり遊ぶか、とプレイを再開したところ、二時間弱の電車移動が一瞬に感じるほど熱中してしまい、忘年会から帰る終電を降りても目が話せず、久し振りに「終電を降りた駅のホームで区切りのいいところまで小説を一気読みする奴」をやった。ゲームじゃん、って？本作はかなりのボリュームのテキストから成る（<a href="https://news.denfaminicogamer.jp/kikakuthetower/200630z">一説による</a>とハリー・ポッターシリーズ全七巻分）ので、もう小説といっていいでしょう。
+結果、年末年始に一週間くらいかけてゆっくりやるつもりだったのが、忘年会の終電を降りたあとはもう実家の自室で明け方の5時くらいまで熱中してエンディングまで一気呵成に辿り着いてしまった。
+これは本当にやばいぞということで、ミステリや SF
+を好む友人知人や赤の他人に布教する目的で筆を執ったという次第。</p>
+</section>
+<section id="disco-elysium-とはどんなゲームなのか" class="level1">
+<h2>Disco Elysium とはどんなゲームなのか？</h2>
+<p>冒頭で引用したタンサンあさとさんのツイートが簡潔にこのゲームを要約して下さっている。
+<strong>アル中で記憶喪失の男となって、脳内の幾つものスキルと会話しながら、頽廃的な都市で吊るされた男の死の真相を追う</strong>というものだ。</p>
+<p>この時点で興味を持った方は、それ以上の情報を入れずにゲームに没入していただいたほうがいいので、以下の記事は読まずにそのまま購入＆プレイに没頭して頂くのがよいだろう。
+というのも、この主人公の男は自分の人生に関する記憶だけではなく、<strong>作品世界の歴史・成り立ち記憶までも失っており</strong>、事件の謎だけではなく<strong>そもそもこの世界は何なのか？という謎も含めて追求する</strong>というのが大きな醍醐味になっており、主人公に寄り添って作品世界に没入する魅力の一端を成しているからだ。
+Steam （Win/macOS 両対応）や PlayStation、Switch
+で遊ぶことができる。私は Switch
+版を買ったが、操作性はちょっと悪い程度で体験を損わずにちゃんとプレイはできたが、もともと
+PC ゲームなので、マウスクリックができる Steam
+のものを買うのが楽かもしれない。</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      
+
+
+    </div>
+
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      
+
+
+    </div>
+
+  <div class="embed w-100 my-4 justify-content-center row py-0">
+    
+
+  </div>
+
+  <div class="embed w-100 my-4 justify-content-center row py-0">
+    
+
+  </div>
+
+<p>まだ様子見をしている御仁に向け、蛇足を承知で重篤なネタバレを極力避けながら、Disco
+Elysium とはいかなる作品なのか紹介していこう。</p>
+<p>本作を一言でいうなら、<strong>腐敗が蔓延る頽廃した新・新大陸植民地の港湾都市を舞台にした、レトロパンク異世界幻想SF・ハードボイルド・サイコ探偵・オープンワールドアドベンチャー電子TRPGノベルゲーム</strong>だ。随分とてんこもりだと思うだろう。しかし、このゲームの過剰さを表現するには、これでもちょっと短かすぎるくらいだ。</p>
+<p>以下、それぞれの要素について説明させてもらおう。</p>
+<section id="作品の舞台マルティネーズと核となる事件について" class="level2">
+<h3>作品の舞台〈マルティネーズ〉と核となる事件について</h3>
+<p>上でちらっと述べたように、この作品では<strong>事件の秘密と世界の秘密が密接に絡み合っており</strong>、我々の知る世界とは異なる歴史を歩んでいる。
+作品の舞台は、〈新・新世界〉としてしられるインスリンデ群島を構成する国家の一つレヴァショール、そのかつての中心地であった<strong>港湾都市・マルティネーズ</strong>を、記憶喪失の男が事件と自身と世界の秘密を求めて彷徨い歩くというのが本作のコンセプトだ。
+この世界はいかなる世界なのか？というのを解き明かすのもこのゲームの重要な要素の一つなので、そこまで深い説明はしないが、徐々に浮かび上がる世界像それ自体も魅力の一つなので、ここではその一端を説明しておこう。</p>
+<p>ゲームの冒頭、男は荒れ果てたホテルの一室で奇妙な夢目覚める。ソファベッドはめちゃくちゃで、あたりに酒瓶と服とが散乱している。
+<ruby><rb>宿酔</rb><rp>（</rp><rt>ふつかよ</rt><rp>）</rp></ruby>いの頭を抱えてシャワー室に向かうと、鏡に映ったのは奇妙な笑顔を貼り付かせた見知らぬ男の顔だった。</p>
+<p>部屋を出てホテルをさまよううち、他の宿泊客やバーテンダー……もとい、カフェテリア経営者らと出会って、自分の蛮行を知る。どうもかなり荒んでいたらしい。
+ホテルのロビーには、自分とバディを組んで事件を捜査すべく別の署から派遣されてきたキム・キツラギ警部補がいて、どうも自分はレヴァショールの<strong>警察機能を担う「レヴァショール市民軍（Revachol
+Citizens Militia; RCM）」のいち捜査官であるらしい</strong>ことがわかる。
+主人公はアルコールに冒されて完全に記憶がパアになってしまっているので、こんな説明を訊いても一向にピンと来ない。</p>
+<p>事件は主人公が宿泊するホテルバー〈ワーリング・イン・ラグズ〉の裏庭で起きた。
+マルティネーズを訪れていた傭兵の死体が木に吊るされた状態で発見されたのだ。
+しかも、死体は住民の誰もが見ていたにも関わらず、匿名の市民がRCMに通報するまで発生から一週間放置されていたというのだ。</p>
+<p>何故それまでずっと放置されていたのか？それには、このマルティネーズ、ひいてはレヴァショールが辿った歴史の特殊性が関連している。
+マルティネーズは港湾都市で、時あたかも労働組合と巨大企業の抜き差しならない睨み合いが続いている。労働組合の権力は絶大で、街を支配していると言ってよく、組合傘下のごろつき自警団〈ハーディ・ボーイズ〉が実質的な地域の警察として君臨している。
+被害者の傭兵はスト破りのために企業側に雇われていた男で、事件の直前〈ハーディ・ボーイズ〉と揉め毎を起こしていた。だからこの事件には〈ハーディ・ボーイズ〉が関っている、というのは住民たちの間では公然の事実だった。彼らに睨まれれば、この街では暮らしていけない。そんな状況でRCMに通報するような住民がいるはずもなかった。では、誰が通報したのだろう？──これも重要な謎だ。</p>
+<p>そもそも、RCM は市民から必ずしも良い印象を持たれていない。
+それはこのレヴァショールの成り立ちに関りがある。
+レヴァショールでは半世紀ほど前に共産主義革命が発生し、一時期権力を握った。
+しかし、大国の同盟組織〈連合〉が内戦に介入した結果革命は頓挫して、現在レヴァショールは〈国際倫理機関〉の統治下で事実上外国勢力の植民地の扱いを受けているのだ。
+RCMはこの大国たちから唯一法執行の権限を与えられた組織であり、だから市民たちからみればRCMは外国勢力の手先でしかないのだ。</p>
+<p>このような逆風の中で、主人公は時折蘇える過去の記憶と自らを責め苛む夢に魘されながら、宿賃をチマチマと稼ぎつつ、市民のお願いをきいたり街の権力者たちにとりいったり、不良少年といっしょにダンスホールを作ったり、共産主義者になってみたりしながら、事件、自身、世界の秘密を迫っていく──それが
+Disco Elysium だ。</p>
+</section>
+<section id="レトロパンク異世界幻想sf" class="level2">
+<h3>レトロパンク異世界幻想SF</h3>
+<p><strong>レトロパンク</strong>というのは私が今適当に考えた言葉で、本当にあるのかは知らない。無線通信やテープのようなレトロな技術の上に計算機文明が築かれているという意味でスチームパンクのような世界観だが、蒸気機関がそこまで重要な役割を果している訳でもないので、とりあえずレトロパンクと呼んでみた。
+この世界では、無線電波を介して様々な処理を行う〈ラジオコンピュータ〉が普及している。
+記憶素子〈フィラメント・メモリー〉を差し込んで無線越しにオペレータに復号してもらうことで、様々な記録を読んだり、情報を印刷したりすることができる。
+捜査が進むに従って、こうしたガジェットを介して世界の「異常」が浮上したりもするし、また、作中では「テープを使った革新的なコンピュータ」が、頓挫した幻のイノベーションとして言及されたりもする。</p>
+<p>また、この島には未確認動物を研究する夫妻が訪れており、この島に住む未確認の固有種・インスリンデナナフシの捕獲を試みている。この不思議な巨大生物は普段は葦に擬態しており人間の知覚機能を阻害するので、少数の目撃報告の他はこれまで人類に確認・捕獲されることなく見過ごされてきた──夫妻はそう主張する。
+主人公はこの夫妻に話を訊き、暇つぶしにあるいはその存在を自らも信じて、その捕獲を手伝うこともできる。
+もちろん、相棒のキツラギ警部補を含め多くの人はこんな荒唐無稽・幻想的な種の存在を信じてはいない。それでも、こんなものが存在してもおかしくないと思える程度には、この世界は神秘のヴェールを纏っている。
+この世界ではで〈イノセンス〉と呼ばれる数名の歴史上の神秘的な指導者がおり、それぞれが人類史に大きな影響を与えているらしい──といった事実が次第に明らかになっていくが、こういった我々の世界から見て異質な異世界設定も、もしかしたらこんな幻想種がいてもおかしくないのかも……という感覚を補強する。</p>
+<p>我々が主人公に寄り添って駆け巡るレヴァショールという土地は、そうした我々世界とは違う歴史・地理・技術を持った異世界なのだ。</p>
+</section>
+<section id="ハードボイルドサイコ探偵" class="level2">
+<h3>ハードボイルド・サイコ探偵</h3>
+<p>ミステリとして分類するなら、本作は<strong>ハードボイルド・サイコ探偵小説</strong>だろう。主人公は記憶喪失であるのみならず、何か起きるたびに24もの人格化された個性的なスキルたち──論理、百科事典、修辞学、演劇、概念化、視覚計算、意志力、内陸帝国、共感、権威、団結心、暗示、耐久力、痛覚閾値、肉体装置、電気化学、悪寒、薄明、手と眼の協調、知覚、反応速度、才覚、手さばき、平静──が何かを見たり聞いたりする度に脳内でのべつ幕なしに好き勝手に会話を繰り広げ、それらに影響されながら主にディスコ文化に偏った奇行を繰り広げるサイコ野郎だ。「俺は黙示録刑事だ！」といいだしたり、相手の秘密がわからなくなり急に脈絡なく服を脱ごうとしたりする。
+これらのスキルは捜査をする上で必須の能力・知識を提供してくれる一方で、隙あらば主人公を共産主義陣営にオルグしようとしたり、逆にレイシストのファシストに育て上げようとしたりしてくる。</p>
+<figure class="figure mx-auto">
+<img class="img-fluid figure-img rounded" alt="急に脳内から話し掛けてくる〈修辞学〉。この後主人公は〈修辞学〉に「共産主義」の再構築をするようオルグされる" src="./2023-01-01-disco-elysium-imgs/call-of-rhetric.jpg">
+<figcaption class="figure-caption">
+急に脳内から話し掛けてくる〈修辞学〉。この後主人公は〈修辞学〉に「共産主義」の再構築をするようオルグされる
+</figcaption>
+</figure>
+<p>この銘々かってに喚き散らしたり勝手に脳内で会話劇を繰り広げたりするスキルたちがまた素晴しい。幾つかお気に入りの例を挙げよう。</p>
+<p>「百科事典」は何かを眼にする度にそれにまつわる蘊蓄を教えてくれて世界観を広げてくれるが、一方で今知りたい肝心の知識を知らずにトボケて全然違うことを話してきたりすることもあり、愛嬌がある。</p>
+<figure class="figure mx-auto">
+<img class="img-fluid figure-img rounded" alt="現場検屍について知りたいのに、無関係な世界最高峰の話をしてくる〈百科事典〉" src="./2023-01-01-disco-elysium-imgs/ignorance-of-encyclopedia.jpg">
+<figcaption class="figure-caption">
+現場検屍について知りたいのに、無関係な世界最高峰の話をしてくる〈百科事典〉
+</figcaption>
+</figure>
+<p>「内陸帝国」は直感やオカルト的思考を司るスキルで、これが発達すると無生物や死体と会話した（つもりになった）りして手掛かりを得ることができるようになる。陰謀論的な思考に近い。</p>
+<figure class="figure mx-auto">
+<img class="img-fluid figure-img rounded" alt="勝手に「世界の終末」を早合点する〈内陸帝国〉" src="./2023-01-01-disco-elysium-imgs/inland-empire.jpg">
+<figcaption class="figure-caption">
+勝手に「世界の終末」を早合点する〈内陸帝国〉
+</figcaption>
+</figure>
+<p>「演劇」は相手の嘘を見抜いたりする能力にあたる。こいつも時々的外れなことを言い、他のスキルたちから袋叩きにあったりするかわいげがある。</p>
+<figure class="figure mx-auto">
+<img class="img-fluid figure-img rounded" alt="手掛かりに対して銘々勝手な印象を話す脳内スキルたち。" src="./2023-01-01-disco-elysium-imgs/skills-converse.jpg">
+<figcaption class="figure-caption">
+手掛かりに対して銘々勝手な印象を話す脳内スキルたち。
+</figcaption>
+</figure>
+<p>また、こうした捜査に必要なスキルに加えて、夢や気絶中でのみ主人公に語り掛けてくる人格的存在もある。たとえば、ゲームの始まりはこんな感じだ。</p>
+<p>ゲームを開始すると、プレイヤーが直面するのは、全き闇と物悲しい音楽。その闇のなかから、〈古代爬虫類脳〉の嗄れた声がこちらに語り掛ける。</p>
+<blockquote class="blockquote">
+<p>そこには何もない。生暖かい原初の闇があるだけだ。おまえの意識はその中で発酵していく。それは麦の穂先のひと粒にも満たぬほど小さい。おまえはもう何もしなくていい。</p>
+<p>この先ずっと。</p>
+<p>永遠に。</p>
+</blockquote>
+<p>「（非存在のままでいる）」などと返答しながら、この抽象的な問答を進めていく。
+選んだ返答によって、長い虚無の中に沈み込んでいきもするが、やがて主人公の非存在は許容できなくなり、次第に現実に対する感覚器官が意識されてくる。
+おそらくは「別れた妻」のために、主人公が捨て去りたいと願っている、現実に対する感覚が。
+肉体的な「感覚」の話を拒否しようとすれば、今度は〈辺縁系〉があらわれて甲高い声で現実をつきつけてくる。</p>
+<blockquote class="blockquote">
+<p>おまえの口から酒の悪臭が立ちのぼる。そして……〝信じられない〟ほどの頭痛が。</p>
+<p>赤々とした稲妻がおまえの頭蓋骨を貫き、その両眼を開けさせようとする。音だ。甲高い、地獄からの叫び声だ。</p>
+</blockquote>
+<p>こうして主人公は荒れ果てたホテルの一室で眼を覚ますのである。彼らとは今後、夜毎の睡眠時間やある事実の発見により気を失った際にこうした精神的で幻惑的な対話をしていくことになる。そのフェーズがこの作品に独特のリズムを与えている。
+この作品をプレイしはじめて最初に、この別人格との催眠的とも言える対話の叙述に私は一気に魅了された。
+この後も日を追うごとにこうした夢や無意識界でのやりとりは増えていくと共に、具体性を増していく。終盤、ある場所に辿り着いた際に見るつかのまの夢は、本作の中でもかなり好きな場面の一つだ。</p>
+<p>とはいえ、これを英語で読むのはなかなか厳しそうだと思う（「古代爬虫類脳」なんて英語、脳科学者以外だれが知ってるんだ？）。日本語圏で本作の評判を検索してみると「難解」という形容詞がしばしば眼に入るのは、もちろん記憶喪失から世界を把握しなおすという本作の仕掛けからくるものもあるのだろうが、日本語訳以前はこうした概念的で抽象的な対話を英語で受容する必要があったのも要因の一つだろう。優れた日本語訳でプレイできる現状に感謝したい。</p>
+<p>こうしてみるとわかるように、彼はある種の「信頼できない語り手」ですらある。たとえば、作中である大金持ちに会うと、相手が自分に比べてあまりに資産を持っているためにその質量で部屋の光が歪んで見える時がある。相棒のキムに訊いても別にそうは見えておらず、だからこれは主人公の研ぎ澄まされた感覚が相手がものすごい資産家であることを察知して、おもわず視界が歪んでいると信じこんでいるということになるだろう。このような主人公の思い込みと感覚の鋭さに起因するサイコっぷりを通して世界を見るという体験は、本作の大きな魅力の屋台骨になっている。とはいえ、信頼できないとはいっても基本的にその感覚器官が事件の真相に係る事実を本質的に歪めるようなことはないので、新本格のサイコミステリみたいな枠外からのどんでん返しに怯える必要はない。</p>
+<p>そんなサイコ野郎な探偵が「ハードボイルド」的世界を彷徨うという落差が、本作のプレイ体験をより深みのあるものにしている。
+先述のように、舞台となるマルティネーズは、公的な統治機構の支配権が完全には及ばず、巨大資本と労働組合がしのぎを削る頽廃都市で、そもそもその都市の属する国＝レヴァショールにしてからが、列強から植民地のごとき扱いを受ける主権を制限された世紀末都市だ。
+謎解きの面でいっても、主人公はあちこちを見てまわり人々に話を訊いて、足で証拠を積み上げていく、という点でハードボイルド的である。
+もちろん、謎解きに意外性がまったくないということではなくて、むしろこの作品は曲がり角を曲るたびに目まぐるしく様相を変えていき、プレイヤーを飽きさせない。
+初期状態の主人公は心身両面でクソザコなので、能力値の振り方によっては罵倒されただけで世を儚んで死んだり、宿代をチョロマカそうとして車椅子に激突して死んだりするするので、最初からハードボイルド的なタフで感情を表に出さない探偵という訳ではない。とはいえ、スキルポイントの振り方によって主人公の性格は変わっていくし、一癖も二癖もある地元のゴロツキと丁々発止渡り合っていくことにもなる。少なくとも、舞台となる街がタフでなければ生きてゆけない世界であることは確かだ。優しく在るかどうかは、プレイヤーの選択に任されているが。</p>
+</section>
+<section id="オープンワールドアドベンチャー電子trpgノベルゲーム" class="level2">
+<h3>オープンワールドアドベンチャー電子TRPGノベルゲーム</h3>
+<p>最後にゲームシステムの話をしよう。
+まあ、「オープンワールドRPG」でいいじゃん、という気もするのだが、敢えてこれくらい過剰な表現をしてもいいだろう<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>というくらいにはこのゲームは要素が詰め込まれていて、しかもそれが奇跡的な調和を保っている。</p>
+<p>「電子TRPG」って、アナログなTRPG（テーブルトーク・ロールプレイングゲーム）のレトロニムが「RPG」なんだから単に「RPG」でいいのでは、って？まあ、落ち着いてほしい。
+まず、先に述べたように、本作では主人公の能力を人格化した24のスキルがある。
+主人公は、たとえば相手の隠し事を見抜いたり、宿代をちょろまかしたりするのに、これらの能力を使う。
+その際には、難易度と能力値に応じてシステム上で6面ダイス2個が振られる「スキルチェック」が行われ、出目によって成否が判定される。この判定の前後にはスキル人格との会話の形で結果報告される。TRPG的なスキルシステムをそのまま取り込むのではなく、人格を持った脳内キャラクターとして描写しているのは、作品に奥行きを与えるかなりユニークな工夫だと思う。
+また、ゲームの新規開始時にも、主人公のタイプを「思想家」「神経質」「肉体派」から選ぶか、自由に能力値を振ってキャラメイクをすることができるシステムになっている。
+NetHack
+とかのローグライクとかもそうじゃんと言われればまあそれまでなのだが、それらと共通するTRPGのキャラメイクの楽しさへの意識がある、ということはできるだろう。
+ストーリーの面でも、作中にはTRPG用カスタムダイスの職人がでてきたり、革新的なTRPGの開発に携わる人々が出て来たりするので、いわゆる電子ゲームとしての
+RPG 以上にアナログな TRPG
+に対する思いがこの作品に通底しているのは、ほぼまちがいないといっていい。なのでここでは、敢えて「電子TRPG」と表現したのだ<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>。</p>
+<p>捜査順や請け負うタスクを主人公が選べるオープンワールドであることも、プレイヤーの自由な発想に従って展開していくTRPGの電子的な再現の一環であると言えるだろう（まあ、それも流行のオープンワールドRPG全般に言えることなんだろうけど）。
+要所要所で物語を展開させる決定的なフラグはあるものの、基本的に誰のどんなタスクを請け負って、何をどう捜査するか、いつ誰と話すのか、という取捨選択・順序はほぼ完全にプレイヤーに委ねられている。
+「トンデモ幻想生物なんかいる訳ない！警察がそんなことにかかずらってる義理はない！」と未確認生物学者の依頼を蹴る勤勉さを発揮してもいいし、相棒が寝ている間に死体から高価なアーマーを盗み取ってみせる腐敗っぷりを見せてもいい。
+大企業の手先となって組合に不利な証拠を嗅ぎ回ってもいいし、失くした拳銃の情報のために組合のボスの犬になって組合に楯突く連中を脅迫したっていい。この自由さが、プレイヤーが主人公に憑依してマルティネーズという頽廃都市を徘徊している実感に大きく繋がっている。</p>
+<p>で、ノベルゲームというのは、先述のようにこのゲームに含まれる膨大なテキスト（ハリポタ全7巻分！？）のためだ。このゲームはとににかく膨大な情報と描写の洪水だ。といって、コマが全部文字で埋まっているようなゲームなのかといえばそうではなく、細かく描き込まれた絵やシーンを彩る音楽が、それらに説得力を与え互いに補完しあっている。ヴィジュアルノベルというのはあまりに小説だし、小説というにはあまりにゲームである。そんな異形さが本作にはある。</p>
+</section>
+</section>
+<section id="音楽アートワークがいい" class="level1">
+<h2>音楽・アートワークがいい</h2>
+<p>作品を構成するアートワークや音楽がめちゃくちゃいい。英語音声でフルボイスなのも、作品への没入感を高める。
+アートワークは調べると引っ掛かるので参考にしてほしい。音楽は Amazon
+Music などでも配信されているので、試聴してみるといいだろう：</p>
+
+
+</section>
+<section id="おわりにマルティネーズへの誘い" class="level1">
+<h2>おわりに：マルティネーズへの誘い</h2>
+<p>まあなんか長々と書きすぎた気がするが、このゲームの異様なまでのボリュームと質量を表すにはこれくらいではまだ足りないくらいだと思う<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>。</p>
+<p>ミステリとして見たときにはある意味で「熱海の捜査官」（や、録画に失敗したの最後まで観れていないがその更に元ネタの「ツイン・ピークス」）のような合理と非合理の間を漂う不思議な探偵物語でもあり、ハードボイルド的な背景もある。SFとしてみればファンタジックな架空世界を舞台にしたレトロフューチャー的な擬似スチームパンクでもある。
+それほどまでに多くの要素・ディテールが詰め込まれていながら、瓦解せずに奇怪な建築のように不思議な調和が保たれている。
+自我の揺らいだ主人公と一体になって、この幻想の霧に包まれた不気味な都市を駆け抜け、生きる。Disco
+Elysium はそんな刺激的な作品だ。今（2023年1月1日現在） Steam
+とかでもセール中みたいなんで、この年始はぜひアル中記憶喪失世紀末刑事として、マルティネーズを彷徨ってみてはいかがだろうか。</p>
+</section>
+<section id="おまけプレイしていてつまずいた所気をつけた方がよいこと" class="level1">
+<h2>おまけ：プレイしていてつまずいた所・気をつけた方がよいこと</h2>
+<p>最後に、これからプレイする／まさにプレイしているところ（私もまだ未回収の伏線があるのでこれからリプレイよてい）の人に向けて、Switch
+版をプレイしていて途中まで知らずに損をした部分などを纏めておく。こういうのも含めて自力で見出したい人はここで終わってもらってかまわないです。
+何かの参考になれば幸い。</p>
+<section id="pc-macos-向けのほうが良いかもswitchでも十分遊べはする" class="level2">
+<h3>PC / macOS 向けのほうが良いかも（Switchでも十分遊べはする）</h3>
+<p>本作では、場所を移動しながら、眼に入った物や主人公の脳裡に浮かんだ思考をクリックしながら捜査を進めていく、ポイント・アンド・クリック形式のアドベンチャーゲームになっている。
+Switch
+版では捜査対象を左スティックで切り替えるか、本体画面を指でタップして選択するのだが、スティックによる操作性が若干悪い。グラフィックは高精細で文字が沢山あるのでテレビに接続したほうがプレイしやすい一方、そうするとスティック捜査にはちょっと手間取るかもしれない。とはいえ十分許容範囲であり、去年発表されたミステリゲームでもこれよりもっと酷い操作性のものもあるので、そこまで相対的に問題はないとも言える（私もSwitch版でクリアできたし）。
+プレイ環境等を勘案して、PCでよければ Steam
+版を買うなどすると快適だろう。</p>
+</section>
+<section id="序盤はとにかく耐久力と意志力を強化せよ回復アイテムを買え" class="level2">
+<h3>序盤はとにかく「耐久力」と「意志力」を強化せよ。回復アイテムを買え</h3>
+<p>選ぶスキルタイプにも依るが、序盤の主人公はかなりのポンコツである。
+口喧嘩に負けて世を儚むし、転んで車椅子の女性に突っ込んだだけで御陀仏になる。
+もっと詳しく言えば、主人公の主要なパラメータには「体力」と「気力」の二種類があり、どちらかがゼロになった瞬間にゲームオーバーとなる。
+これらはそれぞれ「耐久力」と「意志力」の能力値をプラスすることで強化できる。これらはそれぞれ「肉体」と「精神」のカテゴリに属するスキルなので、これらのカテゴリの基準値を薬品や思考などで底上げすることでも効果は出る。</p>
+<p>キャラメイクによって序盤はこれらのパラメータはクソショボなので、強化するまではホテルの東側（右）にある売店で売っている回復アイテム（マグネシウムなど）を多めに買っておくとよい。</p>
+</section>
+<section id="セーブはこまめに" class="level2">
+<h3>セーブはこまめに</h3>
+<p>序盤は体力・気力が少なかったり、修辞学が低くて相手を怒らせて撃たれてしまったりで、うっかりすると死んでしまう。
+上述のようにアイテムや能力値の強化で回避できるが、はじめはなかなか間に合わないので、こまめにセーブしておこう。私は冒頭からセーブせずに一時間半くらいプレイした後で宿代をちょろまかそうとして勢い余って車椅子の女性に衝突、そのまま帰らぬひととなり全部ゼロからになったことがある。</p>
+</section>
+<section id="思考のスロットはスキルポイントを消費して増やせる" class="level2">
+<h3>思考のスロットはスキルポイントを消費して増やせる</h3>
+<p>先に上げた24のスキル以外にも、本編が展開していくに従ってさまざまな効果を持つ「思考」を内面化していくことで使える能力の底上げができたりする。
+いわばスキルツリーみたいなものである。
+デフォルトではこのスロットは3つしかないのだが、タスクをこなすと得られるスキルポイントはスキルの値を追加する以外にも、思考スロットをアンロックするのに使える。
+この情報は知っていたのだが操作方法がわからずに後半になるまで開放方法がわからなかったので、Switch
+での解放方法を紹介しておく。
+といっても簡単で、解放されていないスロット（空の菱形のやつ）を指でタップするか、コントローラのスティックをひたすら左に倒して選択し
+A ボタンを押せばよい。</p>
+</section>
+<section id="チップスはロード画面以外でも確認可能" class="level2">
+<h3>チップスはロード画面以外でも確認可能</h3>
+<p>ロード画面に出て来るチップス（「待って、などで始まる選択肢を選ぶと状況を説明してもらえる」などの一口アドバイス）は、メニュー画面を開くと右側のペインで確認できる。アイテムの簡単な使い方とかもそこで読める。</p>
+</section>
+<section id="酒薬品タバコなどの消費アイテムは一定待たないと次の消費ができない" class="level2">
+<h3>酒・薬品・タバコなどの消費アイテムは一定待たないと次の消費ができない</h3>
+<p>っぽい。</p>
+</section>
+</section>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr></hr>
+<ol>
+<li id="fn1" role="doc-endnote"><p>TRPG の G は Game
+なんだから「ノベルゲーム」の「ゲーム」は冗語なんだけど、まあ細かいことは言うなや。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>シングルプレイなのでTRPGというよりはゲームブック的という人もどこかで見掛けた。それもまたそうだと思う。<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>この記事の内容の散漫さについては……まあご寛恕を。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>]]></summary>
+    </entry>
     <entry>
       <title>古典的実現可能性モデルノート</title>
       <link href="https://konn-san.com/math/realisability.html" />
@@ -2177,247 +2437,6 @@ LaTeX</a>というのがあるようだけど、辞書が一つしか持てな�
 とはいえ、つかってみてちょっと不便な場合もあるので、今後この辺りももっと柔軟に設定出来るようにする予定。
 乞うご期待。</p>
 </section>
-</section>]]></summary>
-    </entry>
-    <entry>
-      <title>Emacs から Visual Studio Code に乗り換える作業のメモ</title>
-      <link href="https://konn-san.com/prog/migrating-emacs-to-vscode.html" />
-      <id>https://konn-san.com/prog/migrating-emacs-to-vscode.html</id>
-      <published>2018-10-16T00:05:00+09:00</published>
-      <updated>2018-10-16T00:05:00+09:00</updated>
-      <summary type="html"><![CDATA[<section id="発端" class="level1">
-<h2>発端</h2>
-<p>発端という程のことは何もないんですが、Emacs
-のプラグインが肥大化するに伴なって、食い合せが悪くて変な挙動をしたり、バージョンを上げたらパッケージが動かなくなったり……といったことにいい加減辟易してきました。
-最近はよくわらないタイミングでビジーになったり死んでしまうことも多くなってきたので、いっそモダンなエディタに乗り換えよう、という機運でした。</p>
-<p>そんな中で VSCode (Visual Studio Code)
-を選んだのは、何か最近話題になっていたからというのと、Atom
-があんまり手に合わない印象があったから、あと TL で VSCode
-使ってる人が多かったからという感じで、まあ特に理由はないです。</p>
-<section id="要件" class="level2">
-<h3>要件</h3>
-<p>とはいえ、Emacs ではかなりカスタマイズを進めていたので、VSCode
-に移行するに当っては以下の要件が満たされて欲しい、という思いがあります。</p>
-<ul>
-<li><p>マトモな Haskell 統合環境</p>
-<ul>
-<li><p>Emacs ではここ数年はずっと <a href="http://commercialhaskell.github.io/intero/">intero</a>
-を使っていた。 intero
-の補完・警告システムはかなり良かったので、完全互換ではないにせよ、十分伍するものが欲しい。</p>
-<p>そもそも今回乗り換えようと思ったのは、intero
-が最近あまりメンテされていない感じで、REPL で IO
-の結果を表示しようとすると Hang
-するとか、型の重いプログラムを書いていると、REPL
-で補完を働かせようとしてビジーになるとか、そういうことが続いたからでもあった。</p></li>
-</ul></li>
-<li><p>コードスニペットデータの移行</p>
-<ul>
-<li>僕はコードスニペットを多用してコーディングをしているので、<a href="https://github.com/konn/dotfiles/tree/master/.emacs.d/share/snippets">これまでのスニペット</a>が移行出来ないと死ぬ。</li>
-<li>スニペットエンジンは <a href="https://github.com/joaotavora/yasnippet">Yasnippet</a>
-を使っていて、たとえば <code class="sourceCode haskell"><span class="kw">module</span></code>
-宣言の補完とかは 内部で ELisp を使って
-<code>piyo/Hoge/Fuga/Bar.hs</code> なら <code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Hoge.Fuga.Bar</span> <span class="kw">where</span><span class="op">...</span></code>、
-小文字のファイル名 <code>moke.hs</code> とかなら <code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></code>
-となるようにしていたので、こういうことが出来ると嬉しい。</li>
-</ul></li>
-<li><p>Rust と Scala の統合環境</p>
-<ul>
-<li>最近使ってみているので、快適なのが欲しい。</li>
-</ul></li>
-<li><p><a href="https://www.yatex.org">YaTeX</a> の代替になるやつ</p>
-<ul>
-<li><p><strong>2018/11/12 追記</strong>：幾つか組み合わせつつ、<a href="https://marketplace.visualstudio.com/items?itemname=mr-konn.catex">自前で拡張を書いて解決</a>した。</p></li>
-<li><p>永らく LaTeX の執筆環境では YaTeX-mode を利用してきた。<br />
-特に、YaTeX
-にはイメージ補完というのがあって、アスキーで表現された数学記号のイメージに相当する記号を手軽に入力出来る。
-例えば <kbd>;||-</kbd> で <span class="math inline">\(\Vdash\)</span>
-(<code>\Vdash</code>)、<kbd>;ox</kbd> で <span class="math inline">\(\otimes\)</span> (<code>\otimes</code>)、あるいは
-<kbd>:a</kbd> で <span class="math inline">\(\alpha\)</span>
-(<code>\alpha</code>)、<kbd>:ph-</kbd> で <span class="math inline">\(\varphi\)</span> (<code>\varphi</code>)
-といった具合に。</p>
-<p>僕はもうこれがなければ数式が打てないレベルまで来ているので、この機能の代替が欲しい。
-前 Atom に乗り換えようとした際にも、<a href="https://github.com/konn/atom-latex-shape-completion">Atom
-向けのイメージ補完機構</a>を作ってみていたのだが、途中で飽きて放り投げてある。VSCode
-の方がAPIが整理されていて、遥かに書き易かった。</p></li>
-</ul></li>
-<li><p>Tramp による SSH 越しに sudo やったりするやつ</p></li>
-</ul>
-</section>
-<section id="現状" class="level2">
-<h3>現状</h3>
-<p>上記の要件に対して、どの程度まで移行出来ているか、以下で順次書いていくことにする。</p>
-<section id="haskell-環境" class="level3">
-<h4>Haskell 環境</h4>
-<p>この構築に一番手間取った。検索してヒットするのはだいたい以下の三つだろう：</p>
-<ul>
-<li>Haskell Language Server
-<ul>
-<li><a href="https://github.com/haskell/haskell-ide-engine"><code>haskell-ide-engine</code></a>
-ベース。 裏で <code>intero</code>, <code>ghc-mod</code>,
-<code>brittany</code>, <code>hoogle</code>, <code>HaRe</code>
-などを呼び出すことになっている。</li>
-</ul></li>
-<li>Haskero</li>
-<li>Haskelly
-<ul>
-<li>どちらも<a href="http://commercialhaskell.github.io/intero/"><code>intero</code></a>
-ベース。</li>
-</ul></li>
-</ul>
-<p>最終的には haskell-ide-engine
-に収斂していくべきだと思っているので、Haskell Language Server
-をまず入れてみたのがだ、結論から言うと全然動かなかった。 一応
-<code>hie-wrapper</code> をめぼしい GHC
-バージョンごとにビルドしてインストールはしてあったのだが、モジュールの補完は利かないし、マウスオーバーで表示されるはずのドキュメントがいつまで経っても出てこないし、warning
-や error
-の報告も全然表示されないしで、検索するとヒットするような対応はだいたい試してみたつもりだが、ロクに動かなかった。</p>
-<p>次いで Haskelly。これは調べた感じ Warning や error
-の表示がないみたいなので割愛。</p>
-<p>最後に
-Haskero。これもなかなかマウスオーバーでドキュメント表示が上手くいかなかった。
-これはローカルの DB だけあればいいだろうと思っていたら、どうも global な
-DB も必要だったらしい。
-なので、以下を実行すればマウスオーバーは出来るようになる：</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hoogle generate</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd path/to/project</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> stack haddock <span class="at">--keep-going</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> stack hoogle generate</span></code></pre></div>
-<p>多分最後の三行はローカルの DB 要らねと思ったら実行する必要はない。
-実にはこの工程を試したあとに Haskell Language Server
-のマウスオーバーも試していて、その上でタイムアウトしている。</p>
-<p>これで Haskero
-のマウスオーバーは出来るようになったが、警告やエラーが一向に表示されない。
-調べてみると、次の issue が見付かった。</p>
-    <div class="embed w-100 my-4 justify-content-center row py-0">
-      
-
-
-    </div>
-
-<p>ここで書かれている対処法を参考に、インストールの Haskero
-を書き換える形で一時的に解決している。 なんでも <code>:l</code> した後に
-<code>:r</code> をするのが不味いらしい。
-具体的には、<code>$HOME/.vscode/extensions/vans.haskero-1.3.1/server/intero/commands/reload.js</code>
-の <code class="sourceCode javascript">ReloadRequest</code> クラスの
-<code class="sourceCode javascript">send</code>
-メソッドを以下のように書き換える：</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">send</span>(interoProxy) {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> filePath <span class="op">=</span> uriUtils_1<span class="op">.</span><span class="at">UriUtils</span><span class="op">.</span><span class="fu">toFilePath</span>(<span class="kw">this</span><span class="op">.</span><span class="at">uri</span>)<span class="op">;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> escapedFilePath <span class="op">=</span> interoUtils_1<span class="op">.</span><span class="at">InteroUtils</span><span class="op">.</span><span class="fu">escapeFilePath</span>(filePath)<span class="op">;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> load <span class="op">=</span> <span class="vs">`:l </span><span class="sc">${</span>escapedFilePath<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// const reloadRequest = &#39;:r&#39;;</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> interoProxy<span class="op">.</span><span class="fu">sendRawRequest</span>(load)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">/*</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">               .then(response =&gt; {</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">            return interoProxy.sendRawRequest(reloadRequest);</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">        })</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">        */</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>               <span class="op">.</span><span class="fu">then</span>((response) <span class="kw">=&gt;</span> {</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="bu">Promise</span><span class="op">.</span><span class="fu">resolve</span>(<span class="kw">new</span> <span class="fu">ReloadResponse</span>(response<span class="op">.</span><span class="at">rawout</span><span class="op">,</span> response<span class="op">.</span><span class="at">rawerr</span>))<span class="op">;</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            })<span class="op">;</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
-<p>すると、開いた直後は掻き消えることがあるが、一応問題なく動ようになった。</p>
-<p>Haskero には REPL はなさそうだったので、<a href="https://marketplace.visualstudio.com/items?itemName=rcook.ghci-helper">GHCi
-Helper</a> を入れた。 REPL としての intero
-は、<code>-fdefer-type-errors</code>
-が掛かっていたり、無駄に補完しようとしてビジーになったり、正直腐り切っていたので、<code>stack ghci</code>
-を使う GHCi Helper は性に合っていそうである。</p>
-<p>あと、コードフォーマッタは Haskero は <code>brittany</code>
-を推奨しているようだが、僕は <code>stylish-haskell</code>
-を使っているので、<a href="https://marketplace.visualstudio.com/items?itemName=vigoo.stylish-haskell">stylish-haskell
-用機能拡張</a>を入れた。 HLint も使いたいので、<a href="https://marketplace.visualstudio.com/items?itemName=lunaryorn.hlint"><code>hlint</code>機能拡張</a>も入れた。<code>haskell-linter</code>とかいうのもあるが、<code>apply-refact</code>
-を使った自動反映に対応しているっぽかったので、<code>hlint</code>
-の方を選んだ。</p>
-<p>他にも Haskero の warning や error を同様に適用してくれる奴として、
-<a href="https://marketplace.visualstudio.com/items?itemName=Edka.haskutil"><code>Haskutil</code></a>も入れた。
-以上で、完全ではないがあるていどこれまでの Haskell
-統合環境に近いものが構築出来た。</p>
-<p>さらに、オマケとして、Haskell 編集中だけ Haskell 用リガチャフォントの
-<a href="https://github.com/i-tu/Hasklig">Hasklig</a>
-を使うようにするため、以下の設定を <code>settings.json</code>
-に追加した：</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span>   <span class="er">...</span><span class="fu">,</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;[haskell]&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;editor.fontFamily&quot;</span><span class="fu">:</span> <span class="st">&quot;Hasklig,Menlo, Monaco, &#39;Courier New&#39;, monospace&quot;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
-</section>
-<section id="コードスニペットの移行" class="level3">
-<h4>コードスニペットの移行</h4>
-<p>検索すると幾つか変換器がヒットするが、どう対応しているのかわからなかったので、Rust
-を使って変換器を書いた。</p>
-    <div class="embed w-100 my-4 justify-content-center row py-0">
-      
-
-
-    </div>
-
-<p>Rust のパーザコンビネータである <code>combine</code> crate
-の良い練習になった。 Yasnippet では選択肢から選ぶという場合はそれ専用の
-ELisp 関数を呼び出しやる必要があったのだが、VSCode
-では専用の構文が用意されており、 <code class="vscode">${1|foo,bar,buz|}</code> とすればよく大変楽だった。</p>
-<p>取り敢えず、可能な限り選択肢からの変換やプレースホルダの変換の面倒を見つつ、内部で任意コードを呼びだしているっぽいスニペットが来たら、標準出力で警告をするようにしている。
-使い方としては、</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> path/to/output</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> crates ~/.emacs/share/snippets path/to/output</span></code></pre></div>
-<p>とすれば、言語ごとに <code>haskell.json</code>
-のような形でまとめられたスニペット定義が出来上がるので、上の警告を参考に書き換えつつ、macOS
-なら <code>$HOME/Library/Application Support/Code/User/snippets</code>
-にでも置けばよい。 ところで、如何に天下の Microsoft
-だからといって、サポートファイルの識別名を <code>Code</code>
-にするのはいかがなものか。 というか、なんで <code>$HOME/.vscode</code>
-にしないのか全く理解出来ない。</p>
-<p>一方で、任意のコードが実行出来るわけではないので、上の要件に上げたモジュール名補完は今のところ有効打が見付かっていない。
-一応、正規表現で一回だけ置換したり大文字小文字を弄ったり、空かどうかで分岐したり、といった機構が
-VSCode にもあるにはある。
-だが、調べた感じ複数回置換は出来なさそうだし、そもそも正規表のキャプチャグループとスニペットのタブストップへの参照がどちらも
-<code>$1, $2, ...</code>
-という形でごっちゃになっている上に、変数の正規表現置換と空文字列の条件分岐を組み合わせようとすると一瞬で変な挙動をするので、今のところ実現出来ていない、という感じである。</p>
-<p>何か良い手を思い付いた方は御一報下さい。いっそのこと機能拡張を作って、動的にスニペットを生成して補完候補として呼び出させるのも一つの手かもしれないが……。</p>
-</section>
-<section id="rust-と-scala" class="level3">
-<h4>Rust と Scala</h4>
-<dl>
-<dt>Rust</dt>
-<dd>
-Rusty Code と Rust (<code>rls</code>) を入れたら万事 OK。
-</dd>
-<dt>Scala</dt>
-<dd>
-Scala Language Server、Scala (<code>sbt</code>)
-あたりを入れたら動いて見える。
-</dd>
-</dl>
-</section>
-<section id="yatex-の代替" class="level3">
-<h4>YaTeX の代替</h4>
-<p><del>残念ながらまだ見付かってないです。良い奴教えてください。最低要件は上で書いたイメージ補完が使えることです。</del></p>
-<p>だいぶ楽になった。詳細は<a href="../articles/2018-11-26-happy-latex-with-catex.html">新記事</a>を参照。</p>
-</section>
-<section id="emacs-の-tramp-相当" class="level3">
-<h4>Emacs の TRAMP 相当</h4>
-<p>Emacs には tramp-mode というのがあって、SSH
-越しにリモートファイルを編集したり、更にリモートで sudo
-越しに保護されたファイル（サーバの config
-とか）を編集したりということができた。 <del>VSCode
-では何を使えばいいんだろう。</del></p>
-<p>当面の間は<a href="https://marketplace.visualstudio.com/items?itemName=Kelvin.vscode-sshfs">SSH
-FS for VSCode</a>を使うことにした<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。 TRAMP は /.ssh/config
-を自動で読み出してくれるが、SSH FS
-では自分で設定を書く必要があるようだ。 <a href="https://github.com/SchoofsKelvin/vscode-sshfs/issues/28#issuecomment-425078388">この
-issue</a>によれば、現行の 1.10.0 でも <code class="sourceCode json"><span class="er">&quot;sftpCommand&quot;:</span> <span class="er">&quot;sudo</span> <span class="er">/usr/lib/openssh/sftp-server&quot;</span></code>
-とか指定すれば、リモートで <code>sudo</code>
-打てる筈なのだが、どうも上手く接続出来ないのでどうしたものか。
-あと、ワークスペースとしてマウントする奴なので、ちょっと一つのファイルだけ開きたい時はオーバーキルのような気もする。</p>
-</section>
-</section>
-</section>
-<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
-<hr></hr>
-<ol>
-<li id="fn1" role="doc-endnote"><p>所でどうでもいいけど、SSH FS
-って言うと FUSE の SSH マウント出来るやつと紛らわしいな。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
 </section>]]></summary>
     </entry>
 </feed>
