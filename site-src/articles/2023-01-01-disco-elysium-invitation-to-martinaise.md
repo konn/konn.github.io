@@ -124,6 +124,11 @@ RCMはこの大国たちから唯一法執行の権限を与えられた組織�
   <figcaption class="figure-caption">手掛かりに対して銘々勝手な印象を話す脳内スキルたち。</figcaption>
 </figure>
 
+<figure class="figure mx-auto">
+  <img class="img-fluid figure-img rounded" alt="手掛かりに対して銘々勝手な印象を話す脳内スキルたち。" src="./2023-01-01-disco-elysium-imgs/unity.jpg">
+  <figcaption class="figure-caption">〈団結心〉は広い意味で仲間の心理などを推し量ったり、相手に共感してもらったりするのに使われる。キツラギ警部補は最高のバディ。</figcaption>
+</figure>
+
 また、こうした捜査に必要なスキルに加えて、夢や気絶中でのみ主人公に語り掛けてくる人格的存在もある。たとえば、ゲームの始まりはこんな感じだ。
 
 ゲームを開始すると、プレイヤーが直面するのは、全き闇と物悲しい音楽。その闇のなかから、〈古代爬虫類脳〉の嗄れた声がこちらに語り掛ける。
