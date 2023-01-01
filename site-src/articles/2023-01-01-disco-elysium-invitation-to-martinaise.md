@@ -1,6 +1,6 @@
 ---
 title: Disco Elysium - 頽廃の都マルティネーズで世界の迷宮に迷い込もう
-date: 2023/01/01 11:51:18 JST
+date: 2023/01/01 17:35:00 JST
 author: 石井大海
 description: Disco Elysium が前評判に違わず素晴しかったのでみんなプレイしましょうという話です。
 tag: Disco Elysium,game,ゲーム,ディスコ・エリジウム
