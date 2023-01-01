@@ -1,4 +1,0 @@
-cradle:
-  stack:
-    - path: "app"
-      component: "konn-san-dot-com:exe:site"
