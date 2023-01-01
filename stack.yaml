@@ -1,6 +1,10 @@
 resolver: lts-19.3
 
-flags: {}
+extra-include-dirs: 
+- /usr/local/Cellar/icu4c/71.1/include
+extra-lib-dirs: 
+- /usr/local/Cellar/icu4c/71.1/lib
+
 packages:
   - "."
 allow-newer: true

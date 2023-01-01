@@ -41,6 +41,7 @@ dependencies:
 - mtl
 - network-uri
 - pandoc
+- rio
 - citeproc
 - pandoc-types
 - parsec
