@@ -1,3 +1,10 @@
+- date: 2023/03/12
+  conference:
+    name: Tsukuba Computer Mathematics Seminar 2023
+    venue: "Hybrid (Tsukuba and Online)"
+  title: "Reverse-Mode 自動微分を理解する"
+  links:
+    Slides: https://konn-san.com/math/reverse-mode-ad-slides.pdf
 - date: 2022/03/06
   conference:
     name: Tsukuba Computer Mathematics Seminar 2022
