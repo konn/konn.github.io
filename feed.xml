@@ -1342,6 +1342,8 @@ expanded</em>, 3rd ed. Springer-Verlag Berlin Heidelberg New York,
 <h2>講演一覧</h2>
 <p>他の詳細な経歴等は<a href="/profile.html">プロファイル</a>を参照。</p>
 <p><ul>
+<li>2023/03/12 
+Tsukuba Computer Mathematics Seminar 2023＠Hybrid (Tsukuba and Online)『<b>Reverse-Mode 自動微分を理解する</b>』（<a href="https://konn-san.com/math/reverse-mode-ad-slides.pdf">Slides</a>）</li>
 <li>2022/03/06 
 Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める</b>』（<a href="https://konn-san.com/math/ishii-fibonacci-slides.pdf">Slides</a>）</li>
 <li>2021/09/15 
@@ -1595,6 +1597,8 @@ Constructive Arguments Must Be Guided with Concrete Witness</a></em>”,
 <h3>Talks</h3>
 <p>勉強会や社内セミナーなどでの発表記録（直近十件；<a href="/talks.html">全一覧</a>）。</p>
 <p><ul>
+<li>2023/03/12 
+Tsukuba Computer Mathematics Seminar 2023＠Hybrid (Tsukuba and Online)『<b>Reverse-Mode 自動微分を理解する</b>』（<a href="https://konn-san.com/math/reverse-mode-ad-slides.pdf">Slides</a>）</li>
 <li>2022/03/06 
 Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める</b>』（<a href="https://konn-san.com/math/ishii-fibonacci-slides.pdf">Slides</a>）</li>
 <li>2021/09/15 
@@ -1613,8 +1617,6 @@ Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計
 筑波大学計算機数学グループ 春の合宿 2018＠Nami Kaze Tateyama（旧・筑波大学館山研修所）『<b><a href="/math/tateyama-18-satysfi.pdf">SATySFi を使ってみた</a></b>』</li>
 <li>2017/11/07 
 <a href="http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html">Workshop on Iterated Forcing Theory and Cardinal Invariants</a>＠RIMS『<b><a href="/math/rims2017.pdf">Reflection Principles and Saturated Filters on \(\mathcal{P}_{\omega_1} \lambda\)</a></b>』</li>
-<li>2017/10/27 
-数学基礎論若手の会2017＠大学セミナーハウス『<b>正集合の反映原理と飽和イデアルの構成</b>』（<a href="/math/wakate-2017.pdf">Slide PDF</a>）</li>
 </ul>
 <p>
 See <a href="/talks.html">Talks</a> for all talks.
