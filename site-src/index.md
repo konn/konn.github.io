@@ -47,6 +47,12 @@ External Links {#links}
 [mstdn.jp](https://mstdn.jp/@konn)
 :    Twitter凍結が相次いでてこわいのでつくりました。
 
+[Bluesky](https://bsky.app/profile/konn-san.com)
+:    イーロンが怖いのでつくりました。こんさんドットコムに紐付いているので本物で安心。
+
+[Nostr](https://snort.social/p/npub1thlw8jw45f4etn3ec746x6lt7aj7vvsdwhv9t52f28w4r5q9mxdquyspj7)
+:    イーロンがまだ本格的にこわくなる前につくって放置しています。
+
 [GitHub](https://github.com/konn)
 :    開発したもので公開しても差し支えのないものなどはこちらで管理中。
 

@@ -1,9 +1,9 @@
 resolver: lts-19.3
 
 extra-include-dirs: 
-- /usr/local/Cellar/icu4c/71.1/include
+- /usr/local/Cellar/icu4c/72.1/include
 extra-lib-dirs: 
-- /usr/local/Cellar/icu4c/71.1/lib
+- /usr/local/Cellar/icu4c/72.1/lib
 
 packages:
   - "."
@@ -21,8 +21,3 @@ extra-deps:
 # - git: git@github.com:haskell/text-icu.git
 #   commit: 1d2b39abe9f32dc3d19d252391c074ccd82de23f
 
-extra-include-dirs:
-  - /usr/local/opt/icu4c/include
-
-extra-lib-dirs:
-  - /usr/local/opt/icu4c/lib
