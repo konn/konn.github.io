@@ -137,7 +137,14 @@ VPN サーバの機能がついていた。 大学の VPN
 <p>こちらが今回買った Raspberry Pi Model B+ です：</p>
 <p><a href="http://www.amazon.co.jp/dp/B07FQ9678G?tag=konn06-22"><img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/raspi-vpn-dyndns/raspi-box.jpeg"></a></p>
   <div class="embed w-100 my-4 justify-content-center row py-0">
-    <iframe style="width:120px;height:240px;" scrolling="no" frameborder="0" marginwidth="0" marginheight="0" src="//ws-fe.assoc-amazon.com/widgets/cm?t=konn06-22&amp;o=9&amp;l=as4&amp;m=amazon&amp;f=ifr&amp;asins=B07FQ9678G"></iframe>
+    <div class="col-md-2 col-2 align-self-center embed-item">
+<div style="border: 1px solid" class="mx-auto">
+  <a href="https://www.amazon.co.jp/gp/product/B07FQ9678G?tag=konn06-22">
+    <img alt="asin:B07FQ9678G" src="https://images-fe.ssl-images-amazon.com/images/P/B07FQ9678G.09.jpg" width="100%">
+  </a>
+  <a href="https://www.amazon.co.jp/gp/product/B07FQ9678G?tag=konn06-22">Amazonへ飛ぶ</a>
+</div>
+</div>
 
   </div>
 
@@ -190,9 +197,23 @@ BIND を動かす。</li>
 Bluetooth で繋いでいる Magic Keyboard と Magic Trackpad 2 を USB
 ケーブルで繋いだら普通に使えたので良かった。</p>
   <div class="embed w-100 my-4 justify-content-center row py-0">
-    <iframe style="width:120px;height:240px;" scrolling="no" frameborder="0" marginwidth="0" marginheight="0" src="//ws-fe.assoc-amazon.com/widgets/cm?t=konn06-22&amp;o=9&amp;l=as4&amp;m=amazon&amp;f=ifr&amp;asins=B016ZF8RDA"></iframe>
+    <div class="col-md-2 col-2 align-self-center embed-item">
+<div style="border: 1px solid" class="mx-auto">
+  <a href="https://www.amazon.co.jp/gp/product/B016ZF8RDA?tag=konn06-22">
+    <img alt="asin:B016ZF8RDA" src="https://images-fe.ssl-images-amazon.com/images/P/B016ZF8RDA.09.jpg" width="100%">
+  </a>
+  <a href="https://www.amazon.co.jp/gp/product/B016ZF8RDA?tag=konn06-22">Amazonへ飛ぶ</a>
+</div>
+</div>
 
-    <iframe style="width:120px;height:240px;" scrolling="no" frameborder="0" marginwidth="0" marginheight="0" src="//ws-fe.assoc-amazon.com/widgets/cm?t=konn06-22&amp;o=9&amp;l=as4&amp;m=amazon&amp;f=ifr&amp;asins=B016ZE7K8O"></iframe>
+    <div class="col-md-2 col-2 align-self-center embed-item">
+<div style="border: 1px solid" class="mx-auto">
+  <a href="https://www.amazon.co.jp/gp/product/B016ZE7K8O?tag=konn06-22">
+    <img alt="asin:B016ZE7K8O" src="https://images-fe.ssl-images-amazon.com/images/P/B016ZE7K8O.09.jpg" width="100%">
+  </a>
+  <a href="https://www.amazon.co.jp/gp/product/B016ZE7K8O?tag=konn06-22">Amazonへ飛ぶ</a>
+</div>
+</div>
 
   </div>
 
@@ -268,17 +289,17 @@ Bluetooth で繋いでいる Magic Keyboard と Magic Trackpad 2 を USB
 どうせ何も設定していないし、どうもゾーンファイルを弄るときには止めておいたほうがいいらしい。</p>
 <p>BINDの設定ファイルは <code>/etc/bind/named.conf</code>
 だが、デフォルトでは以下のような内容になっている：</p>
-<pre class="/etc/bind/named.conf"><code>// This is the primary configuration file for the BIND DNS server named.
-//
-// Please read /usr/share/doc/bind9/README.Debian.gz for information on the
-// structure of BIND configuration files in Debian, *BEFORE* you customize
-// this configuration file.
-//
-// If you are just adding zones, please do that in /etc/bind/named.conf.local
-
-include &quot;/etc/bind/named.conf.options&quot;;
-include &quot;/etc/bind/named.conf.local&quot;;
-include &quot;/etc/bind/named.conf.default-zones&quot;;</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode /etc/bind/named.conf"><code class="sourceCode toml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="dt">This</span> <span class="dt">is</span> <span class="dt">the</span> <span class="dt">primary</span> <span class="dt">configuration</span> <span class="dt">file</span> <span class="dt">for</span> <span class="dt">the</span> <span class="dt">BIND</span> <span class="dt">DNS</span> <span class="dt">server</span> <span class="dt">named.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="er">//</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="dt">Please</span> <span class="dt">read</span> <span class="er">/</span><span class="dt">usr</span><span class="er">/</span><span class="dt">share</span><span class="er">/</span><span class="dt">doc</span><span class="er">/</span><span class="dt">bind9</span><span class="er">/</span><span class="dt">README.Debian.gz</span> <span class="dt">for</span> <span class="dt">information</span> <span class="dt">on</span> <span class="dt">the</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="dt">structure</span> <span class="dt">of</span> <span class="dt">BIND</span> <span class="dt">configuration</span> <span class="dt">files</span> <span class="dt">in</span> <span class="dt">Debian</span><span class="er">,</span> <span class="er">*</span><span class="dt">BEFORE</span><span class="er">*</span> <span class="dt">you</span> <span class="dt">customize</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="dt">this</span> <span class="dt">configuration</span> <span class="dt">file.</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="er">//</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="dt">If</span> <span class="dt">you</span> <span class="dt">are</span> <span class="dt">just</span> <span class="dt">adding</span> <span class="dt">zones</span><span class="er">,</span> <span class="dt">please</span> <span class="dt">do</span> <span class="dt">that</span> <span class="dt">in</span> <span class="er">/</span><span class="dt">etc</span><span class="er">/</span><span class="dt">bind</span><span class="er">/</span><span class="dt">named.conf.local</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="dt">include</span> <span class="dt">&quot;/etc/bind/named.conf.options&quot;</span><span class="er">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="dt">include</span> <span class="dt">&quot;/etc/bind/named.conf.local&quot;</span><span class="er">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="dt">include</span> <span class="dt">&quot;/etc/bind/named.conf.default-zones&quot;</span><span class="er">;</span></span></code></pre></div>
 <p>早い話が、BINDのオプションについては
 <code>/etc/bind/named.conf.options</code> に、自前のゾーン設定については
 <code>named.conf.local</code> に記述するということである。</p>
@@ -306,13 +327,13 @@ ID 扱いになるらしい。 この二つのファイルは、<code>nsupdate</
 で呼び出す時に必要になるので捨ててはいけないし、バレたら更新出来るようになってしまうので、絶対に秘匿する必要がある。</p>
 <p>次に、ゾーンの設定をする。次の内容を
 <code>/etc/bind/named.conf.local</code> に追記する：</p>
-<pre class="conf"><code>zone &quot;home.example.com&quot; {
-     type master;
-     file &quot;home.example.com.zone&quot;;
-     update-policy {
-       grant vpn.home.example.com. name vpn.home.example.com. A;
-     };
-};</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode conf"><code class="sourceCode toml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">zone</span> <span class="dt">&quot;home.example.com&quot;</span> <span class="er">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>     <span class="dt">type</span> <span class="dt">master</span><span class="er">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>     <span class="dt">file</span> <span class="dt">&quot;home.example.com.zone&quot;</span><span class="er">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>     <span class="dt">update-policy</span> <span class="er">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>       <span class="dt">grant</span> <span class="dt">vpn.home.example.com.</span> <span class="dt">name</span> <span class="dt">vpn.home.example.com.</span> <span class="dt">A</span><span class="er">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>     <span class="er">};</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="er">};</span></span></code></pre></div>
 <p>これで、「ゾーンの具体的な設定は
 <code>/var/cache/bind/home.example.com.zone</code>を参照」「<code>vpn.home.example.com</code>
 を動的に書き換えられるのは、上の <code>.zone</code>
@@ -470,29 +491,29 @@ dns       A       999.999.999.999   ; さくらVPSの固定IP</code></pre>
 は人間が触るものではないので、ここでは systemd を使うことにする。
 以下のファイルを作成する：</p>
 <p><code>/etc/systemd/system/update-ip.service</code>:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[</span><span class="dt">Unit</span><span class="kw">]</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Description</span><span class="op">=</span><span class="er">Updates</span> <span class="er">global</span> <span class="er">IP</span> <span class="er">address</span></span>
+<div class="sourceCode" id="cb17"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[Unit]</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Description</span><span class="op">=</span><span class="dt">Updates</span> <span class="dt">global</span> <span class="dt">IP</span> <span class="dt">address</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[</span><span class="dt">Service</span><span class="kw">]</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="dt">Type</span><span class="op">=</span><span class="er">oneshot</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="dt">ExecStart</span><span class="op">=</span><span class="er">/home/admin/bin/update-ip.sh</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="dt">WorkingDirectory</span><span class="op">=</span><span class="er">/home/admin</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span><span class="op">=</span><span class="er">admin</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="dt">Restart</span><span class="op">=</span><span class="er">no</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[Service]</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="dt">Type</span><span class="op">=</span><span class="dt">oneshot</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="dt">ExecStart</span><span class="op">=</span><span class="er">/</span><span class="dt">home</span><span class="er">/</span><span class="dt">admin</span><span class="er">/</span><span class="dt">bin</span><span class="er">/</span><span class="dt">update-ip.sh</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="dt">WorkingDirectory</span><span class="op">=</span><span class="er">/</span><span class="dt">home</span><span class="er">/</span><span class="dt">admin</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span><span class="op">=</span><span class="dt">admin</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="dt">Restart</span><span class="op">=</span><span class="dt">no</span></span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="kw">[</span><span class="dt">Install</span><span class="kw">]</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="dt">WantedBy</span><span class="op">=</span><span class="er">multi-user.target</span></span></code></pre></div>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="kw">[Install]</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="dt">WantedBy</span><span class="op">=</span><span class="dt">multi-user.target</span></span></code></pre></div>
 <p><code>/etc/systemd/system/update-ip.timer</code>:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[</span><span class="dt">Unit</span><span class="kw">]</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Description</span><span class="op">=</span><span class="er">Periodically</span> <span class="er">renews</span> <span class="er">global</span> <span class="er">IP</span> <span class="er">address</span> <span class="er">info</span></span>
+<div class="sourceCode" id="cb18"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[Unit]</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Description</span><span class="op">=</span><span class="dt">Periodically</span> <span class="dt">renews</span> <span class="dt">global</span> <span class="dt">IP</span> <span class="dt">address</span> <span class="dt">info</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[</span><span class="dt">Timer</span><span class="kw">]</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="dt">OnBootSec</span><span class="op">=</span><span class="dv">1</span><span class="er">min</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="dt">OnUnitActiveSec</span><span class="op">=</span><span class="dv">15</span><span class="er">min</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="dt">Unit</span><span class="op">=</span><span class="er">update-ip.service</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[Timer]</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="dt">OnBootSec</span><span class="op">=</span><span class="dv">1</span><span class="dt">min</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="dt">OnUnitActiveSec</span><span class="op">=</span><span class="dv">15</span><span class="dt">min</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="dt">Unit</span><span class="op">=</span><span class="dt">update-ip.service</span></span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">[</span><span class="dt">Install</span><span class="kw">]</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="dt">WantedBy</span><span class="op">=</span><span class="er">timers.target</span></span></code></pre></div>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">[Install]</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="dt">WantedBy</span><span class="op">=</span><span class="dt">timers.target</span></span></code></pre></div>
 <p>ここでは、起動1分後から、以後15分刻みで定期実行されるようにしてある。
 あとはこれらを有効化すれば良い。</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo systemctl enable update-ip.service</span>
@@ -516,10 +537,10 @@ dns       A       999.999.999.999   ; さくらVPSの固定IP</code></pre>
 特有のこととかがなかったので、ゆくゆくはアイオーティーでディープラーニング（）などをやっていきたい。
 ここ改善したら？みたいのがあったら教えてください。ではでは。</p>
 </section>
-<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1" role="doc-endnote"><p>安全を期するなら、コンテナの中でやった方がいいかも<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>安全を期するなら、コンテナの中でやった方がいいかも<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
           <hr>

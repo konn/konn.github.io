@@ -194,7 +194,7 @@
 他にも，3の倍数かつ0で終わる（=2の倍数）ときに受理する，と云う風に読んでもいいです．</p>
 <section id="quickcheck-を使ってみる" class="level2">
 <h3>QuickCheck を使ってみる</h3>
-<p>理屈の上では多分二番目のも素朴な<code>aDivBy6&#39;</code>と同様に動いてくれる筈です．でも，ちょっと不安だなあ……．
+<p>理屈の上では多分二番目のも素朴な<code>aDivBy6’</code>と同様に動いてくれる筈です．でも，ちょっと不安だなあ……．
 と云うわけで，早速 QuickCheck で確かめてみましょう！</p>
 <p>6で割れれば<code>aDivBy6</code>でその二進数表現が受理される，と云う条件を書きます．</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">showBin ::</span> <span class="dt">Integral</span> r <span class="ot">=&gt;</span> r <span class="ot">-&gt;</span> <span class="dt">String</span></span>

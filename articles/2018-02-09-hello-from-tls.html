@@ -231,19 +231,19 @@ Firefoxで開いたら「証明書不正だ」と怒られた。なんだと！L
 <p>では、そもそもブクマボタンを<strong>古いHTTPのリンクのままにする</strong>というのはどうか？
 <code>http://~</code> から <code>https://~</code>
 に自動転送されるのだから、これは問題ない筈……ということでタグを弄って以下のようにしてみる：</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">&quot;//b.hatena.ne.jp/entry/http://konn-san.com/index.html&quot;</span> <span class="er">...</span><span class="kw">&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;img</span> <span class="er">src</span><span class="ot">=</span><span class="st">&quot;//b.st-hatena.com/images/entry-button/button-only.gif&quot;</span> <span class="er">...</span><span class="kw">&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/a&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ot">        src=</span><span class="st">&quot;//b.st-hatena.com/js/bookmark_button.js&quot;</span> <span class="er">...</span><span class="kw">&gt;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/script&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;//b.hatena.ne.jp/entry/http://konn-san.com/index.html&quot;</span><span class="ot"> </span><span class="er">...</span><span class="dt">&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;//b.st-hatena.com/images/entry-button/button-only.gif&quot;</span><span class="ot"> </span><span class="er">...</span><span class="dt">&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ot">        src</span><span class="op">=</span><span class="st">&quot;//b.st-hatena.com/js/bookmark_button.js&quot;</span><span class="ot"> </span><span class="er">...</span><span class="dt">&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span></code></pre></div>
 <p>しかし、こうしても<strong>勝手に <code>https://</code>
 に直されたページに飛ばされる</strong>。
 囲い込んでやがんなぁ……というので上の <code>//</code> を
 <code>http://</code> に戻すのはよくなくて、上で<strong>折角獲得した<span class="emoji" data-emoji="lock">🔒</span>アイコンが消える</strong>。
 セキュアにしようと思ってやっているのだから、このバッヂを手放すのはまあ本末転倒でじゃあHTTPのまんまでいいだろうとなる。</p>
 <section id="失敗する試みiframe-の書き換え" class="level3">
-<h4>失敗する試み：<code class="sourceCode html"><span class="kw">&lt;iframe&gt;</span></code>
+<h4>失敗する試み：<code class="sourceCode html"><span class="dt">&lt;</span><span class="kw">iframe</span><span class="dt">&gt;</span></code>
 の書き換え</h4>
 <p>色々と調べていると、はてなブックマークのAPIが公開されている。</p>
     <div class="embed w-100 my-4 justify-content-center row py-0">
@@ -254,9 +254,9 @@ Firefoxで開いたら「証明書不正だ」と怒られた。なんだと！L
 
 <p>これを使って、はてブが自動で生成するボタンの内容を書き換えられないか？というのが自然に現れる。</p>
 <p>しかし、これは上手くいかない。なぜなら、<strong>はてブボタンは外部URLへの
-<code class="sourceCode html"><span class="kw">&lt;iframe&gt;</span></code>
+<code class="sourceCode html"><span class="dt">&lt;</span><span class="kw">iframe</span><span class="dt">&gt;</span></code>
 要素として実現されている</strong>からだ。
-CSRFとかを防ぐためにも、JavaScriptを使って外部URLへの <code class="sourceCode html"><span class="kw">&lt;iframe&gt;</span></code>
+CSRFとかを防ぐためにも、JavaScriptを使って外部URLへの <code class="sourceCode html"><span class="dt">&lt;</span><span class="kw">iframe</span><span class="dt">&gt;</span></code>
 の内容を書き換えることはできないので、直接はてブボタンを弄る作戦は上手くいかないのだ。</p>
 </section>
 <section id="今回取った作戦合計はてブ数欄をつくる" class="level3">
@@ -318,17 +318,17 @@ CSRFとかを防ぐためにも、JavaScriptを使って外部URLへの <code cl
 <p>まあとにかくこんな感じで、弊サイトはHTTPSに乗り換えました。
 ちゃんと乗り換えられたということがわかりたいので、みなさんも弊サイトにはてなスターとはてなブクマをやっていってください。</p>
 </section>
-<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1" role="doc-endnote"><p>はてなスターは最近設置したばかりなのでまだゼロ個しか貰っていなかったから無傷。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p><strong>[以下SEO屋の悪口]</strong><br>
+<li id="fn1"><p>はてなスターは最近設置したばかりなのでまだゼロ個しか貰っていなかったから無傷。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><strong>[以下SEO屋の悪口]</strong><br>
 ところで、リンクしたページ以外にもHTTPS移行後はてブ消滅問題を扱っているページは幾つか見付かったんだけど、SEO対策を謳っているサイトに載っているPHPによる対応策のコードが全然整形されておらず読み辛いのには大変笑った。PVを気にする余り何か大切なものを置いてきてしまったのだろうか。以下でjQueryによる対応策を述べているが、SEO屋のコードは読み辛くてそもそも読んでいないので、全く参考にしていない。悪しからず。<br>
 <strong>[/SEO屋の悪口終わり]</strong><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>あとこれは本筋に関係ないんだけど、勘でJavaScriptを書いているので、特に何も考えず最初は
+<li id="fn3"><p>あとこれは本筋に関係ないんだけど、勘でJavaScriptを書いているので、特に何も考えず最初は
 jQuery の Slim 版を読み込んでいた。こいつらは <code class="sourceCode javascript">jQuery<span class="op">.</span><span class="at">ajax</span></code>
 とかが省かれているが故の「スリム」版なので、最初は上のコードが通らずにウーン何故だ……と無駄に悩むことになった。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4" role="doc-endnote"><p>スマホでみると縦に分割されてちょっと見苦しいのでなんとかしたいんだけどね……。<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>スマホでみると縦に分割されてちょっと見苦しいのでなんとかしたいんだけどね……。<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
           <hr>

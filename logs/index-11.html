@@ -140,6 +140,7 @@ Hatena.Star.SiteConfig = {
         </span>
       </li>
       <li class="page-item"><a class="page-link" href="/logs/index-12.html">12</a></li>
+      <li class="page-item"><a class="page-link" href="/logs/index-13.html">13</a></li>
     <li class="page-item">
       <a class="page-link" href="/logs/index-12.html" aria-label="Next">
         <span aria-hidden="true">»</span>
@@ -149,7 +150,95 @@ Hatena.Star.SiteConfig = {
   </ul>
 </nav>
 <p></p>
-<article class="log" id="20180423">
+<article class="log" id="20180424">
+<header>
+<h3>
+<a href="/logs/20180424.html">あめにっき20180424</a>
+</h3>
+<div id="social-20180424">
+<i class="fa fa-bookmark" aria-hidden="true"></i>
+<ul id="socials-20180424">
+<li id="facebook-20180424">
+<div class="fb-like" data-href="https://konn-san.com/logs/20180424.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true">
+
+</div>
+</li><li id="hatena-bookmarks-20180424">
+<a href="http://b.hatena.ne.jp/entry/s/konn-san.com/logs/20180424.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a>
+<script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+</li><li>
+<script src="//apis.google.com/js/plusone.js"></script>
+<div class="g-plusone" data-size="standard" data-count="true">
+
+</div>
+</li><li class="hatena-star">
+</li></ul>
+</div>
+<div>
+<i class="fa fa-calendar" aria-hidden="true"></i> posted on 2018/04/24 22:04:56 JST
+</div>
+</header>
+<div class="log-body">
+<p></p><p>今日は義務ではないセミナーの初回が午前からあってちゃんと起きようと思っていたのだが気付いたら14時だった。悲しい。</p>
+<p>雨だったので院生室に行く気も起きず、今日は一日オフということにして、家でひたすらこんさんドットコムの改修作業をしていた。</p>
+<p>このサイトは永らく <a href="https://jaspervdj.be/hakyll">Hakyll</a>
+という静的サイトジェネレータを使って生成されていたのだが、一つのファイルから動的に複数のファイルを生成するとかそういう所の小回りが効かず、困ったなと思っていた。
+思っていたので、ちょっと前からHaskellの汎用ビルドシステム <a href="https://shakebuild.com">Shake</a>
+を使って少しずつ書き直す作業をしていて、今日はそれを完成させるのに費した。
+これによって、以下のようなアドバンテージが得られた：</p>
+<ul>
+<li>同時に複数のページを並列でビルドで出来るようになった</li>
+<li>キャッシュの粒度を細かくしたので、一つのファイルのキャッシュが壊れてもその全体をリビルドされることがなくなった
+<ul>
+<li>Hakyllはキャッシュがよくわからない形で管理されていて、どれか一個壊れてもどのキャッッシュに対応しているのかわからず、全部消してゼロから再ビルドする必要があるという悲しい仕様になっていた。</li>
+</ul></li>
+<li>複数ページ出力の対応。たとえば、このにっきのページが3記事ごとにページ化されたのに気付いただろう。
+<ul>
+<li>Hakyllでも無理矢理書き出し先に何も言わずにファイルを自動生成すれば出来たが、あんまり綺麗にこういうことが出来なかった。</li>
+<li>Hakyllはドキュメントが不親切で、勝手に書き出したファイルの依存関係を管理する方法が全くわからなかったので、馬鹿みたいにリコンパイルが走ったり逆に一巡するまでリコンパイルが起きなかったりした。</li>
+</ul></li>
+</ul>
+<p>というわけで総じて管理しやすくなったのではないか。よかったよかった。
+今のところ欠けている機能として：</p>
+<ul>
+<li>ページ単位での clean
+<ul>
+<li>これは Hakyll にもなかったし追い追い</li>
+</ul></li>
+<li>削除したファイルの掃除
+<ul>
+<li>Hakyllにもなかったが、まあ履歴を記録すれば何とかなるはずだ</li>
+</ul></li>
+</ul>
+<p>あと折角なので各ページごとにはてなスターをつけた。
+星を貰うと喜ぶので星をつけられるひとはください。うれしいなー。</p>
+<section id="めし" class="level2">
+<h5>めし</h5>
+<p>また馬鹿の一つ覚えのようにペペロンチーノを。</p>
+<div class="tumblr-post" data-href="https://embed.tumblr.com/embed/post/NvJbxbG4ja_bU6ZaCP5BrA/173257129589" data-did="62dcec774c6c321e3322936e49d018aac16eb9c3">
+<a href="http://gohan.konn-san.com/post/173257129589/ペペロンチーノですぞ">http://gohan.konn-san.com/post/173257129589/ペペロンチーノですぞ</a>
+</div>
+<script async src="https://assets.tumblr.com/post.js"></script>
+<p>今日はふと思い立ってローズマリーをザーッと入れ、いつもよりオリーヴオイルを沢山いれてみた結果味に変化が出て美味しかった。
+段々とペペロンチーノから遠ざかっている気がするが、これが私のペペロンチーノです。</p>
+</section>
+<section id="明日" class="level2">
+<h5>明日</h5>
+<ul>
+<li>お仕事その2に必要なのではやおき</li>
+</ul>
+</section>
+<section id="うたったうた" class="level2">
+<h5>うたったうた</h5>
+<p>料理しながら Monty Python “I Like Chinese” をうたった。</p>
+  <div class="embed w-100 my-4 justify-content-center row py-0">
+    <div class="embed-responsive embed-responsive-16by9 col-md-10 col-12 align-self-center"> <iframe width="560" height="315" src="https://www.youtube.com/embed/7DqvweTYTI0" class="embed-responsive" allow="autoplay; encrypted-media" allowfullscreen></iframe> </div>
+  </div>
+
+<p>40年前にモンティ・パイソンが唄ったときには間違いなく馬鹿にしていたのだが、40年を経て歌詞の意味合いが180°変化してしまった一曲である。</p>
+</section><p></p>
+</div>
+</article>
+<p></p><article class="log" id="20180423">
 <header>
 <h3>
 <a href="/logs/20180423.html">いえにっき20180423</a>
@@ -214,10 +303,10 @@ Proが置いてあるのだが、置いたのは後なので写真に移らな�
 <li>The Beatles “I Me Mine”</li>
 </ul>
 </section>
-<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="20180423-fn1" role="doc-endnote"><p>って書くと比喩とシャレの解らない人が不正利用だと騒ぎ立てそうだ。ちゃんと利用許可を取ってあります。<a href="#20180423-fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="20180423-fn1"><p>って書くと比喩とシャレの解らない人が不正利用だと騒ぎ立てそうだ。ちゃんと利用許可を取ってあります。<a href="#20180423-fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section><p></p>
 </div>
@@ -385,94 +474,11 @@ Keyboardはまだ届いていないので、スタンドのまだないが、も
 <li>Queenを聴いてた。</li>
 </ul>
 </section>
-<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="20180420-fn1" role="doc-endnote"><p>ところで、頭の悪い文句つけたがりの人が文句を付けてくる前に書いておきますが、学振特別研究員は研究生活の足しになり本業に差し支えがないのであればTAその他の仕事に就くことは特に時間制限なく認められています。で、以下にも書いてあるように今週までにこの二週間で二本論文を投稿したということは全く差し支えが出ていないということです。<a href="#20180420-fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="20180420-fn2" role="doc-endnote"><p>とはいえ、本作も<span style="color: white;">過去の事件</span>では<span style="color: white;">ホープが犯人ではある</span>。<a href="#20180420-fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section><p></p>
-</div>
-</article>
-<p></p><article class="log" id="20180419">
-<header>
-<h3>
-<a href="/logs/20180419.html">ふつかぶんにっき20180418-19</a>
-</h3>
-<div id="social-20180419">
-<i class="fa fa-bookmark" aria-hidden="true"></i>
-<ul id="socials-20180419">
-<li id="facebook-20180419">
-<div class="fb-like" data-href="https://konn-san.com/logs/20180419.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true">
-
-</div>
-</li><li id="hatena-bookmarks-20180419">
-<a href="http://b.hatena.ne.jp/entry/s/konn-san.com/logs/20180419.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="basic-counter" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a>
-<script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
-</li><li>
-<script src="//apis.google.com/js/plusone.js"></script>
-<div class="g-plusone" data-size="standard" data-count="true">
-
-</div>
-</li><li class="hatena-star">
-</li></ul>
-</div>
-<div>
-<i class="fa fa-calendar" aria-hidden="true"></i> posted on 2018/04/19 23:17:12 JST
-</div>
-</header>
-<div class="log-body">
-<p></p><p>突発的飲み会を遅くまでやっていたため昨日はにっきが書けなかったのでまずはそこから。</p>
-<p>昨日は起きたら雨だったので、雨だなあと思った。
-しかし大学の仕事が一つあったので結構早起きして、といってもバスが間に合うギリギリの昼前くらいに起き出してきて、バスに乗り、弁当を買ってコーヒーを淹れ院生室で服んだ。
-お仕事を一つ片付けた後はひたすら研究その2を進める。どうも悩んでいた部分が処理系のバグらしいのだが、minimal
-case を見付けたから報告したいという思いもあり、むずかしい。</p>
-<p>夕方には病院と買い物へ。塗り薬の補充。
-家に戻ってミートソーススパゲッでも作るつもり、そのための買い物でもあったのだが、気付いたらサイゼリアでパスタ喰っている自分を発見してしまう。
-家にあるのはスパゲッティーニであってスパゲッティではないのでなんとでも理屈はつくという話もあるが、まあ二日連続はちょっと……という事でミートソーススパゲッはやめる。
-買い物。バナナもなければ食べたい冷凍ピザもなくエンエン泣く。
-主目的の牛乳だけ3本買った。</p>
-<p>スパゲッを食べたら院生室戻るつもりだったので、マシンやタブレット等の一式は全て置いてきていたが、この時点で結構眠いのでめんどうくちゃい〜と思いつつ家に戻って買い物を置いていく。
-行くか……と思っていたら水をズボン全体に零してしまい泣きながら新しいズボンと下着に履き替える。
-もうこの時点で院生室行くのが相当億劫になっていたが、マシンを置いてきてるのはアレなのでとりに戻り、ついでに紅茶を飲みつつ数時間作業して帰宅。
-シャワーを浴びて洗濯物を干した所でロジック系の学生で呑むという話が突発的に持ち上がったので、洗濯物を取り込んで出掛ける。これは嘘で、干したものを一瞬で取り込んだりはしない。取り込んだのは今日の夕方である。
-一時間だけね〜といっていたが気付いたら2時半になっており、そのまま数人でラーメンを喰って帰って寝た。
-ラーメンを喰いながら悪い人間になっていて、2001年宇宙の旅とスターウォーズを観ろと迫る害悪になった。</p>
-<p>で、今朝起きたのが14時くらい。
-指導教員から論文の添削結果を頂いたので反映したり、新しい作業環境のセットアップなどをしている。
-昨日の飲み会によって財布が空になっていたので、多少引き出して食材を贖い、今日はタコライスを自分で作って喰った。レシピ：</p>
-<ol type="1">
-<li>ご飯を炊く</li>
-<li>玉ねぎ、にんじん、にんにくをみじん切りにする。</li>
-<li>したらフライパンにオリーブオイルを敷き、野菜を炒める。</li>
-<li>飽きたら肉を入れ、色が着くまで炒める。</li>
-<li>色が着いたら色が着いたなあとしみじみ思う。</li>
-<li>しみじみ思いながら山を越えると美しい機織りの母娘がいる。</li>
-<li>美しい機織りの母娘からチリペッパーをもらう</li>
-<li>家に帰る</li>
-<li>家に帰ると千年が経っている</li>
-<li>千年が経っているが気にせずに肉にチリペッパーと胡椒、塩を好きなだけ振り掛ける。</li>
-<li>あと白ワインとレモン汁<a href="#20180419-fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>も入れる。</li>
-<li>水分が飛ぶまで炒める</li>
-<li>皿に飯を敷き、肉を盛って、上からレタスで覆う。</li>
-<li>フライパンには油が乗っているので、たまごを割り、目玉焼く。</li>
-<li>目玉焼かれた目玉焼きをレタスの上に載せ、思うさまミックスチーズを振り掛ける。</li>
-<li>プチトマトを載せる。プチトマトは買い忘れたので、今回は代わりに無を載せました。</li>
-</ol>
-<p>牛豚合挽きがなかったので豚挽き肉だったが美味しかった。
-あと作る直前になってレタスのないことに気付き、都合二回買い物に行った。</p>
-<p>その後論文の手直しを多少し現在に至る。</p>
-<section id="うたったうた" class="level2">
-<h5>うたったうた</h5>
-<ul>
-<li>今日は特になし</li>
-<li>昨日はノリノリでQueenなどを唄っていたもよう。あと電子レンジで3分測る必要があったので当然能動的三分間を聴く。</li>
-</ul>
-</section>
-<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
-<hr>
-<ol>
-<li id="20180419-fn1" role="doc-endnote"><p>うちではポッカレモンにしてます<a href="#20180419-fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="20180420-fn1"><p>ところで、頭の悪い文句つけたがりの人が文句を付けてくる前に書いておきますが、学振特別研究員は研究生活の足しになり本業に差し支えがないのであればTAその他の仕事に就くことは特に時間制限なく認められています。で、以下にも書いてあるように今週までにこの二週間で二本論文を投稿したということは全く差し支えが出ていないということです。<a href="#20180420-fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="20180420-fn2"><p>とはいえ、本作も<span style="color: white;">過去の事件</span>では<span style="color: white;">ホープが犯人ではある</span>。<a href="#20180420-fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section><p></p>
 </div>
@@ -504,6 +510,7 @@ case を見付けたから報告したいという思いもあり、むずかし
         </span>
       </li>
       <li class="page-item"><a class="page-link" href="/logs/index-12.html">12</a></li>
+      <li class="page-item"><a class="page-link" href="/logs/index-13.html">13</a></li>
     <li class="page-item">
       <a class="page-link" href="/logs/index-12.html" aria-label="Next">
         <span aria-hidden="true">»</span>
