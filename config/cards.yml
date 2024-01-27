@@ -1,6 +1,20 @@
 asin:
   template: |
-    <iframe style="width:120px;height:240px;" scrolling="no" frameborder="0" marginwidth="0" marginheight="0" src="//ws-fe.assoc-amazon.com/widgets/cm?t=konn06-22&o=9&l=as4&m=amazon&f=ifr&asins={{urlBody}}"></iframe>
+    <div  class="col-md-2 col-2 align-self-center embed-item">
+    <div style="border: 1px solid" class="mx-auto">
+      <a href="https://www.amazon.co.jp/gp/product/{{urlBody}}?tag=konn06-22">
+        <img alt="asin:{{urlBody}}" src="https://images-fe.ssl-images-amazon.com/images/P/{{urlBody}}.09.jpg" width="100%">
+      </a>
+      <caption class="mx-auto"><a href="https://www.amazon.co.jp/gp/product/{{urlBody}}?tag=konn06-22">Amazonへ飛ぶ</a></caption>
+    </div>
+    </div>
+  gather: true
+
+youtube:
+  template:
+    <div class="embed-responsive embed-responsive-16by9 col-md-10 col-12 align-self-center">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/{{urlBody}}" class="embed-responsive" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
   gather: true
 
 "*": |
