@@ -10,7 +10,7 @@
     {
       "label": "preview",
       "type": "shell",
-      "command": "open -a http://localhost:8000; cabal run -- site watch",
+      "command": "open -a Safari http://localhost:8000; cabal run -- site watch",
       "problemMatcher": []
     },
     {
