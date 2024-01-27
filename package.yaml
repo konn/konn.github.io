@@ -8,7 +8,7 @@ license: BSD3
 homepage: https://konn-san.com
 
 other-extensions:
-- DeriveDataTypeable
+- GHC2021
 - TemplateHaskell
 
 ghc-options:
@@ -72,3 +72,8 @@ executables:
   site:
     main: site.hs
     source-dirs: app
+    ghc-options:
+    - '-O2'
+    - '-threaded'
+    - '-rtsopts'
+    - '"-with-rtsopts=-N4 --nonmoving-gc"'

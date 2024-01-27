@@ -64,7 +64,7 @@ import qualified Data.Store as S
 import Data.String
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as ET
-import qualified Data.Text.ICU.Normalize as UNF
+import qualified Data.Text.ICU.Normalize2 as UNF
 import qualified Data.Text.IO as T
 import qualified Data.Text.Lazy as LT
 import Data.Text.Lens (unpacked)
@@ -179,7 +179,7 @@ main =
     "watch" : _ -> watch
     args -> runShake (guard (not $ null args) >> Just args)
 
-withArgs :: MonadUnliftIO m => [String] -> m () -> m ()
+withArgs :: (MonadUnliftIO m) => [String] -> m () -> m ()
 withArgs envs act = withRunInIO $ \unlift ->
   withArgs envs $ unlift act
 
@@ -265,7 +265,7 @@ copies =
   , "//*.webm"
   ]
 
-runShake :: MonadIO m => Maybe [String] -> m ()
+runShake :: (MonadIO m) => Maybe [String] -> m ()
 runShake mtargs = liftIO $ shake myShakeOpts $ do
   want $ fromMaybe ["site"] mtargs
 
@@ -445,13 +445,13 @@ runShake mtargs = liftIO $ shake myShakeOpts $ do
       srcPath <- getSourcePath siteConf out
       need [srcPath]
       if
-          | ".tex" `L.isSuffixOf` srcPath -> texToHtml out
-          | ".md" `L.isSuffixOf` srcPath -> mdOrHtmlToHtml out
-          | ".html" `L.isSuffixOf` srcPath ->
-              if (destD </> "articles") `L.isPrefixOf` out
-                then mdOrHtmlToHtml out
-                else copyFile' srcPath out
-          | otherwise -> error $ "Unknown extension: " <> takeFileName srcPath
+        | ".tex" `L.isSuffixOf` srcPath -> texToHtml out
+        | ".md" `L.isSuffixOf` srcPath -> mdOrHtmlToHtml out
+        | ".html" `L.isSuffixOf` srcPath ->
+            if (destD </> "articles") `L.isPrefixOf` out
+              then mdOrHtmlToHtml out
+              else copyFile' srcPath out
+        | otherwise -> error $ "Unknown extension: " <> takeFileName srcPath
     (cacheD </> "talks.bin") %> \out -> do
       talks <- readFromYamlFile' @_ @[Talk] "site-src/talks.yaml"
       writeBinaryFile out talks
@@ -648,14 +648,14 @@ normaliseFeed = concatMapTags $ \case
   TagOpen op atts -> [TagOpen op $ filter (not . T.isPrefixOf "data-" . fst) atts]
   t -> [t]
 
-itemDateFeedStr :: MonadSake m => Item a -> m T.Text
+itemDateFeedStr :: (MonadSake m) => Item a -> m T.Text
 itemDateFeedStr = fmap (insertColon . T.pack . formatTime timeLocaleWithJST "%Y-%m-%dT%H:%M:%S%z") . itemDate
   where
     insertColon txt =
       let (bh, ah) = T.splitAt (T.length txt - 2) txt
        in bh <> ":" <> ah
 
-itemDateStr :: MonadSake m => Item a -> m T.Text
+itemDateStr :: (MonadSake m) => Item a -> m T.Text
 itemDateStr = fmap (T.pack . formatTime timeLocaleWithJST "%Y/%m/%d %X %Z") . itemDate
 
 feedConf :: FeedConf
@@ -848,7 +848,7 @@ useKaTeX :: Item a -> Bool
 useKaTeX item =
   fromMaybe True $ lookupMetadata "katex" item
 
-procKaTeX :: MonadAction m => T.Text -> m T.Text
+procKaTeX :: (MonadAction m) => T.Text -> m T.Text
 procKaTeX = liftAction . fmap T.pack . prerenderKaTeX . T.unpack
 
 prerenderKaTeX :: String -> Action String
@@ -946,9 +946,9 @@ attachTo key url
   , ["o", "asin"]
       `isPrefixOf` cipath
       || "dp"
-      `elem` cipath
+        `elem` cipath
       || ["gp", "product"]
-      `isPrefixOf` cipath
+        `isPrefixOf` cipath
   , isNothing (lookup "tag" qs) =
       T.tail $
         ET.decodeUtf8 $
@@ -1164,7 +1164,7 @@ capitalise :: String -> String
 capitalise "" = ""
 capitalise (c : cs) = toUpper c : map toLower cs
 
-itemDate :: MonadSake m => Item a -> m ZonedTime
+itemDate :: (MonadSake m) => Item a -> m ZonedTime
 itemDate item =
   let ident = itemIdentifier item
       mdate =
@@ -1177,13 +1177,13 @@ itemDate item =
             utcToLocalZonedTime
               =<< getModificationTime (runIdentifier ident)
 
-extractCites :: Data a => a -> [[Text.Pandoc.Citation]]
+extractCites :: (Data a) => a -> [[Text.Pandoc.Citation]]
 extractCites = Text.Pandoc.queryWith collect
   where
     collect (Text.Pandoc.Cite t _) = [t]
     collect _ = []
 
-extractNoCites :: Data c => c -> [[Text.Pandoc.Citation]]
+extractNoCites :: (Data c) => c -> [[Text.Pandoc.Citation]]
 extractNoCites = Text.Pandoc.queryWith collect
   where
     collect (Text.Pandoc.RawInline "latex" src) =
@@ -1237,7 +1237,7 @@ refBlockToList
       listise _ = ""
 refBlockToList d = d
 
-applyAtts :: Attributable b => [(String, String)] -> b -> b
+applyAtts :: (Attributable b) => [(String, String)] -> b -> b
 applyAtts ats elt =
   let as = map (\(k, v) -> H5.customAttribute (fromString k) (fromString v)) ats
    in foldl (!) elt as
@@ -1322,7 +1322,7 @@ unicodiseMath m@(Text.Pandoc.Math mode eqn) =
    in Text.Pandoc.Span ("", ["math"], []) inls
 unicodiseMath i = i
 
-fromPure :: IsString a => Text.Pandoc.PandocPure a -> a
+fromPure :: (IsString a) => Text.Pandoc.PandocPure a -> a
 fromPure = fromRight "" . Text.Pandoc.runPure
 
 myExts :: Text.Pandoc.Extensions
@@ -1414,7 +1414,7 @@ rewriteIDs ident (TagOpen t atts)
       TagOpen t $ ("id", mconcat [ident, "-", name]) : filter ((/= "id") . fst) atts
 rewriteIDs _ t = t
 
-renderTalks :: MonadSake m => Maybe Int -> m (Item T.Text)
+renderTalks :: (MonadSake m) => Maybe Int -> m (Item T.Text)
 renderTalks mlen = do
   talkTplt <- loadItem "templates/talks.mustache"
   talks0 <- loadBinary @[Talk] (cacheD </> "talks.bin")

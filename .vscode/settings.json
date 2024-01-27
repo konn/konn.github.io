@@ -1,5 +1,5 @@
 {
-  "editor.wordBasedSuggestions": false,
+  "editor.wordBasedSuggestions": "off",
   "markdownlint.config": {
     "MD013": false,
     "MD033": false
@@ -12,5 +12,10 @@
   "latex-workshop.latex.recipes": [],
   "insertDateString.format": "YYYY/MM/DD hh:mm:ss JST",
   "insertDateString.formatDate": "YYYY/MM/DD",
-  "haskell.formattingProvider": "fourmolu"
+  "haskell.formattingProvider": "fourmolu",
+  "emeraldwalk.runonsave": {
+    "commands": [
+      { "cmd": "hpack", "isAsync": true, "match": "(package\\.yaml|\\.l?hs)$" }
+    ]
+  }
 }

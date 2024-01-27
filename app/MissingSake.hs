@@ -169,11 +169,10 @@ instance IsString Patterns where
   fromString = DNF . pure . flip Clause HS.empty . HS.singleton . fromString
 
 instance Semigroup Clause where
-  (<>) = mappend
+  Clause ls rs <> Clause us ts = Clause (ls <> us) (rs <> ts)
 
 instance Monoid Clause where
   mempty = Clause HS.empty HS.empty
-  mappend (Clause ls rs) (Clause us ts) = Clause (ls <> us) (rs <> ts)
 
 infixr 2 .||.
 

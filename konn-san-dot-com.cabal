@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.1.
+-- This file has been generated from package.yaml by hpack version 0.35.2.
 --
 -- see: https://github.com/sol/hpack
 
@@ -32,9 +32,9 @@ executable site
   hs-source-dirs:
       app
   other-extensions:
-      DeriveDataTypeable
+      GHC2021
       TemplateHaskell
-  ghc-options: -O2 -threaded -Wall
+  ghc-options: -O2 -threaded -Wall -O2 -threaded -rtsopts "-with-rtsopts=-N4 --nonmoving-gc"
   build-depends:
       HaTeX
     , aeson

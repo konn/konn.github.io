@@ -19,37 +19,36 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-type-defaults -fno-warn-unused-do-bind #-}
 
-module MathConv
-  ( preprocessLaTeX,
-    texToMarkdown,
-    PreprocessedLaTeX (..),
-  )
-where
+module MathConv (
+  preprocessLaTeX,
+  texToMarkdown,
+  PreprocessedLaTeX (..),
+) where
 
 import Control.Arrow (left)
 import Control.Exception (SomeException)
 import Control.Lens hiding (rewrite)
 import Control.Lens.Extras (is)
+import Control.Monad (guard, (<=<))
 import qualified Control.Monad.Catch as E
-import Control.Monad.Identity
-import Control.Monad.State.Strict
-  ( MonadState,
-    StateT,
-    evalStateT,
-    gets,
-    modify,
-    runState,
-    runStateT,
-  )
+import Control.Monad.State.Strict (
+  MonadState,
+  StateT,
+  evalStateT,
+  gets,
+  modify,
+  runState,
+  runStateT,
+ )
 import Control.Monad.Writer.Strict (runWriter, tell)
-import Data.Char
-  ( isAlpha,
-    isAlphaNum,
-    isAscii,
-    isLatin1,
-    isLetter,
-    isSpace,
-  )
+import Data.Char (
+  isAlpha,
+  isAlphaNum,
+  isAscii,
+  isLatin1,
+  isLetter,
+  isSpace,
+ )
 import Data.Default
 import Data.Either (fromRight)
 import Data.Foldable (toList)
@@ -65,6 +64,7 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import qualified Data.Text.Lazy as LT
 import Data.Text.Lens (unpacked)
+import Data.Traversable (forM)
 import Data.Typeable
 import Development.Shake
 import GHC.Generics (Generic)
@@ -79,24 +79,24 @@ import System.Directory (getHomeDirectory, makeAbsolute)
 import System.FilePath
 import Text.Blaze.Html.Renderer.Text (renderHtml)
 import Text.Blaze.Html5 (img, object, toValue, (!))
-import Text.Blaze.Html5.Attributes
-  ( alt,
-    class_,
-    data_,
-    src,
-    type_,
-  )
+import Text.Blaze.Html5.Attributes (
+  alt,
+  class_,
+  data_,
+  src,
+  type_,
+ )
 import Text.LaTeX.Base hiding ((&))
 import Text.LaTeX.Base.Class (comm1, fromLaTeX)
 import Text.LaTeX.Base.Parser
 import Text.LaTeX.Base.Syntax
-import Text.LaTeX.CrossRef
-  ( LabelFormat (ThisCounter),
-    Numeral (Arabic),
-    RefItem (Item),
-    RefOptions (..),
-    procCrossRef,
-  )
+import Text.LaTeX.CrossRef (
+  LabelFormat (ThisCounter),
+  Numeral (Arabic),
+  RefItem (Item),
+  RefOptions (..),
+  procCrossRef,
+ )
 import qualified Text.LaTeX.CrossRef as R
 import Text.Pandoc hiding (MathType, Writer)
 import Text.Pandoc.Shared
@@ -196,12 +196,13 @@ rewriteBib dir = bottomUp loop
       TeXComm "addbibresource" [FixArg $ TeXRaw $ T.pack absBib]
     loop (TeXComm "addbibresource" [FixArg fp])
       | isRelative (T.unpack $ render fp) =
-        TeXComm
-          "addbibresource"
-          [ FixArg $
-              TeXRaw $
-                T.pack $ dir </> T.unpack (render fp)
-          ]
+          TeXComm
+            "addbibresource"
+            [ FixArg $
+                TeXRaw $
+                  T.pack $
+                    dir </> T.unpack (render fp)
+            ]
     loop t = t
 
 texToMarkdown :: TeXMacros -> FilePath -> Text -> IO Pandoc
@@ -226,7 +227,9 @@ texToMarkdown defMacros fp src_ = do
         applyTeXMacro defMacros $
           rewriteBib (takeDirectory absFP) $
             view _Right $
-              parseTeX $ applyMacros macros $ T.replace "\\qed" "" src_
+              parseTeX $
+                applyMacros macros $
+                  T.replace "\\qed" "" src_
       initial =
         applyMacros macros $
           render $
@@ -317,7 +320,8 @@ breakTeXOn s (TeXRaw t) =
   case T.breakOn s t of
     (_, "") -> Nothing
     answer ->
-      answer & _2 %~ T.drop 1
+      answer
+        & _2 %~ T.drop 1
         & both %~ TeXRaw
         & Just
 breakTeXOn s (TeXSeq l r) =
@@ -439,21 +443,18 @@ getInlines (Header _ attr b3) = [Span attr b3]
 getInlines HorizontalRule = []
 getInlines Table {} = []
 getInlines (Div b1 b2) = [Span b1 $ concatMap getInlines b2]
-getInlines Null = []
-
--- traced :: Show a => String -> a -> a
--- traced lab a = DT.trace (lab <> ": " <> show a) a
+getInlines (Figure _ (Caption _ capBlks) blks) = concatMap getInlines capBlks <> concatMap getInlines blks
 
 pandocBody :: Pandoc -> [Block]
 pandocBody (Pandoc _ body) = body
 
-fixArgs :: Foldable f => f TeXArg -> [LaTeX]
+fixArgs :: (Foldable f) => f TeXArg -> [LaTeX]
 fixArgs = toListOf (folded . _FixArg)
 
 inlineLaTeX :: Text -> [Inline]
 inlineLaTeX src_ =
   let Pandoc _ body =
-        either (const (Pandoc nullMeta [])) id $
+        fromRight (Pandoc nullMeta []) $
           runPure $
             readLaTeX myReaderOpts src_
    in concatMap getInlines body
@@ -469,40 +470,43 @@ rewriteBeginEnv = concatMapM step
     -- fxxk, Pandoc dares to adds \qed at the end of each proof env!!!
     step (Div atts@(_, cls, _) paras@(_ : _))
       | "proof" `elem` cls =
-        pure $
           pure $
-            Div atts $
-              case last paras of
-                Para [Str "\160\9723"] -> init paras
-                Para xs
-                  | Str "\160\9723" <- last xs ->
-                    paras & _last . _Para %~ init
-                _ -> paras
+            pure $
+              Div atts $
+                case last paras of
+                  Para [Str "\160\9723"] -> init paras
+                  Para xs
+                    | Str "\160\9723" <- last xs ->
+                        paras & _last . _Para %~ init
+                  _ -> paras
     step (RawBlock "latex" src_)
       | Right (TeXEnv "enumerate!" args body) <- parseTeX src_ =
-        pure <$> procEnumerate args body
+          pure <$> procEnumerate args body
       | Right (TeXEnv env0 args body) <- parseTeX src_
-        , Just env <- lookupCustomEnv (T.pack env0) (map T.pack envs) = do
-        let divStart
-              | null args = mconcat ["<div class=\"", env, "\">"]
-              | otherwise =
-                mconcat
-                  [ "<div class=\""
-                  , env
-                  , "\" data-theorem-name=\""
-                  , T.unwords $ map texToEnvNamePlainString args
-                  , "\">"
-                  ]
-        Pandoc _ myBody <- texToMarkdownM $ render body
-        return $ RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
+      , Just env <- lookupCustomEnv (T.pack env0) (map T.pack envs) = do
+          let divStart
+                | null args = mconcat ["<div class=\"", env, "\">"]
+                | otherwise =
+                    mconcat
+                      [ "<div class=\""
+                      , env
+                      , "\" data-theorem-name=\""
+                      , T.unwords $ map texToEnvNamePlainString args
+                      , "\">"
+                      ]
+          Pandoc _ myBody <- texToMarkdownM $ render body
+          return $ RawBlock "html" divStart : myBody ++ [RawBlock "html" "</div>"]
     step b = return [b]
 
 lookupCustomEnv :: Text -> [Text] -> Maybe Text
 lookupCustomEnv e es =
-  e <$ guard (e `elem` es)
-    <|> e <> "-plain" <$ guard (e <> "*" `elem` es)
+  e
+    <$ guard (e `elem` es)
+      <|> e
+      <> "-plain"
+    <$ guard (e <> "*" `elem` es)
 
-concatMapM :: Monad m => (a -> m [b]) -> [a] -> m [b]
+concatMapM :: (Monad m) => (a -> m [b]) -> [a] -> m [b]
 concatMapM f a = concat <$> mapM f a
 
 procEnumerate :: [TeXArg] -> LaTeX -> Machine Block
@@ -511,7 +515,8 @@ procEnumerate args body = do
     rewriteEnv
       =<< lift
         ( readLaTeX myReaderOpts $
-            render $ TeXEnv "enumerate" [] body
+            render $
+              TeXEnv "enumerate" [] body
         )
   return $ OrderedList (parseEnumOpts args) blcs
 
@@ -536,12 +541,12 @@ splitLeftMostBrace = loop Nothing
 amendAlignat :: Inline -> Inline
 amendAlignat (Math DisplayMath tsrc)
   | Right (TeXEnv (T.pack -> env) [] body) <- parseLaTeX tsrc
-    , env `elem` ["aligned", "aligned*"]
-    , Just (TeXRaw nums, body') <- splitLeftMostBrace body
-    , [(i :: Int, "")] <- reads $ T.unpack (T.strip nums) =
-    let envedName = T.replace "ed" "edat" env
-        args = [FixArg $ TeXRaw $ T.pack $ show i]
-     in Math DisplayMath $ render $ TeXEnv (T.unpack envedName) args body'
+  , env `elem` ["aligned", "aligned*"]
+  , Just (TeXRaw nums, body') <- splitLeftMostBrace body
+  , [(i :: Int, "")] <- reads $ T.unpack (T.strip nums) =
+      let envedName = T.replace "ed" "edat" env
+          args = [FixArg $ TeXRaw $ T.pack $ show i]
+       in Math DisplayMath $ render $ TeXEnv (T.unpack envedName) args body'
 amendAlignat i = i
 
 parseEnumOpts :: [TeXArg] -> ListAttributes
@@ -589,7 +594,7 @@ buildTikzer tikzLibs tkzs = snd $
       mapM_ fromLaTeX tikzLibs
       document $ mapM_ textell tkzs
 
-extractTikZ :: MonadState (Seq LaTeX) m => LaTeX -> m LaTeX
+extractTikZ :: (MonadState (Seq LaTeX) m) => LaTeX -> m LaTeX
 extractTikZ = bottomUpM step
   where
     step t@(TeXEnv "tikzpicture" _ _) = save t
@@ -611,12 +616,12 @@ procTikz = bottomUpM step
   where
     step (RawBlock "latex" src_)
       | Right ts <- parseTeX src_ =
-        fmap Plain $
-          forM
-            [ nth
-            | (TeXComm c [FixArg nth]) <- universe ts
-            , c == generatedGraphicPlaceholder
-            ]
+          fmap Plain
+            $ forM
+              [ nth
+              | (TeXComm c [FixArg nth]) <- universe ts
+              , c == generatedGraphicPlaceholder
+              ]
             $ \nth -> do
               liftIO $ putStrLn $ "generated image: " ++ T.unpack (render nth)
               let n = fromMaybe 0 $ readMaybe $ T.unpack $ render nth
@@ -626,13 +631,14 @@ procTikz = bottomUpM step
               return $
                 Span
                   ("", ["img-fluid"], [])
-                  [ RawInline "html" $
-                      LT.toStrict $
-                        renderHtml $
-                          object ! class_ "img-thumbnail media-object"
-                            ! type_ "image/svg+xml"
-                            ! data_ dest
-                            $ img ! src alts ! alt "Diagram"
+                  [ RawInline "html"
+                      $ LT.toStrict
+                      $ renderHtml
+                      $ object
+                        ! class_ "img-thumbnail media-object"
+                        ! type_ "image/svg+xml"
+                        ! data_ dest
+                      $ img ! src alts ! alt "Diagram"
                   ]
     step a = return a
 
@@ -648,7 +654,8 @@ texToEnvNamePlainString str =
           MSymArg lats -> T.intercalate "," $ map render lats
           MParArg lats -> T.intercalate "," $ map render lats
    in either (const $ render str) (stringify . bottomUp go) $
-        runPure $ readLaTeX myReaderOpts cated
+        runPure $
+          readLaTeX myReaderOpts cated
   where
     go :: Inline -> Inline
     go = bottomUp $ \case
