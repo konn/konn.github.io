@@ -218,14 +218,19 @@ watch = do
       $ \unlift -> withManager $ \man -> unlift $ do
         logInfo "Starting up watcher..."
         src <- liftIO $ canonicalizePath srcD
+        cfg <- liftIO $ canonicalizePath "config"
         logInfo $ "Watching: " <> fromString src
-        stop <- liftIO $ do
+        stopW1 <- liftIO $ do
           watchTree man src (const True) $ \evt -> do
+            unlift $ logInfo $ "event incoming: " <> displayShow evt
+            atomically $ writeTQueue chan evt
+        stopW2 <- liftIO $ do
+          watchTree man cfg (const True) $ \evt -> do
             unlift $ logInfo $ "event incoming: " <> displayShow evt
             atomically $ writeTQueue chan evt
         forever
           (squashExceptions "Watcher" (threadDelay maxBound))
-          `finally` do logInfo "Finalising..."; liftIO stop
+          `finally` do logInfo "Finalising..."; liftIO (stopW1 >> stopW2)
 
 squashExceptions :: String -> RIO SimpleApp () -> RIO SimpleApp ()
 squashExceptions label =
