@@ -8,7 +8,75 @@
         <name>Hiromi ISHII</name>
         <email>konn.jinro_at_gmail.com</email>
     </author>
-    <updated>2024-01-28T03:30:00+09:00</updated>
+    <updated>2024-03-10T15:00:00+09:00</updated>
+    <entry>
+      <title>Talks</title>
+      <link href="https://konn-san.com/talks.html" />
+      <id>https://konn-san.com/talks.html</id>
+      <published>2024-03-10T15:00:00+09:00</published>
+      <updated>2024-03-10T15:00:00+09:00</updated>
+      <summary type="html"><![CDATA[<section id="講演一覧" class="level1">
+<h2>講演一覧</h2>
+<p>他の詳細な経歴等は<a href="/profile.html">プロファイル</a>を参照。</p>
+<p><ul>
+<li>2024/03/10 
+Tsukuba Computer Mathematics Seminar 2024＠Hybrid (Ranzan and Online)『<b>充足可能性ソルバ（SAT ソルバ）の原理</b>』（<a href="https://konn-san.com/math/cdcl-sat-solvers.pdf">Slides</a>，<a href="https://github.com/konn/herbrand">Implementation</a>，<a href="https://github.com/konn/cdcl-sat-solvers-slides">Source Code of Slides</a>）</li>
+<li>2023/03/12 
+Tsukuba Computer Mathematics Seminar 2023＠Hybrid (Tsukuba and Online)『<b>Reverse-Mode 自動微分を理解する</b>』（<a href="https://konn-san.com/math/reverse-mode-ad-slides.pdf">Slides</a>）</li>
+<li>2022/03/06 
+Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める</b>』（<a href="https://konn-san.com/math/ishii-fibonacci-slides.pdf">Slides</a>）</li>
+<li>2021/09/15 
+<a href="https://www.casc-conference.org/2021/index.html">Computer Algebra in Scientific Computing 2021</a>＠Hybrid (Sochi, Russia and Online)『<b>Automatic differentiation with higher infinitesimals, or computational smooth infinitesimal analysis in Weil algebra</b>』（<a href="https://konn-san.com/math/casc-smooth.pdf">Slides</a>，<a href="https://link.springer.com/book/10.1007/978-3-030-85165-1">Proceedings</a>，<a href="https://arxiv.org/abs/2106.14153">Preprint</a>）</li>
+<li>2021/07/04 
+<a href="https://www.youtube.com/channel/UCSA2iDIY6Z-J9X4pWfdPPnw">alg-d</a>＠YouTube『<b>自動微分とGröbner基底による高次冪零無限小解析（alg_d篇）</b>』（<a href="https://arxiv.org/abs/2106.14153">Paper</a>，<a href="https://konn-san.com/math/smooth-algd-talk.pdf">Slides</a>，<a href="https://www.youtube.com/watch?v=0xtOjwQaib4">YouTube</a>）</li>
+<li>2020/12/22 
+<a href="http://www.nda.ac.jp/cc/masayo/20/rims20.html">Computer Algebra – Theory and its Applications</a>＠Zoom Webinar『<b>自動微分と Gröbner 基底による高次冪零無限小解析</b>』</li>
+<li>2019/11/09 
+<a href="https://techplay.jp/event/727059">Haskell Day 2019</a>＠TECH PLAY SHIBUYA『<b>大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──</b>』（<a href="https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil">Slide URL</a>）</li>
+<li>2018/11/24 
+数学基礎論若手の会＠コテージにらい恩納『<b>集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク</b>』（<a href="https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf">Slide PDF</a>）</li>
+<li>2018/09/19 
+<a href="http://www.casc.cs.uni-bonn.de/2018/">Computer Algebra in Scientific Computing 2018</a>＠University of Lille『<b><a href="/math/casc2018-talk.pdf">A Purely Functional Computer Algebra System Embedded in Haskell</a></b>』</li>
+<li>2018/03/05 
+筑波大学計算機数学グループ 春の合宿 2018＠Nami Kaze Tateyama（旧・筑波大学館山研修所）『<b><a href="/math/tateyama-18-satysfi.pdf">SATySFi を使ってみた</a></b>』</li>
+<li>2017/11/07 
+<a href="http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html">Workshop on Iterated Forcing Theory and Cardinal Invariants</a>＠RIMS『<b><a href="/math/rims2017.pdf">Reflection Principles and Saturated Filters on \(\mathcal{P}_{\omega_1} \lambda\)</a></b>』</li>
+<li>2017/10/27 
+数学基礎論若手の会2017＠大学セミナーハウス『<b>正集合の反映原理と飽和イデアルの構成</b>』（<a href="/math/wakate-2017.pdf">Slide PDF</a>）</li>
+<li>2017/03/06 
+筑波大学計算機数学グループ 春の合宿 2017＠筑波大学館山研修所『<b>ものまね鳥を愛でる 結合子論理と計算</b>』（<a href="https://www.slideshare.net/konn/ss-72840520">SlideShare</a>，<a href="/math/mocking-bird-tateyama.pdf">PDF</a>）</li>
+<li>2016/10/23 
+数学基礎論若手の会2016＠清里高原『<b>On Projective Baire Property</b>』（<a href="/math/projective-baire-fmyg16.pdf">Slide</a>）</li>
+<li>2016/06/04 
+<a href="https://docs.google.com/viewer?a=v&amp;pid=sites&amp;srcid=ZGVmYXVsdGRvbWFpbnxzaGltaWtlbnh8Z3g6MWY5OWFiZDM2NTcyNzljZQ">第4回つくばフレッシュマンセミナー</a>『<b>集合論への招待　〜実数直線の集合論〜</b>』（<a href="/math/freshman-2016-resume.pdf">資料</a>）</li>
+<li>2016/03/08 
+<a href="http://logic.cs.tsukuba.ac.jp/ppl2016/">第18回プログラミングおよびプログラミング言語ワークショップ PPL 2016</a>『<b>Freer Monads, More Extensible Effects</b>』（<a href="/prog/freer-ppl16.key">Keynote</a>，<a href="http://www.slideshare.net/konn/freer-monads-more-extensible-effects-59411772">SlideShare</a>，<a href="/prog/freer-ppl16.pdf">PDF</a>）</li>
+<li>2015/07/27 
+修士論文中間発表『<b>実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について（公開版）</b>』（<a href="http://www.slideshare.net/konn/ss-50957683">Slide</a>）</li>
+<li>2015/03/08 
+筑波大学計算機数学グループ 春の合宿2015＠筑波大学館山研修所『<b>（数式の入った）本をつくる</b>』（<a href="http://www.slideshare.net/konn/ss-45587178">Slide</a>，<a href="https://www.youtube.com/watch?v=a0NcKmVWKq0">録画</a>）</li>
+<li>2014/11/20 
+数学基礎論若手の会2014＠鳥取『<b>Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項</b>』（<a href="http://www.slideshare.net/konn/lebesgue-solovayshelah">Slide</a>）</li>
+<li>2014/03/20 
+PFI社内セミナー『<b>技術者が知るべき Gröbner 基底</b>』（<a href="http://www.slideshare.net/konn/grbner">Slide</a>，<a href="http://www.ustream.tv/recorded/45083876">UStream [後半]</a>，<a href="http://www.ustream.tv/recorded/45083535">UStream [前半]</a>）</li>
+<li>2014/03/08 
+筑波大学計算機数学グループ春の合宿2014＠筑波大学館山研修所『<b>数学プログラムをHaskellで書くべき6の理由</b>』（<a href="http://www.slideshare.net/konn/haskell-6-32258528">Slide</a>，<a href="https://www.youtube.com/watch?v=S4_7KVNA-Ww">録画</a>）</li>
+<li>2013/10/12 
+第四回選択公理オフ『<b>数理論理学の初歩の初歩の初歩の……</b>』（<a href="/math/acoff-04.pdf">PDF</a>，<a href="/math/acoff-04.html">HTML</a>）</li>
+<li>2013/05/04 
+<a href="http://partake.in/events/451a51b0-b18e-4e01-bda4-423bf57f4051">Haskell で計算機代数勉強会</a>『<b>わかったつもりになる Gröbner 基底</b>』（<a href="http://www.slideshare.net/konn/groebner-basisanintroductionreduced">Slide</a>）</li>
+<li>2012/11/22 
+PFI 社内セミナー『<b>Algebraic DP: 動的計画法を書きやすく</b>』（<a href="http://www.slideshare.net/konn/algebraic-dp">Slide</a>，<a href="http://www.ustream.tv/recorded/27196711">Ustream</a>）</li>
+<li>2012/04/22 
+(祝) Yesod 1.0 勉強会『<b>Yesod で Blog Engine をつくってみた</b>』（<a href="http://www.slideshare.net/konn/yesod-12637438">Slide</a>，<a href="http://www.justin.tv/kiwamu/b/315818516">録画</a>）</li>
+<li>2012/04/12 
+PFI 社内セミナー『<b>How wonderful to be (statically) typed 〜型が付くってスバラシイ〜</b>』（<a href="http://www.slideshare.net/konn/how-wonderful-to-be-statically-typed">Slide</a>，<a href="http://www.ustream.tv/recorded/21781769">Ustream</a>）</li>
+<li>2011/09/22 
+PFI 社内セミナー『<b>Alloy Analyzer のこと</b>』（<a href="http://www.slideshare.net/konn/alloy-analyzer-9379488">Slide</a>，<a href="http://www.ustream.tv/recorded/17430540">Ustream</a>）</li>
+</ul>
+</p>
+</section>]]></summary>
+    </entry>
     <entry>
       <title>スカッと故事成語にっき20240127</title>
       <link href="https://konn-san.com/logs/20240127.html" />
@@ -232,72 +300,6 @@ GW明けから早々に引いてしまったので、9日間中断して1日だ�
 <p>完全に食を YouTube に支配されている。されていきましょう。</p>
 <hr></hr>
 <p>というところで。お休みなさい。</p>]]></summary>
-    </entry>
-    <entry>
-      <title>Talks</title>
-      <link href="https://konn-san.com/talks.html" />
-      <id>https://konn-san.com/talks.html</id>
-      <published>2023-03-12T16:00:00+09:00</published>
-      <updated>2023-03-12T16:00:00+09:00</updated>
-      <summary type="html"><![CDATA[<section id="講演一覧" class="level1">
-<h2>講演一覧</h2>
-<p>他の詳細な経歴等は<a href="/profile.html">プロファイル</a>を参照。</p>
-<p><ul>
-<li>2023/03/12 
-Tsukuba Computer Mathematics Seminar 2023＠Hybrid (Tsukuba and Online)『<b>Reverse-Mode 自動微分を理解する</b>』（<a href="https://konn-san.com/math/reverse-mode-ad-slides.pdf">Slides</a>）</li>
-<li>2022/03/06 
-Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める</b>』（<a href="https://konn-san.com/math/ishii-fibonacci-slides.pdf">Slides</a>）</li>
-<li>2021/09/15 
-<a href="https://www.casc-conference.org/2021/index.html">Computer Algebra in Scientific Computing 2021</a>＠Hybrid (Sochi, Russia and Online)『<b>Automatic differentiation with higher infinitesimals, or computational smooth infinitesimal analysis in Weil algebra</b>』（<a href="https://konn-san.com/math/casc-smooth.pdf">Slides</a>，<a href="https://link.springer.com/book/10.1007/978-3-030-85165-1">Proceedings</a>，<a href="https://arxiv.org/abs/2106.14153">Preprint</a>）</li>
-<li>2021/07/04 
-<a href="https://www.youtube.com/channel/UCSA2iDIY6Z-J9X4pWfdPPnw">alg-d</a>＠YouTube『<b>自動微分とGröbner基底による高次冪零無限小解析（alg_d篇）</b>』（<a href="https://arxiv.org/abs/2106.14153">Paper</a>，<a href="https://konn-san.com/math/smooth-algd-talk.pdf">Slides</a>，<a href="https://www.youtube.com/watch?v=0xtOjwQaib4">YouTube</a>）</li>
-<li>2020/12/22 
-<a href="http://www.nda.ac.jp/cc/masayo/20/rims20.html">Computer Algebra – Theory and its Applications</a>＠Zoom Webinar『<b>自動微分と Gröbner 基底による高次冪零無限小解析</b>』</li>
-<li>2019/11/09 
-<a href="https://techplay.jp/event/727059">Haskell Day 2019</a>＠TECH PLAY SHIBUYA『<b>大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──</b>』（<a href="https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil">Slide URL</a>）</li>
-<li>2018/11/24 
-数学基礎論若手の会＠コテージにらい恩納『<b>集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク</b>』（<a href="https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf">Slide PDF</a>）</li>
-<li>2018/09/19 
-<a href="http://www.casc.cs.uni-bonn.de/2018/">Computer Algebra in Scientific Computing 2018</a>＠University of Lille『<b><a href="/math/casc2018-talk.pdf">A Purely Functional Computer Algebra System Embedded in Haskell</a></b>』</li>
-<li>2018/03/05 
-筑波大学計算機数学グループ 春の合宿 2018＠Nami Kaze Tateyama（旧・筑波大学館山研修所）『<b><a href="/math/tateyama-18-satysfi.pdf">SATySFi を使ってみた</a></b>』</li>
-<li>2017/11/07 
-<a href="http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html">Workshop on Iterated Forcing Theory and Cardinal Invariants</a>＠RIMS『<b><a href="/math/rims2017.pdf">Reflection Principles and Saturated Filters on \(\mathcal{P}_{\omega_1} \lambda\)</a></b>』</li>
-<li>2017/10/27 
-数学基礎論若手の会2017＠大学セミナーハウス『<b>正集合の反映原理と飽和イデアルの構成</b>』（<a href="/math/wakate-2017.pdf">Slide PDF</a>）</li>
-<li>2017/03/06 
-筑波大学計算機数学グループ 春の合宿 2017＠筑波大学館山研修所『<b>ものまね鳥を愛でる 結合子論理と計算</b>』（<a href="https://www.slideshare.net/konn/ss-72840520">SlideShare</a>，<a href="/math/mocking-bird-tateyama.pdf">PDF</a>）</li>
-<li>2016/10/23 
-数学基礎論若手の会2016＠清里高原『<b>On Projective Baire Property</b>』（<a href="/math/projective-baire-fmyg16.pdf">Slide</a>）</li>
-<li>2016/06/04 
-<a href="https://docs.google.com/viewer?a=v&amp;pid=sites&amp;srcid=ZGVmYXVsdGRvbWFpbnxzaGltaWtlbnh8Z3g6MWY5OWFiZDM2NTcyNzljZQ">第4回つくばフレッシュマンセミナー</a>『<b>集合論への招待　〜実数直線の集合論〜</b>』（<a href="/math/freshman-2016-resume.pdf">資料</a>）</li>
-<li>2016/03/08 
-<a href="http://logic.cs.tsukuba.ac.jp/ppl2016/">第18回プログラミングおよびプログラミング言語ワークショップ PPL 2016</a>『<b>Freer Monads, More Extensible Effects</b>』（<a href="/prog/freer-ppl16.key">Keynote</a>，<a href="http://www.slideshare.net/konn/freer-monads-more-extensible-effects-59411772">SlideShare</a>，<a href="/prog/freer-ppl16.pdf">PDF</a>）</li>
-<li>2015/07/27 
-修士論文中間発表『<b>実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について（公開版）</b>』（<a href="http://www.slideshare.net/konn/ss-50957683">Slide</a>）</li>
-<li>2015/03/08 
-筑波大学計算機数学グループ 春の合宿2015＠筑波大学館山研修所『<b>（数式の入った）本をつくる</b>』（<a href="http://www.slideshare.net/konn/ss-45587178">Slide</a>，<a href="https://www.youtube.com/watch?v=a0NcKmVWKq0">録画</a>）</li>
-<li>2014/11/20 
-数学基礎論若手の会2014＠鳥取『<b>Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項</b>』（<a href="http://www.slideshare.net/konn/lebesgue-solovayshelah">Slide</a>）</li>
-<li>2014/03/20 
-PFI社内セミナー『<b>技術者が知るべき Gröbner 基底</b>』（<a href="http://www.slideshare.net/konn/grbner">Slide</a>，<a href="http://www.ustream.tv/recorded/45083876">UStream [後半]</a>，<a href="http://www.ustream.tv/recorded/45083535">UStream [前半]</a>）</li>
-<li>2014/03/08 
-筑波大学計算機数学グループ春の合宿2014＠筑波大学館山研修所『<b>数学プログラムをHaskellで書くべき6の理由</b>』（<a href="http://www.slideshare.net/konn/haskell-6-32258528">Slide</a>，<a href="https://www.youtube.com/watch?v=S4_7KVNA-Ww">録画</a>）</li>
-<li>2013/10/12 
-第四回選択公理オフ『<b>数理論理学の初歩の初歩の初歩の……</b>』（<a href="/math/acoff-04.pdf">PDF</a>，<a href="/math/acoff-04.html">HTML</a>）</li>
-<li>2013/05/04 
-<a href="http://partake.in/events/451a51b0-b18e-4e01-bda4-423bf57f4051">Haskell で計算機代数勉強会</a>『<b>わかったつもりになる Gröbner 基底</b>』（<a href="http://www.slideshare.net/konn/groebner-basisanintroductionreduced">Slide</a>）</li>
-<li>2012/11/22 
-PFI 社内セミナー『<b>Algebraic DP: 動的計画法を書きやすく</b>』（<a href="http://www.slideshare.net/konn/algebraic-dp">Slide</a>，<a href="http://www.ustream.tv/recorded/27196711">Ustream</a>）</li>
-<li>2012/04/22 
-(祝) Yesod 1.0 勉強会『<b>Yesod で Blog Engine をつくってみた</b>』（<a href="http://www.slideshare.net/konn/yesod-12637438">Slide</a>，<a href="http://www.justin.tv/kiwamu/b/315818516">録画</a>）</li>
-<li>2012/04/12 
-PFI 社内セミナー『<b>How wonderful to be (statically) typed 〜型が付くってスバラシイ〜</b>』（<a href="http://www.slideshare.net/konn/how-wonderful-to-be-statically-typed">Slide</a>，<a href="http://www.ustream.tv/recorded/21781769">Ustream</a>）</li>
-<li>2011/09/22 
-PFI 社内セミナー『<b>Alloy Analyzer のこと</b>』（<a href="http://www.slideshare.net/konn/alloy-analyzer-9379488">Slide</a>，<a href="http://www.ustream.tv/recorded/17430540">Ustream</a>）</li>
-</ul>
-</p>
-</section>]]></summary>
     </entry>
     <entry>
       <title>Disco Elysium - 頽廃の都マルティネーズで世界の迷宮に迷い込もう</title>
@@ -1858,6 +1860,8 @@ Constructive Arguments Must Be Guided with Concrete Witness</a></em>”,
 <h3>Talks</h3>
 <p>勉強会や社内セミナーなどでの発表記録（直近十件；<a href="/talks.html">全一覧</a>）。</p>
 <p><ul>
+<li>2024/03/10 
+Tsukuba Computer Mathematics Seminar 2024＠Hybrid (Ranzan and Online)『<b>充足可能性ソルバ（SAT ソルバ）の原理</b>』（<a href="https://konn-san.com/math/cdcl-sat-solvers.pdf">Slides</a>，<a href="https://github.com/konn/herbrand">Implementation</a>，<a href="https://github.com/konn/cdcl-sat-solvers-slides">Source Code of Slides</a>）</li>
 <li>2023/03/12 
 Tsukuba Computer Mathematics Seminar 2023＠Hybrid (Tsukuba and Online)『<b>Reverse-Mode 自動微分を理解する</b>』（<a href="https://konn-san.com/math/reverse-mode-ad-slides.pdf">Slides</a>）</li>
 <li>2022/03/06 
@@ -1876,8 +1880,6 @@ Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計
 <a href="http://www.casc.cs.uni-bonn.de/2018/">Computer Algebra in Scientific Computing 2018</a>＠University of Lille『<b><a href="/math/casc2018-talk.pdf">A Purely Functional Computer Algebra System Embedded in Haskell</a></b>』</li>
 <li>2018/03/05 
 筑波大学計算機数学グループ 春の合宿 2018＠Nami Kaze Tateyama（旧・筑波大学館山研修所）『<b><a href="/math/tateyama-18-satysfi.pdf">SATySFi を使ってみた</a></b>』</li>
-<li>2017/11/07 
-<a href="http://www2.kobe-u.ac.jp/~brendle/rims2017/e-home.html">Workshop on Iterated Forcing Theory and Cardinal Invariants</a>＠RIMS『<b><a href="/math/rims2017.pdf">Reflection Principles and Saturated Filters on \(\mathcal{P}_{\omega_1} \lambda\)</a></b>』</li>
 </ul>
 <p>
 See <a href="/talks.html">Talks</a> for all talks.
