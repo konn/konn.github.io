@@ -1,3 +1,13 @@
+- date: 2024/03/10
+  conference:
+    name: Tsukuba Computer Mathematics Seminar 2024
+    venue: "Hybrid (Ranzan and Online)"
+  title: "充足可能性ソルバ（SAT ソルバ）の原理"
+  links:
+    Slides: https://konn-san.com/math/cdcl-sat-solvers.pdf
+    Source Code of Slides: https://github.com/konn/cdcl-sat-solvers-slides
+    Implementation: https://github.com/konn/herbrand
+
 - date: 2023/03/12
   conference:
     name: Tsukuba Computer Mathematics Seminar 2023

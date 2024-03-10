@@ -2,7 +2,7 @@
 title: Talks
 description: これまでに行った講演
 tag: 講演,数学,技術
-date: 2023/03/12 16:00:00 JST
+date: 2024/03/10 15:00:00 JST
 ---
 
 # 講演一覧
