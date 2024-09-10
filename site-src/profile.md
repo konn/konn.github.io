@@ -6,7 +6,7 @@ date: 2021/06/29 16:20:00 JST
 disqus: false
 ---
 
-[English CV](/t/cv.pdf)
+[職務経歴書](/cv/cv-ja.pdf) / [English CV](/cv/cv-en.pdf)
 
 自己紹介
 =======
