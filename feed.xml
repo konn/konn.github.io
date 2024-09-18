@@ -36,7 +36,7 @@
 <li><strong>証明論の初歩</strong>：シーケント計算<span class="math inline">\(\mathrm{LK}\)</span>による古典一階述語論理の構文論の基本</li>
 <li><strong>モデル理論の初歩</strong>：初等拡大、超積と超冪、コンパクト性定理、完全性定理、Löwenheim–Skolemの定理など</li>
 <li><strong>集合論の基本</strong>：<span class="math inline">\(\mathrm{ZFC}\)</span>やその部分体系の公理群や、集合論内での数理論理学の展開、それに必要な初歩の無限組合せ論、集合・クラスモデルの違い、メタとオブジェクトの区別など、強制法を正しく理解するために必要な集合論サイドの知識をまとめています。</li>
-<li><strong>不完全性定理</strong>：無矛盾性証明を理解する上での基本定理であるGödelの第二不完全性定理を紹介します。本来は<span class="math inline">\(\math{PA}\)</span>以上で構文論的・計算論的な証明をするべきですが、強制法への応用の文脈では<span class="math inline">\(\mathrm{ZF}\)</span>やそれよりやや弱い程度の集合論に対する不完全性があれば大丈夫なので、Woodinによる意味論的な証明を採用して細部をスキップしています。</li>
+<li><strong>不完全性定理</strong>：無矛盾性証明を理解する上での基本定理であるGödelの第二不完全性定理を紹介します。本来は<span class="math inline">\(\mathrm{PA}\)</span>以上で構文論的・計算論的な証明をするべきですが、強制法への応用の文脈では<span class="math inline">\(\mathrm{ZF}\)</span>やそれよりやや弱い程度の集合論に対する不完全性があれば大丈夫なので、Woodinによる意味論的な証明を採用して細部をスキップしています。</li>
 </ol>
 </dd>
 </dl>
