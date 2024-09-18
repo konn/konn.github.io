@@ -8,7 +8,52 @@
         <name>Hiromi ISHII</name>
         <email>konn.jinro_at_gmail.com</email>
     </author>
-    <updated>2024-03-10T15:00:00+09:00</updated>
+    <updated>2024-09-18T13:27:51+09:00</updated>
+    <entry>
+      <title>2024年度強制法セミナー発表資料</title>
+      <link href="https://konn-san.com/math/2024-forcing-seminar.html" />
+      <id>https://konn-san.com/math/2024-forcing-seminar.html</id>
+      <published>2024-09-18T13:27:51+09:00</published>
+      <updated>2024-09-18T13:27:51+09:00</updated>
+      <summary type="html"><![CDATA[<section id="概要" class="level1">
+<h2>概要</h2>
+<p>2024年に開催した（している）強制法の基本に関する内輪の自主セミナーの発表資料です。
+そろそろ集合論を忘れそうだったので、<a href="https://x.com/Alwe_Logic">おるうぇ君</a>を抱き込んで、他の参加者に強制法による連続体仮説<span class="math inline">\(\mathrm{CH}\)</span>の独立性証明までを叩き込むのを目標として開催しています。
+数理論理学の基本から復習して、最終的に強制法の基礎を理解するという構成になる予定です。私がロジックと強制法パート、おるうぇ君が無限組合せ論パートを担当していますが、発表内容はおるうぇ君と議論して決めています（特に理論の翻訳可能性回りについてはかなりおるうぇ君の知恵を借りました）。
+専門家になるのが目的ではなく、理論構成の概要を追えるようにするのが目的なので、重要な部分以外の証明についてはほとんど演習問題にしています。一応ヒントは書いてあるので、学部2〜3年程度の数学の下地があれば頑張れば細部を埋められるでしょう。</p>
+<p>とりいそぎ、私の担当分で完成している分の資料を以下にアップしていきます。</p>
+<section id="ほぼ確定原稿" class="level2">
+<h3>（ほぼ）確定原稿</h3>
+<dl>
+<dt><a href="./2024-forcing-seminar/00-introduction-to-set-theory-and-logic.pdf">第0回：忙しい人のための強制法</a></dt>
+<dd>
+そもそも強制法とは何なのか、数理論理学・集合論の歴史も踏まえつつ、おはなしとして本セミナーの目標を概観します。大雑把な強制法のイメージについても概説。
+</dd>
+<dt><a href="./2024-forcing-seminar/01-basic-mathematical-logic.pdf">第1回：数理論理学の初歩</a></dt>
+<dd>
+<p>強制法による独立性証明を理解するために必要な、以下の数理論理学の基礎知識について触れます。</p>
+<ol type="1">
+<li><strong>証明論の初歩</strong>：シーケント計算<span class="math inline">\(\mathrm{LK}\)</span>による古典一階述語論理の構文論の基本</li>
+<li><strong>モデル理論の初歩</strong>：初等拡大、超積と超冪、コンパクト性定理、完全性定理、Löwenheim–Skolemの定理など</li>
+<li><strong>集合論の基本</strong>：<span class="math inline">\(\mathrm{ZFC}\)</span>やその部分体系の公理群や、集合論内での数理論理学の展開、それに必要な初歩の無限組合せ論、集合・クラスモデルの違い、メタとオブジェクトの区別など、強制法を正しく理解するために必要な集合論サイドの知識をまとめています。</li>
+<li><strong>不完全性定理</strong>：無矛盾性証明を理解する上での基本定理であるGödelの第二不完全性定理を紹介します。本来は<span class="math inline">\(\math{PA}\)</span>以上で構文論的・計算論的な証明をするべきですが、強制法への応用の文脈では<span class="math inline">\(\mathrm{ZF}\)</span>やそれよりやや弱い程度の集合論に対する不完全性があれば大丈夫なので、Woodinによる意味論的な証明を採用して細部をスキップしています。</li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="全原稿" class="level2">
+<h3>全原稿</h3>
+<p>確定分以外も含めた原稿は全て以下の GitHub
+レポジトリで閲覧できます：</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      
+
+
+    </div>
+
+</section>
+</section>]]></summary>
+    </entry>
     <entry>
       <title>Talks</title>
       <link href="https://konn-san.com/talks.html" />
@@ -1965,438 +2010,5 @@ Twitter
 <p>夢の話は以上。そういえば、このにっきはうたったうたを書くということでうたにっきと題されていた。今日は
 Queen
 をうたった。夜には昨日つくってあったハヤシライス（良い肉がお手頃だったので）にフェッチーネを入れてスープパスタに換装して食べた。</p>]]></summary>
-    </entry>
-    <entry>
-      <title>Raspberry Pi + VPS で自宅グローバル IP の変更自動検知をやった話</title>
-      <link href="https://konn-san.com/articles/2019-03-09-raspi-vpn-dyndns.html" />
-      <id>https://konn-san.com/articles/2019-03-09-raspi-vpn-dyndns.html</id>
-      <published>2019-03-10T18:00:00+09:00</published>
-      <updated>2019-03-10T18:00:00+09:00</updated>
-      <summary type="html"><![CDATA[<section id="発端" class="level1">
-<h2>発端</h2>
-<p>1月中頃につくばから都内に引っ越したんですが、光インターネットを契約したところ、ルータに
-VPN サーバの機能がついていた。 大学の VPN
-は博士を修了したら使えなくなってしまうし、出先や海外から自室ネットワークにアクセスできると何かと良いことも多かろう、ということで、さっそく使うことにした。
-しかし、一つ問題があって、今契約している回線は固定 IP
-ではないので、定期的にグローバル IP が変わってしまう。
-ルータの機種によっては、グローバル IP
-が変わったら自動通知してくれるものもあるようだが、残念ながら私が貸し出されたルータにその機能はなかった。</p>
-<p>そこで、折角なの Raspberry Pi でも買って、一定期間ごとにグローバル IP
-をチェックし、変更があったら DNS
-を更新するようなシステムを作ることにした。</p>
-<p>以下、その手順を書いていくが、普通の Debian 同然なのであんまり RasPi
-特有のことがなく、どちらかというと BIND9
-の設定の仕方とかが本質的に効いている。</p>
-<section id="素材" class="level2">
-<h3>素材</h3>
-<p>こちらが今回買った Raspberry Pi Model B+ です：</p>
-<p><a href="asin:B07FQ9678G"><img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/raspi-vpn-dyndns/raspi-box.jpeg"></a></p>
-  <div class="embed w-100 my-4 justify-content-center row py-0">
-    <div class="col-md-2 col-2 align-self-center embed-item">
-<div style="border: 1px solid" class="mx-auto">
-  <a href="https://www.amazon.co.jp/gp/product/B07FQ9678G?tag=konn06-22">
-    <img alt="asin:B07FQ9678G" src="https://images-fe.ssl-images-amazon.com/images/P/B07FQ9678G.09.jpg" width="100%">
-  </a>
-  <caption class="mx-auto"><a href="https://www.amazon.co.jp/gp/product/B07FQ9678G?tag=konn06-22">Amazonへ飛ぶ</a></caption>
-</div>
-</div>
-
-  </div>
-
-<p>ケースや電源ケーブル、microSD、ヒートシンクなどもついて1万弱。
-こういうのをやるのは初めてだったので、最初金色と銅色の正方形の板が何なのかよくわからなかったが、これがヒートシンクで、チップの両面に貼り付けると良い感じに熱を逃がしてくれるやつだった。
-どうせ記事を書くんだから写真撮ればよかったが撮らなかった。まあ付属品に金色と銅色の正方形の板は1枚ずつしか入っていないのでわかるだろう。</p>
-</section>
-</section>
-<section id="手順" class="level1">
-<h2>手順</h2>
-<section id="構成の概略" class="level2">
-<h3>構成の概略</h3>
-<ul>
-<li>さくらドメインで取った独自ドメインのサブドメインでVPNにアクセスしたい</li>
-<li>通常のサブドメインはさくらのドメイン管理コンパネでよろしくやっている</li>
-<li>独自ドメインはさくら VPS にマップしてあり、今回はこの VPS 上で更に
-BIND を動かす。</li>
-</ul>
-<p>以下、例としては <code>example.com</code>
-が独自ドメインだと仮定し、以下のような構成にする：</p>
-<ul>
-<li><code>example.com</code> 全体：さくらのネームサーバで管理</li>
-<li><code>home.example.com</code> ゾーン：さくらVPS上に建てた BIND9
-で管理
-<ul>
-<li><code>dns.home.example.com</code>：さくら VP<em>S</em>上の BIND9
-へのアドレス</li>
-<li><code>vpn.home.example.com</code>：自宅 VP<em>N</em>
-へのアクセスポイント</li>
-</ul></li>
-</ul>
-<p>また、IPのプレースホルダとして以下を用いる：</p>
-<dl>
-<dt><code>1.2.3.4</code></dt>
-<dd>
-初期状態（現在）の自宅のグローバルIP。<code>curl inet-ip.info</code> や
-<code>hostname -i</code> などで調べられる。
-</dd>
-<dt><code>999.999.999.999</code></dt>
-<dd>
-さくらVPSの固定グローバルIP。
-</dd>
-</dl>
-</section>
-<section id="raspberry-pi-の初期設定" class="level2">
-<h3>Raspberry Pi の初期設定</h3>
-<p>セットアップには、まず microSD に OS をインストールする必要がある。
-実機だけでインストールを行うには外付けの USB
-キーボードとマウスが必要なようで少し焦ったが、ふだんラップトップに
-Bluetooth で繋いでいる Magic Keyboard と Magic Trackpad 2 を USB
-ケーブルで繋いだら普通に使えたので良かった。</p>
-  <div class="embed w-100 my-4 justify-content-center row py-0">
-    <div class="col-md-2 col-2 align-self-center embed-item">
-<div style="border: 1px solid" class="mx-auto">
-  <a href="https://www.amazon.co.jp/gp/product/B016ZF8RDA?tag=konn06-22">
-    <img alt="asin:B016ZF8RDA" src="https://images-fe.ssl-images-amazon.com/images/P/B016ZF8RDA.09.jpg" width="100%">
-  </a>
-  <caption class="mx-auto"><a href="https://www.amazon.co.jp/gp/product/B016ZF8RDA?tag=konn06-22">Amazonへ飛ぶ</a></caption>
-</div>
-</div>
-
-    <div class="col-md-2 col-2 align-self-center embed-item">
-<div style="border: 1px solid" class="mx-auto">
-  <a href="https://www.amazon.co.jp/gp/product/B016ZE7K8O?tag=konn06-22">
-    <img alt="asin:B016ZE7K8O" src="https://images-fe.ssl-images-amazon.com/images/P/B016ZE7K8O.09.jpg" width="100%">
-  </a>
-  <caption class="mx-auto"><a href="https://www.amazon.co.jp/gp/product/B016ZE7K8O?tag=konn06-22">Amazonへ飛ぶ</a></caption>
-</div>
-</div>
-
-  </div>
-
-<p>説明書に従い、キーボード、マウス（今回はトラックパッド）、外付けディスプレイを繋ぐ。
-電源ケーブルを刺すと勝手に起動し、OSのインストール画面に移る。
-途中で必要なファイルをダウンロードするので、ここで Wi-Fi の設定なり LAN
-ケーブルを繋ぐなりしておく。
-最初は何かダウンロード出来ずに失敗していたが、再起動してもっかいやったらうまくいった。何だったんだろう。</p>
-<p>後で知ったのだが、PiBakery とかいうのを使うと、ブート用の microSD
-にカスタマイズした Raspbian などをインストールできるようだ。</p>
-    <div class="embed w-100 my-4 justify-content-center row py-0">
-      
-
-
-    </div>
-
-<p>てか今みたらホスト名の設定とかも出来るっぽいし、これをちゃんと使えば後の設定の手順も結構省けたかもしれない。
-不覚。</p>
-<section id="アカウント名パスワードホスト名sshの設定" class="level3">
-<h4>アカウント名、パスワード、ホスト名、SSHの設定</h4>
-<p>セキュリティホールになるので、アカウント名やホスト名を初期から変更する。
-以下では <code>admin</code>
-という（ザルな）名前にデフォルトアカウント名が変更されているものとする。
-この辺、完全にただの Debian
-なので、この辺りを参照してよしなにすれば良い：</p>
-    <div class="embed w-100 my-4 justify-content-center row py-0">
-      
-
-
-    </div>
-
-    <div class="embed w-100 my-4 justify-content-center row py-0">
-      
-
-
-    </div>
-
-<p>SSH の設定はまあ、適当にいつものように
-<code>/etc/ssh/sshd_config</code> をいじってやれば良い。 まじで Debian
-なので、RasPi 特有の書いておくべきことがほとんどないね。</p>
-</section>
-<section id="ファイアウォール" class="level3">
-<h4>ファイアウォール</h4>
-<p>念のため、ローカルのネットワークからしかアクセスを受け入れなくする。
-ローカルIPの範囲が <code>192.168.0.0/24</code>
-のときは以下のようにすれば良い：</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo apt-get install ufw            <span class="co"># iptables とか知らないので簡単な ufw を使う</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo ufw default DENY               <span class="co"># デフォルトではあらゆる接続を拒否する</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo ufw allow from 192.168.0.0/24  <span class="co"># 同一ネットワーク内からの接続のみ許可</span></span></code></pre></div>
-</section>
-</section>
-<section id="サーバ側の設定" class="level2">
-<h3>サーバ側の設定</h3>
-<p>まずさくら VPS 上に BIND をインストールする。
-さくらVPSの構成は以下の通り：</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat /etc/os-release</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">NAME</span><span class="op">=</span><span class="st">&quot;Ubuntu&quot;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="va">VERSION</span><span class="op">=</span><span class="st">&quot;16.04.4 LTS (Xenial Xerus)&quot;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="va">ID</span><span class="op">=</span>ubuntu</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="va">ID_LIKE</span><span class="op">=</span>debian</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="va">PRETTY_NAME</span><span class="op">=</span><span class="st">&quot;Ubuntu 16.04.4 LTS&quot;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="va">VERSION_ID</span><span class="op">=</span><span class="st">&quot;16.04&quot;</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="va">HOME_URL</span><span class="op">=</span><span class="st">&quot;http://www.ubuntu.com/&quot;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="va">SUPPORT_URL</span><span class="op">=</span><span class="st">&quot;http://help.ubuntu.com/&quot;</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="va">BUG_REPORT_URL</span><span class="op">=</span><span class="st">&quot;http://bugs.launchpad.net/ubuntu/&quot;</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="va">VERSION_CODENAME</span><span class="op">=</span>xenial</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="va">UBUNTU_CODENAME</span><span class="op">=</span>xenial</span></code></pre></div>
-<p>まず BIND9 をインストールする <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>：</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo apt-get install <span class="at">-y</span> bind9</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo systemctl stop bind9</span></code></pre></div>
-<p>設定をこれから弄るので、一旦止めておく。
-どうせ何も設定していないし、どうもゾーンファイルを弄るときには止めておいたほうがいいらしい。</p>
-<p>BINDの設定ファイルは <code>/etc/bind/named.conf</code>
-だが、デフォルトでは以下のような内容になっている：</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode /etc/bind/named.conf"><code class="sourceCode toml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="dt">This</span> <span class="dt">is</span> <span class="dt">the</span> <span class="dt">primary</span> <span class="dt">configuration</span> <span class="dt">file</span> <span class="dt">for</span> <span class="dt">the</span> <span class="dt">BIND</span> <span class="dt">DNS</span> <span class="dt">server</span> <span class="dt">named.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="er">//</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="dt">Please</span> <span class="dt">read</span> <span class="er">/</span><span class="dt">usr</span><span class="er">/</span><span class="dt">share</span><span class="er">/</span><span class="dt">doc</span><span class="er">/</span><span class="dt">bind9</span><span class="er">/</span><span class="dt">README.Debian.gz</span> <span class="dt">for</span> <span class="dt">information</span> <span class="dt">on</span> <span class="dt">the</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="dt">structure</span> <span class="dt">of</span> <span class="dt">BIND</span> <span class="dt">configuration</span> <span class="dt">files</span> <span class="dt">in</span> <span class="dt">Debian</span><span class="er">,</span> <span class="er">*</span><span class="dt">BEFORE</span><span class="er">*</span> <span class="dt">you</span> <span class="dt">customize</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="dt">this</span> <span class="dt">configuration</span> <span class="dt">file.</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="er">//</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="dt">If</span> <span class="dt">you</span> <span class="dt">are</span> <span class="dt">just</span> <span class="dt">adding</span> <span class="dt">zones</span><span class="er">,</span> <span class="dt">please</span> <span class="dt">do</span> <span class="dt">that</span> <span class="dt">in</span> <span class="er">/</span><span class="dt">etc</span><span class="er">/</span><span class="dt">bind</span><span class="er">/</span><span class="dt">named.conf.local</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="dt">include</span> <span class="dt">&quot;/etc/bind/named.conf.options&quot;</span><span class="er">;</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="dt">include</span> <span class="dt">&quot;/etc/bind/named.conf.local&quot;</span><span class="er">;</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="dt">include</span> <span class="dt">&quot;/etc/bind/named.conf.default-zones&quot;</span><span class="er">;</span></span></code></pre></div>
-<p>早い話が、BINDのオプションについては
-<code>/etc/bind/named.conf.options</code> に、自前のゾーン設定については
-<code>named.conf.local</code> に記述するということである。</p>
-<section id="更新鍵の生成" class="level3">
-<h4>更新鍵の生成</h4>
-<p>次に、Dynamic DNS で更新の際に使う鍵一式を生成する。
-日本語で読めるリソースだと、秘密鍵を生成する方法の記事ばかりがヒットする。
-しかし、 <code>nsupdate</code> のクエリが TLS
-などの暗号化を用いているセキュアなものなのか、調べた限り良くわからなかったので、大事を取って公開鍵方式の鍵を使うことを考える。</p>
-<p>まず、次のようにして鍵を生成する（<code>vpn.home.example.com</code>
-の部分は自分の独自ドメインになる）：</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pwd</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> dnssec-keygen <span class="at">-T</span> KEY <span class="at">-a</span> RSASHA256 <span class="at">-b</span> 2048 <span class="at">-n</span> HOST vpn.home.example.com</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Generating</span> key pair.................................................................</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">....................................+++</span> ............................................</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">....................................................................................</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">...................+++</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">Kvpn.home.example.com.+008+12345</span></span></code></pre></div>
-<p>するとワーキングディレクトリに
-<code>Kvpn.home.example.com.+008+12345.key</code> および
-<code>Kvpn.home.example.com.+008+12345.private</code>
-という鍵対が生成される。
-<code>+</code>以下は生成する度にちがうようで、最後の<code>12345</code>の部分がどうも
-ID 扱いになるらしい。 この二つのファイルは、<code>nsupdate</code>
-で呼び出す時に必要になるので捨ててはいけないし、バレたら更新出来るようになってしまうので、絶対に秘匿する必要がある。</p>
-<p>次に、ゾーンの設定をする。次の内容を
-<code>/etc/bind/named.conf.local</code> に追記する：</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode conf"><code class="sourceCode toml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">zone</span> <span class="dt">&quot;home.example.com&quot;</span> <span class="er">{</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>     <span class="dt">type</span> <span class="dt">master</span><span class="er">;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>     <span class="dt">file</span> <span class="dt">&quot;home.example.com.zone&quot;</span><span class="er">;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>     <span class="dt">update-policy</span> <span class="er">{</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>       <span class="dt">grant</span> <span class="dt">vpn.home.example.com.</span> <span class="dt">name</span> <span class="dt">vpn.home.example.com.</span> <span class="dt">A</span><span class="er">;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>     <span class="er">};</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="er">};</span></span></code></pre></div>
-<p>これで、「ゾーンの具体的な設定は
-<code>/var/cache/bind/home.example.com.zone</code>を参照」「<code>vpn.home.example.com</code>
-を動的に書き換えられるのは、上の <code>.zone</code>
-ファイルで指定された鍵を持っている人のみ」という意味になる。</p>
-<p>今度は <code>/var/cache/bind/home.example.com.zone</code>
-を弄ることになるが、鍵の設定はこのゾーンファイルに書くことになるので、先程生成した公開鍵の内容をメモっておく：</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat Kvpn.home.example.com.+008+12345.key</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">vpn.home.example.com.</span> IN KEY 512 3 8 ABCDEFGHIJKLMNOPQRSTUVWXZ...=</span></code></pre></div>
-<p>これを踏まえて、home.example.com のゾーンの設定をしていく。
-ここでは、VPN
-サブドメインの設定、VPN設定の更新鍵の設定と自前BINDへのアドレスの設定を行う。</p>
-<pre class="/var/cache/bind/home.example.com.zone"><code>$TTL 86400      ; デフォルトの生存期間（1日）
-home.example.com    IN SOA  dns.home.example.com. root.home.example.com. (
-          2019031009 ; シリアル番号、日付＋二桁のユニークIDにする。
-          3600       ; 更新間隔 (秒、ここでは 1 時間)
-          900        ; リトライ間隔 in 秒 (15 minutes)
-          604800     ; 有効期限 (1 week)
-          3600       ; 最小の生存期間 (1 hour)
-          )
-          NS      dns.home.example.com.   ; VPS で動かす BIND へのドメイン
-$ORIGIN home.example.com.
-
-; vpn.home.example.com に紐づけられた鍵
-vpn       KEY     512 3 8 (ABCEDFGHIJKLMNOPQRSTUVWXYZ=...
-                          ...=
-                          ) ; key id = 12345
-$TTL 3600       ; 1 hour
-vpn       A       1.2.3.4   ; 初期状態の自宅グローバルIP
-
-$TTL 86400      ; 1 day
-dns       A       999.999.999.999   ; さくらVPSの固定IP</code></pre>
-<p>上の <code>root.home.example.com</code>
-はメールアドレスを表現するらしく、この場合一つ目の <code>.</code>
-を置き換えて <code>root@home.example.com</code>
-が連絡先メールアドレスとして登録されることになる（らしい）。 上の
-<code>.key</code> ファイルの <code>IN</code> 以後の3つの数字が、ここでの
-<code>vpn</code> KEY 以後の括弧前の <code>512 3 8</code>
-に相当するので、写しておく。
-括弧内は、最後にスペース区切りで書かれているハッシュ値をうつす。</p>
-<p>括弧内では改行等が効くらしく、<code>ABCDEFGHIJKLMNOPQRSTUVWXZ...=</code>部分はスペースごとに改行・インデントすると読みやすい。
-<code>;</code> 以後はコメントになる。</p>
-</section>
-<section id="さくらドメインネームサーバの設定" class="level3">
-<h4>さくらドメインネームサーバの設定</h4>
-<p>さくらの会員メニューにログインする：</p>
-    <div class="embed w-100 my-4 justify-content-center row py-0">
-      
-
-
-    </div>
-
-<p>「契約サービスの確認」＞「ドメインの確認」と飛んで、ページ最下部の「ドメインメニュー」をクリック。
-「ネームサーバとゾーンの管理」から、今回設定したいドメインの欄の「ゾーン編集」を選び、「変更」に飛ぶ。</p>
-<p>まず、DNSサーバへのサブドメインを設定する。
-以下のように入力し、「新規登録」をクリックする。</p>
-<p><img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/raspi-vpn-dyndns/dns-setting.png"></p>
-<p>ここで続けて <code>home</code>
-サブドメインを設定しようとすると上手くいかないことがあるので、一旦「データ送信」を選ぶ。
-今度は今設定した DNS サーバに <code>home.example.com</code>
-以下を委譲する設定を以下のようにし、「新規登録」→「データ送信」をする。</p>
-<p><img class="img-fluid img-thumbnail rounded mx-auto d-block" src="./imgs/raspi-vpn-dyndns/home-setting.png"></p>
-</section>
-<section id="ファイヤウォールまわりの設定" class="level3">
-<h4>ファイヤウォールまわりの設定</h4>
-<p>VPS
-で特にファイヤウォールを動かしていないなら、上の設定だけで問題ない。
-しかし、常識的に考えて VPS も UFW
-によるファイヤウォールで守られている筈なので、このままだとDNSサーバにアクセスできない。
-そこで、まず53番ポートを開けておく：</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo ufw allow 53</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ルールを追加しました</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ルールを追加しました</span> <span class="op">(v6)</span></span></code></pre></div>
-<p>この作業を怠っていたので、1時間くらい「設定合ってる筈なのに何も動かない……」となって泣いた。
-また、BIND9はデフォルトでランダムなポートにフォールバックするようになっているらしく、このままだとまだ動かないので、BINDを53番ポート固定にしておく必要がある。
-以下のように、<code>/etc/bind/named.conf.options</code> の
-<code>options{ }</code> 節の末尾に 53
-番ポートに固定する設定を加える：</p>
-<pre class="/etc/bind/named.conf.options"><code>options {
-  ...
-  query-source address * port 53;
-}</code></pre>
-</section>
-<section id="bind9-起動" class="level3">
-<h4>BIND9 起動</h4>
-<div class="sourceCode" id="cb11"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo systemctl start bind9</span></code></pre></div>
-<p>これで多分 VPS 上の DNS は無事動き始める筈である。
-設定が上手くいっていることを確かめるため、<code>nsupdate</code> を VPS
-上で呼んでみよう。
-先程キーを生成したディレクトリに行って、以下を実行してみる。</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[vps]</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nsupdate <span class="at">-k</span> Kvpn.home.example.com.+008+12345.private <span class="op">&lt;&lt;EOF</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="st">server 999.999.999.999</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="st">update add vpn.home.example.com. 3600 IN A 1.2.3.4</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="st">send</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="st">quit</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span></code></pre></div>
-<p>特に何も言われなければ成功。<code>3600</code>
-の部分はキャッシュが何秒残るかを表している。</p>
-<p>DNS設定が浸透するまでにちょっと時間がかかるので、外部からのアクセスが出来るようになるには、少し待つ必要があるかもしれない。</p>
-</section>
-</section>
-<section id="グローバル-ip-自動更新スクリプト" class="level2">
-<h3>グローバル IP 自動更新スクリプト</h3>
-<p>RasPi 上に戻る。 VPS上から適宜生成したキーペアをコピーしてくる。</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[raspi]</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir ~/.keys</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> scp vps:/path/to/keys/Kvpn.home.example.com.+008+12345.key     ~/.keys</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Kvpn.home.example.com.+008+12345.key</span>      100%   16     1.5KB/s   00:00</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> scp vps:/path/to/keys/Kvpn.home.example.com.+008+12345.private ~/.keys</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Kvpn.home.example.com.+008+12345.private</span>  100%   16     1.5KB/s   00:00</span></code></pre></div>
-<p>これを使えば <code>nsupdate</code>
-でDNS情報を更新出来る筈なので、さっき実行したのをもっかい実行してみる。</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[raspi]</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nsupdate <span class="at">-k</span> ~/.keys/Kvpn.home.example.com.+008+12345.private <span class="op">&lt;&lt;EOF</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="st">server 999.999.999.999</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="st">update add vpn.home.example.com. 3600 IN A 1.2.3.4</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="st">send</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="st">quit</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span></code></pre></div>
-<p>怒られなければ成功。 あとは更新スクリプト <code>update-ip.sh</code>
-を適当に書き、パスの通った場所に置く。</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env bash</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="va">IP_FILE</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${HOME}</span><span class="st">/.batch/global_ipaddr&quot;</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="va">OLD_IP</span><span class="op">=</span><span class="st">&quot;&quot;</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="va">IP</span><span class="op">=</span><span class="kw">`</span><span class="ex">curl</span> inet-ip.info <span class="dv">2</span><span class="op">&gt;</span>/dev/null<span class="kw">`</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> <span class="st">&quot;</span><span class="va">$IP_FILE</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">OLD_IP</span><span class="op">=</span><span class="va">$(</span><span class="fu">cat</span> <span class="st">&quot;</span><span class="va">${IP_FILE}</span><span class="st">&quot;</span><span class="va">)</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-n</span> <span class="st">&quot;</span><span class="va">${IP}</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">${OLD_IP}</span><span class="st">&quot;</span> <span class="ot">!=</span> <span class="st">&quot;</span><span class="va">${IP}</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;IP changed to </span><span class="va">${IP}</span><span class="st">, from the old </span><span class="va">${OLD_IP}</span><span class="st">&quot;</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;UPDATING DynDNS...&quot;</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        <span class="ex">nsupdate</span> <span class="at">-k</span> <span class="va">$HOME</span>/.keys/Kvpn.home.example.com.+008+12345.private <span class="op">&lt;&lt;EOF</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="st">        server dns.home.example.com</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="st">        update add vpn.home.example.com. 3600 IN A </span><span class="va">${IP}</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="st">        send</span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="st">        quit</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;Updated.&quot;</span></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;</span><span class="va">${IP}</span><span class="st">&quot;</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">${IP_FILE}</span><span class="st">&quot;</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;IP </span><span class="va">${OLD_IP}</span><span class="st"> remains the same: </span><span class="va">${IP}</span><span class="st">&quot;</span></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
-<p>古い情報は <code>$HOME/.batch/global_ipaddr</code>
-に保存することにして、適宜 <code class="sourceCode zsh"><span class="fu">mkdir</span> <span class="va">$HOME</span>/.batch</code>
-などしておく。 実行権限を付与し、ちゃんと動くことを確認しておく。</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chmod +x update-ip.sh</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> update-ip.sh</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">IP</span> changed to 1.2.3.4, from the old</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">UPDATING</span> DynDNS...</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Updated.</span></span></code></pre></div>
-<p>あとはこれを定期実行すればよい。 cron
-は人間が触るものではないので、ここでは systemd を使うことにする。
-以下のファイルを作成する：</p>
-<p><code>/etc/systemd/system/update-ip.service</code>:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[Unit]</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Description</span><span class="op">=</span><span class="dt">Updates</span> <span class="dt">global</span> <span class="dt">IP</span> <span class="dt">address</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[Service]</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="dt">Type</span><span class="op">=</span><span class="dt">oneshot</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="dt">ExecStart</span><span class="op">=</span><span class="er">/</span><span class="dt">home</span><span class="er">/</span><span class="dt">admin</span><span class="er">/</span><span class="dt">bin</span><span class="er">/</span><span class="dt">update-ip.sh</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="dt">WorkingDirectory</span><span class="op">=</span><span class="er">/</span><span class="dt">home</span><span class="er">/</span><span class="dt">admin</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span><span class="op">=</span><span class="dt">admin</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="dt">Restart</span><span class="op">=</span><span class="dt">no</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="kw">[Install]</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="dt">WantedBy</span><span class="op">=</span><span class="dt">multi-user.target</span></span></code></pre></div>
-<p><code>/etc/systemd/system/update-ip.timer</code>:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[Unit]</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Description</span><span class="op">=</span><span class="dt">Periodically</span> <span class="dt">renews</span> <span class="dt">global</span> <span class="dt">IP</span> <span class="dt">address</span> <span class="dt">info</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">[Timer]</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="dt">OnBootSec</span><span class="op">=</span><span class="dv">1</span><span class="dt">min</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="dt">OnUnitActiveSec</span><span class="op">=</span><span class="dv">15</span><span class="dt">min</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="dt">Unit</span><span class="op">=</span><span class="dt">update-ip.service</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">[Install]</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="dt">WantedBy</span><span class="op">=</span><span class="dt">timers.target</span></span></code></pre></div>
-<p>ここでは、起動1分後から、以後15分刻みで定期実行されるようにしてある。
-あとはこれらを有効化すれば良い。</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo systemctl enable update-ip.service</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo systemctl enable update-ip.timer</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sudo systemctl start  update-ip.timer</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div>
-<p>以上で、あとは放っておけば遅くとも15分おきに情報が更新され、何も考えずに
-<code>vpn.home.example.com</code> から自宅 VPN
-に繋げられる筈である。</p>
-</section>
-</section>
-<section id="最後に" class="level1">
-<h2>最後に</h2>
-<p>そうは言っても、15分のラグが出うるので、ひみつの場所からグローバル IP
-の情報にアクセス出来るようにすると良い。 私は適当に Let’s Encrypt
-で証明書を取って、TLS + Basic 認証で秘匿された場所に IP
-の情報をアップするようにしている。
-この辺りのことを書いてもよかったが、あとは完全に個人が何のツールを使っているかに依存するので、詳しくは書かない。
-あ、あとここで指定したサブドメイン等は私の本番環境での設定と一致しているとは限りませんので悪しからず。攻撃はやめてね！</p>
-<p>書いてみてタイトルにするほど RasPi
-特有のこととかがなかったので、ゆくゆくはアイオーティーでディープラーニング（）などをやっていきたい。
-ここ改善したら？みたいのがあったら教えてください。ではでは。</p>
-</section>
-<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
-<hr></hr>
-<ol>
-<li id="fn1"><p>安全を期するなら、コンテナの中でやった方がいいかも<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section>]]></summary>
     </entry>
 </feed>

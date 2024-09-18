@@ -1,0 +1,201 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-30CJ4TSV3E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-30CJ4TSV3E');
+  </script>
+  <!-- / Google tag -->
+  <meta charset="utf-8">
+  <title>2024年度強制法セミナー発表資料 - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="強制法,セミナー,発表資料,数理論理学,集合論,公理的集合論"><meta name="description" content="2024年後半におるうぇ君、るじゃ氏、こりーさんなどとやっている強制法自主ゼミの発表資料です。 私とおるうぇ君とで、ロジックの基礎からはじめて強制法の基本を他の参加者に叩き込もうという会です。目標はCHの独立性証明。
+">
+  <link href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/math/2024-forcing-seminar.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  <link rel="stylesheet" href="/css/math.css">
+
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/math/2024-forcing-seminar.html">
+  <meta property="og:title" content="2024年度強制法セミナー発表資料">
+  <meta property="og:description" content="2024年後半におるうぇ君、るじゃ氏、こりーさんなどとやっている強制法自主ゼミの発表資料です。 私とおるうぇ君とで、ロジックの基礎からはじめて強制法の基本を他の参加者に叩き込もうという会です。目標はCHの独立性証明。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/math/">数学関係をまとめておくばしょ</a></li>
+  <li class="li breadcrumb-item active">2024年度強制法セミナー発表資料</li>
+</ol>
+
+    <div class="page-header">
+    <h1>2024年度強制法セミナー発表資料 <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/math/2024-forcing-seminar.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/math/2024-forcing-seminar.html" class="hatena-bookmark-button" data-hatena-bookmark-title="2024年度強制法セミナー発表資料 - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2024/09/18 13:27:51 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="概要" class="level1">
+<h2>概要</h2>
+<p>2024年に開催した（している）強制法の基本に関する内輪の自主セミナーの発表資料です。
+そろそろ集合論を忘れそうだったので、<a href="https://x.com/Alwe_Logic">おるうぇ君</a>を抱き込んで、他の参加者に強制法による連続体仮説<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">H</mi></mrow><annotation encoding="application/x-tex">\mathrm{CH}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord"><span class="mord mathrm">CH</span></span></span></span></span></span></span>の独立性証明までを叩き込むのを目標として開催しています。
+数理論理学の基本から復習して、最終的に強制法の基礎を理解するという構成になる予定です。私がロジックと強制法パート、おるうぇ君が無限組合せ論パートを担当していますが、発表内容はおるうぇ君と議論して決めています（特に理論の翻訳可能性回りについてはかなりおるうぇ君の知恵を借りました）。
+専門家になるのが目的ではなく、理論構成の概要を追えるようにするのが目的なので、重要な部分以外の証明についてはほとんど演習問題にしています。一応ヒントは書いてあるので、学部2〜3年程度の数学の下地があれば頑張れば細部を埋められるでしょう。</p>
+<p>とりいそぎ、私の担当分で完成している分の資料を以下にアップしていきます。</p>
+<section id="ほぼ確定原稿" class="level2">
+<h3>（ほぼ）確定原稿</h3>
+<dl>
+<dt><a href="./2024-forcing-seminar/00-introduction-to-set-theory-and-logic.pdf">第0回：忙しい人のための強制法</a></dt>
+<dd>
+そもそも強制法とは何なのか、数理論理学・集合論の歴史も踏まえつつ、おはなしとして本セミナーの目標を概観します。大雑把な強制法のイメージについても概説。
+</dd>
+<dt><a href="./2024-forcing-seminar/01-basic-mathematical-logic.pdf">第1回：数理論理学の初歩</a></dt>
+<dd>
+<p>強制法による独立性証明を理解するために必要な、以下の数理論理学の基礎知識について触れます。</p>
+<ol type="1">
+<li><strong>証明論の初歩</strong>：シーケント計算<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">L</mi><mi mathvariant="normal">K</mi></mrow><annotation encoding="application/x-tex">\mathrm{LK}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord"><span class="mord mathrm">LK</span></span></span></span></span></span></span>による古典一階述語論理の構文論の基本</li>
+<li><strong>モデル理論の初歩</strong>：初等拡大、超積と超冪、コンパクト性定理、完全性定理、Löwenheim–Skolemの定理など</li>
+<li><strong>集合論の基本</strong>：<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">C</mi></mrow><annotation encoding="application/x-tex">\mathrm{ZFC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord"><span class="mord mathrm">ZFC</span></span></span></span></span></span></span>やその部分体系の公理群や、集合論内での数理論理学の展開、それに必要な初歩の無限組合せ論、集合・クラスモデルの違い、メタとオブジェクトの区別など、強制法を正しく理解するために必要な集合論サイドの知識をまとめています。</li>
+<li><strong>不完全性定理</strong>：無矛盾性証明を理解する上での基本定理であるGödelの第二不完全性定理を紹介します。本来は<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathcolor="#cc0000"><mtext>\math</mtext></mstyle><mrow><mi>P</mi><mi>A</mi></mrow></mrow><annotation encoding="application/x-tex">\math{PA}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord text" style="color: rgb(204, 0, 0);"><span class="mord" style="color: rgb(204, 0, 0);">\math</span></span><span class="mord"><span style="margin-right: 0.1389em;" class="mord mathnormal">P</span><span class="mord mathnormal">A</span></span></span></span></span></span></span>以上で構文論的・計算論的な証明をするべきですが、強制法への応用の文脈では<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi></mrow><annotation encoding="application/x-tex">\mathrm{ZF}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord"><span class="mord mathrm">ZF</span></span></span></span></span></span></span>やそれよりやや弱い程度の集合論に対する不完全性があれば大丈夫なので、Woodinによる意味論的な証明を採用して細部をスキップしています。</li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="全原稿" class="level2">
+<h3>全原稿</h3>
+<p>確定分以外も含めた原稿は全て以下の GitHub
+レポジトリで閲覧できます：</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://github.com/konn/2024-forcing-seminar-notes">
+</iframe>
+
+    </div>
+
+</section>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/math/2024-forcing-seminar.html";
+          this.page.identifier = "/math/2024-forcing-seminar.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/math/2024-forcing-seminar.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+        and <a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2022
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+
+
+</body></html>
