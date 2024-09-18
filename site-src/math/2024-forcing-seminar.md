@@ -21,10 +21,10 @@ macros:
 
 ## （ほぼ）確定原稿
 
-[第0回：忙しい人のための強制法](./2024-forcing-seminar/00-introduction-to-set-theory-and-logic.pdf)
+[第0回：忙しい人のための強制法](/2024-forcing-seminar-notes/00-introduction-to-set-theory-and-logic.pdf)
 :   そもそも強制法とは何なのか、数理論理学・集合論の歴史も踏まえつつ、おはなしとして本セミナーの目標を概観します。大雑把な強制法のイメージについても概説。
 
-[第1回：数理論理学の初歩](./2024-forcing-seminar/01-basic-mathematical-logic.pdf)
+[第1回：数理論理学の初歩](/2024-forcing-seminar-notes/01-basic-mathematical-logic.pdf)
 :   強制法による独立性証明を理解するために必要な、以下の数理論理学の基礎知識について触れます。
 
     1. **証明論の初歩**：シーケント計算$\mathrm{LK}$による古典一階述語論理の構文論の基本
