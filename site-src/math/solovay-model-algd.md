@@ -15,13 +15,17 @@ disqus: false
 
 ## スライドへのリンク
 
+<div class="embed w-100 my-4 justify-content-center row py-0">
+<div class="embed-responsive embed-responsive-16by9 col-md-10 col-12 align-self-center">
 [Slide](./solovay-model-algd.pdf)
 
 <iframe title="pdfjs-default-viewer"
   src="./solovay-model-algd.pdf"
-  width="80%"
-></iframe
->
+  width="720px"
+  height="420px">
+</iframe>
+</div>
+</div>
 
 ## 配信・動画
 
