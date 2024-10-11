@@ -15,7 +15,7 @@ disqus: false
 
 ## スライドへのリンク
 
-<span style="font-size: large">[[Link to Slides](./solovay-model-algd.pdf)]</span>
+<span style="font-size: large">[[Download Slides](./solovay-model-algd.pdf)]</span>
 
 <div class="embed w-100 my-4 justify-content-center row py-0">
 <div class="embed-responsive embed-responsive-16by9 col-md-10 col-12 align-self-center">
