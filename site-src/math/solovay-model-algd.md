@@ -19,9 +19,9 @@ disqus: false
 
 <iframe title="pdfjs-default-viewer"
   src="./solovay-model-algd.pdf"
-  width="1200px"
-  height="700px">
-</iframe>
+  width="80%"
+></iframe
+>
 
 ## 配信・動画
 
