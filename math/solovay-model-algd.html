@@ -1,0 +1,201 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-30CJ4TSV3E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-30CJ4TSV3E');
+  </script>
+  <!-- / Google tag -->
+  <meta charset="utf-8">
+  <title>全ての実数の集合をLebesgue可測にする 〜Solovayモデル入門〜 - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="集合論,強制法,Solovayモデル,記述集合論"><meta name="description" content="「ZF + DC + 任意の実数の集合がLebesgue可測」になる集合論のモデルSolovayモデルについてalg-dチャンネルで喋った時の資料です。
+">
+  <link href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/math/solovay-model-algd.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  <link rel="stylesheet" href="/css/math.css">
+
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/math/solovay-model-algd.html">
+  <meta property="og:title" content="全ての実数の集合をLebesgue可測にする 〜Solovayモデル入門〜">
+  <meta property="og:description" content="「ZF + DC + 任意の実数の集合がLebesgue可測」になる集合論のモデルSolovayモデルについてalg-dチャンネルで喋った時の資料です。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/math/">数学関係をまとめておくばしょ</a></li>
+  <li class="li breadcrumb-item active">全ての実数の集合をLebesgue可測にする 〜Solovayモデル入門〜</li>
+</ol>
+
+    <div class="page-header">
+    <h1>全ての実数の集合をLebesgue可測にする 〜Solovayモデル入門〜 <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/math/solovay-model-algd.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/math/solovay-model-algd.html" class="hatena-bookmark-button" data-hatena-bookmark-title="全ての実数の集合をLebesgue可測にする 〜Solovayモデル入門〜 - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2024/10/12 14:00:00 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="概要とメインの資料" class="level1">
+<h2>概要とメインの資料</h2>
+<p>2024年0A月0C日（10月12日）に<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">Z</mi><mi mathvariant="normal">F</mi></mrow><mo>+</mo><mrow><mi mathvariant="normal">D</mi><mi mathvariant="normal">C</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{ZF}+\mathrm{DC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7667em; vertical-align: -0.0833em;"></span><span class="mord"><span class="mord mathrm">ZF</span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord"><span class="mord mathrm">DC</span></span></span></span></span></span></span> +
+任意の実数の集合がLebesgue可測」が成り立つ集合論のモデルである<strong>Solovayモデル</strong>について<a href="https://www.youtube.com/@alg-dx">alg-dチャンネル</a>で話した時の資料です。
+強制法や巨大基数などの集合論についてあまり知らない人向けに、厳密なところはあまり立ち入らずに、雰囲気を掴めるようにふわっと話したものになります。</p>
+<section id="スライドへのリンク" class="level2">
+<h3>スライドへのリンク</h3>
+<p><a href="./solovay-model-algd.pdf">Slide</a></p>
+<iframe title="pdfjs-default-viewer" src="./solovay-model-algd.pdf" width="1200px" height="700px">
+</iframe>
+</section>
+<section id="配信動画" class="level2">
+<h3>配信・動画</h3>
+  <div class="embed w-100 my-4 justify-content-center row py-0">
+    <div class="embed-responsive embed-responsive-16by9 col-md-10 col-12 align-self-center"> <iframe width="560" height="315" src="https://www.youtube.com/embed/EHWPpIB8FCQ" class="embed-responsive" allow="autoplay; encrypted-media" allowfullscreen></iframe> </div>
+  </div>
+
+</section>
+</section>
+<section id="参考資料" class="level1">
+<h2>参考資料</h2>
+<p>読んだり観たりしなくても大丈夫ですが、読んだり観たりするといいことがあるかもしれない資料たちです。</p>
+<section id="pdf等" class="level2">
+<h3>PDF等</h3>
+<p>院生時代のスライドです：</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=http://www.slideshare.net/konn/ss-50957683">
+</iframe>
+
+    </div>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=http://www.slideshare.net/konn/lebesgue-solovayshelah">
+</iframe>
+
+    </div>
+
+<p>修論です（<strong>Properなら<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span style="margin-right: 0.0785em;" class="mord mathnormal">I</span></span></span></span></span></span>-正則性が成り立つと書いてますが、これは嘘です</strong>）：</p>
+    <div class="embed w-100 my-4 justify-content-center row py-0">
+      <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://konn-san.com/math/regularity-and-inaccessible.html">
+</iframe>
+
+    </div>
+
+</section>
+<section id="alg-dチャンネルの関連する動画" class="level2">
+<h3>alg-dチャンネルの関連する動画</h3>
+<p>以下の alg-d
+チャンネルの動画を見ておくと、理解しやすい部分があるかもしれません。</p>
+  <div class="embed w-100 my-4 justify-content-center row py-0">
+    <div class="embed-responsive embed-responsive-16by9 col-md-10 col-12 align-self-center"> <iframe width="560" height="315" src="https://www.youtube.com/embed/KJlZxdrhK-0" class="embed-responsive" allow="autoplay; encrypted-media" allowfullscreen></iframe> </div>
+    <div class="embed-responsive embed-responsive-16by9 col-md-10 col-12 align-self-center"> <iframe width="560" height="315" src="https://www.youtube.com/embed/toukvpjnAtU" class="embed-responsive" allow="autoplay; encrypted-media" allowfullscreen></iframe> </div>
+    <div class="embed-responsive embed-responsive-16by9 col-md-10 col-12 align-self-center"> <iframe width="560" height="315" src="https://www.youtube.com/embed/z7jXyjFnjfU" class="embed-responsive" allow="autoplay; encrypted-media" allowfullscreen></iframe> </div>
+  </div>
+
+</section>
+</section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/math/solovay-model-algd.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+        and <a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2022
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script type="module"> import pdfjs-dist from https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/+esm </script>
+
+
+</body></html>
