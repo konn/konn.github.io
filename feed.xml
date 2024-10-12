@@ -58,7 +58,7 @@
 <p>「ZF + DC +
 任意の実数の集合がBaireの性質を持つ」モデルには到達不能基数が要らないことを説明した、院生時代のスライドです：</p>
 <ul>
-<li><a href="./2016-shelah-sweet-forcing.pdf">On Projective Baire
+<li><a href="./projective-baire-fmyg16.pdf">On Projective Baire
 Property</a></li>
 </ul>
 </section>
@@ -162,12 +162,14 @@ Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計
 <a href="https://docs.google.com/viewer?a=v&amp;pid=sites&amp;srcid=ZGVmYXVsdGRvbWFpbnxzaGltaWtlbnh8Z3g6MWY5OWFiZDM2NTcyNzljZQ">第4回つくばフレッシュマンセミナー</a>『<b>集合論への招待　〜実数直線の集合論〜</b>』（<a href="/math/freshman-2016-resume.pdf">資料</a>）</li>
 <li>2016/03/08 
 <a href="http://logic.cs.tsukuba.ac.jp/ppl2016/">第18回プログラミングおよびプログラミング言語ワークショップ PPL 2016</a>『<b>Freer Monads, More Extensible Effects</b>』（<a href="/prog/freer-ppl16.key">Keynote</a>，<a href="http://www.slideshare.net/konn/freer-monads-more-extensible-effects-59411772">SlideShare</a>，<a href="/prog/freer-ppl16.pdf">PDF</a>）</li>
+<li>2015/11/27 
+数学基礎論若手の会2015＠館山『<b>Lebesgue 可測性に関する Soloay の定理と実数の集合の正則性</b>』（<a href="/math/2015-solovay-regular.pdf">Slide</a>）</li>
 <li>2015/07/27 
-修士論文中間発表『<b>実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について（公開版）</b>』（<a href="http://www.slideshare.net/konn/ss-50957683">Slide</a>）</li>
+修士論文中間発表『<b>実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について（公開版）</b>』（<a href="/math/2015-how-far-measurable.pdf">Slide</a>）</li>
 <li>2015/03/08 
 筑波大学計算機数学グループ 春の合宿2015＠筑波大学館山研修所『<b>（数式の入った）本をつくる</b>』（<a href="http://www.slideshare.net/konn/ss-45587178">Slide</a>，<a href="https://www.youtube.com/watch?v=a0NcKmVWKq0">録画</a>）</li>
 <li>2014/11/20 
-数学基礎論若手の会2014＠鳥取『<b>Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項</b>』（<a href="http://www.slideshare.net/konn/lebesgue-solovayshelah">Slide</a>）</li>
+数学基礎論若手の会2014＠鳥取『<b>Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項</b>』（<a href="/math/2014-solvay-shelah-descriptive.pdf">Slide</a>）</li>
 <li>2014/03/20 
 PFI社内セミナー『<b>技術者が知るべき Gröbner 基底</b>』（<a href="http://www.slideshare.net/konn/grbner">Slide</a>，<a href="http://www.ustream.tv/recorded/45083876">UStream [後半]</a>，<a href="http://www.ustream.tv/recorded/45083535">UStream [前半]</a>）</li>
 <li>2014/03/08 
