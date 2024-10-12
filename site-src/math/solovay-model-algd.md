@@ -48,7 +48,7 @@ Solovayモデルに関する院生時代のスライドです：
 
 「ZF + DC + 任意の実数の集合がBaireの性質を持つ」モデルには到達不能基数が要らないことを説明した、院生時代のスライドです：
 
-- [On Projective Baire Property](./2016-shelah-sweet-forcing.pdf)
+- [On Projective Baire Property](./projective-baire-fmyg16.pdf)
 
 ## alg-dチャンネルの関連する動画
 

@@ -123,11 +123,18 @@
     SlideShare: http://www.slideshare.net/konn/freer-monads-more-extensible-effects-59411772
     PDF: /prog/freer-ppl16.pdf
     Keynote: /prog/freer-ppl16.key
+- date: 2015/11/27
+  conference:
+    name: 数学基礎論若手の会2015
+    venue: 館山
+  title: Lebesgue 可測性に関する Soloay の定理と実数の集合の正則性
+  links:
+    Slide: "/math/2015-solovay-regular.pdf"
 - date: 2015/07/27
   conference: 修士論文中間発表
   title: 実数の集合はどこまで可測になれるか？Solovay-Shelah による Lebesgue 可測性と〈大きな無限〉の関係に関する結果について（公開版）
   links: 
-    Slide: http://www.slideshare.net/konn/ss-50957683
+    Slide: "/math/2015-how-far-measurable.pdf"
 - date: 2015/03/08
   conference:
     name: 筑波大学計算機数学グループ 春の合宿2015
@@ -142,7 +149,7 @@
     venue: 鳥取
   title: Lebesgue 可測性に関する Solovay-Shelah の結果に必要な記述集合論のごく基本的な事項
   links:
-    Slide: http://www.slideshare.net/konn/lebesgue-solovayshelah
+    Slide: "/math/2014-solvay-shelah-descriptive.pdf"
 - date: 2014/03/20
   conference: PFI社内セミナー
   title: 技術者が知るべき Gröbner 基底
