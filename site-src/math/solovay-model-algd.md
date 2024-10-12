@@ -37,14 +37,18 @@ disqus: false
 
 ## PDF等
 
-院生時代のスライドです：
+Solovayモデルに関する院生時代のスライドです：
 
-[](http://www.slideshare.net/konn/ss-50957683)
-[](http://www.slideshare.net/konn/lebesgue-solovayshelah)
+- [Lebesgue可測性に関するSolovayの定理と実数の集合の正則性](./2015-solovay-regular.pdf)
+- [Lebesgue可測性に関するSolovay–Shelahの結果に必要な記述集合論のごく基本的な事項](./2014-solvay-shelah-descriptive.pdf)
 
 修論です（**Properなら$I$-正則性が成り立つと書いてますが、これは嘘です**）：
 
 [](https://konn-san.com/math/regularity-and-inaccessible.html)
+
+「ZF + DC + 任意の実数の集合がBaireの性質を持つ」モデルには到達不能基数が要らないことを説明した、院生時代のスライドです：
+
+- [On Projective Baire Property](./2016-shelah-sweet-forcing.pdf)
 
 ## alg-dチャンネルの関連する動画
 
