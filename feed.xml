@@ -45,6 +45,9 @@
 <h3>PDF等</h3>
 <p>Solovayモデルに関する院生時代のスライドです：</p>
 <ul>
+<li><a href="./2015-how-far-measurable.pdf">実数の集合はどこまで可測になれるか？Solovay-Shelah
+による Lebesgue
+可測性と〈大きな無限〉の関係に関する結果について（公開版）</a></li>
 <li><a href="./2015-solovay-regular.pdf">Lebesgue可測性に関するSolovayの定理と実数の集合の正則性</a></li>
 <li><a href="./2014-solvay-shelah-descriptive.pdf">Lebesgue可測性に関するSolovay–Shelahの結果に必要な記述集合論のごく基本的な事項</a></li>
 </ul>
