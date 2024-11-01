@@ -4,20 +4,22 @@
     {
       "label": "build",
       "type": "shell",
+      "group": "build",
       "command": "cabal run -- site build",
-      "problemMatcher": []
+      "detail": "$ site build"
     },
     {
       "label": "preview",
       "type": "shell",
+      "group": "test",
       "command": "open -a Safari http://localhost:8000; cabal run -- site watch",
-      "problemMatcher": []
+      "detail": "$ site watch"
     },
     {
       "label": "deploy",
       "type": "shell",
       "command": "cabal run -- site build && cabal run -- site deploy",
-      "problemMatcher": []
+      "detail": "$ site build && site deploy"
     }
   ]
 }
