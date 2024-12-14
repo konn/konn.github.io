@@ -1,0 +1,1139 @@
+<!DOCTYPE html><!--[if lt IE 7]>      <html lang="ja" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html lang="ja" class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html lang="ja" class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html lang="ja" class="no-js"><!--<![endif]--><!--[if !IE]><html lang="ja"><![endif]--><head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-30CJ4TSV3E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-30CJ4TSV3E');
+  </script>
+  <!-- / Google tag -->
+  <meta charset="utf-8">
+  <title>できる！Template Haskell（完） - konn-san.com</title>
+  <meta name="author" content="Hiromi ISHII">
+  <meta name="Keywords" content="Template Haskell,メタプログラミング,Haskell"><meta name="description" content="大昔に書いた Template Haskell の入門記事。はてなグループの消滅に巻き込まれてアクセス不能になっていました。大分古くなってしまった部分もありますが、考え方としてはまだ使える部分もあるのでWeb Archive からサルベージしました。
+">
+  <link href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" type="text/css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width">
+  <link rel="canonical" href="https://konn-san.com/articles/2011-12-18-dekiru-template-haskell.html">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Atom Feed">
+  <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/css/syntax.css" rel="stylesheet" media="screen">
+  <link href="/css/style.css" rel="stylesheet" media="screen">
+  
+
+
+  <script src="//b.st-hatena.com/js/bookmark_button_wo_al.js" async="async">
+  </script>
+  <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+  <script src="//s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script>
+  Hatena.Star.Token = '7bf3845df18764ea7bfa120294f8c5ed1cd371e9';
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.container': {
+        uri: 'window.location',
+        title: 'document.title',
+        container: 'ul#socials li#hatena-star'
+      }
+    }
+  };
+  </script>
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:site" content="@mr_konn">
+  <meta property="og:url" content="https://konn-san.com/articles/2011-12-18-dekiru-template-haskell.html">
+  <meta property="og:title" content="できる！Template Haskell（完）">
+  <meta property="og:description" content="大昔に書いた Template Haskell の入門記事。はてなグループの消滅に巻き込まれてアクセス不能になっていました。大分古くなってしまった部分もありますが、考え方としてはまだ使える部分もあるのでWeb Archive からサルベージしました。 ">
+  <meta property="og:image" content="https://konn-san.com/img/myface_mosaic.jpg">
+  <!-- /Twitter Card -->
+</head>
+<body>
+  <!--[if lt IE 7]>
+    <p class="chromeframe">Sorry, this site doesn't support IE version &lt;7. <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">konn-san.com</a>
+  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navbar" aria-controls="Navbar" aria-expanded="false" aria-label="toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="Navbar">
+    <ul class="navbar-nav mr-auto">
+     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+     <li class="nav-item"><a class="nav-link" href="/profile.html">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="/math">Math</a></li>
+     <li class="nav-item"><a class="nav-link" href="/prog">Tech</a></li>
+     <li class="nav-item"><a class="nav-link" href="/writing">Writings</a></li>
+     <li class="nav-item active"><a class="nav-link" href="/articles">Articles</a></li>
+     <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+     <li class="nav-item"><a class="nav-link" href="/archive.html">Archive</a></li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0" action="https://cse.google.com/" target="_blank">
+      <input type="hidden" name="cx" value="008926939897329001532:wsmollxek8o">
+      <input class="form-control mr-sm-2" type="text" name="q" placeholder="Search" aria-label="Search" required>
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</nav>
+
+  <div class="container">
+   <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">konn-san.com 建設予定地</a></li>
+    <li class="breadcrumb-item"><a href="/articles/">Blog</a></li>
+  <li class="li breadcrumb-item active">できる！Template Haskell（完）</li>
+</ol>
+
+    <div class="page-header">
+    <h1>できる！Template Haskell（完） <small>konn-san.com</small></h1>
+    <div id="social">
+      <i class="fa fa-bookmark" aria-hidden="true"></i>
+      <ul id="socials">
+      <li id="facebook">
+      <div class="fb-like" data-href="https://konn-san.com/articles/2011-12-18-dekiru-template-haskell.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+      </li><li id="hatena-bookmarks">
+        <a href="//b.hatena.ne.jp/entry/https://konn-san.com/articles/2011-12-18-dekiru-template-haskell.html" class="hatena-bookmark-button" data-hatena-bookmark-title="できる！Template Haskell（完） - konn-san.com" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="//b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;"></a><script src="//b.st-hatena.com/js/bookmark_button.js" async="async"></script>
+      </li><li>
+      <script src="//apis.google.com/js/plusone.js"></script>
+      <div class="g-plusone" data-size="standard" data-count="true"></div>
+      </li><li>
+      <a href="//twitter.com/share" class="twitter-share-button" data-via="mr_konn" data-lang="ja">ツイート</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li><li id="hatena-star">
+      </li></ul>
+    </div>
+    <div><i class="fa fa-calendar" aria-hidden="true"></i> posted on 2011/12/18 00:05:08 JST</div>
+    </div>
+    <hr>
+        <div id="page-main" data-offset="0" class="page-content text-justify" data-spy="scroll" data-target="#side-toc">
+          <section id="おことわり" class="level1">
+<h2>おことわり</h2>
+<p>以下の記事は、2011年末にはてなのHaskellグループで公開されていた記事を、2024年になって無理矢理復元したものです。</p>
+<p>はてなグループの消滅に伴い本記事もアクセスできなくなっていましたので、Web
+Archive からサルベージし体裁を簡単に整えたものになります。 Typed
+Template Haskell に対する言及がなかったり、当時から AST
+の詳細がかわっていたりと、古くなってしまった部分も多くありますし、もっと実用的な例なども挙げられると思いますが、記録のため中身は体裁・リンク以外はいじらずにほぼ原文ママで掲載します。</p>
+<hr>
+<p>この記事は Haskell Advent Calendar 2011 18日目の参加記事です <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
+<ul>
+<li>前の記事： <a href="http://haskell.g.hatena.ne.jp/thimura/">id:thimura</a> さんの <a href="http://d.hatena.ne.jp/thimura/20111218/1324216591">作ってみよう
+Enumerator - http-enumerator で Twitter API ぺろぺろ - ごったく</a></li>
+<li>次の記事：ujm さんの <a href="http://vim-users.jp/2011/12/hack241/">no title</a></li>
+</ul>
+<p>本稿は、Template Haskell
+の初心者にむけて、その原理と方法論を、THを書くときの思考法にそって丁寧に解説するこころみです。なので幾分冗長なところがありますので、知ってると思ったら飛ばしてしまって大丈夫です。</p>
+<section id="template-haskell-とは-th-で出来ること" class="level2">
+<h3>Template Haskell とは？── TH で出来ること</h3>
+<p>Template Haskell とは、Haskellで <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>
+コンパイル時メタプログラミングを行うための仕組みです。</p>
+<p>……何だかよくわかりませんね。Template Haskell（以下 TH
+と略）とはマクロの一種です。マクロっていうのは、三崎漁港で取れるお魚のことではなく、簡単に云うとプログラムを生成するためのプログラムです。</p>
+<p>そんな事をして何が嬉しいのか？例えば応用例としてはこんなことが出来ます：</p>
+<ul>
+<li>型クラスインスタンス宣言の自動生成</li>
+<li>他言語とのブリッヂの自動生成</li>
+<li>準クォートによるリーダマクロ<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></li>
+<li>などなど……</li>
+</ul>
+<p>これらを総合して、「何らかのパターンのある記述を自動的に生成することができる」と云うことになるでしょうか。こういうのをboilerplate
+と云うそうです。</p>
+<p>次のような事は出来ません：</p>
+<ul>
+<li>型システムを拡張する</li>
+<li>彼女</li>
+</ul>
+<p>さて。生成すると云いましたが、実際にはHaskellプログラムの構文木をコンパイル時に組替え・合成して、それをその場に埋め込むと云う形になっています。</p>
+<p>と云うことで、THを使いこなすことと云うのは、構文木を適切に合成すること、と云い換えることが出来るでしょう。幾つか構文木の例を見ていきましょう。</p>
+<p><strong>例1</strong>：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">putStrLn</span> <span class="st">&quot;hello, TH World！&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">AppE</span> (<span class="dt">VarE</span> &#39;putStrLn) (<span class="dt">LitE</span> (<span class="dt">StringL</span> <span class="st">&quot;hello, TH World！&quot;</span>))</span></code></pre></div>
+<p><strong>例2</strong>：</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fact <span class="dv">0</span> <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fact n <span class="ot">=</span> n <span class="op">*</span> fact (n <span class="op">-</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>[<span class="dt">FunD</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  (mkName <span class="st">&quot;fact&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  [ <span class="dt">Clause</span> [<span class="dt">LitP</span> (<span class="dt">IntegerL</span> <span class="dv">0</span>)] (<span class="dt">NormalB</span> (<span class="dt">LitE</span> (<span class="dt">IntegerL</span> <span class="dv">1</span>))) []</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  , <span class="dt">Clause</span> [<span class="dt">VarP</span> <span class="op">$</span> mkName <span class="st">&quot;n&quot;</span>] </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      (<span class="dt">NormalB</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        (<span class="dt">InfixE</span> </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>          (<span class="dt">Just</span> (<span class="dt">VarE</span> <span class="op">$</span> <span class="st">&quot;n&quot;</span>))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>          (<span class="dt">VarE</span> &#39;(<span class="op">*</span>))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>          (<span class="dt">Just</span> </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            (<span class="dt">AppE</span> (<span class="dt">VarE</span> <span class="op">$</span> mkName<span class="st">&quot;fact&quot;</span>) </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>              (<span class="dt">InfixE</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                (<span class="dt">Just</span> (<span class="dt">VarE</span> <span class="op">$</span> mkName <span class="st">&quot;n&quot;</span>)) </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>                (<span class="dt">VarE</span> &#39;(<span class="op">-</span>)) </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                (<span class="dt">Just</span> (<span class="dt">LitE</span> (<span class="dt">IntegerL</span> <span class="dv">1</span>)))</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>              )</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      ) </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>      []</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div>
+<p><strong>例3</strong>：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">MyGreatData</span> <span class="ot">=</span> <span class="dt">MGD</span> <span class="dt">String</span> <span class="dt">Int</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">DataD</span> [] (mkName <span class="st">&quot;MyGreatData&quot;</span>) [] </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  [<span class="dt">NormalC</span> (mkName <span class="st">&quot;MGD&quot;</span>) [(<span class="dt">NotStrict</span>, <span class="dt">ConT</span> &#39;<span class="dt">&#39;String</span>),(<span class="dt">NotStrict</span>, <span class="dt">ConT</span> &#39;<span class="dt">&#39;Int</span>)]]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  []</span></code></pre></div>
+<p>どう？簡単でしょう？</p>
+</section>
+<section id="template-haskell-ことはじめ" class="level2">
+<h3>Template Haskell ことはじめ</h3>
+<p>……はい。全然簡単じゃないですね。僕もそう思います。「こんなの一々書かなきゃいけないなら
+TH いいや……」と云う声も聴こえてきそうです。</p>
+<p>また更に、この構文木はええと GHC 7.0.4 標準添付の
+<code>template-haskell-2.5.0.0</code>
+準拠の物です。これはどういうことかと云うと、将来のバージョンで構文木が変わるかもしれない、と云うことです。</p>
+<p>うひゃあ、そんなの追随出来る訳ないじゃんどうするの……と云う感じです。生構文木とか書ける気がしないし、構文木も変わっちゃうんじゃあ……。</p>
+<p>しかーし。問題はありません。TH
+を使う場合、簡単な例であれば生の構文木を書かないで済ませることが出来ます。また、生の構文木を書く場合も簡単にその構文木を書き下すことが出来る方法があります。</p>
+<p>それを、これから解説していきたいと思います。</p>
+<section id="そのいちtemplate-haskell-のバージョンを確認する" class="level3">
+<h4>そのいち：Template Haskell のバージョンを確認する</h4>
+<p>TH
+を使って開発をする前に、自分がどのバージョンを使っているのか確認しましょう。先程もいいましたが、構文木の形式が違ったり、後で述べる
+splice や準クォートの方式が違ったりします。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ghc-pkg</span> list template-haskell</span></code></pre></div>
+<p>などとすれば確認出来ます。ここでは最新の
+<code>template-haskell-2.5.0.0</code> に準拠しています。</p>
+</section>
+<section id="そのにkeep-your-reference-handy" class="level3">
+<h4>そのに：Keep your reference handy！</h4>
+<p>TH
+を本格的に使っていこうと思ったら、リファレンスを読まずにやっていくのは辛いものがあります。</p>
+<p>Haskell Platform
+を使っていればリファレンスがローカルにインストールされていると思います。
+無ければ Hackage のリファレンスを参照すると良いでしょう。</p>
+</section>
+<section id="そのさん-ghci-を起動しておく" class="level3">
+<h4>そのさん： ghci を起動しておく</h4>
+<p>はい。実は構文木を確認したりする作業は　GHCi　で行ないます。なので、GHCiを起動しておきましょう。その際に、</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ghci</span> <span class="at">-XTemplateHaskell</span></span></code></pre></div>
+<p>と必ず <code>-XTemplateHaskell</code>
+プラグマを付ける事を忘れずに。</p>
+</section>
+</section>
+<section id="th-の仕組みと実際の手順" class="level2">
+<h3>TH の仕組みと実際の手順</h3>
+<section id="構文木の簡単な説明" class="level3">
+<h4>構文木の簡単な説明</h4>
+<p>さて、それでは実際に TH
+を使ったプログラミングをしていきましょう。</p>
+<p>その前に、今後のために少し TH
+における構文木の構造を簡単に説明したいと思います。 GHC
+のバージョンによって微妙に変更があったりはしますが、概ねこの構成は変わりません。</p>
+<p>構文木は大きく分けて以下の四つの種類に分かれます<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>。</p>
+<ol type="1">
+<li>式</li>
+<li>パタン</li>
+<li>宣言</li>
+<li>型</li>
+</ol>
+<p>それぞれについて見ていきましょう。式と云うのは、通常の式、例えば
+<code class="sourceCode haskell"><span class="dv">1</span> <span class="op">+</span> <span class="dv">2</span></code>
+とか <code class="sourceCode haskell">\x y <span class="ot">-&gt;</span> x <span class="op">*</span> y</code>などです。これらは
+<strong><code>Exp</code></strong> 型の構文木です。</p>
+<p>対してパタンの構文木は、関数宣言やパタンマッチに登場するパタンのことで、<strong><code>Pat</code></strong>型の構文木です。</p>
+<p>宣言構文木は <strong><code>Dec</code></strong>
+型で、関数宣言や型の宣言、型クラス・インスタンス宣言などがこれに当ります。</p>
+<p>型構文木は文字通り型を表わす構文木で、<strong><code>Type</code></strong>
+型を持ちます。</p>
+<p>実際には、これより更に細かい構文木 <a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>
+の多重再帰によってTHの構文木は定義されています。</p>
+</section>
+<section id="構文木を見ながら仕組みを学ぶ" class="level3">
+<h4>構文木を見ながら仕組みを学ぶ</h4>
+<p>さて。色々と御託を並べましたが、習うより慣れろです。実際に TH
+を使ってみましょう。</p>
+<p>まず GHCi を立ち上げ、<code>Language.Haskell.TH</code>
+を読み込みます。</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">$</span> ghci <span class="op">-</span><span class="dt">XTemplateHaskell</span> <span class="op">-</span><span class="dt">XQuasiQuotes</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">GHCi</span>, version <span class="fl">7.0</span><span class="op">.</span><span class="dv">4</span><span class="op">:</span> http<span class="op">://</span>www<span class="op">.</span>haskell<span class="op">.</span>org<span class="op">/</span>ghc<span class="op">/</span>  <span class="op">:?</span> for help</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="dt">Loading</span> package ghc<span class="op">-</span>prim <span class="op">...</span> linking<span class="op">...</span> done<span class="op">.</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="dt">Loading</span> package integer<span class="op">-</span>gmp <span class="op">...</span> linking <span class="op">...</span> done<span class="op">.</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="dt">Loading</span> package base<span class="op">.</span> <span class="op">..</span> linking <span class="op">...</span> done<span class="op">.</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="dt">Loading</span> package ffi<span class="op">-</span><span class="fl">1.0</span> <span class="op">...</span> linking <span class="op">...</span> done<span class="op">.</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="dt">Loading</span> package filepath<span class="op">-</span><span class="fl">1.2</span><span class="op">.</span><span class="fl">0.0</span> <span class="op">...</span> linking <span class="op">...</span> done<span class="op">.</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="dt">Loading</span> package old<span class="op">-</span>locale<span class="op">-</span><span class="fl">1.0</span><span class="op">.</span><span class="fl">0.2</span> <span class="op">...</span> linking <span class="op">...</span> done<span class="op">.</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="dt">Loading</span> package old<span class="op">-</span>time<span class="op">-</span><span class="fl">1.0</span><span class="op">.</span><span class="fl">0.6</span> <span class="op">...</span> linking <span class="op">...</span> done<span class="op">.</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="dt">Loading</span> package unix<span class="op">-</span><span class="fl">2.4</span><span class="op">.</span><span class="fl">2.0</span> <span class="op">...</span> linking <span class="op">...</span> done<span class="op">.</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="dt">Loading</span> package directory<span class="op">-</span><span class="fl">1.1</span><span class="op">.</span><span class="fl">0.0</span> <span class="op">...</span> linking <span class="op">...</span> done<span class="op">.</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="dt">Loading</span> package process<span class="op">-</span><span class="fl">1.0</span><span class="op">.</span><span class="fl">1.5</span> <span class="op">...</span> linking <span class="op">...</span> done<span class="op">.</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="dt">Prelude</span><span class="op">&gt;</span> <span class="op">:</span>m <span class="dt">Language.Haskell.TH</span></span></code></pre></div>
+<p>では、試しに、最初にも例示した式</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">putStrLn</span>  <span class="st">&quot;hello, TH World！&quot;</span></span></code></pre></div>
+<p>の構文木を見てみましょう。</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="dt">Prelude</span> <span class="dt">Language.Haskell.TH</span><span class="op">&gt;</span> runQ [e|putStrLn &quot;hello, TH World！&quot;|]</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="dt">AppE</span> (<span class="dt">VarE</span> System.IO.putStrLn) (<span class="dt">LitE</span> (<span class="dt">StringL</span> <span class="st">&quot;hello, TH World！&quot;</span>))</span></code></pre></div>
+<p>幾つか説明が必要ですね。上で出て来た <code>[e| ... |]</code> は
+<strong>式クォート</strong>
+と呼ばれます。その名の通り、<code>...</code>に書いた部分の構文木をパースして構文木に変換してくれるものです。こうしたクォートは全部で四種類あります。それを以下に纏めます。</p>
+<dl>
+<dt>式クォート</dt>
+<dd>
+<code>[e| ... |]</code> の形式。よく使うので <code>[| ... |]</code> と
+<code>e</code> を略して記せる。式をクォートする。返値は
+<strong><code>Q Exp</code></strong> 型
+</dd>
+<dt>パタンクォート</dt>
+<dd>
+<code>[p| ... |]</code> の形式。パタンを記述する。返値は
+<strong><code>Q Pat</code></strong>型
+</dd>
+<dt>宣言クォート</dt>
+<dd>
+<code>[d| ... |]</code>
+の形式。函数宣言やクラス宣言、データ宣言などを表わす。返値は
+<strong><code>Q Dec</code></strong> 型
+</dd>
+<dt>型クォート</dt>
+<dd>
+<code>[t| ... |]</code> の形式。型レベルの式を記述する。返値は
+<strong><code>Q Type</code></strong> 型。
+</dd>
+</dl>
+<p>見てわかるとおり、先程挙げた四つの構文木と対応するものがあります。</p>
+<p>さて。返値が <strong><code>Exp</code></strong> ではなく
+<strong><code>Q Exp</code></strong> と頭に <code>Q</code>
+が付いた状態になっているのに気付いたと思います。これは TH のマクロ展開が
+<code>Q</code> モナド と呼ばれる モナド の中で行われるためです。</p>
+<p>なぜそのような特別な モナド
+が用意されているのかと云うと、構文木を合成する際、型や函数の定義を参照したり外部と入出力を行ったり、と云ったIO処理を行えるようにするためです。<code>Q</code>
+モナド の中では次のようなことが出来ます：</p>
+<ul>
+<li>型や函数、 インスタンス の情報を取得する</li>
+<li>任意の <code>IO</code> 処理を実行する
+<ul>
+<li><code>runIO :: IO a -&gt; Q a</code> と云う函数がある</li>
+</ul></li>
+<li>フレッシュな名前を供給</li>
+<li>ソースの現在位置を取得する</li>
+</ul>
+<p>任意のIO処理が実行出来るので、外部からファイルを読んでそれを基に構文木を組替えたり、コンパイル時に音楽を鳴らすことだってできます<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>。そう、<code>Q</code>モナドならね。</p>
+<p>合成した構文木をプログラムの任意の場所に埋め込む（これを接合（splice）する、と云います）際にも、これらの操作をするためにQモナドに包まれた構文木を渡します。なので、式クォートの類はすべて予め
+<code>Q</code> モナド で包まれているのです。</p>
+<p><code>Q</code> モナド
+に包まれた構文木は処理系が勝手に外してその場に接合する訳ですが、 GHCi
+上などでデバッグの用途でそれを外したいときがあります。たとえば、構文木が
+<code>Q</code> に包まれたままでは print
+できません。そのためには、<code>Q</code> の値を <code>IO</code> の値<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> に変換する <code>runQ</code>
+函数を使います。まさに上の例では式クォートで生成した木を
+<code>runQ</code> で <code>IO</code> に引き戻して GHCi に
+<code>print</code> させていますね。</p>
+<p>と云うところで、例に戻ります。出て来た構文木を GHCi
+にコピペしてみましょう。</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">Prelude</span> <span class="dt">Language.Haskell.TH</span><span class="op">&gt;</span> <span class="kw">let</span> expr <span class="ot">=</span> <span class="dt">AppE</span> (<span class="dt">VarE</span> System.IO.putStrLn) (<span class="dt">LitE</span> (<span class="dt">StringL</span> <span class="st">&quot;hello, TH World！&quot;</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>interactive<span class="op">&gt;:</span><span class="dv">1</span><span class="op">:</span><span class="dv">23</span><span class="op">:</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="dt">Couldn&#39;t</span> match expected <span class="kw">type</span> <span class="ot">`Name&#39; with actual type `</span><span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()&#39;</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">In</span> the first argument <span class="kw">of</span> <span class="ot">`VarE&#39;, namely `</span>putStrLn&#39;</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">In</span> the first argument <span class="kw">of</span> <span class="ot">`AppE&#39;, namely `</span>(<span class="dt">VarE</span> <span class="fu">putStrLn</span>)&#39;</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">In</span> the expression<span class="op">:</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AppE</span> (<span class="dt">VarE</span> <span class="fu">putStrLn</span>) (<span class="dt">LitE</span> (<span class="dt">StringL</span> <span class="st">&quot;hello, TH World！&quot;</span>))</span></code></pre></div>
+<p>おや、叱られてしまいましたね……？何がいけないんでしょう。</p>
+<p>実は、吐き出された生のままの構文木ではなく、こう打つのが正しかったのです：</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dt">Prelude</span> <span class="dt">Language.Haskell.TH</span><span class="op">&gt;</span> <span class="kw">let</span> expr <span class="ot">=</span> <span class="dt">AppE</span> (<span class="dt">VarE</span> &#39;putStrLn) (<span class="dt">LitE</span> (<span class="dt">StringL</span> <span class="st">&quot;hello, TH World！&quot;</span>))</span></code></pre></div>
+<p>上で <code>System.IO.putStrLn</code> となっていたところが
+<code>&#39;putStrLn</code> に変わっていますね。これはなんでしょう？</p>
+<p>これは実は名前クォートと呼ばれるものです。名前は
+<strong><code>Name</code></strong>型の値で、その名の通り函数や型の名前などを指します。構文木は
+<code>show</code> するとその形のまま吐かれますが、<code>Name</code> 型を
+<code>show</code>
+するとそれが指す名前そのものになってしまい、コピペしただけでは名前として取り出せないので上のエラーが出た訳です。</p>
+<p>名前クォートには以下の二種類があります：</p>
+<dl>
+<dt>函数名クォート</dt>
+<dd>
+<code>&#39;putStrLn</code> など一重のシングルクォート +
+識別子の形。式文脈中の函数の名前を指す。<code>&#39;Just</code>
+などデータ構築子に対しても使える。
+</dd>
+<dt>型名クォート</dt>
+<dd>
+<code>&#39;&#39;String</code> など <strong>二重のシングルクォート<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></strong> +
+識別子の形。型文脈中の型構築子の名前を指す。
+</dd>
+</dl>
+<p>上の場合は、<code>System.IO.putStrLn</code>
+と名前が直がきされて式と見分けがつかなくなっていたところを、
+<code>&#39;putStrLn</code>と名前クォートをつかって直してやった訳です。</p>
+<p>名前クォートは既に定義されている函数を指す他に、新たな引数や変数をつくりたいときにも使われます。</p>
+<p>さて、今までは式から構文木を調べる方法を見てきましたが、逆はどうすればいいのでしょう？構文木が実際にどんなプログラムを表しているのか知りたいですよね？</p>
+<p>実はそれはとても簡単です。TH には HughesPJ
+ライブラリを利用したプリティプリント機能がついていて、任意の構文木をきちんと動くプログラムの形に整形することが出来ます。</p>
+<p>このあたりの詳しい函数の使い方については、<a href="http://hackage.haskell.org/packages/archive/template-haskell/2.5.0.0/doc/html/Language-Haskell-TH.html#g:23">リファレンスマニュアルのこの部分</a>を参照するとよいと思います。使うのは主に
+<code>ppr</code> 函数と <code>pprint</code>函数でしょう。</p>
+<p>例えば、今の例の <code>expr</code> で試してみると、</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="kw">let</span> expr <span class="ot">=</span> <span class="dt">AppE</span> (<span class="dt">VarE</span> &#39;putStrLn) (<span class="dt">LitE</span> (<span class="dt">StringL</span> <span class="st">&quot;hello, TH World！&quot;</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> ppr expr</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>System.IO.putStrLn <span class="st">&quot;hello, TH World！&quot;</span></span></code></pre></div>
+<p>こんな具合に元の式に復元出来ました。関数名に関しては修飾された形でより正確なものになっているのがわかると思います。</p>
+<p>さて、駆け足でしたが、こんな感じで前提知識の紹介を終えたいと思います。次の節からは、幾つかの例を通して、TH
+を使った実際の開発について見ていきたいと思います。</p>
+</section>
+</section>
+<section id="例1任意長タプルを扱う函数" class="level2">
+<h3>例1：任意長タプルを扱う函数</h3>
+<p>それではさっそく例を見ていきましょう。THの入門記事や紹介では必ずといっていいほど紹介されている、任意長タプルを扱う函数をここでも扱ってみたいと思います。</p>
+<p>ここでいう任意長タプルを扱う函数、と云うのは、 二要素タプルに対する
+<code>fst</code> や
+<code>snd</code>のようなものを、任意長のタプルについて定義してあげよう！と云うことです。</p>
+<p>次のような感じにしたいですね。</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sel</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ot">  ::</span> <span class="dt">Int</span>  <span class="co">-- ^ タプルの要素数</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">Int</span>  <span class="co">-- ^ 取り出したいタプルの要素の番目</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">ExpQ</span> <span class="co">-- ^ 函数を表わす構文木</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>sel len nth <span class="ot">=</span> <span class="op">...</span></span></code></pre></div>
+<p>返値の <code>ExpQ</code> は <code>Q Exp</code> の型シノニムです。</p>
+<p>使い方としては、<code>sel</code>
+から返された構文木を接合して、実際の函数として使ってやる形になります。</p>
+<p>……あ、そうそう、構文木の接合をどうやるかという方法を説明していませんでしたね。合成した構文木を埋め込むには、<code>$( )</code>
+で囲めばよいのです。そう、次のように（GHCi
+のプロンプトで試している想定です）：</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">$</span>(sel <span class="dv">3</span> <span class="dv">2</span>) (<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span></span></code></pre></div>
+<p>また、接合したい式が単なる名前一つだけで済む場合、つまり、</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>hoge <span class="ot">=</span> <span class="op">$</span>(fuga)</span></code></pre></div>
+<p>の様な場合は</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>hoge <span class="ot">=</span> <span class="op">$</span>fuga</span></code></pre></div>
+<p>と書き直すことが出来ます。ここがややこしく、僕らの大好きな中置 演算子
+<code>($)</code> と混同しやすいです。 Haskell のパーザは、<code>$</code>
+の後にスペースが開いていれば演算子、そうでなければ接合と解釈するので気を付けましょう。THのコードを書く際には、なるべく<code>($)</code>
+を使わない方がよいかもしれません。</p>
+<p>このように式や型を接合する際には<code>$()</code>が必要ですが、トップレベル宣言の接合の場合は
+<code>$( )</code>
+を省略することが出来ます。その例は後程インスタンス生成の例で見ていきたいと思います。</p>
+<p>構文木の接合は、普通の Haskell
+のソース中にも書けますし、更に式クォートや型クォートの中にも書くことが出来ます。普通のソース中への接合を特にトップレベル接合と云います。</p>
+<p>構文木を接合する際に一つ、Stage Restriction
+と云う制限があります。これはトップレベル接合では同一モジュール内の函数や引数を参照出来ないという制限です(式クォート中であれば問題ありません)。これについては後の落とし穴のコーナーで言及します。</p>
+<p>閑話休題。先程から <code>sel</code>
+の返値を「函数」と呼んできましたが、実際には「式」がそこに接合されることになるので、実際にはラムダ式がそこにくることになります。</p>
+<p>さて、では sel の実装に入りましょう。知るべきことは何でしょう？</p>
+<ol type="1">
+<li>ラムダ式を表わす構文木は？</li>
+<li>タプルを表わす構文木は？</li>
+<li>変数を表わす構文木は？</li>
+</ol>
+<p>こんな所でしょうか。これらを一つずつ調べてもいいですが、今生成したいのはラムダ式だったので、目的のラムダ式と似たようなラムダ式、例えば
+<code class="sourceCode haskell">\(x,y,z) <span class="ot">-&gt;</span> y</code>
+の構文木を表示させて仕舞えば簡単ですね。</p>
+<p>では、 GHCi を起動してください。 <code>-XTemplateHaskell</code>
+をつけて起動して、<code>Language.Haskell.TH</code>
+を読み込むのを忘れずに。</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="op">$</span> ghci <span class="dt">XTemplateHaskell</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="dt">GHCi</span>, version <span class="fl">7.0</span><span class="op">.</span><span class="dv">4</span><span class="op">:</span> http<span class="op">://</span>www<span class="op">.</span>haskell<span class="op">.</span>org<span class="op">/</span>ghc<span class="op">/</span>  <span class="op">:?</span> for help</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="dt">Prelude</span><span class="op">&gt;</span> <span class="op">:</span>m <span class="dt">Language.Haskell.TH</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="dt">Prelude</span> <span class="dt">Language.Haskell.TH</span><span class="op">&gt;</span> </span></code></pre></div>
+<p>では、構文木を表示させてしまいましょう。</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> runQ [<span class="op">|</span>\(x,y,z) <span class="ot">-&gt;</span> y <span class="op">|</span>]</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="dt">LamE</span> [<span class="dt">TupP</span> [<span class="dt">VarP</span> x_0,<span class="dt">VarP</span> y_1,<span class="dt">VarP</span> z_2]] (<span class="dt">VarE</span> y_1)</span></code></pre></div>
+<p>大体形が予想出来たと思います。ラムダ式を表わす構文木(の構築子名)が
+<code>LamE</code>、タプルのパタンを表わす構文木が
+<code>TupP</code>、変数のパタンおよび式を表わすのが <code>VarP</code>
+および <code>VarE</code> です。</p>
+<p>ここから大体想像がつくと思いますが、構文木のデータ構築子には、それが何を表わす構文木なのかを示す接尾辞が付いています。式ならば大文字の<code>E</code>、パタンなら
+<code>P</code>、型は<code>T</code>、宣言は <code>D</code>
+、といった具合です。</p>
+<p>なお、上式中の <code>x_0</code>, <code>y_1</code>, <code>z_2</code>
+はそれぞれ <code>Name</code> です。</p>
+<p>さて、ではこれを参考に <code>sel</code>
+を実装していきましょうー。</p>
+<p>はい、既に実装したものが実は下にあります (<code>TupTH.hs</code>)
+！</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">TupTH</span> <span class="kw">where</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.Haskell.TH</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Control.Monad</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="ot">sel ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">ExpQ</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>sel count nth <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  vars <span class="ot">&lt;-</span> replicateM count <span class="op">$</span> newName <span class="st">&quot;x&quot;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  lamE [tupP <span class="op">$</span> <span class="fu">map</span> varP vars] (varE <span class="op">$</span> vars <span class="op">!!</span> (nth<span class="op">-</span><span class="dv">1</span>))</span></code></pre></div>
+<p><code>sel</code>
+の定義一行目では、タプルの各要素に使われる名前を生成しています。ここで登場する
+<code>newName</code> と云うのは、その型</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>t newName</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ot">newName ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Q</span> <span class="dt">Name</span></span></code></pre></div>
+<p>からもわかるとおり、文字列を取ってそれを元に名前を作って返す函数です。あれ、でも最初の方で
+<code>mkName</code>
+と云う函数が出て来ていましたね。あれはどうちがうんでしょう……？型は、、、</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>t mkName</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ot">mkName ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Name</span></span></code></pre></div>
+<p>newName とそっくりですね。でもよく見ると返値が <code>Q</code>
+で包まれていません。</p>
+<p>この違いはなにか？次を試してみるとわかります。</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">$</span>(varE <span class="op">$</span> mkName <span class="st">&quot;pi&quot;</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fl">3.141592653589793</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">$</span>(varE <span class="op">=&lt;&lt;</span> newName <span class="st">&quot;pi&quot;</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>interactive<span class="op">&gt;:</span><span class="dv">1</span><span class="op">:</span><span class="dv">3</span><span class="op">:</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Not</span> <span class="kw">in</span> scope<span class="op">:</span> <span class="ot">`pi[a19D]&#39;</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="ot">    In the result of the splice:</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="ot">      $(varE =&lt;&lt; newName &quot;pi&quot;)</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="ot">    To see what the splice expanded to, use -ddump-splices</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="ot">    In the expression: $(varE =&lt;&lt; newName &quot;pi&quot;)</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="ot">    In an equation for `</span>it&#39;<span class="op">:</span> it <span class="ot">=</span> <span class="op">$</span>(varE <span class="op">=&lt;&lt;</span> newName <span class="st">&quot;pi&quot;</span>)</span></code></pre></div>
+<p>このように、<code>mkName</code> で作られたものは 文脈
+中に被る名前があればそれを参照しますが、<code>newName</code>
+は完全にフレッシュな、衝突しない名前を返します。これが出来るのは、
+<code>Q</code> モナド
+に包まれているからです。上のエラーをよくみると、<code>Not in scope: `pi[a19D]&#39;</code>
+となっていますね。newName で生成された識別子は厳密には <code>pi</code>
+ではなく <code>pi[a19D]</code> と云う名前であることになっていて、後ろの
+<code>[ ]</code> に囲まれた部分がその一意性を保証している訳です。</p>
+<p>sel の例では、newName を count 回繰り返してフレッシュな名前を count
+個得ています。逆に上の vars を定義している部分を、</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> vars <span class="ot">=</span> <span class="fu">replicate</span> count <span class="op">$</span> mkName <span class="st">&quot;x&quot;</span></span></code></pre></div>
+<p>に差し替えると、<code>sel</code>
+の定義を読み込んだ時点ではエラーは出ませんが、それを接合しようとすると、、、</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">$</span>(sel <span class="dv">3</span> <span class="dv">2</span>) (<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>interactive<span class="op">&gt;:</span><span class="dv">1</span><span class="op">:</span><span class="dv">3</span><span class="op">:</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Conflicting</span> definitions for <span class="ot">`x&#39;</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="ot">    Bound at: &lt;interactive&gt;:1:3-9</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="ot">              &lt;interactive&gt;:1:3-9</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="ot">              &lt;interactive&gt;:1:3-9</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="ot">    In a lambda abstraction</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="ot">    In the result of the splice:</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="ot">      $(sel 3 2)</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="ot">    To see what the splice expanded to, use -ddump-splices</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="ot">    In the expression: $(sel 3 2)</span></span></code></pre></div>
+<p>こんな具合に mkName
+で生成されている名前が被ってしまっているのでエラーが出ます。つまり、</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>\(x,x,x) <span class="ot">-&gt;</span> x</span></code></pre></div>
+<p>のような何が何やらよくわからない式になってしまっているので、弾かれて仕舞うわけです。</p>
+<p>ここで一つポイントなのが、このエラーが出るのは
+<em>接合されるとき</em>
+だということです。函数としては型があってしまえば構文木としてはまったく問題ないので、それが実際に式へと変換されて始めてエラーがおきるのです。</p>
+<p>では二行目に移りましょう。ここではさっき確認した構文木を参考に、ラムダ式を表わす構文木を生成しているところです。</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>lamE [tupP <span class="op">$</span> <span class="fu">map</span> varP vars] (varE <span class="op">$</span> vars <span class="op">!!</span> (nth<span class="op">-</span><span class="dv">1</span>))</span></code></pre></div>
+<p>一行目で生成した <code>vars</code>
+はあくまで名前のリストだったので、引数パタンがくる部分では
+<code>map varP</code>
+で名前を参照するパターンに、第二引数の実際の式の部分では <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></span></span>-番目の引数に <code>varE</code>
+を付けて式に変換しています。</p>
+<p>さて。注意深くみてみると、おや？と思われたひとも多いと思います。さっきみた構文木では
+<code>LamE</code> や <code>VarP</code>
+のように先頭が大文字になっていましたよね。データ構築子なので当然です。ところが上の例では、
+<code>lamE</code> や <code>varP</code>
+のように先頭が小文字になり、関数呼び出しになっています。試しに型を見てみましょう。</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>t lamE</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ot">lamE ::</span> [<span class="dt">PatQ</span>] <span class="ot">-&gt;</span> <span class="dt">ExpQ</span> <span class="ot">-&gt;</span> <span class="dt">ExpQ</span></span></code></pre></div>
+<p>TH では <code>Q</code> モナド
+の中で合成を行う都合上、データ構築子の引数や返値の構文木を
+<code>Q</code> モナド
+で包んだ形で扱ったほうがべんりなので、こうしたユーティリティ函数が定義されているのです。大抵の構文木の構築子に対してこうした先頭を小文字に直したものが用意されています。また、頻出するイディオムを自動化するための函数も多く定義されています。こうしたものを知っているかいないかでは手間が大きく違うので、リファレンスを一通り見ておくとよいでしょう。</p>
+</section>
+<section id="例2任意長タプルの別解-ワイルドカードとデータ構築子" class="level2">
+<h3>例2：任意長タプルの別解 ── ワイルドカードとデータ構築子</h3>
+<p>さて、前回は簡単に実装出来てしまいましたが、タプルは単なる
+代数的データ型 でした。</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>) <span class="op">==</span> (,,) <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>(<span class="dv">3</span>,<span class="dv">4</span>)   <span class="op">==</span> (,) <span class="dv">3</span> <span class="dv">4</span></span></code></pre></div>
+<p>また、変数をタプルの要素数の数だけ生成しましたが、これはいかにも無駄なので、ワイルドカードパタン
+<code>_</code>
+で代用出来そうな気もします。なので、ここでは以下を使った別解を考えてみたいと思います：</p>
+<ol type="1">
+<li>タプルのデータ構築子に対するパタンマッチ</li>
+<li>ワイルドカードパタン</li>
+</ol>
+<p>ワイルドカードパタンはそのものズパリ、<code>WildP</code>
+と云うのがそれを表わす構文木です。勿論 <code>Q</code> モナド 版の
+<code>wildP</code> もあります。これを使えば全然問題ないですね。</p>
+<p>ではデータ構築子のパタンマッチはどうすればいいのでしょう？と云う訳でまた
+GHCi に訊いてみましょー。</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> runQ [p| (,,) 1 2 3 |]</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="dt">ConP</span> <span class="dt">GHC.Tuple</span><span class="op">.</span>(,,) [<span class="dt">LitP</span> (<span class="dt">IntegerL</span> <span class="dv">1</span>),<span class="dt">LitP</span> (<span class="dt">IntegerL</span> <span class="dv">2</span>),<span class="dt">LitP</span> (<span class="dt">IntegerL</span> <span class="dv">3</span>)]</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>t <span class="dt">ConP</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="dt">ConP</span><span class="ot"> ::</span> <span class="dt">Name</span> <span class="ot">-&gt;</span> [<span class="dt">Pat</span>] <span class="ot">-&gt;</span> <span class="dt">Pat</span></span></code></pre></div>
+<p><code>ConP</code>
+と云うのがその物ズバリのようですね。引数から明らかなように、構築子の名前が第一引数、構築子に対する引数のリストが第二引数になります。</p>
+<p>ところで、一つ問題があります。上では3要素決め打ちだったのでデータ構築子の名前は
+<code>(,,)</code>
+で大丈夫でしたが、任意長に対してはどうすればいいのでしょう？</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>mkName (<span class="st">&quot;(&quot;</span> <span class="op">++</span> (<span class="fu">replicate</span> count <span class="ch">&#39;,&#39;</span>) <span class="op">++</span> <span class="st">&quot;)&quot;</span>)</span></code></pre></div>
+<p>で出来ないこともないですが、いかにもスマートではないですね……。</p>
+<p>と、云わけでリファレンスを紐解きましょう。すると、</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ot">tupleDataName ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Name</span></span></code></pre></div>
+<p>と云うお誂え向きの函数が見付かります！こんな具合に、 GHCi
+に頼り切らずリファレンスで何かよいものがないかを探すのは、再三の繰り返しになりますが、とても大事です。基本的な函数やデータ型は
+<code>Language.Haskell.TH</code>、ユーティリティ函数やシノニムは
+<code>Language.Haskell.TH.Lib</code> を参照すると良いでしょう。</p>
+<p>では、上のものを使って <code>sel</code>
+を書き直してみたものが次です：</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ot">sel&#39; ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">ExpQ</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>sel&#39; count nth <span class="op">|</span> count <span class="op">&gt;=</span> nth <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  var <span class="ot">&lt;-</span> newName <span class="st">&quot;x&quot;</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> pats <span class="ot">=</span> <span class="fu">replicate</span> (nth <span class="op">-</span> <span class="dv">1</span>) wildP <span class="op">++</span> [varP var] <span class="op">++</span> <span class="fu">replicate</span> (count <span class="op">-</span> nth) wildP</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  lamE [conP (tupleDataName count) pats] (varE var)</span></code></pre></div>
+<p>説明はもう殆んど要らないと思います。沢山変数を生成するかわりに目当ての引数と残りをワイルドカードにしたのと、あとは明示的にタプルに対するパタンマッチで書き直したのだけです。</p>
+<p>さて、以上の知識を得た上で、次の課題をやってみたいひとはやってみてください。</p>
+<ol type="1">
+<li>任意長タプル要素の入れ替え函数を定義する (難易度：易)</li>
+<li>一般化 <code>flip</code> の定義。(難易度：易)</li>
+<li>一般化 <code>curry</code>/<code>uncurry</code> の定義。(難易度：易)
+- つまり、
+<code>$(ncurry 5) :: ((a,b,c,d,e) -&gt; f) -&gt; a -&gt; b -&gt; c -&gt; d -&gt; e -&gt; f</code>
+となるような <code>ncurry</code>
+の定義。<code>uncurry</code>も同様。</li>
+</ol>
+</section>
+<section id="インスタンス-の自動生成型情報と定義の扱い" class="level2">
+<h3>インスタンス の自動生成──型情報と定義の扱い</h3>
+<p>さて。大体コツはつかめてきたでしょうか。タプルの例はちょっと簡単すぎた感があるので、いっきに進んだ例を扱ってみましょう。</p>
+<p>ソースコード全てを載せると大変なので、GitHubに載せた<a href="https://github.com/konn/template-haskell-tutor">ソースコード</a>を参照してください。</p>
+<p>次のようなバイナリ・エンコードのための型クラス、<code>Bin</code>
+を考えます(完全な実装は GitHub の <code>Bin.hs</code>
+をご覧ください)：</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Bit</span> <span class="ot">=</span> <span class="dt">O</span> <span class="op">|</span> <span class="dt">I</span> <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Read</span>, <span class="dt">Eq</span>, <span class="dt">Ord</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="dt">Bin</span> a <span class="kw">where</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="ot">  encode ::</span> a <span class="ot">-&gt;</span> [<span class="dt">Bit</span>]</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="ot">  decode ::</span> [<span class="dt">Bit</span>] <span class="ot">-&gt;</span> (a, [<span class="dt">Bit</span>])</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Bin</span> <span class="dt">Int</span> <span class="kw">where</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  encode <span class="ot">=</span> <span class="op">...</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  decode <span class="ot">=</span> <span class="op">...</span></span></code></pre></div>
+<p>この <code>Bin</code>
+のインスタンスを一々生成していたのではとても面倒なので、何とかして自動生成したいなあ、と思いますよね？思ってください<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a>。</p>
+<p>さて、自動生成したいと思って貰えたと思います。その方法は総称プログラミングの手法をつかったり色々ありますが、ここでは
+Template Haskell を使おうと思います。TH
+でそんなことが出来るの？と思うかもしれませんが、TH には</p>
+<blockquote class="blockquote">
+<ul>
+<li>型や函数、インスタンスの情報を取得する</li>
+</ul>
+</blockquote>
+<p>と云う最強の技が残っていたのでした。この章の目的は、この機能を説明することです。</p>
+<p>型、函数、 クラス の情報を取得するには <strong><a href="http://hackage.haskell.org/packages/archive/template-haskell/2.5.0.0/doc/html/Language-Haskell-TH-Syntax.html#v:reify"><code>reify</code></a><a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a> 函数</strong></p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ot">reify ::</span> <span class="dt">Name</span> <span class="ot">-&gt;</span> <span class="dt">Q</span> <span class="dt">Info</span></span></code></pre></div>
+<p>を使用します。名前に紐付けられている実体に関する情報 <a href="http://hackage.haskell.org/packages/archive/template-haskell/2.5.0.0/doc/html/Language-Haskell-TH-Syntax.html#t:Info"><code>Info</code></a>
+を返してくれます。リファレンスを読むとわかるように、2.5.0.0 時点では
+型クラス 、型構築子、データ構築子、変数、 型変数
+の情報を得ることが出来ます。</p>
+<p>なんだかわくわくしますね！早速試してみましょう。</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="op">$</span> ghci <span class="op">-</span><span class="dt">XTemplateHaskell</span> </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="dt">GHCi</span>, version <span class="fl">7.0</span><span class="op">.</span><span class="dv">4</span><span class="op">:</span> http<span class="op">://</span>www<span class="op">.</span>haskell<span class="op">.</span>org<span class="op">/</span>ghc<span class="op">/</span>  <span class="op">:?</span> for help</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>m <span class="dt">Language.Haskell.TH</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> runQ <span class="op">$</span> reify &#39;<span class="dt">&#39;String</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="dt">Template</span> <span class="dt">Haskell</span> <span class="fu">error</span><span class="op">:</span> <span class="dt">Can&#39;t</span> <span class="kw">do</span> <span class="ot">`reify&#39; in the IO monad</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="ot">*** Exception: user error (Template Haskell failure)</span></span></code></pre></div>
+<p>おや、怒られてしまいましたね……。そう、実は
+<strong><code>reify</code>函数はコンパイル時にしか実行出来ない</strong>
+んです。</p>
+<p>これは、Template Haskell は裏で GHCi
+を使って色々な処理をしているかららしいです。らしい、と云うのは良くしらないと云うことです。</p>
+<p>なので、「この型の情報が欲しいなあ」「この函数の情報が欲しい」「クラス舐めたいぺろぺろ」みたいなことを考えたら、一旦プログラムを書いて、それをGHCiで読み込むなり実行するなりしてやる必要があります。そこで、
+<code>reifier.hs</code>
+とか適当な名前のファイルを作って、そこで色々実験することにしましょう。</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell #-}</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.Haskell.TH</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Bin</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="kw">do</span> info <span class="ot">&lt;-</span> reify &#39;<span class="dt">&#39;String</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>   runIO <span class="op">$</span> <span class="fu">print</span> info</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">return</span> []</span></code></pre></div>
+<p>これを GHCi で読み込むと……</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>l reifier<span class="op">.</span>hs</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span> <span class="kw">of</span> <span class="dv">1</span>] <span class="dt">Compiling</span> <span class="dt">Main</span>             ( reifier<span class="op">.</span>hs, interpreted )</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="dt">TyConI</span> (<span class="dt">TySynD</span> <span class="dt">GHC.Base.String</span> [] (<span class="dt">AppT</span> <span class="dt">ListT</span> (<span class="dt">ConT</span> <span class="dt">GHC.Types.Char</span>)))</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="dt">Ok</span>, modules loaded<span class="op">:</span> <span class="dt">Main</span><span class="op">.</span></span></code></pre></div>
+<p>シレッと <code>String</code>
+の定義を盗み見ることに成功しました！真ん中の <code>TyConI</code>
+のところです。</p>
+<p>ところで、上の <code>reifier.hs</code>
+ですが妙ですね……。何もないところにいきなり <code class="sourceCode haskell"><span class="kw">do</span></code>-式が書いてあります。malformed
+なんじゃないの？</p>
+<p>そんなことはありません。実はこれは、</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="op">$</span>(<span class="kw">do</span> info <span class="ot">&lt;-</span> reify &#39;<span class="dt">&#39;String</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>     runIO <span class="op">$</span> <span class="fu">print</span> info</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>     <span class="fu">return</span> [])</span></code></pre></div>
+<p>の省略形なのです。そういえばだいぶ昔に「トップレベル宣言では
+<code>$( )</code>を省略出来る」と云うようなことを云っていたと思います。宣言の接合なので
+do式全体の値は <code>Q Dec</code>
+を返す必要があります。なので、最後の行で <code>return []</code>
+としてツジツマを合わせているのです。</p>
+<p>では、さっき定義した <code>Bin</code> 型クラス
+の情報を見てみたいですね。しかし、<code>Bin</code>
+の名前はどうやって指定すればいいのでしょう……？</p>
+<p>実は、TH
+では型名と型クラス名は同じ名前空間・構文木で表現されるという約束があります。なので今のプログラムの</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">do</span> info <span class="ot">&lt;-</span> reify &#39;<span class="dt">&#39;String</span></span></code></pre></div>
+<p>を</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="kw">do</span> info <span class="ot">&lt;-</span> reify &#39;<span class="dt">&#39;Bin</span></span></code></pre></div>
+<p>に書き換えれば……</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>l reifier<span class="op">.</span>hs</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span> <span class="kw">of</span> <span class="dv">2</span>] <span class="dt">Compiling</span> <span class="dt">Bin</span>              ( Bin.hs, interpreted )</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>[<span class="dv">2</span> <span class="kw">of</span> <span class="dv">2</span>] <span class="dt">Compiling</span> <span class="dt">Main</span>             ( reifier<span class="op">.</span>hs, interpreted )</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="dt">ClassI</span> (<span class="dt">ClassD</span> [] <span class="dt">Bin.Bin</span> [<span class="dt">PlainTV</span> a_1627406217] [] [<span class="dt">SigD</span> Bin.encode (<span class="dt">ForallT</span> [<span class="dt">PlainTV</span> a_1627406217] [<span class="dt">ClassP</span> <span class="dt">Bin.Bin</span> [<span class="dt">VarT</span> a_1627406217]] (<span class="dt">AppT</span> (<span class="dt">AppT</span> <span class="dt">ArrowT</span> (<span class="dt">VarT</span> a_1627406217)) (<span class="dt">AppT</span> <span class="dt">ListT</span> (<span class="dt">ConT</span> <span class="dt">Bin.Bit</span>)))),<span class="dt">SigD</span> Bin.decode (<span class="dt">ForallT</span> [<span class="dt">PlainTV</span> a_1627406217] [<span class="dt">ClassP</span> <span class="dt">Bin.Bin</span> [<span class="dt">VarT</span> a_1627406217]] (<span class="dt">AppT</span> (<span class="dt">AppT</span> <span class="dt">ArrowT</span> (<span class="dt">AppT</span> <span class="dt">ListT</span> (<span class="dt">ConT</span> <span class="dt">Bin.Bit</span>))) (<span class="dt">AppT</span> (<span class="dt">AppT</span> (<span class="dt">TupleT</span> <span class="dv">2</span>) (<span class="dt">VarT</span> a_1627406217)) (<span class="dt">AppT</span> <span class="dt">ListT</span> (<span class="dt">ConT</span> <span class="dt">Bin.Bit</span>)))))]) [<span class="dt">ClassInstance</span> {ci_dfun <span class="ot">=</span> <span class="op">Bin.$</span>fBinInt, ci_tvs <span class="ot">=</span> [], ci_cxt <span class="ot">=</span> [], ci_cls <span class="ot">=</span> <span class="dt">Bin.Bin</span>, ci_tys <span class="ot">=</span> [<span class="dt">ConT</span> <span class="dt">GHC.Types.Int</span>]},<span class="dt">ClassInstance</span> {ci_dfun <span class="ot">=</span> <span class="op">Bin.$</span>fBinBool, ci_tvs <span class="ot">=</span> [], ci_cxt <span class="ot">=</span> [], ci_cls <span class="ot">=</span> <span class="dt">Bin.Bin</span>, ci_tys <span class="ot">=</span> [<span class="dt">ConT</span> <span class="dt">GHC.Bool.Bool</span>]},<span class="dt">ClassInstance</span> {ci_dfun <span class="ot">=</span> <span class="op">Bin.$</span>fBin[], ci_tvs <span class="ot">=</span> [<span class="dt">PlainTV</span> a_1627406230], ci_cxt <span class="ot">=</span> [<span class="dt">ClassP</span> <span class="dt">Bin.Bin</span> [<span class="dt">VarT</span> a_1627406230]], ci_cls <span class="ot">=</span> <span class="dt">Bin.Bin</span>, ci_tys <span class="ot">=</span> [<span class="dt">AppT</span> <span class="dt">ListT</span> (<span class="dt">VarT</span> a_1627406230)]},<span class="dt">ClassInstance</span> {ci_dfun <span class="ot">=</span> <span class="op">Bin.$</span>fBinBit, ci_tvs <span class="ot">=</span> [], ci_cxt <span class="ot">=</span> [], ci_cls <span class="ot">=</span> <span class="dt">Bin.Bin</span>, ci_tys <span class="ot">=</span> [<span class="dt">ConT</span> <span class="dt">Bin.Bit</span>]}]</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="dt">Ok</span>, modules loaded<span class="op">:</span> <span class="dt">Bin</span>, <span class="dt">Main</span><span class="op">.</span></span></code></pre></div>
+<p>うひゃあ、長々とデータご出て来ましたね！メンバ函数の型や制約、 クラス
+の インスタンス などの情報が取れているのがわかると思います。</p>
+<p>ところでリファレンスを見ると、<code>Info</code> 型には</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="dt">VarI</span> <span class="dt">Name</span> <span class="dt">Type</span> (<span class="dt">Maybe</span> <span class="dt">Dec</span>) <span class="dt">Fixity</span></span></code></pre></div>
+<p>という構築子がありますね。これはきっと函数・変数の定義をとってくる子にちがいありません。
+<code>Maybe Dec</code>
+ということはひょっとすると定義も取ってこれるのかな……！
+と思いつつ先程の部分を、</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="kw">do</span> info <span class="ot">&lt;-</span> reify &#39;curry</span></code></pre></div>
+<p>にしてみると……</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>reload</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span> <span class="kw">of</span> <span class="dv">2</span>] <span class="dt">Compiling</span> <span class="dt">Bin</span>              ( Bin.hs, interpreted )</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>[<span class="dv">2</span> <span class="kw">of</span> <span class="dv">2</span>] <span class="dt">Compiling</span> <span class="dt">Main</span>             ( reifier<span class="op">.</span>hs, interpreted )</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="dt">VarI</span> Data.Tuple.curry (<span class="dt">ForallT</span> [<span class="dt">PlainTV</span> a_1627409906,<span class="dt">PlainTV</span> b_1627409907,<span class="dt">PlainTV</span> c_1627409908] [] (<span class="dt">AppT</span> (<span class="dt">AppT</span> <span class="dt">ArrowT</span> (<span class="dt">AppT</span> (<span class="dt">AppT</span> <span class="dt">ArrowT</span> (<span class="dt">AppT</span> (<span class="dt">AppT</span> (<span class="dt">TupleT</span> <span class="dv">2</span>) (<span class="dt">VarT</span> a_1627409906)) (<span class="dt">VarT</span> b_1627409907))) (<span class="dt">VarT</span> c_1627409908))) (<span class="dt">AppT</span> (<span class="dt">AppT</span> <span class="dt">ArrowT</span> (<span class="dt">VarT</span> a_1627409906)) (<span class="dt">AppT</span> (<span class="dt">AppT</span> <span class="dt">ArrowT</span> (<span class="dt">VarT</span> b_1627409907)) (<span class="dt">VarT</span> c_1627409908))))) <span class="dt">Nothing</span> (<span class="dt">Fixity</span> <span class="dv">9</span> <span class="dt">InfixL</span>)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="dt">Ok</span>, modules loaded<span class="op">:</span> <span class="dt">Bin</span>, <span class="dt">Main</span><span class="op">.</span></span></code></pre></div>
+<p>おお、型の情報とか色々とれた！と思いますが肝心の函数定義のところが
+<code>Nothing</code> ですね……。</p>
+<p>ここで残念なお知らせです。<code>Info</code>
+には定義を入れる部分があるにもかかわらず、現在
+<strong>函数定義をとってくる機能は実装されていません</strong>。まあ余り使わないと云えばそれまでですが、悲しいものがありますね……。</p>
+<p>閑話休題。いよいよインスタンスの自動生成にはいりましょー。まずは常套手段、適当な宣言を書いて構文木の探りを入れてみましょう。</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>{</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a> runQ [d|</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>   instance (Bin a) =&gt; Bin (Maybe a) where</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>     encode Nothing = [O]</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>     encode (Just a) = I : encode a</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>     decode (I:xs) = let (a, xs&#39;) = decode xs in (Just a, xs&#39;)</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>     decode (O:xs) = (Nothing, xs)</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>   |]</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="op">:</span>}</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>[ <span class="dt">InstanceD</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>    [<span class="dt">ClassP</span> <span class="dt">Bin.Bin</span> [<span class="dt">VarT</span> a_0]]</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">AppT</span> (<span class="dt">ConT</span> <span class="dt">Bin.Bin</span>) (<span class="dt">AppT</span> (<span class="dt">ConT</span> <span class="dt">Data.Maybe.Maybe</span>) (<span class="dt">VarT</span> a_0)))</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    [ <span class="dt">FunD</span> encode [ <span class="dt">Clause</span> [<span class="dt">ConP</span> <span class="dt">Data.Maybe.Nothing</span> []] (<span class="dt">NormalB</span> (<span class="dt">ListE</span> [<span class="dt">ConE</span> <span class="dt">Bin.O</span>])) []</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>                  , <span class="dt">Clause</span> [<span class="dt">ConP</span> <span class="dt">Data.Maybe.Just</span> [<span class="dt">VarP</span> a_1]]</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>                           (<span class="dt">NormalB</span></span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>                             (<span class="dt">InfixE</span> (<span class="dt">Just</span> (<span class="dt">ConE</span> <span class="dt">Bin.I</span>)) (<span class="dt">ConE</span> <span class="op">GHC.Types.:</span>) (<span class="dt">Just</span> (<span class="dt">AppE</span> (<span class="dt">VarE</span> encode) (<span class="dt">VarE</span> a_1))))) []]</span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>    , <span class="dt">FunD</span> decode [ <span class="dt">Clause</span> [<span class="dt">InfixP</span> (<span class="dt">ConP</span> <span class="dt">Bin.I</span> []) <span class="op">GHC.Types.:</span> (<span class="dt">VarP</span> xs_2)]</span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>                           (<span class="dt">NormalB</span> (<span class="dt">LetE</span> [<span class="dt">ValD</span> (<span class="dt">TupP</span> [<span class="dt">VarP</span> a_3,<span class="dt">VarP</span> xs&#39;_4]) (<span class="dt">NormalB</span> (<span class="dt">AppE</span> (<span class="dt">VarE</span> decode) (<span class="dt">VarE</span> xs_2))) []] (<span class="dt">TupE</span> [<span class="dt">AppE</span> (<span class="dt">ConE</span> <span class="dt">Data.Maybe.Just</span>) (<span class="dt">VarE</span> a_3),<span class="dt">VarE</span> xs&#39;_4]))) []</span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>                  , <span class="dt">Clause</span> [<span class="dt">InfixP</span> (<span class="dt">ConP</span> <span class="dt">Bin.O</span> []) <span class="op">GHC.Types.:</span> (<span class="dt">VarP</span> xs_5)]</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>                                   (<span class="dt">NormalB</span> (<span class="dt">TupE</span> [<span class="dt">ConE</span> <span class="dt">Data.Maybe.Nothing</span>,<span class="dt">VarE</span> xs_5])) []]</span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>   ]</span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div>
+<p>インスタンス 宣言には <code>InstanceD</code>
+を使えばよいようですね。構文木の引数の順番は大体実際のプログラムで書く順番に対応しているので、それぞれ順に
+インスタンス 制約、 インスタンス
+宣言本体、メンバ函数などの定義であろうと類推をつけることが出来ます。実際型を見てみると、</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>t <span class="dt">InstanceD</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="dt">InstanceD</span><span class="ot"> ::</span> <span class="dt">Cxt</span> <span class="ot">-&gt;</span> <span class="dt">Type</span> <span class="ot">-&gt;</span> [<span class="dt">Dec</span>] <span class="ot">-&gt;</span> <span class="dt">Dec</span></span></code></pre></div>
+<p>どうやら読み通りだったようです。 <a href="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH-Syntax.html#t:Cxt"><code>Cxt</code></a>
+の説明を見ると <code>Pred</code> と云うのが出て来て、 クラス
+制約を表わす <code>ClassP</code> と型同値を表わす <code>EqualP</code>
+の二つがあることがわかります。上で吐かれた構文木だと <code>Bin a</code>
+と云う制約が掛かっている様によめます。</p>
+<p>次に函数定義の方を読んでいきましょう。<code>encode</code>
+の定義とおぼしき部分だけ切り出すと、</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="dt">FunD</span> encode [ <span class="dt">Clause</span> [<span class="dt">ConP</span> <span class="dt">Data.Maybe.Nothing</span> []]</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>                     (<span class="dt">NormalB</span> (<span class="dt">ListE</span> [<span class="dt">ConE</span> <span class="dt">Bin.O</span>]))</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>                     []</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>            , <span class="dt">Clause</span> [<span class="dt">ConP</span> <span class="dt">Data.Maybe.Just</span> [<span class="dt">VarP</span> a_1]]</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>                     (<span class="dt">NormalB</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>                       (<span class="dt">InfixE</span> (<span class="dt">Just</span> (<span class="dt">ConE</span> <span class="dt">Bin.I</span>)) </span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>                               (<span class="dt">ConE</span> <span class="op">GHC.Types.:</span>) </span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>                               (<span class="dt">Just</span> (<span class="dt">AppE</span> (<span class="dt">VarE</span> encode) (<span class="dt">VarE</span> a_1)))))</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>                     []</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>            ]</span></code></pre></div>
+<p>こうなっているので、 <code>FunD</code> の型を見てみます。</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="dt">FunD</span><span class="ot"> ::</span> <span class="dt">Name</span> <span class="ot">-&gt;</span> [<span class="dt">Clause</span>] <span class="ot">-&gt;</span> <span class="dt">Dec</span></span></code></pre></div>
+<p>これは、関数名と定義節(<code>Clause</code>)のリストを取って函数定義の構文木を返すと云うことでしょう。定義節とは、例えば上の例であれば、</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>encode <span class="dt">Nothing</span> <span class="ot">=</span> [<span class="dt">O</span>]</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>encode (<span class="dt">Just</span> a) <span class="ot">=</span> <span class="dt">I</span> <span class="op">:</span> encode a</span></code></pre></div>
+<p>の各行、つまり <code>Nothing</code>に対する場合、<code>Just</code>
+に対する場合の函数の定義それぞれのことです。 GHCi で Clause
+の情報を見てみると、</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">:</span>info <span class="dt">Clause</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Clause</span> <span class="ot">=</span> <span class="dt">Clause</span> [<span class="dt">Pat</span>] <span class="dt">Body</span> [<span class="dt">Dec</span>]</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>      <span class="co">-- Defined in Language.Haskell.TH.Syntax</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Eq</span> <span class="dt">Clause</span> <span class="co">-- Defined in Language.Haskell.TH.Syntax</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Show</span> <span class="dt">Clause</span> <span class="co">-- Defined in Language.Haskell.TH.Syntax</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Ppr</span> <span class="dt">Clause</span> <span class="co">-- Defined in Language.Haskell.TH.Ppr</span></span></code></pre></div>
+<p>となっています。データ構築子は <code>Clause</code>
+のみで、引数(のパタン)のリスト、定義の式本体と、いくつかの定義のリストを取るようになっていますね。</p>
+<p>最後の定義のリストはなんでしょうか？THの構文木は実際の構文に習って組み立てられていることから類推すると……？実は、これは
+<code>where</code> 節に取られる定義のリストです。</p>
+<p>Haskell を書いていると、時々「あれっ、<code>where</code>
+節って関数定義全体にわたるんだっけ……？」と思うときがありますが、この構文木を見れば一目瞭然に各パターンに対してだけであることがわかりますね。
+このように、THをやっているとHaskellの構文木でアイマイにしか理解していなかったところを理解できると云う副作用があります。わいわい。</p>
+<p>さて、必要な道具は大体そろった気がします。あとは今迄の要領で知らない構文木を調べていけばいいわけです。と、云う訳で一般の
+インスタンス 導出に移りましょう。</p>
+<p>一般的なデータ型をどうやってバイナリにエンコードするか、と云う方法を上の
+<code>Maybe</code> の例から考えみてましょう。<code>Maybe</code>
+の場合、</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="ot">=</span> <span class="dt">Nothing</span> <span class="op">|</span> <span class="dt">Just</span> a</span></code></pre></div>
+<p>と云う定義に対して、</p>
+<ol type="1">
+<li>一番左の <code>Nothing</code> だったら <code>O</code>
+だけでおわり</li>
+<li>二番目の <code>Just a</code> だったら <code>I</code> に続けて
+<code>a</code> をエンコードしたものをくっ付ける</li>
+</ol>
+<p>と云う感じの定義になっていました。これをより一般の場合に敷衍してみましょう。たとえば次の型を上のマナーの類推でエンコードするとどうなるか？</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">WeightTree</span> a <span class="ot">=</span> <span class="dt">Nil</span> <span class="op">|</span> <span class="dt">Leaf</span> <span class="dt">Int</span> a <span class="op">|</span> <span class="dt">Branch</span> (<span class="dt">WeightTree</span> a) (<span class="dt">WeightTree</span> a)</span></code></pre></div>
+<ol type="1">
+<li>一番左の <code>Nil -&gt; [O]</code></li>
+<li>その右の <code>Leaf i a -&gt; I + O + i</code> のエンコード +
+<code>a</code> のエンコード</li>
+<li>一番右の <code>Branch t s → I + I + t</code> のエンコード +
+<code>s</code> のエンコード</li>
+</ol>
+<p>こんな感じになりそうです。要は構築子の左から順に、<code>O</code>、<code>IO</code>、<code>IIO</code>、<code>IIIO</code>……と区別のつくようにタグを割り振って、それに続けて引数を順番にエンコードして置いていけばよいわけです。そして、最後のタグについては
+<code>O</code> を付けると冗長なのでそれをとってしまえばいい、と。</p>
+<p>こんな原理に従って encode の自動生成まで書いたのがリポジトリの <a href="https://github.com/konn/template-haskell-tutor/blob/master/BinTH.hs"><code>BinTH.hs</code></a>
+です。</p>
+<p>そこから核になる部分を取り出してみましょう。</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="ot">deriveBin ::</span> <span class="dt">Name</span> <span class="ot">-&gt;</span> <span class="dt">Q</span> [<span class="dt">Dec</span>]</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>deriveBin dName <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">DataD</span> cxts name vars cons _ <span class="ot">&lt;-</span> normalizeInfo <span class="op">&lt;$&gt;</span> reify dName</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  (cs, pats, exps) <span class="ot">&lt;-</span> <span class="fu">unzip3</span> <span class="op">&lt;$&gt;</span> <span class="fu">mapM</span> implForCon cons</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> cxts <span class="ot">=</span> <span class="fu">return</span> <span class="op">$</span> <span class="fu">map</span> (<span class="dt">ClassP</span> &#39;<span class="dt">&#39;Bin</span> <span class="op">.</span> <span class="fu">pure</span>) <span class="op">$</span> nub <span class="op">$</span> <span class="fu">concat</span> cs</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>      funs <span class="ot">=</span> genFuns pats exps</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> <span class="op">&lt;$&gt;</span> instanceD cxts (appT (conT &#39;<span class="dt">&#39;Bin</span>) (appsT <span class="op">$</span> conT name <span class="op">:</span> <span class="fu">map</span> (varT <span class="op">.</span> tvName) vars))</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>                       [funD &#39;encode funs]</span></code></pre></div>
+<p><code>deriveBin</code> は <code>Bin</code> のインスタンス
+にしたい型の名前を取ってその定義を返す函数です。<code>reify</code>
+で型情報を取得して、自前で定義した <code>normalizeInfo</code>
+でデータ型の定義に変換しています。変換と云うと大袈裟に聴こえますが、基本的に
+<code>data</code>
+定義と<code>newtype</code>定義以外を弾いて、面倒なので結果は
+<code>data</code>
+定義のものに統一するように処理をしているだけです(詳しくはソース参照)。</p>
+<p>次の行では、下で定義されている <code>implForCon</code>
+函数にデータ構築子の情報を渡して、各構築子に対するエンコード函数の定義に必要な型制約、引数のパターン、定義本体(のもとになるもの)を取得しています。必要な型制約、と云うのは
+<code>Maybe a</code> の <code>a</code> や <code>WeightTree a</code> の
+<code>a</code> などの 型変数 のように、<code>Bin</code> クラス の
+インスタンス
+になっていなくては困るものを抜き出してきていると思ってください。</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="ot">implForCon ::</span> <span class="dt">Con</span> <span class="ot">-&gt;</span> <span class="dt">Q</span> ([<span class="dt">Type</span>], <span class="dt">PatQ</span>, <span class="dt">ExpQ</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>implForCon con <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> (name, typs) <span class="ot">=</span> conTypesAndName con</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  vars <span class="ot">&lt;-</span> replicateM (<span class="fu">length</span> typs) <span class="op">$</span> newName <span class="st">&quot;x&quot;</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> pats <span class="ot">=</span> <span class="fu">map</span> varP vars</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>      exps <span class="ot">=</span> <span class="fu">map</span> varE vars</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>      expr <span class="ot">=</span> [<span class="op">|</span> <span class="fu">concat</span> <span class="op">$</span>(listE <span class="op">$</span> <span class="fu">map</span> (appE [<span class="op">|</span> encode <span class="op">|</span>]) exps) <span class="op">|</span>]</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">filter</span> isVarType typs, conP name pats, expr)</span></code></pre></div>
+<p>自前で定義した <code>conTypeAndName</code>
+で構築子の名前とその引数型のリストを取り出し、引数の数だけパタンマッチに必要な変数名を
+<code>newName</code>
+で用意しています。返値タプルは左から順に、引数に含まれている 型変数
+のリスト、パタン、エンコードする式です。</p>
+<p>そうして得た情報を基に、制約の生成や函数定義部分の生成を行っているのが
+<code>BinTH.hs</code> の 14, 15行目です。</p>
+<p>15行目で呼んでいる <code>genFuns</code>
+は、パタンのリストと式のリストを取って、各構築子に対するO,Iのタグを付加した定義節を定義する函数です：</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="ot">genFuns ::</span> [<span class="dt">PatQ</span>] <span class="ot">-&gt;</span> [<span class="dt">ExpQ</span>] <span class="ot">-&gt;</span> [<span class="dt">ClauseQ</span>]</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>genFuns []     []     <span class="ot">=</span> [ ]</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>genFuns [p]    [e]    <span class="ot">=</span> [ clause [p] (normalB e) []]</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>genFuns (p<span class="op">:</span>ps) (e<span class="op">:</span>es) <span class="ot">=</span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  clause [p] (normalB <span class="op">$</span> [<span class="op">|</span> <span class="dt">O</span> <span class="op">:</span> <span class="op">$</span>(e) <span class="op">|</span>]) [] <span class="op">:</span> <span class="fu">map</span> modifyBody (genFuns ps es)</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="ot">    modifyBody ::</span> <span class="dt">ClauseQ</span> <span class="ot">-&gt;</span> <span class="dt">ClauseQ</span></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>    modifyBody cq <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Clause</span> pat (<span class="dt">NormalB</span> e) [] <span class="ot">&lt;-</span> cq</span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>      clause (<span class="fu">map</span> <span class="fu">return</span> pat) (normalB [<span class="op">|</span> <span class="dt">I</span> <span class="op">:</span> <span class="op">$</span>(<span class="fu">return</span> e) <span class="op">|</span>]) []</span></code></pre></div>
+<p>こうして関数定義節本体を得たら、あとは <code>instanceD</code>
+で包んで返してあげればよいだけです。第二引数の</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>appT (conT &#39;<span class="dt">&#39;Bin</span>) (appsT <span class="op">$</span> conT name <span class="op">:</span> <span class="fu">map</span> (varT <span class="op">.</span> tvName) vars)</span></code></pre></div>
+<p>と云うのが少し読みづらいですが、これは型 インスタンス
+宣言の部分で、例えば <code>Either</code> に対しては</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="dt">Bin</span> (<span class="dt">Either</span> a b)</span></code></pre></div>
+<p>の部分にすぎません。呼ばれている <code>appsT</code>
+と云うのは、このモジュールで勝手に定義した次の便利函数です：</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="ot">appsT ::</span> [<span class="dt">TypeQ</span>] <span class="ot">-&gt;</span> <span class="dt">TypeQ</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>appsT [] <span class="ot">=</span> <span class="fu">error</span> <span class="st">&quot;appsT []&quot;</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>appsT [x] <span class="ot">=</span> x</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>appsT (x<span class="op">:</span>y<span class="op">:</span>zs) <span class="ot">=</span> appsT ( (appT x y) <span class="op">:</span> zs )</span></code></pre></div>
+<p>つまり、型のリストを取って、それを順に 適用
+してった型を返す函数です。正しくないコードですがこんな感じ。</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>appsT [<span class="dt">Either</span>, <span class="dt">Int</span>, <span class="dt">String</span>] <span class="op">==</span> <span class="dt">Either</span> <span class="dt">Int</span> <span class="dt">String</span></span></code></pre></div>
+<p>式の構文木に関しては、<code>Language.Haskell.TH</code> で<a href="http://hackage.haskell.org/packages/archive/template-haskell/latest/doc/html/Language-Haskell-TH.html#v:appsE"><code>appsE</code></a>
+と云う同様のことをやってくれる便利函数が居るんですが、型に対しては用意されてなかったのでその定義をちょここっとかえて自前で定義してみました。</p>
+<p>ここで気付いたと思いますが、パタンでの 適用
+と式・型でのそれの構文木は構造が違います。パタンではデータ構築子に引数全てが完全
+適用 されていなくてはいけないので</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="dt">ConP</span><span class="ot"> ::</span> <span class="dt">Name</span> <span class="ot">-&gt;</span> [<span class="dt">Pat</span>] <span class="ot">-&gt;</span> <span class="dt">Pat</span></span></code></pre></div>
+<p>と、構築子の構文木に引数が含まれている形でしたが、式と型に関してはデータ構築子の他にも函数に対する
+適用 があったり、 部分適用 があったりするので、</p>
+<div class="sourceCode" id="cb63"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="dt">ConE</span><span class="ot"> ::</span> <span class="dt">Name</span> <span class="ot">-&gt;</span> <span class="dt">Exp</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="dt">VarE</span><span class="ot"> ::</span> <span class="dt">Name</span> <span class="ot">-&gt;</span> <span class="dt">Exp</span></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="dt">AppE</span><span class="ot"> ::</span> <span class="dt">Exp</span> <span class="ot">-&gt;</span> <span class="dt">Exp</span> <span class="ot">-&gt;</span> <span class="dt">Exp</span></span></code></pre></div>
+<p>のように構築子、函数、 適用
+がそれぞれ別れた形になっています。型についても同様です。</p>
+<p>さて、駆け足＆省略が多い感じではありましたが、一応これで
+<code>BinTH.hs</code>
+の解説は終わりです。説明を省いた部分についても読んでいけばどういうことをしているのか大体わかると思います。</p>
+<p>実際にここで定義したマクロを使っているところを見てみましょう。
+<code>BinTHTest.hs</code> を見てください。</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell #-}</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Bin</span></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">BinTH</span></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Language.Haskell.TH</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Tree</span> a <span class="ot">=</span> <span class="dt">Nil</span> <span class="op">|</span> <span class="dt">Leaf</span> a <span class="op">|</span> <span class="dt">Branch</span> (<span class="dt">Tree</span> a) (<span class="dt">Tree</span> a)</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Unit</span> a <span class="ot">=</span> <span class="dt">Unit</span> a</span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Phantom</span> a <span class="ot">=</span> <span class="dt">Phantom</span> <span class="dt">Int</span></span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Hoge</span> a <span class="ot">=</span> <span class="dt">Huga</span> [a] <span class="op">|</span> <span class="dt">NilHoge</span></span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a>deriveBin &#39;<span class="dt">&#39;Tree</span></span>
+<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a>deriveBin &#39;<span class="dt">&#39;Unit</span></span></code></pre></div>
+<p>マクロを使っているのは、最後の二行の部分です。これはトップレベル宣言なので接合作用素が省略されていて、</p>
+<div class="sourceCode" id="cb65"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="op">$</span>(deriveBin &#39;<span class="dt">&#39;Tree</span>)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="op">$</span>(deriveBin &#39;<span class="dt">&#39;Unit</span>)</span></code></pre></div>
+<p>の略記法です。ところで、 <code>Tree</code> の宣言を
+<code>deriveBin</code> の後に持ってきて読み込み直そうとすると、</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="op">/</span><span class="dt">Users</span><span class="op">/</span>hiromi<span class="op">/</span>haskell<span class="op">/</span>advent<span class="op">/</span><span class="dv">2011</span><span class="op">/</span>BinTHTest.hs<span class="op">:</span><span class="dv">12</span><span class="op">:</span><span class="dv">11</span><span class="op">:</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Not</span> <span class="kw">in</span> scope<span class="op">:</span> <span class="kw">type</span> constructor <span class="fu">or</span> <span class="kw">class</span> <span class="ot">`Tree&#39;</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="ot">Failed, modules loaded: Bin, BinTH, TupTH.</span></span></code></pre></div>
+<p>と怒られます。こんな具合に、TH
+のマクロを使うには、それに渡す名前がマクロ呼び出しより物理的に前に出て来ている必要があります。</p>
+<p>さて。ちょっと、ここで意欲のあるひとのために幾つか課題を挙げておこうと思います<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a>。</p>
+<ol type="1">
+<li><p><code>encode</code> の例にならって <code>decode</code>
+函数の自動生成も実装してください。(難易度：ふつう)</p></li>
+<li><p>実は、上の型インスタンス制約の処理では上手く動かないところがあります。例えば、</p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Tree</span> a <span class="ot">=</span> <span class="dt">Leaf</span> [a] <span class="op">|</span> <span class="dt">Branch</span> (<span class="dt">Tree</span> a) (<span class="dt">Tree</span> a)</span></code></pre></div>
+<p>のような型に対してのインスタンス制約の文脈が正しく指定出来ません。克服するにはどうすればいいでしょう？(難易度：至難<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a>)</p>
+<ol type="1">
+<li>方針1：面倒なので型引数を全部要求しちゃう</li>
+<li>方針2：<code>reify</code> でとれる <a href="http://hackage.haskell.org/packages/archive/template-haskell/2.5.0.0/doc/html/Language-Haskell-TH-Syntax.html#t:ClassInstance"><code>ClassInstance</code></a>
+の情報を利用して文脈を正確に指定するようがんばる</li>
+</ol></li>
+<li><p>必要なインスタンスが定義されていなかった場合自動的にそれも定義する機能を付ける。(難易度：難)</p>
+<ol type="1">
+<li>方針：<code>reify</code> の <code>ClassInstance</code> の情報や <a href="http://hackage.haskell.org/packages/archive/template-haskell/2.5.0.0/doc/html/Language-Haskell-TH-Syntax.html#v:isClassInstance"><code>isClassInstance</code></a>
+、 <a href="http://hackage.haskell.org/packages/archive/template-haskell/2.5.0.0/doc/html/Language-Haskell-TH-Syntax.html#v:classInstances"><code>classInstances</code></a>
+函数などを使ってみる
+<ul>
+<li>ただし、2.5.0.0 の classInstances 函数はとても使い辛い</li>
+</ul></li>
+</ol></li>
+</ol>
+</section>
+<section id="template-haskell-の落とし穴" class="level2">
+<h3>Template Haskell の落とし穴</h3>
+<p>ここでは、
+THをいじっていると遭遇する落とし穴について解説したいと思います。</p>
+<section id="接合作用素と-が紛らわしい" class="level3">
+<h4>接合作用素と <code>($)</code> が紛らわしい</h4>
+<p>前も書きましたが接合作用素 <code>$()</code>
+の括弧が省略出来るため、函数 適用演算子<code>($)</code>
+と紛らわしく、プログラムが malformed になることがよくあります。</p>
+<p>TH を使うときは、中置演算子の
+<code>($)</code>の前後にはしっかり空白を置くか、一切使わないようにしましょう。接合作用素についても、省略出来る場合でも括弧はしっかり書くようにしましょう<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a>。</p>
+</section>
+<section id="stage-restriction-とのたたかい" class="level3">
+<h4>Stage Restriction とのたたかい</h4>
+<p>前に触れましたが、構文木を接合する際に Stage Restriction
+と云う制限がかかります。それは、
+<strong>トップレベル接合中で呼び出せる函数は外部から <code>import</code>
+したものだけ</strong> という制限です。</p>
+<p>何故こんな制限があるのかと云うと、コンパイル時に接合に循環が起きないかをチェックするのが技術的に非常にコストがかかるため、このような形になっています。では、ローカルの変数などを渡したい場合はどうすればいいの……？と云うのが当然次に出て来る疑問ですが、その場合は変数の名前を渡してやるように変更すれば、大抵の場合うまくいきます。</p>
+<p>どういうことか。簡単な例ですが、</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="ot">multi ::</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">ExpQ</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>multi i <span class="ot">=</span> [<span class="op">|</span> (i <span class="op">*</span>) <span class="op">|</span>]</span></code></pre></div>
+<p>のようなマクロを定義したとします。貰った数倍する式を返すマクロですね。これを
+GHCi で読み込んで遊んでみます。</p>
+<div class="sourceCode" id="cb69"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="op">$</span>(multi <span class="dv">2</span>) <span class="dv">3</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="dv">6</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="kw">let</span> a <span class="ot">=</span> <span class="dv">2</span> <span class="kw">in</span> <span class="op">$</span>(multi a) <span class="dv">3</span></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>interactive<span class="op">&gt;:</span><span class="dv">1</span><span class="op">:</span><span class="dv">22</span><span class="op">:</span></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">GHC</span> stage restriction<span class="op">:</span> <span class="ot">`a&#39;</span></span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a><span class="ot">      is used in a top-level splice or annotation,</span></span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a><span class="ot">      and must be imported, not defined locally</span></span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a><span class="ot">    In the first argument of `</span>multi&#39;, namely <span class="ot">`a&#39;</span></span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a><span class="ot">    In the expression: multi a</span></span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a><span class="ot">    In the expression: $(multi a)</span></span></code></pre></div>
+<p>一つめの例では単に値を渡しただけなので上手くいきましたが、二つめの例では
+Stage Restriction に引っ掛かってしまい通りません。</p>
+<p>そこで、multi の定義を次のように変更しましょう。接合の中で引数の n
+を読んでいる様に見えて restriction
+に引っ掛かりそうですが、式クォート中なのでセーフです。</p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="ot">multi ::</span> <span class="dt">Name</span> <span class="ot">-&gt;</span> <span class="dt">ExpQ</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>multi n <span class="ot">=</span> [<span class="op">|</span> (<span class="op">$</span>(varE n) <span class="op">*</span>) <span class="op">|</span>]</span></code></pre></div>
+<p>すると、一番最初の <code>$(multi 2)</code>
+のような使い方は出来なくなりますが、二番目の例は、</p>
+<div class="sourceCode" id="cb71"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> <span class="kw">let</span> a <span class="ot">=</span> <span class="dv">2</span> <span class="kw">in</span> <span class="op">$</span>(multi &#39;a) <span class="dv">3</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="dv">6</span></span></code></pre></div>
+<p>と、名前を渡してやることでちゃんと動くようになります。或いはこの例の場合はもっと簡単に、</p>
+<div class="sourceCode" id="cb72"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="ot">multi ::</span> <span class="dt">ExpQ</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>multi <span class="ot">=</span> [<span class="op">|</span> \a <span class="ot">-&gt;</span> (a <span class="op">*</span>) <span class="op">|</span>]</span></code></pre></div>
+<p>のようにすることも出来ます。まあこれはこの例が簡単だからと云うのもありますが、
+Stage Restriction
+に引っ掛かった場合は、実値渡しではなく名前渡しで解決出来ないか、と云うことを考えてみると良いでしょう。</p>
+<p>ただ、これでも解決出来ないことがあります。例えば、コンパイル時に遺伝的プログラミングをしたくて、合成した構文木の
+評価 をしたかったとします。この場合、TH
+の機能だけではどうしてもその場で合成した構文木をトップレベル接合に入れてやる必要があるため、上の技法は使えません。</p>
+<p>一般に、合成したばかりの構文木を 評価 するようなマクロは TH
+だけでは書けません。まず TH 自身を TH
+で扱うことが出来ないので、メタマクロのようなものもかくことが出来ません。どうしてもやりたい……？その場合は
+<a href="http://hackage.haskell.org/package/hint">hint</a>
+パッケージなり <a href="http://hackage.haskell.org/package/haskell-src-exts">haskell-src-exts</a>
+パッケージなりを調べてみると幸せになれるかもしれませんね。お勧めはしませんが。。。</p>
+</section>
+<section id="マクロがコンパイル出来たからって全てが上手くいくと思うな" class="level3">
+<h4>マクロがコンパイル出来たからって全てが上手くいくと思うな</h4>
+<p>THの函数と体力を駆使して次の様なマクロを書いたとします。</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="ot">wtf ::</span> <span class="dt">ExpQ</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>wtf <span class="ot">=</span> infixApp (litE (stringL <span class="st">&quot;hello &quot;</span>)) [<span class="op">|</span> (<span class="op">++</span>) <span class="op">|</span>] (conE <span class="dt">&#39;True</span>)</span></code></pre></div>
+<p>GHCi に実行させてみましょうか。</p>
+<div class="sourceCode" id="cb74"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="dt">Prelude</span> <span class="op">&gt;</span> <span class="op">:</span>l MyGreatMacro.hs</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span> <span class="kw">of</span> <span class="dv">1</span>] <span class="dt">Compiling</span> <span class="dt">Main</span>             ( MyGreatMacro.hs, interpreted )</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="dt">Ok</span>, modules loaded<span class="op">:</span> <span class="dt">Main</span><span class="op">.</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a><span class="dt">Main</span><span class="op">*</span> <span class="dt">Prelude</span><span class="op">&gt;</span> <span class="op">$</span>(wtf)</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>interactive<span class="op">&gt;:</span><span class="dv">1</span><span class="op">:</span><span class="dv">1</span><span class="op">:</span></span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Couldn&#39;t</span> match expected <span class="kw">type</span> <span class="ot">`[Char]&#39; with actual type `</span><span class="dt">Bool&#39;</span></span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">In</span> the second argument <span class="kw">of</span> <span class="ot">`(++)&#39;, namely `</span><span class="dt">True&#39;</span></span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">In</span> the expression<span class="op">:</span> (<span class="st">&quot;hello &quot;</span> <span class="op">++</span> <span class="dt">True</span>)</span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">In</span> the result <span class="kw">of</span> the splice<span class="op">:</span></span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>      <span class="op">$</span>wtf</span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">To</span> see what the splice expanded to, use <span class="op">-</span>ddump<span class="op">-</span>splices</span></code></pre></div>
+<p>失敗してしまいました……！？ナンデ！？マクロナンデ！？</p>
+<p>と思いますが、そりゃ失敗する筈ですよ。だって、wtfを良くみたら、</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;hello&quot;</span> <span class="op">++</span> <span class="dt">True</span></span></code></pre></div>
+<p>って云う構文木なんですから、そりゃ型が合わないんだから死にます。<code>Exp</code>
+型の型付けが弱いのでこういうことが起きるわけです。</p>
+<p>そういう仕組みなので、マクロで型がちゃんと合うかどうかを自分で見てやる必要があります。</p>
+<p>これは余り不便だと云うので、新しく型をパラメタ化した <a href="http://hackage.haskell.org/trac/ghc/blog/Template%20Haskell%20Proposal"><code>TExp</code>
+型を作ったらどうかと云う Proposal</a> もあります<a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a>。</p>
+<p>大分前の例でも出て来ましたが、引数パターンの名前が被っていたりと云ったのも接合してみるまでエラーがわかないので注意が必要です。</p>
+<p>どうしてもどこで食い違いがおこっているのかわからない……。と云うような場合は、マクロを使用しているプログラムをコンパイルする際に
+<code>-ddump-splices</code>
+オプションを付けてコンパイルすると、構文木の接合が起きるたびにどんな風にそれが展開されたかを表示してくれるので、試してみると良いでしょう。</p>
+<p>例えば最後の <code>BinTH</code> の例である <code>BinTHTest.hs</code>
+を <code>-ddump-splices</code> を付けてコンパイルすると、</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>BinTHTest.hs<span class="op">:</span><span class="dv">1</span><span class="op">:</span><span class="dv">1</span><span class="op">:</span> <span class="dt">Splicing</span> declarations</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>    deriveBin <span class="dt">&#39;Tree</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">======&gt;</span></span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>    BinTHTest.hs<span class="op">:</span><span class="dv">13</span><span class="op">:</span><span class="dv">1</span><span class="op">-</span><span class="dv">16</span></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">instance</span> <span class="dt">Bin</span> a[a3GR] <span class="ot">=&gt;</span> <span class="dt">Bin</span> (<span class="dt">Tree</span> a[a3GR]) <span class="kw">where</span></span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>        { encode <span class="dt">Nil</span> <span class="ot">=</span> (<span class="dt">O</span> <span class="op">GHC.Types.:</span> <span class="fu">concat</span> [])</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>          encode (<span class="dt">Leaf</span> x[a3Hr])</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>            <span class="ot">=</span> (<span class="dt">I</span> <span class="op">GHC.Types.:</span> (<span class="dt">O</span> <span class="op">GHC.Types.:</span> <span class="fu">concat</span> [encode x[a3Hr]]))</span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>          encode (<span class="dt">Branch</span> x[a3Hs] x[a3Ht])</span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>            <span class="ot">=</span> (<span class="dt">I</span></span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>             <span class="op">GHC.Types.:</span></span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>               (<span class="dt">I</span> <span class="op">GHC.Types.:</span> <span class="fu">concat</span> [encode x[a3Hs], encode x[a3Ht]])) }</span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>BinTHTest.hs<span class="op">:</span><span class="dv">1</span><span class="op">:</span><span class="dv">1</span><span class="op">:</span> <span class="dt">Splicing</span> declarations</span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>    deriveBin <span class="dt">&#39;Unit</span></span>
+<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">======&gt;</span></span>
+<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>    BinTHTest.hs<span class="op">:</span><span class="dv">14</span><span class="op">:</span><span class="dv">1</span><span class="op">-</span><span class="dv">16</span></span>
+<span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">instance</span> <span class="dt">Bin</span> a[a3GQ] <span class="ot">=&gt;</span> <span class="dt">Bin</span> (<span class="dt">Unit</span> a[a3GQ]) <span class="kw">where</span></span>
+<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a>        { encode (<span class="dt">Unit</span> x[a3HW]) <span class="ot">=</span> <span class="fu">concat</span> [encode x[a3HW]] }</span></code></pre></div>
+<p>こんな感じでマクロ展開後のコードを表示してくれるようになります。便利でしょ？</p>
+<section id="結語" class="level4">
+<h5>結語</h5>
+<p>長々と＆期限を大幅に破って続けて参りましたこの記事ですが、何とかこの辺で終わりにしたいと思います。……最初のテーブルにはもっと内容があった気がするんですが、きっとそれは気のせいです。こんな記事を何度も読むより、自分で何度も書き直したりしたほうが
+TH は身に付くと思うので、是非みなさん楽しんでください。</p>
+<p>Happy Template Haskelling and have a nice year！</p>
+</section>
+</section>
+</section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>完成したのはその十日後です。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>正確には Haskell 処理系の一種であるGHC で<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>これについては本稿では説明しないので、以前書いた <a href="http://haskell.g.hatena.ne.jp/mr_konn/20101210/quasiquotes">準クォートでもてかわゆるふわメタプログラミング！
+-はてな使ったら負けだと思っている deriving Haskell</a>
+を参照してください（サルベージ後註：現在サルベージ中）<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>厳密にはもっと沢山ありますし、粗く分けるならも少ない分類もありえます<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>リテラルを表わす <code>Lit</code>、節を表わす
+<code>Clause</code> や函数本体を表わす <code>Body</code>、文脈を示す
+<code>Cxt</code> など<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>鳴らして嬉しいかどうかは別問題ですが．．．<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>正確には <code>Quasi</code>
+クラスのインスタンスとなるファンクタですが、<code>IO</code>
+以外に用いることはほぼないでしょう。<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>ダブルクォートではないことに注意！<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p><strong>（2024年からの註）</strong>
+GHCのジェネリクスの機能が十分強力になったので、ここで書いているような例であれば、実は
+Template Haskell を使わずとも Generics と <code>DeriveAnyClass</code>
+を使って直接 <code>deriving</code>
+節で導出させるロジックを書くことができます。Template Haskell
+を使ってもいいですが、TH
+はクロスコンパイラなどでサポートされていなかったりしますので、こういう例では
+Generics
+を使うのが一般的です。ただし、Genericsは途中で中間表現を挟むので、パフォーマンス面を気にする場合はこれが消去されるように腐心する必要があったり、また
+TH
+でしか使えない型の情報などでより効率的なインスタンスが導出可能な場合もあるため、Template
+Haskell で実装を導出させることもよくあります。また、Generics は GADTs
+や型族に対して使えないため、こうしたデータ型のインスタンスの導出にも TH
+は有効です。<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn10"><p>りーえふぁい、と読むみたいです。具体化するとか云う意味らしい<a href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn11"><p>出題者が答えを知っているとは思わないでくださいね？<a href="#fnref11" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn12"><p>出題者が答えを（ry<a href="#fnref12" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn13"><p><strong>（2024年からの註）</strong>最近のGHC（GHC 9.2
+以降）では、Template Haskell が有効でない文脈で <code>f $x</code>
+みたいに <code>$</code>
+と識別子が隣接していると警告するようになりました。てか、フォーマッタを掛けましょう。<a href="#fnref13" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn14"><p><strong>（2024年からの註）</strong>最近の Template
+Haskell
+では型付式クォートが実装されています。インタフェースは何度か変遷を経、現在では
+<code>Code Q a</code> が「spliceされると型 <code>a</code>
+の値になる副作用つきマクロ式」の意味になり、この型の値を生成するためのクォート
+<code>[|| hoge ||]</code> があります（左右の <code>|</code>
+が二個になっていることに注意）。<a href="#fnref14" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+          <hr>
+          <!-- DISQUS -->
+          <section id="disqus_area" class="mx-1 mx-md-3 mx-lg-5">
+            <h2>Comments</h2>
+          <div id="disqus_thread"></div>
+          <script>
+          var disqus_config = function () {
+          this.page.url = "https://konn-san.com/articles/2011-12-18-dekiru-template-haskell.html";
+          this.page.identifier = "/articles/2011-12-18-dekiru-template-haskell.html";
+          };
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://konn-san.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          </section>
+          <!-- /DISQUS -->
+        </div>
+      </div>
+  <footer>
+      <p>
+        <a href="//validator.w3.org/check?uri=https%3A%2F%2Fkonn-san.com/articles/2011-12-18-dekiru-template-haskell.html">
+          <img src="/img/HTML5_Logo_32.png" height="32" alt="HTML5">
+	</a>
+	<br>
+	Powered by <a href="https://shakebuild.com">Shake</a>,
+        <a href="https://github.com/konn/sake">Sake</a>,
+	<a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>,
+	<a href="https://khan.github.io/KaTeX/">KaTeX</a>,
+        and <a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages">GitHub Pages</a>.
+	<br>
+	Copyright © Hiromi ISHII 2012-2022
+      </p>
+    </footer>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script type="module"> import pdfjs-dist from https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/+esm </script>
+
+
+</body></html>
