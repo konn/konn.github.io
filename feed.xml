@@ -114,6 +114,11 @@ Calendar Advent Calendar 2024</a>の9日目の記事ということにしまし�
 <dd>
 強制法の基礎理論について、Boole完備化の一意存在からはじめ、Boole値モデルによる強制法の定式化からはじめて、一般の擬順序での強制法関係による強制法を導出しています。特に、強制拡大が<span class="math inline">\(V\)</span>を推移的モデルとして含む<span class="math inline">\(\ZFC\)</span>のモデルとなること、強制拡大における真理補題、完備埋め込みの性質などについて論じています。
 </dd>
+<dt><a href="/2024-forcing-seminar-notes/04-independence-of-ch.pdf">第4回：連続体仮説の独立性証明</a></dt>
+<dd>
+これまでに準備してきた強制法の理論を用いて、<span class="math inline">\(\mathrm{ZFC} + \mathrm{CH}\)</span>および<span class="math inline">\(\mathrm{ZFC} + \lnot
+\mathrm{CH}\)</span>の無矛盾性証明を与えます。核となるのは、Cohen強制法およびLevy崩壊の組合せ論的性質です。
+</dd>
 </dl>
 </section>
 <section id="全原稿" class="level2">
