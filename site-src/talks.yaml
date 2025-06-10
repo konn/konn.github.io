@@ -1,3 +1,12 @@
+- date: 2025/05/30
+  conference:
+    name: "2025年度 人工知能学会全国大会 (第39回) 数理最適化OS"
+    url: "https://www.ai-gakkai.or.jp/jsai2025/"
+    venue: "Hybrid (大阪国際会議場 and Online)"
+  title: "数理最適化モデル記述ツール JijModeling のご紹介"
+  links:
+    Slides: https://www.docswell.com/s/Jij_Inc/59VP3V-2025-05-30-jijmodeling
+
 - date: 2024/03/10
   conference:
     name: Tsukuba Computer Mathematics Seminar 2024
