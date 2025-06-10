@@ -8,7 +8,199 @@
         <name>Hiromi ISHII</name>
         <email>konn.jinro_at_gmail.com</email>
     </author>
-    <updated>2024-10-12T14:00:00+09:00</updated>
+    <updated>2025-06-10T13:00:00+09:00</updated>
+    <entry>
+      <title>プロフィール</title>
+      <link href="https://konn-san.com/profile.html" />
+      <id>https://konn-san.com/profile.html</id>
+      <published>2025-06-10T13:00:00+09:00</published>
+      <updated>2025-06-10T13:00:00+09:00</updated>
+      <summary type="html"><![CDATA[<p><a href="/cv/cv-ja.pdf">[職務経歴書]</a> / <a href="/cv/cv-en.pdf">[English CV]</a></p>
+<section id="自己紹介" class="level1">
+<h2>自己紹介</h2>
+<p>数学と関数型プログラミングを愛でる博士（理学）。数学（集合論をはじめとした数学基礎論および計算代数）と本格ミステリ、関数型プログラミング。時々パズル。</p>
+<section id="専門と趣味について" class="level2">
+<h3>専門と趣味について</h3>
+<dl>
+<dt>好きな作家（順不同）</dt>
+<dd>
+麻耶雄嵩、円城塔、森川智喜、円居挽、倉知淳。座右の書は麻耶雄嵩『<a href="asin:4062638916">夏と冬の奏鳴曲</a>』と円城塔『<a href="asin:4150310203">Boy’s
+Surface</a>』。パズル作家の芦ヶ原伸之さんのエッセイも好き。
+</dd>
+<dt>数学</dt>
+<dd>
+専攻は集合論を初めとした数理論理学、計算代数、および関数型プログラミング。
+</dd>
+<dt>プログラミング</dt>
+<dd>
+中学の頃くらいからやっている。おおよそ REALbasic → Ruby → Haskell
+という遍歴を辿っている。他にも色々な言語をつまみぐいしてみたりしたが、現在は
+Haskell 一本に落ち着き、飯を食っている。このサイトも Haskell
+で生成・管理しています。
+</dd>
+</dl>
+</section>
+<section id="受賞歴資格等" class="level2">
+<h3>受賞歴・資格等</h3>
+<ul>
+<li>2015年度 第十四回茗渓会賞</li>
+<li>2013年度 早稲田大学基幹理工学部卒業生総代</li>
+<li>2013年度 早稲田大学基幹理工学部長賞最優秀賞（第一回）</li>
+</ul>
+</section>
+<section id="年表" class="level2">
+<h3>年表</h3>
+<ul>
+<li>2024/11〜現在 <a href="https://www.j-ij.com/ja">株式会社Jij</a>ソフトウェア開発部</li>
+<li>2019/04〜2024/10 <a href="https://www.deepflow.co.jp">DeepFlow株式会社</a> 研究開発部</li>
+<li>2019/04〜2020/03 統計数理研究所 外来研究員</li>
+<li>2019/03 筑波大学大学院 数理物質科学研究科 数学専攻
+博士後期課程修了</li>
+<li>2017/04〜2019/03 日本学術振興会特別研究員（DC2）</li>
+<li>2016/04〜 筑波大学大学院 数理物質科学研究科 数学専攻
+博士後期課程</li>
+<li>2016/03 筑波大学大学院 数理物質科学研究科 数学専攻
+博士前期課程修了</li>
+<li>2014/04 Google Summer of Code 2014 採択（Haskell
+による効率的なGröbner基底計算とそのための疎行列アルゴリズムの実装）</li>
+<li>2014/04 筑波大学大学院 数理物質科学研究科 数学専攻入学</li>
+<li>2014/03 同卒業（基幹理工学部総代）</li>
+<li>2011/04 早稲田大学基幹理工学部 数学科配属</li>
+<li>2010/10〜2014/03 <a href="http://preferred.jp/">株式会社 Preferred
+Infrastructure</a> アルバイト</li>
+<li>2010/08〜09 <a href="http://preferred.jp/">株式会社 Preferred
+Infrastructure</a> インターン生</li>
+<li>2010/04 早稲田大学基幹理工学部入学</li>
+<li>2010/03 神奈川県立横浜緑ヶ丘高校卒業</li>
+<li>1992/01/18 生まれる</li>
+</ul>
+</section>
+</section>
+<section id="activity" class="level1">
+<h2>Activity</h2>
+<p>現在・過去の活動記録など。</p>
+<section id="papers" class="level2">
+<h3>Papers</h3>
+<section id="refereed-papers" class="level3">
+<h4>Refereed Papers</h4>
+<ul>
+<li>Hiromi ISHII, “<em>Automatic Differentiation With Higher
+Infinitesimals, or Computational Smooth Infinitesimal Analysis in Weil
+Algebra</em>”, In: Computer Algebra in Scientific Computation 2021,
+pp. 174-191. DOI: <a href="https://doi.org/10.1007/978-3-030-85165-1_11">10.1007/978-3-030-85165-1_11</a>
+(<a href="https://github.com/konn/smooth">Example Repository</a>, <a href="https://arxiv.org/abs/2106.14153">arxiv:2106.14153</a>, <a href="/math/casc-smooth.pdf">Slides</a>).</li>
+<li>Hiromi ISHII, “<em><a href="https://doi.org/10.15068/00156548">Bidirectional Interplay between
+Mathematics and Computer Science: Safety and Extensibility in Computer
+Algebra and Haskell</a></em>”, Ph.D. Thesis.</li>
+<li>Hiromi ISHII, “<em>A Purely Functional Computer Algebra System
+Embedded in Haskell</em>” (<a href="https://arxiv.org/abs/1807.01456">preprint</a>), In: Computer
+Algebra in Scientific Computing, pp. 288-303. 20th International
+Workshop, CASC 2018, Lille, France, September 17-21, 2018. DOI: <a href="https://doi.org/10.1007/978-3-319-99639-4_20">10.1007/978-3-319-99639-4_20</a>.</li>
+<li>Hiromi ISHII, “<em><a href="math/regularity-and-inaccessible.html">Regularity Properties of
+Sets of Reals and Inaccessible Cardinals</a></em>”, Master’s
+Thesis.</li>
+<li>Oleg Kiselyov and Hiromi ISHII, “<a href="http://okmij.org/ftp/Haskell/extensible/more.pdf">Freer Monads,
+More Extensible effects</a>”. Haskell Symposium 2015.</li>
+</ul>
+</section>
+<section id="non-refereed-papers" class="level3">
+<h4>Non-refereed Papers</h4>
+<ul>
+<li>Hiromi Ishii, “<em><a href="RIMSca2021-rims">A Succinct Multivariate
+Lazy Multivariate Tower AD for Weil Algebra Computation</a></em>”,
+Computer Algebra – Theory and its Applications, RIMS Kôkyûroku No. 2185
+(2021), pp. 104-112. (<a href="RIMSca2021-arxiv">arxiv:2103.11615</a>)</li>
+</ul>
+</section>
+<section id="preprints-only" class="level3">
+<h4>Preprints-only</h4>
+<ul>
+<li>Hiromi ISHII, “<em><a href="https://arxiv.org/abs/2103.11751">Functional Pearl: Witness Me –
+Constructive Arguments Must Be Guided with Concrete Witness</a></em>”,
+2021.</li>
+</ul>
+</section>
+</section>
+<section id="talks" class="level2">
+<h3>Talks</h3>
+<p>勉強会や社内セミナーなどでの発表記録（直近十件；<a href="/talks.html">全一覧</a>）。</p>
+<p><ul>
+<li>2025/05/30 
+<a href="https://www.ai-gakkai.or.jp/jsai2025/">2025年度 人工知能学会全国大会 (第39回) 数理最適化OS</a>＠Hybrid (大阪国際会議場 and Online)『<b>数理最適化モデル記述ツール JijModeling のご紹介</b>』（<a href="https://www.docswell.com/s/Jij_Inc/59VP3V-2025-05-30-jijmodeling">Slides</a>）</li>
+<li>2024/03/10 
+Tsukuba Computer Mathematics Seminar 2024＠Hybrid (Ranzan and Online)『<b>充足可能性ソルバ（SAT ソルバ）の原理</b>』（<a href="https://konn-san.com/math/cdcl-sat-solvers.pdf">Slides</a>，<a href="https://github.com/konn/herbrand">Implementation</a>，<a href="https://github.com/konn/cdcl-sat-solvers-slides">Source Code of Slides</a>）</li>
+<li>2023/03/12 
+Tsukuba Computer Mathematics Seminar 2023＠Hybrid (Tsukuba and Online)『<b>Reverse-Mode 自動微分を理解する</b>』（<a href="https://konn-san.com/math/reverse-mode-ad-slides.pdf">Slides</a>）</li>
+<li>2022/03/06 
+Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める</b>』（<a href="https://konn-san.com/math/ishii-fibonacci-slides.pdf">Slides</a>）</li>
+<li>2021/09/15 
+<a href="https://www.casc-conference.org/2021/index.html">Computer Algebra in Scientific Computing 2021</a>＠Hybrid (Sochi, Russia and Online)『<b>Automatic differentiation with higher infinitesimals, or computational smooth infinitesimal analysis in Weil algebra</b>』（<a href="https://konn-san.com/math/casc-smooth.pdf">Slides</a>，<a href="https://link.springer.com/book/10.1007/978-3-030-85165-1">Proceedings</a>，<a href="https://arxiv.org/abs/2106.14153">Preprint</a>）</li>
+<li>2021/07/04 
+<a href="https://www.youtube.com/channel/UCSA2iDIY6Z-J9X4pWfdPPnw">alg-d</a>＠YouTube『<b>自動微分とGröbner基底による高次冪零無限小解析（alg_d篇）</b>』（<a href="https://arxiv.org/abs/2106.14153">Paper</a>，<a href="https://konn-san.com/math/smooth-algd-talk.pdf">Slides</a>，<a href="https://www.youtube.com/watch?v=0xtOjwQaib4">YouTube</a>）</li>
+<li>2020/12/22 
+<a href="http://www.nda.ac.jp/cc/masayo/20/rims20.html">Computer Algebra – Theory and its Applications</a>＠Zoom Webinar『<b>自動微分と Gröbner 基底による高次冪零無限小解析</b>』</li>
+<li>2019/11/09 
+<a href="https://techplay.jp/event/727059">Haskell Day 2019</a>＠TECH PLAY SHIBUYA『<b>大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──</b>』（<a href="https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil">Slide URL</a>）</li>
+<li>2018/11/24 
+数学基礎論若手の会＠コテージにらい恩納『<b>集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク</b>』（<a href="https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf">Slide PDF</a>）</li>
+<li>2018/09/19 
+<a href="http://www.casc.cs.uni-bonn.de/2018/">Computer Algebra in Scientific Computing 2018</a>＠University of Lille『<b><a href="/math/casc2018-talk.pdf">A Purely Functional Computer Algebra System Embedded in Haskell</a></b>』</li>
+</ul>
+<p>
+See <a href="/talks.html">Talks</a> for all talks.
+</p>
+</p>
+</section>
+<section id="pre-publication-reviews" class="level2">
+<h3>Pre-publication Reviews</h3>
+<p>プログラミング関連で幾つか出版前のレビューに協力させて頂きました。</p>
+<dl>
+<dt><a href="asin:4274068854">すごいHaskell楽しく学ぼう！</a></dt>
+<dd>
+主に他の言語での経験のある人に向けて、Haskell
+を一から入門するための本。普通の本やなんかとは一線を画した、肩肘はらない独特の語り口で
+Haskell のキモを学ぶことが出来ます。
+</dd>
+<dt><a href="asin:4274069117">型システム入門
+─プログラミング言語と型の理論─</a></dt>
+<dd>
+型理論入門書の定番・Types and Programming Language
+待望の和訳。豪華監修・執筆陣による非常に読み易い翻訳に仕上がっています。型理論に興味のある方はぜひ。
+</dd>
+<dt><a href="asin:427406896X">関数プログラミング入門 ─Haskell
+で学ぶ技法と原理─</a></dt>
+<dd>
+こちらは Haskell
+を使った関数型プログラミングの入門書。関数型プログラミングを体系的に基礎から勉強していくのに適しています。残念ながら余りレビューに参加出来なかった為、名前は出さないで頂きました。
+</dd>
+<dt><a href="asin:4873116899">Haskellによる並列・並行プログラミング</a></dt>
+<dd>
+Haskell
+で並列・並行プログラミングを行う上で必要な知識が網羅された一冊です。Haskell
+で並列・並行処理を用いたプログラムを書こうと思ったら、まずはこの本は必読書でしょう。低レベルな機能の紹介から始まってそこから抽象度の高いライブラリを設計するところまでを解説しているので、既存のライブラリの裏側を知るのにも役立ちますし、関数型プログラミングの方法論を実感することも出来るでしょう。
+</dd>
+</dl>
+</section>
+<section id="other-publications" class="level2">
+<h3>Other Publications</h3>
+<dl>
+<dt><a href="http://tcug.jp/books/2013-12/">Coqによる定理証明</a></dt>
+<dd>
+Tsukuba Coq Users’ Group による、主に Coq
+による定理証明の技法についての同人誌。わたしの担当は第三章で、Haskell
+を定理証明系として用いる方法を解説する記事を書きました。<a href="/prog/2013-advent-calendar.html">販促記事はこちら</a>。
+</dd>
+<dt><a href="http://longgate.co.jp/books/grimoire-vol3.html">プログラミングの魔導書
+〜Programmers’ Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed
+Programming”</a></dt>
+<dd>
+株式会社ロングゲート様の技術書に、合成性の高い並行処理を実現する STM
+についての入門記事を寄稿させて頂きました。拙稿に限らず、並行・並列処理に関するあらゆる知識の詰まった一冊となっておりますので、是非。
+</dd>
+</dl>
+</section>
+</section>]]></summary>
+    </entry>
     <entry>
       <title>全ての実数の集合をLebesgue可測にする 〜Solovayモデル入門〜</title>
       <link href="https://konn-san.com/math/solovay-model-algd.html" />
@@ -144,6 +336,8 @@ Calendar Advent Calendar 2024</a>の9日目の記事ということにしまし�
 <h2>講演一覧</h2>
 <p>他の詳細な経歴等は<a href="/profile.html">プロファイル</a>を参照。</p>
 <p><ul>
+<li>2025/05/30 
+<a href="https://www.ai-gakkai.or.jp/jsai2025/">2025年度 人工知能学会全国大会 (第39回) 数理最適化OS</a>＠Hybrid (大阪国際会議場 and Online)『<b>数理最適化モデル記述ツール JijModeling のご紹介</b>』（<a href="https://www.docswell.com/s/Jij_Inc/59VP3V-2025-05-30-jijmodeling">Slides</a>）</li>
 <li>2024/03/10 
 Tsukuba Computer Mathematics Seminar 2024＠Hybrid (Ranzan and Online)『<b>充足可能性ソルバ（SAT ソルバ）の原理</b>』（<a href="https://konn-san.com/math/cdcl-sat-solvers.pdf">Slides</a>，<a href="https://github.com/konn/herbrand">Implementation</a>，<a href="https://github.com/konn/cdcl-sat-solvers-slides">Source Code of Slides</a>）</li>
 <li>2023/03/12 
@@ -1871,197 +2065,5 @@ on〜は「前向きな」ニヒリズムを原動力に底抜けに明るい仕
 <p>歳の瀬も迫っているので来年の目標を書いておく。アウトプットの年にします。色々なものを創りたいね。
 次のマダミスを創ろうという話もあるし、映像作品を創りたいという思いもある。幾つ叶うかはわからないけど、正夢にしたいですね。</p>
 <p>それではまたいつか。</p>]]></summary>
-    </entry>
-    <entry>
-      <title>プロフィール</title>
-      <link href="https://konn-san.com/profile.html" />
-      <id>https://konn-san.com/profile.html</id>
-      <published>2021-06-29T16:20:00+09:00</published>
-      <updated>2021-06-29T16:20:00+09:00</updated>
-      <summary type="html"><![CDATA[<p><a href="/cv/cv-ja.pdf">[職務経歴書]</a> / <a href="/cv/cv-en.pdf">[English CV]</a></p>
-<section id="自己紹介" class="level1">
-<h2>自己紹介</h2>
-<p>数学と関数型プログラミングを愛でる博士（理学）。数学（集合論をはじめとした数学基礎論および計算代数）と本格ミステリ、関数型プログラミング。時々パズル。</p>
-<section id="専門と趣味について" class="level2">
-<h3>専門と趣味について</h3>
-<dl>
-<dt>好きな作家（順不同）</dt>
-<dd>
-麻耶雄嵩、円城塔、森川智喜、円居挽、倉知淳。座右の書は麻耶雄嵩『<a href="asin:4062638916">夏と冬の奏鳴曲</a>』と円城塔『<a href="asin:4150310203">Boy’s
-Surface</a>』。パズル作家の芦ヶ原伸之さんのエッセイも好き。
-</dd>
-<dt>数学</dt>
-<dd>
-専攻は集合論を初めとした数理論理学、計算代数、および関数型プログラミング。
-</dd>
-<dt>プログラミング</dt>
-<dd>
-中学の頃くらいからやっている。おおよそ REALbasic → Ruby → Haskell
-という遍歴を辿っている。他にも色々な言語をつまみぐいしてみたりしたが、現在は
-Haskell 一本に落ち着き、飯を食っている。このサイトも Haskell
-で生成・管理しています。
-</dd>
-</dl>
-</section>
-<section id="受賞歴資格等" class="level2">
-<h3>受賞歴・資格等</h3>
-<ul>
-<li>2015年度 第十四回茗渓会賞</li>
-<li>2013年度 早稲田大学基幹理工学部卒業生総代</li>
-<li>2013年度 早稲田大学基幹理工学部長賞最優秀賞（第一回）</li>
-</ul>
-</section>
-<section id="年表" class="level2">
-<h3>年表</h3>
-<ul>
-<li>2024/11〜現在 <a href="https://www.j-ij.com/ja">株式会社Jij</a>ソフトウェア開発部</li>
-<li>2019/04〜2024/10 <a href="https://www.deepflow.co.jp">DeepFlow株式会社</a> 研究開発部</li>
-<li>2019/04〜2020/03 統計数理研究所 外来研究員</li>
-<li>2019/03 筑波大学大学院 数理物質科学研究科 数学専攻
-博士後期課程修了</li>
-<li>2017/04〜2019/03 日本学術振興会特別研究員（DC2）</li>
-<li>2016/04〜 筑波大学大学院 数理物質科学研究科 数学専攻
-博士後期課程</li>
-<li>2016/03 筑波大学大学院 数理物質科学研究科 数学専攻
-博士前期課程修了</li>
-<li>2014/04 Google Summer of Code 2014 採択（Haskell
-による効率的なGröbner基底計算とそのための疎行列アルゴリズムの実装）</li>
-<li>2014/04 筑波大学大学院 数理物質科学研究科 数学専攻入学</li>
-<li>2014/03 同卒業（基幹理工学部総代）</li>
-<li>2011/04 早稲田大学基幹理工学部 数学科配属</li>
-<li>2010/10〜2014/03 <a href="http://preferred.jp/">株式会社 Preferred
-Infrastructure</a> アルバイト</li>
-<li>2010/08〜09 <a href="http://preferred.jp/">株式会社 Preferred
-Infrastructure</a> インターン生</li>
-<li>2010/04 早稲田大学基幹理工学部入学</li>
-<li>2010/03 神奈川県立横浜緑ヶ丘高校卒業</li>
-<li>1992/01/18 生まれる</li>
-</ul>
-</section>
-</section>
-<section id="activity" class="level1">
-<h2>Activity</h2>
-<p>現在・過去の活動記録など。</p>
-<section id="papers" class="level2">
-<h3>Papers</h3>
-<section id="refereed-papers" class="level3">
-<h4>Refereed Papers</h4>
-<ul>
-<li>Hiromi ISHII, “<em>Automatic Differentiation With Higher
-Infinitesimals, or Computational Smooth Infinitesimal Analysis in Weil
-Algebra</em>”, In: Computer Algebra in Scientific Computation 2021,
-pp. 174-191. DOI: <a href="https://doi.org/10.1007/978-3-030-85165-1_11">10.1007/978-3-030-85165-1_11</a>
-(<a href="https://github.com/konn/smooth">Example Repository</a>, <a href="https://arxiv.org/abs/2106.14153">arxiv:2106.14153</a>, <a href="/math/casc-smooth.pdf">Slides</a>).</li>
-<li>Hiromi ISHII, “<em><a href="https://doi.org/10.15068/00156548">Bidirectional Interplay between
-Mathematics and Computer Science: Safety and Extensibility in Computer
-Algebra and Haskell</a></em>”, Ph.D. Thesis.</li>
-<li>Hiromi ISHII, “<em>A Purely Functional Computer Algebra System
-Embedded in Haskell</em>” (<a href="https://arxiv.org/abs/1807.01456">preprint</a>), In: Computer
-Algebra in Scientific Computing, pp. 288-303. 20th International
-Workshop, CASC 2018, Lille, France, September 17-21, 2018. DOI: <a href="https://doi.org/10.1007/978-3-319-99639-4_20">10.1007/978-3-319-99639-4_20</a>.</li>
-<li>Hiromi ISHII, “<em><a href="math/regularity-and-inaccessible.html">Regularity Properties of
-Sets of Reals and Inaccessible Cardinals</a></em>”, Master’s
-Thesis.</li>
-<li>Oleg Kiselyov and Hiromi ISHII, “<a href="http://okmij.org/ftp/Haskell/extensible/more.pdf">Freer Monads,
-More Extensible effects</a>”. Haskell Symposium 2015.</li>
-</ul>
-</section>
-<section id="non-refereed-papers" class="level3">
-<h4>Non-refereed Papers</h4>
-<ul>
-<li>Hiromi Ishii, “<em><a href="RIMSca2021-rims">A Succinct Multivariate
-Lazy Multivariate Tower AD for Weil Algebra Computation</a></em>”,
-Computer Algebra – Theory and its Applications, RIMS Kôkyûroku No. 2185
-(2021), pp. 104-112. (<a href="RIMSca2021-arxiv">arxiv:2103.11615</a>)</li>
-</ul>
-</section>
-<section id="preprints-only" class="level3">
-<h4>Preprints-only</h4>
-<ul>
-<li>Hiromi ISHII, “<em><a href="https://arxiv.org/abs/2103.11751">Functional Pearl: Witness Me –
-Constructive Arguments Must Be Guided with Concrete Witness</a></em>”,
-2021.</li>
-</ul>
-</section>
-</section>
-<section id="talks" class="level2">
-<h3>Talks</h3>
-<p>勉強会や社内セミナーなどでの発表記録（直近十件；<a href="/talks.html">全一覧</a>）。</p>
-<p><ul>
-<li>2024/03/10 
-Tsukuba Computer Mathematics Seminar 2024＠Hybrid (Ranzan and Online)『<b>充足可能性ソルバ（SAT ソルバ）の原理</b>』（<a href="https://konn-san.com/math/cdcl-sat-solvers.pdf">Slides</a>，<a href="https://github.com/konn/herbrand">Implementation</a>，<a href="https://github.com/konn/cdcl-sat-solvers-slides">Source Code of Slides</a>）</li>
-<li>2023/03/12 
-Tsukuba Computer Mathematics Seminar 2023＠Hybrid (Tsukuba and Online)『<b>Reverse-Mode 自動微分を理解する</b>』（<a href="https://konn-san.com/math/reverse-mode-ad-slides.pdf">Slides</a>）</li>
-<li>2022/03/06 
-Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計算代数を駆使して（一般化）フィボナッチ数列の一般項を求める</b>』（<a href="https://konn-san.com/math/ishii-fibonacci-slides.pdf">Slides</a>）</li>
-<li>2021/09/15 
-<a href="https://www.casc-conference.org/2021/index.html">Computer Algebra in Scientific Computing 2021</a>＠Hybrid (Sochi, Russia and Online)『<b>Automatic differentiation with higher infinitesimals, or computational smooth infinitesimal analysis in Weil algebra</b>』（<a href="https://konn-san.com/math/casc-smooth.pdf">Slides</a>，<a href="https://link.springer.com/book/10.1007/978-3-030-85165-1">Proceedings</a>，<a href="https://arxiv.org/abs/2106.14153">Preprint</a>）</li>
-<li>2021/07/04 
-<a href="https://www.youtube.com/channel/UCSA2iDIY6Z-J9X4pWfdPPnw">alg-d</a>＠YouTube『<b>自動微分とGröbner基底による高次冪零無限小解析（alg_d篇）</b>』（<a href="https://arxiv.org/abs/2106.14153">Paper</a>，<a href="https://konn-san.com/math/smooth-algd-talk.pdf">Slides</a>，<a href="https://www.youtube.com/watch?v=0xtOjwQaib4">YouTube</a>）</li>
-<li>2020/12/22 
-<a href="http://www.nda.ac.jp/cc/masayo/20/rims20.html">Computer Algebra – Theory and its Applications</a>＠Zoom Webinar『<b>自動微分と Gröbner 基底による高次冪零無限小解析</b>』</li>
-<li>2019/11/09 
-<a href="https://techplay.jp/event/727059">Haskell Day 2019</a>＠TECH PLAY SHIBUYA『<b>大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──</b>』（<a href="https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil">Slide URL</a>）</li>
-<li>2018/11/24 
-数学基礎論若手の会＠コテージにらい恩納『<b>集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク</b>』（<a href="https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf">Slide PDF</a>）</li>
-<li>2018/09/19 
-<a href="http://www.casc.cs.uni-bonn.de/2018/">Computer Algebra in Scientific Computing 2018</a>＠University of Lille『<b><a href="/math/casc2018-talk.pdf">A Purely Functional Computer Algebra System Embedded in Haskell</a></b>』</li>
-<li>2018/03/05 
-筑波大学計算機数学グループ 春の合宿 2018＠Nami Kaze Tateyama（旧・筑波大学館山研修所）『<b><a href="/math/tateyama-18-satysfi.pdf">SATySFi を使ってみた</a></b>』</li>
-</ul>
-<p>
-See <a href="/talks.html">Talks</a> for all talks.
-</p>
-</p>
-</section>
-<section id="pre-publication-reviews" class="level2">
-<h3>Pre-publication Reviews</h3>
-<p>プログラミング関連で幾つか出版前のレビューに協力させて頂きました。</p>
-<dl>
-<dt><a href="asin:4274068854">すごいHaskell楽しく学ぼう！</a></dt>
-<dd>
-主に他の言語での経験のある人に向けて、Haskell
-を一から入門するための本。普通の本やなんかとは一線を画した、肩肘はらない独特の語り口で
-Haskell のキモを学ぶことが出来ます。
-</dd>
-<dt><a href="asin:4274069117">型システム入門
-─プログラミング言語と型の理論─</a></dt>
-<dd>
-型理論入門書の定番・Types and Programming Language
-待望の和訳。豪華監修・執筆陣による非常に読み易い翻訳に仕上がっています。型理論に興味のある方はぜひ。
-</dd>
-<dt><a href="asin:427406896X">関数プログラミング入門 ─Haskell
-で学ぶ技法と原理─</a></dt>
-<dd>
-こちらは Haskell
-を使った関数型プログラミングの入門書。関数型プログラミングを体系的に基礎から勉強していくのに適しています。残念ながら余りレビューに参加出来なかった為、名前は出さないで頂きました。
-</dd>
-<dt><a href="asin:4873116899">Haskellによる並列・並行プログラミング</a></dt>
-<dd>
-Haskell
-で並列・並行プログラミングを行う上で必要な知識が網羅された一冊です。Haskell
-で並列・並行処理を用いたプログラムを書こうと思ったら、まずはこの本は必読書でしょう。低レベルな機能の紹介から始まってそこから抽象度の高いライブラリを設計するところまでを解説しているので、既存のライブラリの裏側を知るのにも役立ちますし、関数型プログラミングの方法論を実感することも出来るでしょう。
-</dd>
-</dl>
-</section>
-<section id="other-publications" class="level2">
-<h3>Other Publications</h3>
-<dl>
-<dt><a href="http://tcug.jp/books/2013-12/">Coqによる定理証明</a></dt>
-<dd>
-Tsukuba Coq Users’ Group による、主に Coq
-による定理証明の技法についての同人誌。わたしの担当は第三章で、Haskell
-を定理証明系として用いる方法を解説する記事を書きました。<a href="/prog/2013-advent-calendar.html">販促記事はこちら</a>。
-</dd>
-<dt><a href="http://longgate.co.jp/books/grimoire-vol3.html">プログラミングの魔導書
-〜Programmers’ Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed
-Programming”</a></dt>
-<dd>
-株式会社ロングゲート様の技術書に、合成性の高い並行処理を実現する STM
-についての入門記事を寄稿させて頂きました。拙稿に限らず、並行・並列処理に関するあらゆる知識の詰まった一冊となっておりますので、是非。
-</dd>
-</dl>
-</section>
-</section>]]></summary>
     </entry>
 </feed>
