@@ -6,15 +6,15 @@
 #   title: "Optimizing Optimizations: Case Study on Detecting Specific Types of Mathematical Optimization Constraints with E-Graphs in JijModeling"
 #   links:
 #     Abstract: https://arxiv.org/abs/2506.06495
-# - date: 2025/06/14
-#   conference:
-#     name: "関数型まつり"
-#     venue: "中野セントラルパーク カンファレンス"
-#     url: "https://2025.fp-matsuri.org/"
-#   title: "Rust世界の二つのモナド──Rust でも do 式をしてプログラムを直感的に記述する件について"
-#   links:
-#     # Slides:
-#     Repository: https://github.com/konn/qualified_do
+- date: 2025/06/14
+  conference:
+    name: "関数型まつり"
+    venue: "中野セントラルパーク カンファレンス"
+    url: "https://2025.fp-matsuri.org/"
+  title: "Rust世界の二つのモナド──Rust でも do 式をしてプログラムを直感的に記述する件について"
+  links:
+    # Slides:
+    Repository: https://github.com/konn/qualified_do
 - date: 2025/05/30
   conference:
     name: "2025年度 人工知能学会全国大会 (第39回) 数理最適化OS"
