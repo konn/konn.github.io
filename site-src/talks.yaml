@@ -13,7 +13,7 @@
 #     url: "https://2025.fp-matsuri.org/"
 #   title: "Rust世界の二つのモナド──Rust でも do 式をしてプログラムを直感的に記述する件について"
 #   links:
-#     # Slides:
+#     Slides: "/t/two-monads-in-rust.pdf"
 #     Repository: https://github.com/konn/qualified_do
 - date: 2025/05/30
   conference:

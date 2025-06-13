@@ -17,5 +17,22 @@
     "commands": [
       { "cmd": "hpack", "isAsync": true, "match": "(package\\.yaml|\\.l?hs)$" }
     ]
-  }
+  },
+  "path-intellisense.absolutePathTo": "${workspaceFolder}/_site",
+  "path-intellisense.absolutePathToWorkspace": true,
+  "path-autocomplete.pathMappings": {
+    "${root}": {
+      "conditions": [
+        {
+          "when": "site-src",
+          "value": "${folder}/_site"
+        },
+        {
+          "when": "src",
+          "value": "${folder}"
+        }
+      ]
+    }
+  },
+  "path-autocomplete.ignoredFilesPattern": ".DS_Store"
 }
