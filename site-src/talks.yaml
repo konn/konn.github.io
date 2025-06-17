@@ -1,11 +1,12 @@
-# - date: 2025/06/17
-#   conference:
-#     name: "EGARPHS '25 (colocated with PLDI '25)"
-#     url: "https://pldi25.sigplan.org/home/egraphs-2025"
-#     venue: "Seoul, South Korea"
-#   title: "Optimizing Optimizations: Case Study on Detecting Specific Types of Mathematical Optimization Constraints with E-Graphs in JijModeling"
-#   links:
-#     Abstract: https://arxiv.org/abs/2506.06495
+- date: 2025/06/17
+  conference:
+    name: "EGARPHS '25 (colocated with PLDI '25)"
+    url: "https://pldi25.sigplan.org/home/egraphs-2025"
+    venue: "Seoul, South Korea"
+  title: "Optimizing Optimizations: Case Study on Detecting Specific Types of Mathematical Optimization Constraints with E-Graphs in JijModeling"
+  links:
+    Abstract: https://arxiv.org/abs/2506.06495
+    Slides (via Program): https://pldi25.sigplan.org/details/egraphs-2025-papers/1/Optimizing-Optimizations-Case-Study-on-Detecting-Specific-Types-of-Mathematical-Opti
 - date: 2025/06/14
   conference:
     name: "関数型まつり"
