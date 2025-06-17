@@ -125,6 +125,8 @@ Constructive Arguments Must Be Guided with Concrete Witness</a></em>”,
 <h3>Talks</h3>
 <p>勉強会や社内セミナーなどでの発表記録（直近十件；<a href="/talks.html">全一覧</a>）。</p>
 <p><ul>
+<li>2025/06/17 
+<a href="https://pldi25.sigplan.org/home/egraphs-2025">EGARPHS &#39;25 (colocated with PLDI &#39;25)</a>＠Seoul, South Korea『<b>Optimizing Optimizations: Case Study on Detecting Specific Types of Mathematical Optimization Constraints with E-Graphs in JijModeling</b>』（<a href="https://arxiv.org/abs/2506.06495">Abstract</a>，<a href="https://pldi25.sigplan.org/details/egraphs-2025-papers/1/Optimizing-Optimizations-Case-Study-on-Detecting-Specific-Types-of-Mathematical-Opti">Slides (via Program)</a>）</li>
 <li>2025/06/14 
 <a href="https://2025.fp-matsuri.org/">関数型まつり</a>＠中野セントラルパーク カンファレンス『<b>Rust世界の二つのモナド──Rust でも do 式をしてプログラムを直感的に記述する件について</b>』（<a href="/t/two-monads-in-rust.pdf">Slides</a>，<a href="https://github.com/konn/qualified_do">Repository</a>）</li>
 <li>2025/05/30 
@@ -143,8 +145,6 @@ Tsukuba Computer Mathematics Seminar 2022＠Hybrid (Tsukuba and Online)『<b>計
 <a href="http://www.nda.ac.jp/cc/masayo/20/rims20.html">Computer Algebra – Theory and its Applications</a>＠Zoom Webinar『<b>自動微分と Gröbner 基底による高次冪零無限小解析</b>』</li>
 <li>2019/11/09 
 <a href="https://techplay.jp/event/727059">Haskell Day 2019</a>＠TECH PLAY SHIBUYA『<b>大規模数値計算を支える Haskell ── Pragmatic Haskell in Large-Scale Numerical Computation──</b>』（<a href="https://speakerdeck.com/konn/da-gui-mo-shu-zhi-ji-suan-wozhi-eru-haskell-nil-nil-pragmatic-haskell-in-large-scale-numerical-computation-nil-nil">Slide URL</a>）</li>
-<li>2018/11/24 
-数学基礎論若手の会＠コテージにらい恩納『<b>集合論の生成的多元宇宙と地質学入門 生成拡大の織り成すネットワーク</b>』（<a href="https://gitlab.com/konn/wakate-2018/raw/master/slide.pdf">Slide PDF</a>）</li>
 </ul>
 <p>
 See <a href="/talks.html">Talks</a> for all talks.
@@ -336,6 +336,8 @@ Calendar Advent Calendar 2024</a>の9日目の記事ということにしまし�
 <h2>講演一覧</h2>
 <p>他の詳細な経歴等は<a href="/profile.html">プロファイル</a>を参照。</p>
 <p><ul>
+<li>2025/06/17 
+<a href="https://pldi25.sigplan.org/home/egraphs-2025">EGARPHS &#39;25 (colocated with PLDI &#39;25)</a>＠Seoul, South Korea『<b>Optimizing Optimizations: Case Study on Detecting Specific Types of Mathematical Optimization Constraints with E-Graphs in JijModeling</b>』（<a href="https://arxiv.org/abs/2506.06495">Abstract</a>，<a href="https://pldi25.sigplan.org/details/egraphs-2025-papers/1/Optimizing-Optimizations-Case-Study-on-Detecting-Specific-Types-of-Mathematical-Opti">Slides (via Program)</a>）</li>
 <li>2025/06/14 
 <a href="https://2025.fp-matsuri.org/">関数型まつり</a>＠中野セントラルパーク カンファレンス『<b>Rust世界の二つのモナド──Rust でも do 式をしてプログラムを直感的に記述する件について</b>』（<a href="/t/two-monads-in-rust.pdf">Slides</a>，<a href="https://github.com/konn/qualified_do">Repository</a>）</li>
 <li>2025/05/30 
