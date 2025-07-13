@@ -7,6 +7,7 @@
   links:
     Abstract: https://arxiv.org/abs/2506.06495
     Slides (via Program): https://pldi25.sigplan.org/details/egraphs-2025-papers/1/Optimizing-Optimizations-Case-Study-on-Detecting-Specific-Types-of-Mathematical-Opti
+    Recording (YouTube): https://youtu.be/MBjWIjlIyMY
 - date: 2025/06/14
   conference:
     name: "関数型まつり"
