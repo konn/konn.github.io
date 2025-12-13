@@ -77,6 +77,18 @@ Papers
 ### Preprints-only
 * Hiromi ISHII, "*[Functional Pearl: Witness Me -- Constructive Arguments Must Be Guided with Concrete Witness](https://arxiv.org/abs/2103.11751)*", 2021.
 
+### Technical Articles
+
+[『n月刊ラムダノート』Vol.5 No.2（2025）](https://www.lambdanote.com/blogs/news/n-vol-5-no-2-2025)
+:    ラムダノート社様の技術誌『n月刊ラムダノート』Vol.5 No.2（2025）に、「**do式でわかるモナドとその仲間たち**」を寄稿しました。[サポートページ](https://github.com/lambdanote/support-monad)。
+
+[Coqによる定理証明](http://tcug.jp/books/2013-12/)
+:    Tsukuba Coq Users' Group による、主に Coq による定理証明の技法についての同人誌。わたしの担当は第三章で、Haskell を定理証明系として用いる方法を解説する記事を書きました。[販促記事はこちら](/prog/2013-advent-calendar.html)。
+
+[プログラミングの魔導書 〜Programmers' Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed Programming”](http://longgate.co.jp/books/grimoire-vol3.html)
+:    株式会社ロングゲート様の技術書に、合成性の高い並行処理を実現する STM についての入門記事を寄稿させて頂きました。拙稿に限らず、並行・並列処理に関するあらゆる知識の詰まった一冊となっておりますので、是非。
+
+
 Talks
 -----
 
@@ -100,12 +112,3 @@ Pre-publication Reviews
 
 [Haskellによる並列・並行プログラミング](asin:4873116899)
 :    Haskell で並列・並行プログラミングを行う上で必要な知識が網羅された一冊です。Haskell で並列・並行処理を用いたプログラムを書こうと思ったら、まずはこの本は必読書でしょう。低レベルな機能の紹介から始まってそこから抽象度の高いライブラリを設計するところまでを解説しているので、既存のライブラリの裏側を知るのにも役立ちますし、関数型プログラミングの方法論を実感することも出来るでしょう。
-
-Other Publications
-------------------
-
-[Coqによる定理証明](http://tcug.jp/books/2013-12/)
-:    Tsukuba Coq Users' Group による、主に Coq による定理証明の技法についての同人誌。わたしの担当は第三章で、Haskell を定理証明系として用いる方法を解説する記事を書きました。[販促記事はこちら](/prog/2013-advent-calendar.html)。
-
-[プログラミングの魔導書 〜Programmers' Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed Programming”](http://longgate.co.jp/books/grimoire-vol3.html)
-:    株式会社ロングゲート様の技術書に、合成性の高い並行処理を実現する STM についての入門記事を寄稿させて頂きました。拙稿に限らず、並行・並列処理に関するあらゆる知識の詰まった一冊となっておりますので、是非。
