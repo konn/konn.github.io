@@ -1,3 +1,11 @@
+- date: 2026/03/09
+  conference:
+    name: 第28回プログラミングおよびプログラミング言語ワークショップ PPL 2026
+    url: https://jssst-ppl.org/workshop/2026/
+    venue: 	レクザムホール 小ホール棟（香川県高松市） および オンラインのハイブリッド開催
+  title: 数理最適化向け埋め込み型領域特化言語 JijModeling 2 におけるプログラミング言語理論の応用について
+  links:
+    Slides: https://www.docswell.com/s/Jij_Inc/ZY8NM9-2026-03-09-165831
 - date: 2025/06/17
   conference:
     name: "EGARPHS '25 (colocated with PLDI '25)"
