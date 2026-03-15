@@ -2,7 +2,7 @@
 title: プロフィール
 description: わたしについて。
 tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オートマトン
-date: 2025/06/10 13:00:00 JST
+date: 2026/03/13 02:00:13 JST
 disqus: false
 ---
 
