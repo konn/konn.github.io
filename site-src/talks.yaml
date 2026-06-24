@@ -1,3 +1,12 @@
+- date: 2026/06/15
+  conference:
+    name: "EGARPHS '26 (colocated with PLDI '26)"
+    url: "https://pldi26.sigplan.org/home/egraphs-2026"
+    venue: "Boulder, Colorado, USA"
+  title: "Optimizing Optimizations: Case Study on Detecting Specific Types of Mathematical Optimization Constraints with E-Graphs in JijModeling"
+  links:
+    Slides (via Program): https://pldi26.sigplan.org/details/egraphs-2026-papers/5/Optimizing-Optimizations-Declaratively-Optimizing-the-Higher-Order-Functions-in-Mat
+    Abstract: https://arxiv.org/abs/2605.17884
 - date: 2026/03/09
   conference:
     name: 第28回プログラミングおよびプログラミング言語ワークショップ PPL 2026

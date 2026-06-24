@@ -2,7 +2,7 @@
 title: プロフィール
 description: わたしについて。
 tag: 数学,数理論理学,ロジック,ミステリ,小説,評論,Haskell,オートマトン
-date: 2026/03/13 02:00:13 JST
+date: 2026/06/24 20:44:00 JST
 disqus: false
 ---
 
@@ -62,6 +62,7 @@ Papers
 
 ### Refereed Papers
 
+* Yusuke Matsushita and Hiromi Ishii, "*Pure Borrow: Linear Haskell Meets Rust-Style Borrowing*", In: Proceedings of the ACM on Programming Languages, Volume 10, Issue PLDI. pp.303-327. DOI: [10.1145/3808259](https://doi.org/10.1145/3808259), [arXiv:2604.15290](https://arxiv.org/abs/2604.15290).
 * Hiromi ISHII, "*Automatic Differentiation With Higher Infinitesimals, or Computational Smooth Infinitesimal Analysis in Weil Algebra*", In: Computer Algebra in Scientific Computation 2021, pp. 174-191. DOI: [10.1007/978-3-030-85165-1_11](https://doi.org/10.1007/978-3-030-85165-1_11) ([Example Repository](https://github.com/konn/smooth), [arxiv:2106.14153](https://arxiv.org/abs/2106.14153), [Slides](/math/casc-smooth.pdf)).
 * Hiromi ISHII, "*[Bidirectional Interplay between Mathematics and Computer Science: Safety and Extensibility in Computer Algebra and Haskell](https://doi.org/10.15068/00156548)*", Ph.D. Thesis.
 * Hiromi ISHII, "*A Purely Functional Computer Algebra System Embedded in Haskell*" ([preprint](https://arxiv.org/abs/1807.01456)), In: Computer Algebra in Scientific Computing, pp. 288-303. 20th International Workshop, CASC 2018, Lille, France, September 17-21, 2018. DOI: [10.1007/978-3-319-99639-4_20](https://doi.org/10.1007/978-3-319-99639-4_20).
