@@ -679,7 +679,7 @@ writerConf =
     { -- We can't change this to KaTeX,
       -- as this sacrifices the conversion logic.
       writerHTMLMathMethod = Text.Pandoc.MathJax "https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"
-    , writerHighlightStyle = Just pygments
+    -- , writerHighlightStyle = Just pygments
     , writerSectionDivs = True
     , writerExtensions = Text.Pandoc.disableExtension Text.Pandoc.Ext_tex_math_dollars myExts
     }
