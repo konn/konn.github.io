@@ -154,11 +154,11 @@
 <li>このファイルの存在下では、<code>foo::bar</code> に当るのは
 <code>src/foo/bar/mod.rs</code>。</li>
 </ul></li>
-<li>Haskellの <code class="sourceCode haskell"><span class="kw">import</span></code>
-に近いのは <code class="sourceCode rust"><span class="kw">use</span></code>。
+<li>Haskellの <code class="sourceCode haskell hs"><span class="kw">import</span></code>
+に近いのは <code class="sourceCode rust rs"><span class="kw">use</span></code>。
 <ul>
-<li><code class="sourceCode rust"><span class="kw">use</span> <span class="pp">a::b::</span>c</code>
-と宣言しておくと、以後モジュール <code>a::b</code> 以下の定義は <code class="sourceCode rust"><span class="pp">b::</span>fun</code>
+<li><code class="sourceCode rust rs"><span class="kw">use</span> <span class="pp">a::b::</span>c</code>
+と宣言しておくと、以後モジュール <code>a::b</code> 以下の定義は <code class="sourceCode rust rs"><span class="pp">b::</span>fun</code>
 などと呼び出せるようになる。</li>
 </ul></li>
 </ul>
@@ -178,22 +178,23 @@
 された変数にアクセスする方法はないが、shadowing
 されてもスコープが区切られなければ Drop はされない。</li>
 </ul></li>
-<li>コメントは一行コメントのみ：<code class="sourceCode rust"><span class="co">// これはコメントです</span></code></li>
+<li>コメントは一行コメントのみ：<code class="sourceCode rust rs"><span class="co">// これはコメントです</span></code></li>
 <li>ここに入れていいのかわからないが、インデントは4スペース。</li>
 </ul>
 </section>
 <section id="変数束縛" class="level1">
 <h2>変数束縛</h2>
 <ul>
-<li><code class="sourceCode rust"><span class="kw">let</span> a<span class="op">:</span> T <span class="op">=</span> b</code>
+<li><code class="sourceCode rust rs"><span class="kw">let</span> a<span class="op">:</span> T <span class="op">=</span> b</code>
 は不変変数宣言。</li>
-<li><code class="sourceCode rust"><span class="kw">let</span> <span class="kw">mut</span> a<span class="op">:</span> T <span class="op">=</span> b</code>
+<li><code class="sourceCode rust rs"><span class="kw">let</span> <span class="kw">mut</span> a<span class="op">:</span> T <span class="op">=</span> b</code>
 は可変変数。</li>
-<li><code class="sourceCode rust"><span class="kw">static</span> A<span class="op">:</span> T <span class="op">=</span> b</code>
+<li><code class="sourceCode rust rs"><span class="kw">static</span> A<span class="op">:</span> T <span class="op">=</span> b</code>
 は定数宣言。</li>
-<li><code class="sourceCode rust"><span class="kw">static</span></code>
+<li><code class="sourceCode rust rs"><span class="kw">static</span></code>
 以外は型註釈はある程度省略出来る。</li>
-<li>あとは <code class="sourceCode rust"><span class="op">&amp;</span></code> とか <code class="sourceCode rust"><span class="kw">ref</span></code>
+<li>あとは <code class="sourceCode rust rs"><span class="op">&amp;</span></code> とか
+<code class="sourceCode rust rs"><span class="kw">ref</span></code>
 とかの修飾子が適宜つく。</li>
 </ul>
 </section>
@@ -242,9 +243,9 @@ Haskell の <code>case</code> 相当だが、<strong>exhaustive
 内部でやった方が適切な場合あり。</li>
 </ul></li>
 <li><code class="sourceCode haskell"><span class="dt">TypeApplications</span></code>:
-GHCの<code class="sourceCode haskell"><span class="dt">TypeApplications</span></code>
-での <code class="sourceCode haskell">f <span class="op">@</span><span class="dt">T</span> xs</code>
-に当るのは <code class="sourceCode rust"><span class="pp">f::</span><span class="op">&lt;</span>T<span class="op">&gt;</span>(xs)</code>。ワイルドカードも使える：<code>f::&lt;Vec&lt;_&gt;&gt;(xs)</code>。</li>
+GHCの<code class="sourceCode haskell hs"><span class="dt">TypeApplications</span></code>
+での <code class="sourceCode haskell hs">f <span class="op">@</span><span class="dt">T</span> xs</code>
+に当るのは <code class="sourceCode rust rs"><span class="pp">f::</span><span class="op">&lt;</span>T<span class="op">&gt;</span>(xs)</code>。ワイルドカードも使える：<code>f::&lt;Vec&lt;_&gt;&gt;(xs)</code>。</li>
 </ul>
 </section>
 <section id="データ型" class="level1">
@@ -252,12 +253,14 @@ GHCの<code class="sourceCode haskell"><span class="dt">TypeApplications</span><
 <ul>
 <li><p><code class="sourceCode rust">Int16<span class="op">,</span> Int32<span class="op">,</span> Int64<span class="op">,</span> Word16<span class="op">,</span> Word32<span class="op">,</span> Word64</code>
 に当るのが <code class="sourceCode rust"><span class="dt">i16</span><span class="op">,</span> <span class="dt">i32</span><span class="op">,</span> <span class="dt">i64</span><span class="op">,</span> <span class="dt">u16</span><span class="op">,</span> <span class="dt">u32</span><span class="op">,</span> <span class="dt">u64</span></code>。
-ポインタアドレス等、アーキテクチャ依存の整数型（<code class="sourceCode haskell"><span class="dt">Int</span></code> や <code class="sourceCode haskell"><span class="dt">Word</span></code>）は <code class="sourceCode rust"><span class="dt">isize</span></code> (符号付) や
-<code class="sourceCode rust"><span class="dt">usize</span></code>
+ポインタアドレス等、アーキテクチャ依存の整数型（<code class="sourceCode haskell hs"><span class="dt">Int</span></code> や
+<code class="sourceCode haskell"><span class="dt">Word</span></code>）は
+<code class="sourceCode rust rs"><span class="dt">isize</span></code>
+(符号付) や <code class="sourceCode rust rs"><span class="dt">usize</span></code>
 (符号無)。</p></li>
 <li><p><code class="sourceCode rust"><span class="kw">struct</span></code> や <code class="sourceCode rust"><span class="kw">enum</span></code> が Haskell
-の <code class="sourceCode haskell"><span class="kw">data</span></code>
-や <code class="sourceCode haskell"><span class="kw">newtype</span></code>
+の <code class="sourceCode haskell hs"><span class="kw">data</span></code> や
+<code class="sourceCode haskell hs"><span class="kw">newtype</span></code>
 に当る。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Struct <span class="op">{</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  fld<span class="op">:</span> <span class="dt">i64</span><span class="op">,</span></span>
@@ -268,26 +271,27 @@ GHCの<code class="sourceCode haskell"><span class="dt">TypeApplications</span><
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  A(<span class="dt">i64</span>)<span class="op">,</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  B <span class="op">{</span> val<span class="op">:</span> <span class="dt">i32</span><span class="op">,</span> dull<span class="op">:</span> <span class="dt">i16</span><span class="op">,</span> <span class="op">},</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
-<li><p><code class="sourceCode rust"><span class="kw">struct</span></code>
-は直積型、<code class="sourceCode rust"><span class="kw">enum</span></code>
+<li><p><code class="sourceCode rust rs"><span class="kw">struct</span></code>
+は直積型、<code class="sourceCode rust rs"><span class="kw">enum</span></code>
 は直和型。</p>
 <ul>
-<li><code class="sourceCode rust"><span class="kw">enum</span></code>の各コンストラクタを<strong>variant</strong>と言う。</li>
-<li>フィールドラベルのついた <code class="sourceCode rust"><span class="kw">struct</span> F <span class="op">{</span> a<span class="op">:</span> <span class="dt">i64</span> <span class="op">}</span></code>
-と、ついていないタプル構造型 <code class="sourceCode rust"><span class="kw">struct</span> F(<span class="dt">i64</span>)</code>
+<li><code class="sourceCode rust rs"><span class="kw">enum</span></code>の各コンストラクタを<strong>variant</strong>と言う。</li>
+<li>フィールドラベルのついた <code class="sourceCode rust rs"><span class="kw">struct</span> F <span class="op">{</span> a<span class="op">:</span> <span class="dt">i64</span> <span class="op">}</span></code>
+と、ついていないタプル構造型 <code class="sourceCode rust rs"><span class="kw">struct</span> F(<span class="dt">i64</span>)</code>
 は全く違うもの。</li>
 </ul></li>
-<li><p>再帰型は <code class="sourceCode rust"><span class="dt">Box</span><span class="op">&lt;</span>a<span class="op">&gt;</span></code>
+<li><p>再帰型は <code class="sourceCode rust rs"><span class="dt">Box</span><span class="op">&lt;</span>a<span class="op">&gt;</span></code>
 などに包んで間接的に参照の形で持つ。</p>
 <ul>
 <li>フィールドの値や関数の引数は、<strong>メモリ上でのサイズが確定</strong>していないといけないので。</li>
 </ul></li>
-<li><p>コンストラクタは <code class="sourceCode rust"><span class="pp">Enum::</span>A</code>
+<li><p>コンストラクタは <code class="sourceCode rust rs"><span class="pp">Enum::</span>A</code>
 のように呼ぶ。</p>
 <ul>
-<li>ここでも <code class="sourceCode rust"><span class="kw">use</span></code> が使え、<code class="sourceCode rust"><span class="kw">use</span> <span class="pp">Struct::</span><span class="op">*</span></code>
-や <code class="sourceCode rust"><span class="kw">use</span> <span class="pp">Enum::</span><span class="op">*</span></code>
-のようにすると、単に<code class="sourceCode rust">A(<span class="dv">12</span>)</code>や<code class="sourceCode rust">B <span class="op">{</span> val<span class="op">:</span> <span class="dv">12</span><span class="op">,</span> dull<span class="op">:</span> <span class="dv">54</span> <span class="op">}</span></code>
+<li>ここでも <code class="sourceCode rust rs"><span class="kw">use</span></code>
+が使え、<code class="sourceCode rust rs"><span class="kw">use</span> <span class="pp">Struct::</span><span class="op">*</span></code>
+や <code class="sourceCode rust rs"><span class="kw">use</span> <span class="pp">Enum::</span><span class="op">*</span></code>
+のようにすると、単に<code class="sourceCode rust rs">A(<span class="dv">12</span>)</code>や<code class="sourceCode rust rs">B <span class="op">{</span> val<span class="op">:</span> <span class="dv">12</span><span class="op">,</span> dull<span class="op">:</span> <span class="dv">54</span> <span class="op">}</span></code>
 のように呼べる。</li>
 </ul></li>
 <li><p><code class="sourceCode haskell"><span class="dt">NamedFieldPuns</span></code>
@@ -299,14 +303,14 @@ GHCの<code class="sourceCode haskell"><span class="dt">TypeApplications</span><
 とすればフィールド <code>x</code>, <code>y</code> の値が変数
 <code>x</code>, <code>y</code> にバインドされる。</li>
 </ul></li>
-<li><p>レコードの更新：<code class="sourceCode rust">d <span class="op">=</span> D <span class="op">{</span> field<span class="op">:</span> a<span class="op">,</span> gield<span class="op">:</span> b <span class="op">}</span></code>
-のとき、 Haskellでいう <code class="sourceCode haskell">d { field <span class="ot">=</span> val }</code>
-は Rust だと <code class="sourceCode rust">D <span class="op">{</span> field<span class="op">:</span> val<span class="op">,</span> <span class="op">..</span> d <span class="op">}</span></code>
+<li><p>レコードの更新：<code class="sourceCode rust rs">d <span class="op">=</span> D <span class="op">{</span> field<span class="op">:</span> a<span class="op">,</span> gield<span class="op">:</span> b <span class="op">}</span></code>
+のとき、 Haskellでいう <code class="sourceCode haskell hs">d { field <span class="ot">=</span> val }</code>
+は Rust だと <code class="sourceCode rust rs">D <span class="op">{</span> field<span class="op">:</span> val<span class="op">,</span> <span class="op">..</span> d <span class="op">}</span></code>
 となる。</p></li>
 <li><p>ベクトル：<code>Vec&lt;T&gt;</code>。リストリテラルのように作るのは
-<code class="sourceCode rust"><span class="pp">vec!</span>[<span class="dv">1</span><span class="op">,</span><span class="dv">2</span><span class="op">,</span><span class="dv">3</span>]</code>。</p>
+<code class="sourceCode rust rs"><span class="pp">vec!</span>[<span class="dv">1</span><span class="op">,</span><span class="dv">2</span><span class="op">,</span><span class="dv">3</span>]</code>。</p>
 <ul>
-<li>固定長ベクトルは <code class="sourceCode rust">[T<span class="op">;</span> <span class="dv">3</span>]</code>
+<li>固定長ベクトルは <code class="sourceCode rust rs">[T<span class="op">;</span> <span class="dv">3</span>]</code>
 のよう。</li>
 </ul></li>
 </ul>
@@ -316,42 +320,50 @@ GHCの<code class="sourceCode haskell"><span class="dt">TypeApplications</span><
 <ul>
 <li>モナドはない。
 <ul>
-<li>でも将来に向けて <code class="sourceCode rust"><span class="kw">do</span></code>
+<li>でも将来に向けて <code class="sourceCode rust rs"><span class="kw">do</span></code>
 は予約語になっているようだ。</li>
 </ul></li>
-<li>例外機構はなく、<code class="sourceCode rust">panic</code>を使って自殺するか、後述の <code class="sourceCode rust"><span class="dt">Result</span></code>
+<li>例外機構はなく、<code class="sourceCode rust rs">panic</code>を使って自殺するか、後述の <code class="sourceCode rust rs"><span class="dt">Result</span></code>
 を使っていくのがよいとされているようだ。</li>
-<li><code class="sourceCode haskell"><span class="dt">Maybe</span> a</code>
-に対応するのが <code class="sourceCode haskell"><span class="dt">Option</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span></code>。
-<code class="sourceCode haskell"><span class="dt">Nothing</span></code>と<code>Just a</code>には{.hs}
-には <code class="sourceCode rust"><span class="cn">Some</span>(a)</code> と <code class="sourceCode rust"><span class="cn">None</span></code>が対応。
+<li><code class="sourceCode haskell hs"><span class="dt">Maybe</span> a</code>
+に対応するのが <code class="sourceCode haskell hs"><span class="dt">Option</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span></code>。
+<code class="sourceCode haskell hs"><span class="dt">Nothing</span></code>と<code>Just a</code>には{.hs}
+には <code class="sourceCode rust rs"><span class="cn">Some</span>(a)</code> と
+<code class="sourceCode rust rs"><span class="cn">None</span></code>が対応。
 <ul>
-<li><code class="sourceCode rust"><span class="dt">Option</span></code>
-を <code class="sourceCode rust">panic</code>に変換するには：
+<li><code class="sourceCode rust rs"><span class="dt">Option</span></code> を
+<code class="sourceCode rust rs">panic</code>に変換するには：
 <ul>
-<li><code class="sourceCode haskell">fromJust ma</code> <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code>ma.unwrap()</code></li>
-<li><code class="sourceCode haskell">fromMaybe (<span class="fu">error</span> <span class="st">&quot;unko&quot;</span>) ma</code>
-<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust">ma<span class="op">.</span>expect(<span class="st">&quot;unko&quot;</span>)</code></li>
+<li><code class="sourceCode haskell hs">fromJust ma</code> <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code>ma.unwrap()</code></li>
+<li><code class="sourceCode haskell hs">fromMaybe (<span class="fu">error</span> <span class="st">&quot;unko&quot;</span>) ma</code>
+<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust rs">ma<span class="op">.</span>expect(<span class="st">&quot;unko&quot;</span>)</code></li>
 </ul></li>
 </ul></li>
-<li><code class="sourceCode haskell"><span class="dt">Either</span> a b</code>
-に対応するのが <code class="sourceCode rust"><span class="dt">Result</span><span class="op">&lt;</span>B<span class="op">,</span> A<span class="op">&gt;</span></code>
+<li><code class="sourceCode haskell hs"><span class="dt">Either</span> a b</code>
+に対応するのが <code class="sourceCode rust rs"><span class="dt">Result</span><span class="op">&lt;</span>B<span class="op">,</span> A<span class="op">&gt;</span></code>
 <ul>
-<li><code class="sourceCode haskell"><span class="dt">Right</span> a</code> <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust"><span class="cn">Ok</span>(a)</code>, <code class="sourceCode haskell"><span class="dt">Left</span> b</code> <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust"><span class="cn">Err</span>(b)</code></li>
-<li>ライブラリ毎に <code class="sourceCode rust"><span class="kw">type</span> MyResult<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">=</span> <span class="dt">Result</span><span class="op">&lt;</span>T<span class="op">,</span> MyError<span class="op">&gt;</span></code>
-のような別名を用意している。</li>
-<li><strong>順番に注意</strong>！Haskell
-の流儀では二番目の型引数が「成功」だが、Rustでは<strong>最初の型引数が成功値</strong>。</li>
-<li><code>unwrap()</code> と <code class="sourceCode rust">expect(<span class="st">&quot;foo&quot;</span>)</code>は同様に使える。</li>
-<li>モナドはないが、SwiftやCoffeeScriptの <code>?</code>
-オペレータと同じようなものがある。
-<code>rs     fn proc(opt_arg: Option&lt;i64&gt;) -&gt; Result&lt;i16,SomeError&gt;  {         let a = opt_arg?.some_method().still_perhaps_failling()?;         println!(&quot;Hahaha&quot;);         { some heavy proc ... }         Ok(42)     }</code>
-とかあったら、<code>?</code>が付いてる値が <code class="sourceCode rust"><span class="cn">Err</span>(hoge)</code>
-だった場合、なんかいいかんじの変換が成されて直ちに <code class="sourceCode rust"><span class="cn">Err</span></code>
-が返るようになる（注：Haskellと違いRustにはearly returnがある）。
+<li><p><code class="sourceCode haskell hs"><span class="dt">Right</span> a</code>
+<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust rs"><span class="cn">Ok</span>(a)</code>, <code class="sourceCode haskell hs"><span class="dt">Left</span> b</code>
+<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo></mrow><annotation encoding="application/x-tex">=</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.3669em;"></span><span class="mrel">=</span></span></span></span></span></span> <code class="sourceCode rust rs"><span class="cn">Err</span>(b)</code></p></li>
+<li><p>ライブラリ毎に <code class="sourceCode rust rs"><span class="kw">type</span> MyResult<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">=</span> <span class="dt">Result</span><span class="op">&lt;</span>T<span class="op">,</span> MyError<span class="op">&gt;</span></code>
+のような別名を用意している。</p></li>
+<li><p><strong>順番に注意</strong>！Haskell
+の流儀では二番目の型引数が「成功」だが、Rustでは<strong>最初の型引数が成功値</strong>。</p></li>
+<li><p><code>unwrap()</code> と <code class="sourceCode rust rs">expect(<span class="st">&quot;foo&quot;</span>)</code>は同様に使える。</p></li>
+<li><p>モナドはないが、SwiftやCoffeeScriptの <code>?</code>
+オペレータと同じようなものがある。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> proc(opt_arg<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">i64</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="dt">Result</span><span class="op">&lt;</span><span class="dt">i16</span><span class="op">,</span>SomeError<span class="op">&gt;</span>  <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> a <span class="op">=</span> opt_arg<span class="op">?.</span>some_method()<span class="op">.</span>still_perhaps_failling()<span class="op">?;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">&quot;Hahaha&quot;</span>)<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span> some heavy <span class="kw">proc</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cn">Ok</span>(<span class="dv">42</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>とかあったら、<code>?</code>が付いてる値が <code class="sourceCode rust rs"><span class="cn">Err</span>(hoge)</code>
+だった場合、なんかいいかんじの変換が成されて直ちに <code class="sourceCode rust rs"><span class="cn">Err</span></code>
+が返るようになる（注：Haskellと違いRustにはearly returnがある）。</p>
 <ul>
-<li><p>但し関数定義（<code class="sourceCode rust"><span class="cf">return</span></code>が呼べるところ）でしか使えない。</p></li>
-<li><p>qnighy氏の記事によれば、nightly では <code class="sourceCode rust"><span class="kw">do</span> catch</code>
+<li><p>但し関数定義（<code class="sourceCode rust rs"><span class="cf">return</span></code>が呼べるところ）でしか使えない。</p></li>
+<li><p>qnighy氏の記事によれば、nightly では <code class="sourceCode rust rs"><span class="kw">do</span> catch</code>
 構文があるようだが、stableには入ってない模様。</p>
     <div class="embed w-100 my-4 justify-content-center row py-0">
       <iframe scrolling="no" frameborder="0" class="col-md-10 col-12 align-self-center embed-item" src="//hatenablog-parts.com/embed?url=https://qnighy.hatenablog.com/entry/2017/06/03/070000">
@@ -366,30 +378,30 @@ GHCの<code class="sourceCode haskell"><span class="dt">TypeApplications</span><
 <section id="オーバーロード" class="level1">
 <h2>オーバーロード</h2>
 <ul>
-<li><p>Haskell の型クラスに当るのがトレイト（<code class="sourceCode rust"><span class="kw">trait</span></code>）</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Trait<span class="op">&lt;</span><span class="ot">&#39;a</span><span class="op">,</span> T<span class="op">,</span> U<span class="op">&gt;:</span> <span class="pp">this::is::</span>SuperTrait <span class="op">{</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">type</span> F  <span class="co">// 関連型（associated type）もある</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  fn foo<span class="op">&lt;</span>T<span class="op">&gt;</span>(args<span class="op">:</span> <span class="dt">i64</span><span class="op">,</span> <span class="op">...</span>)  <span class="op">-&gt;</span> result<span class="op">;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span><span class="op">&lt;</span><span class="ot">&#39;a</span><span class="op">,</span> T<span class="op">&gt;</span> Trait<span class="op">&lt;</span><span class="ot">&#39;a</span><span class="op">,</span> T<span class="op">,</span> T<span class="op">&gt;</span> <span class="cf">for</span> MyStruct <span class="op">{</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> </span></code></pre></div></li>
+<li><p>Haskell の型クラスに当るのがトレイト（<code class="sourceCode rust rs"><span class="kw">trait</span></code>）</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Trait<span class="op">&lt;</span><span class="ot">&#39;a</span><span class="op">,</span> T<span class="op">,</span> U<span class="op">&gt;:</span> <span class="pp">this::is::</span>SuperTrait <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">type</span> F  <span class="co">// 関連型（associated type）もある</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  fn foo<span class="op">&lt;</span>T<span class="op">&gt;</span>(args<span class="op">:</span> <span class="dt">i64</span><span class="op">,</span> <span class="op">...</span>)  <span class="op">-&gt;</span> result<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span><span class="op">&lt;</span><span class="ot">&#39;a</span><span class="op">,</span> T<span class="op">&gt;</span> Trait<span class="op">&lt;</span><span class="ot">&#39;a</span><span class="op">,</span> T<span class="op">,</span> T<span class="op">&gt;</span> <span class="cf">for</span> MyStruct <span class="op">{</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> </span></code></pre></div></li>
 <li><p>Rust
 は「ゼロコスト抽象」を謳っており、使用したトレイトの実装は自動的に特殊化されコードが生成される。</p>
 <ul>
-<li>いわば、<code class="sourceCode haskell"><span class="dt">SPECIALISE</span></code>
+<li>いわば、<code class="sourceCode haskell hs"><span class="dt">SPECIALISE</span></code>
 プラグマが適宜有効化されたような状態になっている。</li>
 </ul></li>
-<li><p>デフォルトで <code class="sourceCode haskell"><span class="dt">OverlappingInstances</span></code>
+<li><p>デフォルトで <code class="sourceCode haskell hs"><span class="dt">OverlappingInstances</span></code>
 状態。</p></li>
-<li><p>存在型：トレイト制約付きの存在型（existential type）は<code class="sourceCode rust"><span class="kw">dyn</span></code>で作る。</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode hs"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Showable</span> <span class="kw">where</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">MkShowable</span><span class="ot"> ::</span> <span class="dt">Show</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Showable</span></span></code></pre></div>
+<li><p>存在型：トレイト制約付きの存在型（existential type）は<code class="sourceCode rust rs"><span class="kw">dyn</span></code>で作る。</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode hs"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Showable</span> <span class="kw">where</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">MkShowable</span><span class="ot"> ::</span> <span class="dt">Show</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Showable</span></span></code></pre></div>
 <p>に対応するのは、</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Showable(<span class="kw">dyn</span> <span class="bu">Display</span>)<span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Showable(<span class="kw">dyn</span> <span class="bu">Display</span>)<span class="op">;</span></span></code></pre></div>
 <ul>
-<li><code class="sourceCode rust"><span class="kw">dyn</span></code>
+<li><code class="sourceCode rust rs"><span class="kw">dyn</span></code>
 は動的にディスパッチするので、ゼロコスト抽象は効かない。</li>
 </ul></li>
 </ul>

@@ -162,7 +162,7 @@ server {
     try_files $uri $uri/ =404;
   }
 }</code></pre>
-<p>こんな感じにしてやって <code class="sourceCode bash"><span class="fu">sudo</span> systemctl reload nginx</code>
+<p>こんな感じにしてやって <code class="sourceCode bash sh"><span class="fu">sudo</span> systemctl reload nginx</code>
 とでもすれば、これまで通りに <code>http://konn-san.com/math</code>
 にアクセスしても、自動的に <code>https://konn-san.com/math</code>
 に飛ばされるようになる。やったね！</p>
@@ -326,7 +326,7 @@ CSRFとかを防ぐためにも、JavaScriptを使って外部URLへの <code cl
 ところで、リンクしたページ以外にもHTTPS移行後はてブ消滅問題を扱っているページは幾つか見付かったんだけど、SEO対策を謳っているサイトに載っているPHPによる対応策のコードが全然整形されておらず読み辛いのには大変笑った。PVを気にする余り何か大切なものを置いてきてしまったのだろうか。以下でjQueryによる対応策を述べているが、SEO屋のコードは読み辛くてそもそも読んでいないので、全く参考にしていない。悪しからず。<br>
 <strong>[/SEO屋の悪口終わり]</strong><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>あとこれは本筋に関係ないんだけど、勘でJavaScriptを書いているので、特に何も考えず最初は
-jQuery の Slim 版を読み込んでいた。こいつらは <code class="sourceCode javascript">jQuery<span class="op">.</span><span class="at">ajax</span></code>
+jQuery の Slim 版を読み込んでいた。こいつらは <code class="sourceCode javascript js">jQuery<span class="op">.</span><span class="at">ajax</span></code>
 とかが省かれているが故の「スリム」版なので、最初は上のコードが通らずにウーン何故だ……と無駄に悩むことになった。<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4"><p>スマホでみると縦に分割されてちょっと見苦しいのでなんとかしたいんだけどね……。<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>

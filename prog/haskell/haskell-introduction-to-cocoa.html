@@ -143,7 +143,7 @@ Obj-C のコードを交ぜ書きするスタイルです。</p>
 <p>ですので、Obj-Cを自分で書かなければならないという点ではラッパライブラリを用いるのに較べて少し手間かもしれません。しかし、ラッパを使うにしてもちゃんとしたプログラムを書くには、CocoaのAPIリファレンスを読まなくてはいけない訳ですし、さして必要な労力は変わらないでしょう。</p>
 <p>また、<code>language-c-inline</code>じたいは、HOCが提供していたような、Obj-Cのオブジェクト・システムを再現するための機構は提供していません。しかし、GHC
 の最近の型機能を使えば、その必要な部分だけをエミュレートするような型システムを簡単に設計することが出来ます。そもそも、Obj-CのAPIを呼んだり、コントローラを書いたりする部分以外は関数型のパラダイムを使ってプログラミングする訳ですから、Obj-Cが提供するような高度なオブジェクト・システムすべてが使える必要はなく、単純な継承とアップキャスト、（unsafe
-な）ダウンキャスト、<code class="sourceCode objectivec">id</code>型くらいがあれば十分な訳です。以下ではその技法も含めて解説出来ればな、という感じです。</p>
+な）ダウンキャスト、<code class="sourceCode objectivec Objectivec">id</code>型くらいがあれば十分な訳です。以下ではその技法も含めて解説出来ればな、という感じです。</p>
 <p>また、オブジェクト・システムを模倣する上で、現在 Hackage
 に上がっている
 <code>language-c-inline</code>（<code>0.7</code>系統）には無い機能を使っています。なので、以下の作業をする上では<a href="https://github.com/mchakravarty/language-c-inline/">GitHubから直接最新版を取ってくる</a>のが一番やりやすいと思います。そのうち最新版がリリースされる筈ですが、作者の方が忙しいので、Hackage
@@ -272,7 +272,7 @@ Hello, World! とでもいうべき Currency Converter
 <li>その結果を表示（<code>resultField</code>）する。</li>
 </ol>
 <p>ということだけで、実質掛け算するだけです。Cocoa
-のリファレンスマニュアルなどと首っぴきになれば、テキストフィールドの値の取得・設定は<code class="sourceCode objectivec"><span class="op">-(</span><span class="dt">int</span><span class="op">)</span> intValue</code>や<code class="sourceCode objectivec"><span class="op">-(</span><span class="dt">double</span><span class="op">)</span> doubleValue</code>、<code class="sourceCode objectivec"><span class="op">-(</span><span class="dt">void</span><span class="op">)</span> setIntValue<span class="op">:(</span><span class="dt">double</span><span class="op">)</span> val</code>などを使えばよさそうなので、メインロジックである<code>convert</code>の実装は次のように書けば良さそうです：</p>
+のリファレンスマニュアルなどと首っぴきになれば、テキストフィールドの値の取得・設定は<code class="sourceCode objectivec"><span class="op">-(</span><span class="dt">int</span><span class="op">)</span> intValue</code>や<code class="sourceCode objectivec"><span class="op">-(</span><span class="dt">double</span><span class="op">)</span> doubleValue</code>、<code class="sourceCode objectivec Objectivec"><span class="op">-(</span><span class="dt">void</span><span class="op">)</span> setIntValue<span class="op">:(</span><span class="dt">double</span><span class="op">)</span> val</code>などを使えばよさそうなので、メインロジックである<code>convert</code>の実装は次のように書けば良さそうです：</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">convert ::</span> <span class="dt">AppDelegate</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>convert app <span class="ot">=</span> <span class="kw">do</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  input <span class="ot">&lt;-</span> intValue    <span class="op">=&lt;&lt;</span> dollarsField app</span>

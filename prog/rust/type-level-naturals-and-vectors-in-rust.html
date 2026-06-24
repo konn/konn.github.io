@@ -140,7 +140,7 @@
 <section id="普通に-array-じゃだめなの" class="level1">
 <h2>普通に Array じゃだめなの？</h2>
 <p>ところで Rust には <em>array</em>
-と呼ばれる固定長配列の型が予め用意されていて、<code class="sourceCode rust"><span class="kw">let</span> a<span class="op">:</span> [<span class="dt">i64</span><span class="op">;</span> <span class="dv">5</span>] <span class="op">=</span> [<span class="dv">1</span><span class="op">,</span><span class="dv">2</span><span class="op">,</span><span class="dv">3</span><span class="op">,</span><span class="dv">4</span><span class="op">,</span><span class="dv">5</span>]</code>のような形で利用出来ます。</p>
+と呼ばれる固定長配列の型が予め用意されていて、<code class="sourceCode rust rs"><span class="kw">let</span> a<span class="op">:</span> [<span class="dt">i64</span><span class="op">;</span> <span class="dv">5</span>] <span class="op">=</span> [<span class="dv">1</span><span class="op">,</span><span class="dv">2</span><span class="op">,</span><span class="dv">3</span><span class="op">,</span><span class="dv">4</span><span class="op">,</span><span class="dv">5</span>]</code>のような形で利用出来ます。</p>
 <p>これでいいんじゃね？と思う訳で、まあ部分的にはそれでいいんですが、でもやっぱりそれでは駄目です。</p>
 <p>というのも、Rustはどうやら<strong>標準の型レベル自然数に対する四則演算がない</strong>、というか、そもそも型やジェネリクスの引数として<strong>型レベル自然数を取ることが出来ない</strong>ようです。
 これは、標準的な型レベル自然数では、例えば次のような<strong>連結関数すら書きようがない</strong>、ということになります。</p>
@@ -158,8 +158,8 @@
 こういう時は<strong>Peano数項</strong>として自然数を表現するのが常套手段です。</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> Zero <span class="op">{}</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> Succ<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{}</span></span></code></pre></div>
-<p>などとあった時に、<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span>に当るのが<code class="sourceCode rust">Zero</code>で、<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mo>=</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>0</mn><mo>=</mo><mi>S</mi><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">3 = 1
-+ 1 + 1 + 0 = S(S(S(0)))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">3</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.0576em;" class="mord mathnormal">S</span><span class="mopen">(</span><span style="margin-right: 0.0576em;" class="mord mathnormal">S</span><span class="mopen">(</span><span style="margin-right: 0.0576em;" class="mord mathnormal">S</span><span class="mopen">(</span><span class="mord">0</span><span class="mclose">)))</span></span></span></span></span></span>に当るのが<code class="sourceCode rust">Succ<span class="op">&lt;</span>Succ<span class="op">&lt;</span>Succ<span class="op">&lt;</span>Zero<span class="op">&gt;&gt;&gt;</span></code>ですね。</p>
+<p>などとあった時に、<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span>に当るのが<code class="sourceCode rust rs">Zero</code>で、<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mo>=</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>0</mn><mo>=</mo><mi>S</mi><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">3
+= 1 + 1 + 1 + 0 = S(S(S(0)))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">3</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.0576em;" class="mord mathnormal">S</span><span class="mopen">(</span><span style="margin-right: 0.0576em;" class="mord mathnormal">S</span><span class="mopen">(</span><span style="margin-right: 0.0576em;" class="mord mathnormal">S</span><span class="mopen">(</span><span class="mord">0</span><span class="mclose">)))</span></span></span></span></span></span>に当るのが<code class="sourceCode rust rs">Succ<span class="op">&lt;</span>Succ<span class="op">&lt;</span>Succ<span class="op">&lt;</span>Zero<span class="op">&gt;&gt;&gt;</span></code>ですね。</p>
 <p>あとは、型レベルの足し算があれば嬉しく、例えば GHC
 だったら次のように書きます：</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="kw">family</span> <span class="dt">Plus</span> (<span class="ot">n ::</span> <span class="dt">Nat</span>) (<span class="ot">m ::</span> <span class="dt">Nat</span>) <span class="kw">where</span></span>
@@ -175,36 +175,36 @@
 </ul></li>
 <li>Haskellのようなデータ型の昇格もなく、依存型の機能もない。
 <ul>
-<li>値を型レベル、型を種レベルに持ち上げて<code class="sourceCode haskell"><span class="ot">::</span> <span class="dt">Nat</span></code>
+<li>値を型レベル、型を種レベルに持ち上げて<code class="sourceCode haskell hs"><span class="ot">::</span> <span class="dt">Nat</span></code>
 のようなことは出来ない。</li>
 </ul></li>
 <li>Rust のトレイトは一つの型引数しか持てない。
 <ul>
-<li>なので、たとえば <code class="sourceCode rust"><span class="kw">impl</span> Plus <span class="cf">for</span> N<span class="op">,</span> M</code>
+<li>なので、たとえば <code class="sourceCode rust rs"><span class="kw">impl</span> Plus <span class="cf">for</span> N<span class="op">,</span> M</code>
 のような書き方は出来ない。</li>
 </ul></li>
 </ul>
 <p>これらを乗り越えるには幾つかやりようがあると思いますが、ここでは以下のような作戦を取ることにしました：</p>
 <ul>
 <li>まず自然数の計算を扱う<strong>抽象構文木に当るダミーの型</strong>を沢山用意する。</li>
-<li>「Peano数項に簡約可能」を表すトレイト <code class="sourceCode rust">Nat</code>
+<li>「Peano数項に簡約可能」を表すトレイト <code class="sourceCode rust rs">Nat</code>
 を使い、これをあたかも自然数に対応する種（Kind）であるかのように扱う。
 <ul>
-<li><code class="sourceCode rust">Nat</code>
-には「計算結果」を表す<strong>関連型</strong> <code class="sourceCode rust">Eval</code> と、対応する整数の値を返す <code class="sourceCode rust"><span class="kw">fn</span> as_int() <span class="op">-&gt;</span> <span class="dt">usize</span></code>
+<li><code class="sourceCode rust rs">Nat</code>
+には「計算結果」を表す<strong>関連型</strong> <code class="sourceCode rust rs">Eval</code> と、対応する整数の値を返す <code class="sourceCode rust rs"><span class="kw">fn</span> as_int() <span class="op">-&gt;</span> <span class="dt">usize</span></code>
 を持たせておく。</li>
 </ul></li>
-<li>トレイトの <code class="sourceCode rust"><span class="kw">where</span></code>
-節を使って必要な帰納法の仮定を書き下し、特定の形の型に対して <code class="sourceCode rust">Nat</code> トレイトを実装する。</li>
+<li>トレイトの <code class="sourceCode rust rs"><span class="kw">where</span></code>
+節を使って必要な帰納法の仮定を書き下し、特定の形の型に対して <code class="sourceCode rust rs">Nat</code> トレイトを実装する。</li>
 </ul>
 <section id="実際の実装" class="level2">
 <h3>実際の実装</h3>
-<p>まずは、上で言ったように「ペアノ数項に簡約される」型のトレイト <code class="sourceCode rust">Nat</code> を定義しておきます。</p>
+<p>まずは、上で言ったように「ペアノ数項に簡約される」型のトレイト <code class="sourceCode rust rs">Nat</code> を定義しておきます。</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">trait</span> Nat <span class="op">{</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">type</span> Eval<span class="op">;</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> as_int() <span class="op">-&gt;</span> <span class="dt">usize</span><span class="op">;</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>まず、一番簡単な「ゼロ」に当る型 <code class="sourceCode rust">Zero</code> は次のようになります：</p>
+<p>まず、一番簡単な「ゼロ」に当る型 <code class="sourceCode rust rs">Zero</code> は次のようになります：</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> Zero <span class="op">{}</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span> Nat <span class="cf">for</span> Zero <span class="op">{</span></span>
@@ -213,7 +213,7 @@
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>では次に <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>+</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">1 + n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></span></span> に当る型、<code class="sourceCode rust">Succ<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
+<p>では次に <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>+</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">1 + n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></span></span> に当る型、<code class="sourceCode rust rs">Succ<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
 を見てみます：</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span> <span class="op">{</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    _maker<span class="op">:</span> PhantomData<span class="op">&lt;</span><span class="kw">fn</span>() <span class="op">-&gt;</span> N<span class="op">&gt;,</span></span>
@@ -227,22 +227,22 @@
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">type</span> Succ<span class="op">&lt;</span>N<span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span>MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span> <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>Eval<span class="op">;</span></span></code></pre></div>
-<p>ここでは二種類の型 <code class="sourceCode rust">MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
-と <code class="sourceCode rust">Succ<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
+<p>ここでは二種類の型 <code class="sourceCode rust rs">MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
+と <code class="sourceCode rust rs">Succ<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
 が定義されていますね。 前者は単に抽象構文木上で「<span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>+</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">1 + N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7278em; vertical-align: -0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span style="margin-right: 0.109em;" class="mord mathnormal">N</span></span></span></span></span></span>
-っぽい何か」を表す構築子になっていて、<code class="sourceCode rust">Succ<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
-は「<code class="sourceCode rust">MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span></code>を実際に
-<code class="sourceCode rust">Eval</code>を呼んで簡約させた型」を返すようになっています。
-実際、<code class="sourceCode rust">Nat</code> トレイトの <code class="sourceCode rust">as_int()</code> の実装を見ると、「内側の
+っぽい何か」を表す構築子になっていて、<code class="sourceCode rust rs">Succ<span class="op">&lt;</span>N<span class="op">&gt;</span></code>
+は「<code class="sourceCode rust rs">MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span></code>を実際に
+<code class="sourceCode rust rs">Eval</code>を呼んで簡約させた型」を返すようになっています。
+実際、<code class="sourceCode rust rs">Nat</code> トレイトの <code class="sourceCode rust rs">as_int()</code> の実装を見ると、「内側の
 <code>N</code> の値を計算して <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1</span></span></span></span></span></span>
-を足す」ものになっています。 <code class="sourceCode rust">Eval</code>
+を足す」ものになっています。 <code class="sourceCode rust rs">Eval</code>
 も同様ですが、一つだけ注意しないといけないのは、完全に簡約しないといけないので、<strong>まず
-<code class="sourceCode rust">N</code> を簡約してから <code class="sourceCode rust">MkSucc</code>を包む</strong>ようになっている、ということです。</p>
+<code class="sourceCode rust rs">N</code> を簡約してから <code class="sourceCode rust rs">MkSucc</code>を包む</strong>ようになっている、ということです。</p>
 <p>ところで、<code>MkSucc&lt;N&gt;</code>
 は型としての意味しかないので、フィールドを持たない筈ですが、ここでは
-<code class="sourceCode rust">PhantomData</code>
+<code class="sourceCode rust rs">PhantomData</code>
 型のフィールドを持っています。
-これはダミーのフィールドで、かいつまんでいえば型引数の <code class="sourceCode rust">N</code>
+これはダミーのフィールドで、かいつまんでいえば型引数の <code class="sourceCode rust rs">N</code>
 が所有権に何の影響も及ぼさないことをコンパイラに伝えるためのものです。
 詳しくは以下の qnighy
 さんの記事に載っていますので、そっちを御覧ください：</p>
@@ -255,10 +255,10 @@
 </section>
 <section id="コンストラクタの実装" class="level2">
 <h3>コンストラクタの実装</h3>
-<p>ここまでで、<code class="sourceCode rust"><span class="bu">Sized</span><span class="pp">::</span>new(arg)</code>
-関数が実装できます。 これは、<code class="sourceCode rust"><span class="dt">Vec</span><span class="op">&lt;</span>T<span class="op">&gt;</span></code>
+<p>ここまでで、<code class="sourceCode rust rs"><span class="bu">Sized</span><span class="pp">::</span>new(arg)</code>
+関数が実装できます。 これは、<code class="sourceCode rust rs"><span class="dt">Vec</span><span class="op">&lt;</span>T<span class="op">&gt;</span></code>
 型の引数を取って、長さが型レベル自然数と等しければ包んで返し、そうでなければ
-<code class="sourceCode rust"><span class="cn">None</span></code>
+<code class="sourceCode rust rs"><span class="cn">None</span></code>
 を返すものです：</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span><span class="op">&lt;</span>N<span class="op">:</span> Nat<span class="op">,</span> T<span class="op">&gt;</span> <span class="bu">Sized</span><span class="op">&lt;</span>N<span class="op">,</span> T<span class="op">&gt;</span> <span class="op">{</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> new(v<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span>T<span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="bu">Sized</span><span class="op">&lt;</span>N<span class="op">,</span> T<span class="op">&gt;&gt;</span> <span class="op">{</span></span>
@@ -290,7 +290,7 @@
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Sized</span><span class="op">&lt;</span>Five, _<span class="op">&gt;</span> = Some<span class="op">(Sized { _maker:</span><span class="va"> PhantomData, _vector</span><span class="op">:</span><span class="va"> [1, 2, 3, 4, 5] }</span><span class="op">)</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Sized</span><span class="op">&lt;</span>Three, _<span class="op">&gt;</span> = Some<span class="op">(Sized { _maker:</span><span class="va"> PhantomData, _vector</span><span class="op">:</span><span class="va"> [6, 7, 8] }</span><span class="op">)</span></span></code></pre></div>
 <p>たとえば、これで <code>mthree</code>
-の定義を以下のように書き換えると、<code class="sourceCode rust"><span class="cn">None</span></code>
+の定義を以下のように書き換えると、<code class="sourceCode rust rs"><span class="cn">None</span></code>
 が返ります：</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode main.rs"><code class="sourceCode rust"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> mthree<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="bu">Sized</span><span class="op">&lt;</span>Three<span class="op">,</span> _<span class="op">&gt;&gt;</span> <span class="op">=</span> <span class="bu">Sized</span><span class="pp">::</span>new(<span class="pp">vec!</span>[<span class="dv">6</span><span class="op">,</span> <span class="dv">7</span>])<span class="op">;</span> <span class="co">// to short!</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cargo run</span>
@@ -300,15 +300,15 @@
 <section id="足し算の実装" class="level2">
 <h3>足し算の実装</h3>
 <p>では次に足し算を実装してみたいと思います。</p>
-<p>まずは、足し算を表現する型 <code class="sourceCode rust">MkPlus</code> と、その最終的な簡約結果に当る
-<code class="sourceCode rust">Plus</code>を定義します：</p>
+<p>まずは、足し算を表現する型 <code class="sourceCode rust rs">MkPlus</code> と、その最終的な簡約結果に当る
+<code class="sourceCode rust rs">Plus</code>を定義します：</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span> <span class="op">{</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    _maker<span class="op">:</span> PhantomData<span class="op">&lt;</span><span class="kw">fn</span>() <span class="op">-&gt;</span> (N<span class="op">,</span> M)<span class="op">&gt;,</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">type</span> Plus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span>MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span> <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>Eval<span class="op">;</span></span></code></pre></div>
-<p>さて、ではあとは <code class="sourceCode rust">as_int()</code> と
-<code class="sourceCode rust">Eval</code> を実装しましょう。</p>
+<p>さて、ではあとは <code class="sourceCode rust rs">as_int()</code> と
+<code class="sourceCode rust rs">Eval</code> を実装しましょう。</p>
 <p>上で見たように、ペアノ自然数の足し算は、第一引数についてパターンマッチをして再帰的に計算していきます。
 まずは第一引数が <span class="math inline"><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></span></span>
 の自明な場合を書きましょう。</p>
@@ -331,12 +331,12 @@
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">&lt;</span>MkSucc<span class="op">&lt;</span>N<span class="op">&gt;</span> <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>as_int() <span class="op">+</span> <span class="op">&lt;</span>M <span class="kw">as</span> Nat<span class="op">&gt;</span><span class="pp">::</span>as_int()</span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p><code class="sourceCode rust"><span class="kw">where</span></code>
-節に <code class="sourceCode rust">MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;:</span> Nat</code>
-という制約がありますね。 我々からすれば、<code class="sourceCode rust">N<span class="op">,</span> M<span class="op">:</span> Nat</code>
+<p><code class="sourceCode rust rs"><span class="kw">where</span></code>
+節に <code class="sourceCode rust rs">MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;:</span> Nat</code>
+という制約がありますね。 我々からすれば、<code class="sourceCode rust rs">N<span class="op">,</span> M<span class="op">:</span> Nat</code>
 だけあれば十分動くように見えますが、他の型があとから <code>MkPlus</code>
-の引数に入ってくる可能性もあり、これだけで場合が取り尽せている、ということは、コンパイラには伺い知れず、<code class="sourceCode rust">MkSucc<span class="op">&lt;</span>MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span></code>の<code class="sourceCode rust">Nat</code>トレイトを見付けさせるには、このように明示的に
-<code class="sourceCode rust"><span class="kw">where</span></code>
+の引数に入ってくる可能性もあり、これだけで場合が取り尽せている、ということは、コンパイラには伺い知れず、<code class="sourceCode rust rs">MkSucc<span class="op">&lt;</span>MkPlus<span class="op">&lt;</span>N<span class="op">,</span> M<span class="op">&gt;</span></code>の<code class="sourceCode rust rs">Nat</code>トレイトを見付けさせるには、このように明示的に
+<code class="sourceCode rust rs"><span class="kw">where</span></code>
 節に指定する必要があるようです。</p>
 <p>他の方法を採用すれば何か巧いこといくのかもしれません。有識者の意見を待ちます。</p>
 </section>
@@ -378,10 +378,10 @@
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>   = help: consider adding a `#![recursion_limit=&quot;128&quot;]` attribute to your crate</span>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>   = note: required because of the requirements on the <span class="op">impl of </span>`type_naturals::Nat`<span class="op"> fo</span>r `type_naturals::MkPlus&lt;type_naturals::MkSucc&lt;_&gt;<span class="op">,</span> _&gt;`</span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>   = note: required because <span class="op">of </span>the<span class="op"> req</span>uirements on the impl of <span class="kw">`</span><span class="ex">type_naturals::Nat</span><span class="kw">`</span> for <span class="kw">`</span><span class="ex">type_naturals::MkPlus</span><span class="op">&lt;</span>type_naturals::MkSucc<span class="op">&lt;</span>type_naturals::MkSucc<span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>, _<span class="op">&gt;</span><span class="kw">`</span></span></code></pre></div>
-<p>ギャオス！なんかよくわからないけどエラーが出ます。 どうやら、<code class="sourceCode rust">MkPlus</code> がトレイト <code class="sourceCode rust">Eval</code>
+<p>ギャオス！なんかよくわからないけどエラーが出ます。 どうやら、<code class="sourceCode rust rs">MkPlus</code> がトレイト <code class="sourceCode rust rs">Eval</code>
 に属するかどうかの条件を列挙しようとして無限ループに陥っているようで。
-<code class="sourceCode rust">five</code> や <code class="sourceCode rust">three</code>
-の型はもう決まっているし、それが決まれば <code class="sourceCode rust">Plus</code>
+<code class="sourceCode rust rs">five</code> や <code class="sourceCode rust rs">three</code>
+の型はもう決まっているし、それが決まれば <code class="sourceCode rust rs">Plus</code>
 の値も決まる筈ですから、なんかそこの定義をズバっと持ってくれば良さそうな気がするのですが、トレイトの解決が内部でどう実装されているのかわからないので、今一なんでこうなるのかわかりません。
 <strong>Rust有識者の解説をお待ち</strong>しています！！！</p>
 <p>いずれにせよ、これは以下のようにそれぞれの型を明示すると通るようになります：</p>
@@ -443,10 +443,10 @@
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="ex">...flattened</span> into</span>
 <span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Sized</span> { _maker: PhantomData, _vector: <span class="pp">[</span><span class="st">1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12</span><span class="pp">]</span> },</span>
 <span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="ex">with</span> length 12</span></code></pre></div>
-<p><code class="sourceCode rust"><span class="bu">Iterator</span></code>
-の <code class="sourceCode rust">size_hint</code> とか <code class="sourceCode rust"><span class="bu">ExactSizeIterator</span></code>
+<p><code class="sourceCode rust rs"><span class="bu">Iterator</span></code> の
+<code class="sourceCode rust rs">size_hint</code> とか <code class="sourceCode rust rs"><span class="bu">ExactSizeIterator</span></code>
 とかも <code>N</code> の情報を適宜使って書ける気がしますが、複雑すぎると
-<code class="sourceCode rust">as_int()</code>の計算コストがかかってあまり嬉しくない気もする。</p>
+<code class="sourceCode rust rs">as_int()</code>の計算コストがかかってあまり嬉しくない気もする。</p>
 </section>
 </section>
 <section id="まとめ" class="level1">

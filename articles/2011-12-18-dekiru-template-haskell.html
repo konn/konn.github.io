@@ -243,8 +243,8 @@ splice や準クォートの方式が違ったりします。</p>
 <li>型</li>
 </ol>
 <p>それぞれについて見ていきましょう。式と云うのは、通常の式、例えば
-<code class="sourceCode haskell"><span class="dv">1</span> <span class="op">+</span> <span class="dv">2</span></code>
-とか <code class="sourceCode haskell">\x y <span class="ot">-&gt;</span> x <span class="op">*</span> y</code>などです。これらは
+<code class="sourceCode haskell hs"><span class="dv">1</span> <span class="op">+</span> <span class="dv">2</span></code>
+とか <code class="sourceCode haskell hs">\x y <span class="ot">-&gt;</span> x <span class="op">*</span> y</code>などです。これらは
 <strong><code>Exp</code></strong> 型の構文木です。</p>
 <p>対してパタンの構文木は、関数宣言やパタンマッチに登場するパタンのことで、<strong><code>Pat</code></strong>型の構文木です。</p>
 <p>宣言構文木は <strong><code>Dec</code></strong>
@@ -430,7 +430,7 @@ splice や準クォートの方式が違ったりします。</p>
 <li>変数を表わす構文木は？</li>
 </ol>
 <p>こんな所でしょうか。これらを一つずつ調べてもいいですが、今生成したいのはラムダ式だったので、目的のラムダ式と似たようなラムダ式、例えば
-<code class="sourceCode haskell">\(x,y,z) <span class="ot">-&gt;</span> y</code>
+<code class="sourceCode haskell hs">\(x,y,z) <span class="ot">-&gt;</span> y</code>
 の構文木を表示させて仕舞えば簡単ですね。</p>
 <p>では、 GHCi を起動してください。 <code>-XTemplateHaskell</code>
 をつけて起動して、<code>Language.Haskell.TH</code>
@@ -657,7 +657,7 @@ Template Haskell を使おうと思います。TH
 の定義を盗み見ることに成功しました！真ん中の <code>TyConI</code>
 のところです。</p>
 <p>ところで、上の <code>reifier.hs</code>
-ですが妙ですね……。何もないところにいきなり <code class="sourceCode haskell"><span class="kw">do</span></code>-式が書いてあります。malformed
+ですが妙ですね……。何もないところにいきなり <code class="sourceCode haskell hs"><span class="kw">do</span></code>-式が書いてあります。malformed
 なんじゃないの？</p>
 <p>そんなことはありません。実はこれは、</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="op">$</span>(<span class="kw">do</span> info <span class="ot">&lt;-</span> reify &#39;<span class="dt">&#39;String</span></span>

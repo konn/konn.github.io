@@ -443,7 +443,7 @@ ffi を用いて実装されていて、GHC 内部では <code class="sourceCode
 printf デバッグをするか、或いは一旦 <code class="sourceCode haskell"><span class="dt">Language.Fay.Prelude</span></code>
 をコメントアウトして <code class="sourceCode haskell"><span class="dt">Prelude</span></code>
 を読み込むなどして動かしてみて試すしかない。間違っても吐き出された JS
-のソーコードを読もうと思ってはいけない。というか読めない。<code class="sourceCode bash"><span class="ex">$</span> fay Automaton.hs <span class="at">--pretty</span></code>
+のソーコードを読もうと思ってはいけない。というか読めない。<code class="sourceCode bash sh"><span class="ex">$</span> fay Automaton.hs <span class="at">--pretty</span></code>
 と云う具合に <code>--pretty</code>
 オプションを付ければちょっとは読み易くはなり、公式サイトのほうにシンボルの読み方等はあることにはある。</p>
 <p>このような関数をデバッグするのは、ちょっと慣れないと大変だ。</p>
@@ -457,7 +457,7 @@ printf デバッグをするか、或いは一旦 <code class="sourceCode haskel
 とかも上手く動かない。あと、</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">case</span> hoge <span class="kw">of</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Fuga</span> a <span class="op">|</span> a <span class="ot">`elem`</span> target <span class="ot">-&gt;</span> <span class="op">....</span></span></code></pre></div>
-<p>のような構文もサポートされていないらしい。どの構文がサポートされていてどれがサポートされていないかは、<code class="sourceCode bash"><span class="ex">fay</span></code>
+<p>のような構文もサポートされていないらしい。どの構文がサポートされていてどれがサポートされていないかは、<code class="sourceCode bash sh"><span class="ex">fay</span></code>
 コマンドにソースを通すと判るので、適宜それを使わないように書き換えていく必要がある。</p>
 </section>
 </section>
