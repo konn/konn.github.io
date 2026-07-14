@@ -1,3 +1,12 @@
+- date: 2026/07/11
+  conference:
+    name: "関数型まつり"
+    venue: "中野セントラルパーク カンファレンス"
+    url: "https://2026.fp-matsuri.org/"
+  title: " 本物のプログラマーは unsafe と型システムを使う 〜拡張可能レコードを作って学ぶ黒魔術入門〜"
+  links:
+    Slides: "/t/real-programmer-uses-unsafe-fp2026.pdf"
+    Repository: https://github.com/konn/unsafe-haskell-intro-fp-matsuri-2026
 - date: 2026/06/15
   conference:
     name: "EGARPHS '26 (colocated with PLDI '26)"
