@@ -57,6 +57,13 @@ Activity
 
 現在・過去の活動記録など。
 
+Talks
+-----
+
+勉強会や社内セミナーなどでの発表記録（直近十件；[全一覧](/talks.html)）。
+
+{{{talks}}}
+
 Papers
 ------
 
@@ -88,14 +95,6 @@ Papers
 
 [プログラミングの魔導書 〜Programmers' Grimoire〜 Vol.3 “Parallel, Concurrent, and Distributed Programming”](http://longgate.co.jp/books/grimoire-vol3.html)
 :    株式会社ロングゲート様の技術書に、合成性の高い並行処理を実現する STM についての入門記事を寄稿させて頂きました。拙稿に限らず、並行・並列処理に関するあらゆる知識の詰まった一冊となっておりますので、是非。
-
-
-Talks
------
-
-勉強会や社内セミナーなどでの発表記録（直近十件；[全一覧](/talks.html)）。
-
-{{{talks}}}
 
 Pre-publication Reviews
 -----------------------
