@@ -612,35 +612,61 @@ generatedGraphicPlaceholder :: String
 generatedGraphicPlaceholder = "generatedgraphic"
 
 procTikz :: Pandoc -> Machine Pandoc
-procTikz = bottomUpM step
+procTikz = bottomUpM stepBlock <=< bottomUpM stepInline
   where
-    step (RawBlock "latex" src_)
-      | Right ts <- parseTeX src_ =
-          fmap Plain
-            $ forM
-              [ nth
-              | (TeXComm c [FixArg nth]) <- universe ts
-              , c == generatedGraphicPlaceholder
-              ]
-            $ \nth -> do
-              liftIO $ putStrLn $ "generated image: " ++ T.unpack (render nth)
-              let n = fromMaybe 0 $ readMaybe $ T.unpack $ render nth
-              fp <- use imgPath
-              let dest = toValue $ ("/" :: String) </> fp </> ("image-" ++ show n ++ ".svg")
-                  alts = toValue $ ("/" :: String) </> fp </> ("image-" ++ show n ++ ".png")
-              return $
-                Span
-                  ("", ["img-fluid"], [])
-                  [ RawInline "html"
-                      $ LT.toStrict
-                      $ renderHtml
-                      $ object
-                        ! class_ "img-thumbnail media-object"
-                        ! type_ "image/svg+xml"
-                        ! data_ dest
-                      $ img ! src alts ! alt "Diagram"
-                  ]
-    step a = return a
+    stepBlock orig@(RawBlock "latex" src_)
+      | Right ts <- parseTeX src_
+      , let nths = [nth | (TeXComm c [FixArg nth]) <- universe ts, c == generatedGraphicPlaceholder]
+      , not (null nths) = do
+          spans <- forM nths $ \nth -> do
+            let n = fromMaybe 0 $ readMaybe $ T.unpack $ render nth
+            makeGraphicSpan n
+          return $ Plain spans
+      | otherwise = return orig
+    stepBlock a = return a
+
+    stepInline orig@(RawInline "latex" src_)
+      | Right ts <- parseTeX src_
+      , let nths = [nth | (TeXComm c [FixArg nth]) <- universe ts, c == generatedGraphicPlaceholder]
+      , not (null nths) = do
+          spans <- forM nths $ \nth -> do
+            let n = fromMaybe 0 $ readMaybe $ T.unpack $ render nth
+            makeGraphicSpan n
+          case spans of
+            [single] -> return single
+            _ -> return $ Span ("", [], []) spans
+      | otherwise = return orig
+    stepInline orig@(Math _ src_)
+      | Right ts <- parseTeX src_
+      , let nths = [nth | (TeXComm c [FixArg nth]) <- universe ts, c == generatedGraphicPlaceholder]
+      , not (null nths) = do
+          spans <- forM nths $ \nth -> do
+            let n = fromMaybe 0 $ readMaybe $ T.unpack $ render nth
+            makeGraphicSpan n
+          case spans of
+            [single] -> return single
+            _ -> return $ Span ("", [], []) spans
+      | otherwise = return orig
+    stepInline a = return a
+
+makeGraphicSpan :: Int -> Machine Inline
+makeGraphicSpan n = do
+  liftIO $ putStrLn $ "generated image: " <> show n
+  fp <- use imgPath
+  let dest = toValue $ ("/" :: String) </> fp </> ("image-" <> show n <> ".svg")
+      alts = toValue $ ("/" :: String) </> fp </> ("image-" <> show n <> ".png")
+  return $
+    Span
+      ("", ["img-fluid"], [])
+      [ RawInline "html"
+          $ LT.toStrict
+          $ renderHtml
+          $ object
+            ! class_ "img-thumbnail media-object"
+            ! type_ "image/svg+xml"
+            ! data_ dest
+          $ img ! src alts ! alt "Diagram"
+      ]
 
 texToEnvNamePlainString :: TeXArg -> Text
 texToEnvNamePlainString str =

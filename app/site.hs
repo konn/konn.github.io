@@ -92,8 +92,10 @@ import Skylighting hiding (Context (..), ListItem (..), Style)
 import System.Directory (
   canonicalizePath,
   createDirectoryIfMissing,
+  findExecutable,
   getHomeDirectory,
   getModificationTime,
+  removePathForcibly,
   renameFile,
  )
 import System.Environment (getArgs)
@@ -495,6 +497,11 @@ runShake mtargs = liftIO $ shake myShakeOpts $ do
     serialPngOrSvg ?> \out -> do
       let prepro = replaceDir destD cacheD $ takeDirectory out <.> "tex" <.> "preprocess"
       need [prepro]
+      b <- doesFileExist out
+      unless b $ do
+        ans <- readFromBinaryFile' prepro
+        forM_ (images ans) $ \(_, src) ->
+          unless (T.null src) $ generateImages prepro src
 
 serialPngOrSvg :: FilePath -> Bool
 serialPngOrSvg fp =
@@ -679,8 +686,8 @@ writerConf =
     { -- We can't change this to KaTeX,
       -- as this sacrifices the conversion logic.
       writerHTMLMathMethod = Text.Pandoc.MathJax "https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"
-    -- , writerHighlightStyle = Just pygments
-    , writerSectionDivs = True
+    , -- , writerHighlightStyle = Just pygments
+      writerSectionDivs = True
     , writerExtensions = Text.Pandoc.disableExtension Text.Pandoc.Ext_tex_math_dollars myExts
     }
 
@@ -755,19 +762,26 @@ generateImages :: FilePath -> T.Text -> Action ()
 generateImages fp body = do
   master <- liftIO $ canonicalizePath $ replaceDir cacheD destD $ dropExtensions fp
   liftIO $ createDirectoryIfMissing True $ fromString master
+  mudrawPath <- liftIO $ do
+    mpath <- findExecutable "mudraw"
+    case mpath of
+      Just p -> pure p
+      Nothing -> do
+        mapp <- findExecutable "/Applications/TeX2img.app/Contents/Resources/mupdf/mudraw"
+        pure $ fromMaybe "mudraw" mapp
   withTempDir $ \tmp -> do
     copyFile' ("data" </> ".latexmkrc") (tmp </> ".latexmkrc")
     writeTextFile (tmp </> "image.tex") body
     cmd_ (Cwd tmp) "latexmk" (EchoStdout False) (WithStdout True) "-pdflua" "image.tex"
+    -- Generating SVGs directly from image.pdf using mudraw
     cmd_
       (Cwd tmp)
-      "tex2img"
+      mudrawPath
       (EchoStdout False)
       (WithStdout True)
-      ["--latex=lualatex"]
-      "--with-text"
-      "image.tex"
-      "image.svg"
+      "-o"
+      "image-%d.svg"
+      "image.pdf"
     -- Generating PNGs
     cmd_
       (Cwd tmp)
@@ -793,12 +807,15 @@ generateImages fp body = do
               mapMaybe
                 (readMaybe <=< L.stripPrefix "NumberOfPages: ")
                 (lines infos)
-    forM_ [1 .. pages - 1] $ \n -> do
-      let targ = tmp </> "image-" <> show n <.> "svg"
-      liftIO $ renameFile (tmp </> "image-" <> show (n + 1) <.> "svg") targ
-    liftIO $ renameFile (tmp </> "image.svg") (tmp </> "image-0.svg")
+    -- mudraw creates image-1.svg, image-2.svg, ... (1-indexed)
+    -- Align with 0-indexed image-0.svg, image-1.svg, ...
+    forM_ [0 .. pages - 1] $ \n -> do
+      let srcF = tmp </> "image-" <> show (n + 1) <.> "svg"
+          targ = tmp </> "image-" <> show n <.> "svg"
+      liftIO $ renameFile srcF targ
     imgs <- getDirectoryFiles tmp ["*.png", "*.svg"]
-    forM_ imgs $ \i ->
+    forM_ imgs $ \i -> do
+      liftIO $ removePathForcibly (master </> i)
       traced (unwords ["Copying", tmp </> i, "to", master </> i]) $
         copyFileNoDep (tmp </> i) (master </> i)
     putNormal . unwords . ("generated:" :) =<< getDirectoryFiles tmp ["*.png", "*.svg"]
@@ -982,10 +999,10 @@ makeNavBar ident = do
   let cats =
         toJSON
           [ object
-            [ "path" .= pth
-            , "category" .= cat
-            , "active" .= (getActive cDic (dropDirectory1 $ runIdentifier ident) == pth)
-            ]
+              [ "path" .= pth
+              , "category" .= cat
+              , "active" .= (getActive cDic (dropDirectory1 $ runIdentifier ident) == pth)
+              ]
           | (cat, pth) <- cDic
           ]
   src <- readFromFile' "templates/navbar.mustache"
@@ -1256,9 +1273,9 @@ remoteCiteLink :: T.Text -> HM.HashMap T.Text RefInfo -> Text.Pandoc.Inline -> T
 remoteCiteLink base refInfo (Text.Pandoc.Cite cs _) =
   let ctLinks =
         [ maybe
-          (Text.Pandoc.Strong [Text.Pandoc.Str citationId])
-          (\RefInfo {..} -> Text.Pandoc.Link ("", [], []) [Text.Pandoc.Str refLabel] (base <> "#" <> refAnchor, ""))
-          mres
+            (Text.Pandoc.Strong [Text.Pandoc.Str citationId])
+            (\RefInfo {..} -> Text.Pandoc.Link ("", [], []) [Text.Pandoc.Str refLabel] (base <> "#" <> refAnchor, ""))
+            mres
         | Text.Pandoc.Citation {..} <- cs
         , let mres = HM.lookup citationId refInfo
         ]
