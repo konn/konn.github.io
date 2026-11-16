@@ -1,3 +1,13 @@
+
+- date: 2026/11/16
+  conference:
+    name: "TPP 2026: 22nd Theorem Proving and Provers Meeting"
+    venue: "理化学研究所 革新知能統合研究センター（理研AIP）東京オフィス"
+    url: "https://auto-res.github.io/tpp2026/ja/"
+  title: "Praxis: A theorem prover for metamathematics based on very weak theory"
+  links:
+    Slides: "/t/Praxis-Prover-TPP26.pdf"
+    Repository: https://github.com/konn/praxis-prover
 - date: 2026/07/11
   conference:
     name: "関数型まつり"
